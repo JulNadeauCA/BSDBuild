@@ -1,4 +1,4 @@
-# $Csoft: csoft.lib.mk,v 1.36 2003/12/10 02:22:39 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.37 2003/12/10 02:28:54 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -31,6 +31,7 @@ AR?=		ar
 RANLIB?=	ranlib
 LIB_INSTALL?=	No
 LIB_SHARED?=	No
+LIB_ADD?=
 ASM?=		nasm
 ASMFLAGS?=	-g -w-orphan-labels
 LIBTOOL?=	libtool
@@ -156,11 +157,11 @@ lib${LIB}.a: _lib_objs ${OBJS}
 	    	    F=`echo $$F | sed 's/.asm$$/.o/'`; \
 	    	    _objs="$$_objs $$F"; \
                 done; \
-	        echo "${AR} -cru lib${LIB}.a $$_objs"; \
-	        ${AR} -cru lib${LIB}.a $$_objs; \
+	        echo "${AR} -cru lib${LIB}.a $$_objs ${LIB_ADD}"; \
+	        ${AR} -cru lib${LIB}.a $$_objs ${LIB_ADD}; \
 	    else \
-	        echo "${AR} -cru lib${LIB}.a ${OBJS}"; \
-	        ${AR} -cru lib${LIB}.a ${OBJS}; \
+	        echo "${AR} -cru lib${LIB}.a ${OBJS} ${LIB_ADD}"; \
+	        ${AR} -cru lib${LIB}.a ${OBJS} ${LIB_ADD}; \
 	    fi; \
 	    echo "${RANLIB} lib${LIB}.a"; \
 	    (${RANLIB} lib${LIB}.a || exit 0); \
@@ -179,15 +180,17 @@ lib${LIB}.la: ${LIBTOOL} _lib_shobjs
                 done; \
 	        echo "${LIBTOOL} ${CC} -o lib${LIB}.la -rpath ${PREFIX}/lib \
 	            -shared -version-info ${SOVERSION} ${LDFLAGS} $$_shobjs \
-		    ${LIBS}"; \
+		    ${LIBS} ${LIB_ADD}"; \
 	        ${LIBTOOL} ${CC} -o lib${LIB}.la -rpath ${PREFIX}/lib -shared \
-		    -version-info ${SOVERSION} ${LDFLAGS} $$_shobjs ${LIBS}; \
+		    -version-info ${SOVERSION} ${LDFLAGS} $$_shobjs ${LIBS} \
+		    ${LIB_ADD}; \
 	    else \
 	        echo "${LIBTOOL} ${CC} -o lib${LIB}.la -rpath ${PREFIX}/lib \
 	            -shared -version-info ${SOVERSION} ${LDFLAGS} ${SHOBJS} \
-		    ${LIBS}"; \
+		    ${LIBS} ${LIB_ADD}"; \
 	        ${LIBTOOL} ${CC} -o lib${LIB}.la -rpath ${PREFIX}/lib -shared \
-		    -version-info ${SOVERSION} ${LDFLAGS} ${SHOBJS} ${LIBS}; \
+		    -version-info ${SOVERSION} ${LDFLAGS} ${SHOBJS} ${LIBS} \
+		    ${LIB_ADD}; \
 	    fi; \
 	fi
 

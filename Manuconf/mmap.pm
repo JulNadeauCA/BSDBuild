@@ -1,4 +1,4 @@
-# $Csoft: setenv.pm,v 1.3 2002/09/06 00:56:51 vedge Exp $
+# $Csoft: mmap.pm,v 1.1 2002/09/21 07:58:25 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -29,6 +29,10 @@ sub Test
 	TryCompile 'HAVE_MMAP', << 'EOF';
 #include <sys/types.h>
 #include <sys/mman.h>
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
 
 int
 main(int argc, char *argv[])

@@ -1,6 +1,6 @@
-# $Csoft: vedge.common.mk,v 1.2 2001/08/16 05:52:31 vedge Exp $
+# $Csoft: csoft.common.mk,v 1.1 2001/10/09 04:50:30 vedge Exp $
 
-CSOFT_MK_VERSION=1.0
+VERSION=1.0
 
 tree:
 	(cd $(TOP)/mk && $(SH) maptree.sh none)

@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.17 2002/05/29 21:33:21 vedge Exp $
+# $Csoft: manuconf.pl,v 1.18 2002/07/27 06:32:41 vedge Exp $
 #
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -91,7 +91,7 @@ EOF
 BEGIN
 {
     	$VERSION = '1.2';
-	$INSTALLDIR = '/home/vedge/src/csoft-mk';
+	$INSTALLDIR = '%PREFIX%/share/csoft-mk';
 
 	print << "EOF";
 #!/bin/sh

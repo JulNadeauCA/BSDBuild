@@ -1,4 +1,4 @@
-# $Csoft$
+# $Csoft: vedge.prog.mk,v 1.14 2001/08/16 05:52:32 vedge Exp $
 
 TYPE=		prog
 
@@ -20,7 +20,7 @@ ASMOUT?=	aoutb
 ASMFLAGS?=	-f $(ASMOUT) -g -w-orphan-labels
 ASM_PICFLAGS?=	-DPIC
 
-.SUFFIXES:  .o .c .cc .C .cxx .y .s .S .asm
+.SUFFIXES:  .o .c .cc .C .cxx .y .s .S .asm .so
 
 .c.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<

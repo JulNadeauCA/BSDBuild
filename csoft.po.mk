@@ -1,4 +1,4 @@
-# $Csoft: csoft.po.mk,v 1.3 2003/07/27 17:16:38 vedge Exp $
+# $Csoft: csoft.po.mk,v 1.4 2003/07/27 20:27:43 vedge Exp $
 
 # Copyright (c) 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -71,7 +71,10 @@ regress:
 	# nothing
 
 clean:
-	rm -f ${POTFILES}
+	if [ "${POTFILES}" != "" -o "${MOS}" != "" ]; then \
+		echo "rm -f ${POTFILES} ${MOS}"; \
+		rm -f ${POTFILES} ${MOS}; \
+	fi
 
 cleandir:
 	# nothing

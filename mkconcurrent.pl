@@ -90,13 +90,16 @@ EOF
 	}
 	if (@deps) {
 		print DSTMAKEFILE "\n", join("\n", @deps), "\n";
-		if (-e "$BUILD/$ndir/.depend") {			# Hack
-			print DSTMAKEFILE 'include .depend'."\n";
-		}
+		print DSTMAKEFILE 'include .depend'."\n";
 	}
 
 	close(DSTMAKEFILE);
 	close(SRCMAKEFILE);
+
+	# Prevent make from complaining.
+	open(DSTDEPEND, ">$BUILD/$ndir/.depend") or
+	    die "$BUILD/$ndir/.depend: $!";
+	close(DSTDEPEND);
 }
 
 sub Scan

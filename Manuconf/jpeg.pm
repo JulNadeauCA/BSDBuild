@@ -1,4 +1,4 @@
-# $Csoft: smpeg.pm,v 1.8 2002/12/24 08:59:39 vedge Exp $
+# $Csoft: jpeg.pm,v 1.1 2003/03/19 05:14:43 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -59,6 +59,13 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
+
+	print
+		Cond('"${HAVE_JPEG}" != ""',
+		MKSave('JPEG_CFLAGS') .
+		MKSave('JPEG_LIBS'),
+		Nothing());
+
 	return (0);
 }
 

@@ -29,7 +29,8 @@
 #
 
 optarg=
-for arg; do
+for arg
+do
 	case "$arg" in
 	-*=*)
 	    optarg=`echo "$arg" | sed 's/[-_a-zA-Z0-9]*=//'`
@@ -98,26 +99,26 @@ fi
 
 if [ "${srcdir}" != "" ]; then
 	echo "concurrent build (source in ${srcdir})"
-	if [ ! -e "${srcdir}" ]; then
-		echo "Cannot find source directory: ${srcdir}"
-		exit 1
-	fi
-	if [ ! -e "${srcdir}/configure.in" ]; then
-		echo "Invalid source directory: ${srcdir}"
-		exit 1
-	fi
-	if [ -e "${srcdir}/config" ]; then
-		echo "Source directory is already configured: ${srcdir}"
-		exit 1
-	fi
+#	if [ ! -e "${srcdir}" ]; then
+#		echo "Cannot find source directory: ${srcdir}"
+#		exit 1
+#	fi
+#	if [ ! -e "${srcdir}/configure.in" ]; then
+#		echo "Invalid source directory: ${srcdir}"
+#		exit 1
+#	fi
+#	if [ -e "${srcdir}/config" ]; then
+#		echo "Source directory is already configured: ${srcdir}"
+#		exit 1
+#	fi
 	SRC=${srcdir}
 
 	perl ${SRC}/mk/mkconcurrent.pl ${SRC}
 else
-	if [ ! -e "configure.in" ]; then
-		echo "Missing --srcdir argument"
-		exit 1
-	fi
+#	if [ ! -e "configure.in" ]; then
+#		echo "Missing --srcdir argument"
+#		exit 1
+#	fi
 	SRC=`pwd`
 fi
 
@@ -128,9 +129,6 @@ HOST="$SYSTEM-$RELEASE-$MACHINE"
 
 echo "Host: $HOST"
 echo >Makefile.config
-if [ "${version}" = "yes" ]
- then
-fi
 if [ "${help}" = "yes" ]
  then
 echo "Usage: ./configure [args]"

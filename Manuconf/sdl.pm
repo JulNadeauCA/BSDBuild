@@ -1,4 +1,4 @@
-# $Csoft: sdl.pm,v 1.11 2002/12/27 01:53:28 vedge Exp $
+# $Csoft: sdl.pm,v 1.12 2002/12/27 02:27:16 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -54,8 +54,8 @@ sub Test
 	print
 	    Cond('"${sdl_found}" = "yes"',
 	    Echo('ok'),
-	    Fail('Could not find the SDL library. Make sure sdl-config is in your $PATH.'.
-		     'Make sure sdl-config is in $PATH.'));
+	    Fail('Could not find the SDL library. '.
+		     'Make sure sdl-config is in PATH.'));
 	
 	print NEcho('checking whether SDL works...');
 	TryLibCompile 'HAVE_SDL',

@@ -1,4 +1,4 @@
-# $Csoft: Makefile,v 1.3 2002/05/29 21:33:04 vedge Exp $
+# $Csoft: Makefile,v 1.4 2002/07/27 06:33:00 vedge Exp $
 
 TOP=.
 
@@ -10,7 +10,7 @@ SUBDIR=	Manuconf
 
 all:	all-subdir
 
-install:
+install: install-subdir
 	@if [ ! -d "${SHAREDIR}" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
 	    ${INSTALL_DATA_DIR} ${SHAREDIR}; \

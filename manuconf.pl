@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I/home/vedge/src/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.11 2002/02/25 10:18:19 vedge Exp $
+# $Csoft: manuconf.pl,v 1.12 2002/05/05 22:10:20 vedge Exp $
 #
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -62,25 +62,9 @@ sub Register
 	$arg = $1;
 	$descr =~ /\"(.*)\"/;
 	$descr = $1;
-	my $hopt = $arg;
-
-	$hopt =~ s/^\-\-//;
-	if ($hopt =~ /^(with|without|enable|disable)/) {
-		$hopt =~ s/^(with|without|enable|disable)\-//;
-		$hopt = "$1_$hopt";
-	}
-	$hopt = uc($hopt);
 
 	my $darg = pack('A' x 20, split('', $arg));
-
 	push @HELP, "echo \"    $darg $descr\"";
-	print "for OPT in \$@; do\n";
-	print
-	    SHTest("\"\$OPT\" = \"$arg\"",
-	    SHDefine($hopt, 1) .
-	        SHMKSave($hopt),
-	    SHNothing());
-	print "done\n";
 }
 
 sub Help
@@ -92,6 +76,7 @@ sub Help
     print << "EOF";
 echo "Usage: ./configure [args]"
 $regs
+exit 1
 EOF
 }
 
@@ -99,6 +84,7 @@ sub Version
 {
     print << "EOF";
 echo "Manuconf v${VERSION}"
+exit 1
 EOF
 }
 
@@ -113,7 +99,10 @@ BEGIN
 # Do not edit!
 # File generated from configure.in by manuconf v${VERSION}.
 #
-# Copyright (c) 2001, CubeSoft Communications, Inc.
+EOF
+
+	print << 'EOF';
+# Copyright (c) 2001, 2002, CubeSoft Communications, Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -139,16 +128,68 @@ BEGIN
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-for D in \$@; do
-LPREFIX="`echo \$D | awk -F= '{ print \$1 }'`"
-RPREFIX="`echo \$D | awk -F= '{ print \$2 }'`"
-if [ "\$LPREFIX" = "--prefix" ]; then
-PREFIX=\$RPREFIX
-fi
+
+mc_last_arg=
+mc_optarg=
+for mc_arg; do
+	if test -n "$mc_last_arg"; then
+		eval "$mc_last_arg=\$mc_arg"
+		mc_last_arg=
+		continue
+	fi
+	case "$mc_arg" in
+	-*=*)
+	    mc_optarg=`echo "$mc_arg" | sed 's/[-_a-zA-Z0-9]*=//'`
+	    ;;
+	*)
+	    mc_optarg=
+	    ;;
+	esac
+
+	case "$mc_arg" in
+	--prefix=*)
+	    mc_prefix=$mc_optarg
+	    ;;
+	--enable-*)
+	    mc_option=`echo $mc_arg | sed -e 's/--enable-//' -e 's/=.*//'`
+	    mc_option=`echo $mc_option | sed 's/-/_/g'`
+	    case "$mc_option" in
+	        *=*)
+	            eval "enable_${mc_option}='$mc_optarg'"
+		    ;;
+		*)
+	            eval "enable_${mc_option}=yes"
+		    ;;
+	    esac
+	    ;;
+	--disable-*)
+	    mc_option=`echo $mc_arg | sed -e 's/--disable-//'`;
+	    mc_option=`echo $mc_option | sed 's/-/_/g'`
+	    eval "enable_${mc_option}=no"
+	    ;;
+	--help)
+	    help=yes
+	    ;;
+	--version)
+	    version=yes
+	    ;;
+	*)
+	    echo "invalid argument: $mc_arg"
+	    echo "try ./configure --help"
+	    exit 1
+	    ;;
+	esac
 done
-if [ "\$PREFIX" = "" ]; then
-PREFIX=/usr/local
+
+if [ "$mc_prefix" != "" ]; then
+    PREFIX=$mc_prefix
+else
+    PREFIX=/usr/local
 fi
+
+trap 'if [ -e config.log ]; then ls -l config.log; fi; exit 1' 1 2 15
+exec 3>config.log
+
 EOF
 	print SHObtain('pwd', '', 'S');
 	while (<STDIN>) {

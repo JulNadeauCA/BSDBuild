@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Csoft: manuconf.pl,v 1.5 2002/02/18 02:51:08 vedge Exp $
+# $Csoft: manuconf.pl,v 1.6 2002/02/18 03:12:49 vedge Exp $
 #
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -172,7 +172,20 @@ sub glib
 
 sub c64bit
 {
-	# XXX
+	# mega XXX
+	print SHObtain('uname', '', 'UNAME');
+	print
+	    SHTest('"$UNAME" = "IRIX64"',
+	    SHDefine('ARCH64', '1') .
+	        SHHSave('ARCH64') ,
+	    SHNothing());
+
+	print SHObtain('uname', '-m', 'UNAME');
+	print
+	    SHTest('"$UNAME" = "sparc64"',
+	    SHDefine('ARCH64', '1') .
+	        SHHSave('ARCH64') ,
+	    SHNothing());
 }
 
 sub Register
@@ -451,6 +464,6 @@ EOF
 		}
 	}
 	print SHMKSave('PREFIX'), SHHSaveS('PREFIX');
-	print SHEcho("Don't forget to run \\\"make depend\\\".");
+#	print SHEcho("Don't forget to run \\\"make depend\\\".");
 }
 

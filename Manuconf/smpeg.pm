@@ -1,4 +1,4 @@
-# $Csoft: smpeg.pm,v 1.6 2002/07/31 00:28:03 vedge Exp $
+# $Csoft: smpeg.pm,v 1.7 2002/09/06 00:56:51 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -35,10 +35,11 @@ sub Test
 	print
 	    Cond('"${smpeg_version}" != ""',
 	    Echo("ok") . 
-	    	HSave('CONF_SMPEG') .
+	    	HDefine('HAVE_SMPEG') .
 	        MKSave('SMPEG_CFLAGS') .
 	        MKSave('SMPEG_LIBS'),
-	    Fail('missing'));
+	    Fail('missing') .
+		    HUndef('HAVE_SMPEG'));
 
 	return (0);
 }

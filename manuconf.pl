@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.23 2002/09/06 00:54:00 vedge Exp $
+# $Csoft: manuconf.pl,v 1.24 2002/11/28 03:58:54 vedge Exp $
 #
 # Copyright (c) 2001, 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
 # All rights reserved.
@@ -28,7 +28,6 @@
 use Manuconf::Core;
 
 sub MDefine;
-sub HDefine;
 
 sub Register;
 sub Help;
@@ -41,15 +40,6 @@ sub MDefine
 	print
 	    Define($def, $val) .
 	    MKSave($def);
-}
-
-sub HDefine
-{
-	my ($def, $val) = @_;
-
-	print
-	    Define($def, $val) .
-	    HSave($def);
 }
 
 sub Register
@@ -66,9 +56,15 @@ sub Register
 
 sub Help
 {
-    my $darg = pack('A' x 30, split('', '--prefix'));
-    my $descr = 'Installation prefix [/usr/local]';
-    my $regs = join("\n", "echo \"    $darg $descr\"", @HELP);
+    my $prefix_opt = pack('A' x 30, split('', '--prefix'));
+    my $prefix_desc = 'Installation prefix [/usr/local]';
+    my $srcdir_opt = pack('A' x 30, split('', '--srcdir'));
+    my $srcdir_desc = 'Source tree for concurrent builds [.]';
+
+    my $regs = join("\n",
+        "echo \"    $prefix_opt $prefix_desc\"",
+        "echo \"    $srcdir_opt $srcdir_desc\"",
+	@HELP);
 
     print << "EOF";
 echo "Usage: ./configure [args]"
@@ -80,21 +76,21 @@ EOF
 sub Version
 {
     print << "EOF";
-echo "Manuconf v${VERSION}"
+echo "Csoft-mk ${CSOFT_MK_VERSION}"
 exit 1
 EOF
 }
 
 BEGIN
 {
-    	$VERSION = '1.2';
 	$INSTALLDIR = '%PREFIX%/share/csoft-mk';
+	$CSOFT_MK_VERSION = 	'1.5';
 
 	print << "EOF";
 #!/bin/sh
 #
 # Do not edit!
-# File generated from configure.in by manuconf v${VERSION}.
+# File generated from configure.in by csoft-mk ${CSOFT_MK_VERSION}.
 #
 EOF
 
@@ -122,8 +118,6 @@ EOF
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-
-echo > config.log
 
 optarg=
 for arg; do
@@ -177,6 +171,9 @@ for arg; do
 	--help)
 	    help=yes
 	    ;;
+	--srcdir=*)
+	    srcdir=$optarg
+	    ;;
 	*)
 	    echo "invalid argument: $arg"
 	    echo "try ./configure --help"
@@ -189,8 +186,31 @@ if [ "${prefix}" != "" ]; then
 else
     PREFIX=/usr/local
 fi
+
+if [ "${srcdir}" != "" ]; then
+	echo "concurrent build (source in ${srcdir})"
+	if [ ! -e "${srcdir}" ]; then
+		echo "Cannot find source directory: ${srcdir}"
+		exit 1
+	fi
+	if [ ! -e "${srcdir}/configure.in" ]; then
+		echo "Invalid source directory: ${srcdir}"
+		exit 1
+	fi
+	SRC=${srcdir}
+
+	perl ${SRC}/mk/mkconcurrent.pl ${SRC}
+else
+	if [ ! -e "configure.in" ]; then
+		echo "Missing --srcdir argument"
+		exit 1
+	fi
+	SRC=`pwd`
+fi
+
+echo > config.log
+
 EOF
-	print Obtain('pwd', '', 'S');
 	while (<STDIN>) {
 		chop;
 		if (/^#/) {
@@ -241,10 +261,20 @@ EOF
 				} elsif ($1 eq 'mdefine') {
 				    MDefine(@args);
 				} elsif ($1 eq 'hdefine') {
-				    HDefine(@args);
+				    print Define($args[0], $args[1]) .
+				          HDefine($args[0]);
+				} elsif ($1 eq 'hundef') {
+					print HUndef($args[0]);
 				} elsif ($1 eq 'inclout') {
 				    $CONF{'inclout'} = $args[0];
-				    print "echo >$CONF{'inclout'}\n";
+				    print << "EOF";
+if [ ! -e "$CONF{'inclout'}" ]; then
+	mkdir $CONF{'inclout'}
+	if [ \$? != 0 ]; then
+		exit 1
+	fi
+fi
+EOF
 				} elsif ($1 eq 'exit') {
 				    print "exit $args[0]\n";
 				}
@@ -253,7 +283,7 @@ EOF
 			}
 		}
 	}
-	print MKSave('PREFIX'), HSaveS('PREFIX');
+	print MKSave('PREFIX'), HDefineString('PREFIX');
 	print Echo("Don't forget to run \\\"make depend\\\".");
 }
 

@@ -1,4 +1,4 @@
-# $Csoft: Core.pm,v 1.10 2002/11/28 09:50:42 vedge Exp $
+# $Csoft: Core.pm,v 1.11 2002/12/22 04:57:38 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -103,45 +103,40 @@ sub MKSave
     my $s = '';
    
     if ($CONF{'makeout'}) {
-	$s = "echo $var=\$$var >> $CONF{'makeout'}\n";
-    } else {
-	print STDERR "mdefine: not saving `$var'\n";
+		$s = "echo $var=\$$var >> $CONF{'makeout'}\n";
     }
     return ($s);
 }
 
-sub HSave
+sub HDefine
 {
     my $var = shift;
-    my $s = '';
-
-    if ($CONF{'inclout'}) {
-	$s = << "EOF"
-echo "#ifndef $var" >> $CONF{'inclout'}
-echo "#define $var" \$$var >> $CONF{'inclout'}
-echo "#endif /* $var */" >> $CONF{'inclout'}
+	my $include = $CONF{'inclout'}.'/'.lc($var).'.h';
+	return << "EOF"
+echo "#ifndef $var" > $include
+echo "#define $var" \$$var >> $include
+echo "#endif /* $var */" >> $include
 EOF
-    } else {
-		print STDERR "hdefine: not saving `$var'\n";
-    }
-    return ($s);
 }
 
-sub HSaveS
+sub HUndef
 {
     my $var = shift;
-    my $s = '';
-
-    if ($CONF{'inclout'}) {
-	$s = << "EOF"
-echo "#ifndef $var" >> $CONF{'inclout'}
-echo "#define $var \\\"\$$var\\\"" >> $CONF{'inclout'}
-echo "#endif /* $var */" >> $CONF{'inclout'}
+	my $include = $CONF{'inclout'}.'/'.lc($var).'.h';
+	return << "EOF"
+echo "#undef $var" > $include
 EOF
-    } else {
-	print STDERR "mdefine: not saving `$var'\n";
-    }
-    return ($s);
+}
+
+sub HDefineString
+{
+    my $var = shift;
+	my $include = $CONF{'inclout'}.'/'.lc($var).'.h';
+	return << "EOF"
+echo "#ifndef $var" > $include
+echo "#define $var \\\"\$$var\\\"" >> $include
+echo "#endif /* $var */" >> $include
+EOF
 }
 
 sub Nothing
@@ -164,17 +159,19 @@ compile="ok"
 echo "$CC -o conftest conftest.c" >> config.log
 $CC -o conftest conftest.c 2>>config.log
 if [ $? != 0 ]; then
-	echo "-> failed: compiler had non-zero exit status" >> config.log
+	echo "-> failed: non-zero exit status" >> config.log
 	compile="failed"
-fi
-if [ ! -e "conftest" ]; then
-	echo "-> failed: compiler did not produce an executable" >> config.log
-	compile="failed"
+else
+    if [ ! -e "conftest" ]; then
+	    echo "-> failed: compiler did not produce an executable" >> config.log
+	    compile="failed"
+    fi
 fi
 rm -f conftest conftest.c
 EOF
 
-		my $define = HSave($def);
+		my $define = HDefine($def);
+		my $undef = HUndef($def);
 
 		print << "EOF";
 if [ "\${compile}" = "ok" ]; then
@@ -182,6 +179,7 @@ if [ "\${compile}" = "ok" ]; then
 	$define
 	echo "yes"
 else
+    $undef
 	echo "no"
 fi
 EOF
@@ -218,7 +216,8 @@ fi
 rm -f conftest conftest.c
 EOF
 
-		my $hdefine = HSave($def);
+		my $hdefine = HDefine($def);
+		my $hundefine = HUndef($def);
 		my $define = Define($def, 'yes');
 
 		print << "EOF";
@@ -228,6 +227,7 @@ if [ "\${compile}" = "ok" ]; then
 	$define
 	echo "yes"
 else
+	$hundefine
 	echo "no"
 fi
 EOF
@@ -241,7 +241,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(%TESTS %DESCR Obtain Cond Define Echo Necho Fail MKSave HSave HSaveS Nothing REQUIRE TryCompile Log);
+    @EXPORT = qw(%TESTS %DESCR Obtain Cond Define Echo Necho Fail MKSave HDefine HDefineString HUndef Nothing REQUIRE TryCompile Log);
 }
 
 ;1

@@ -1,4 +1,4 @@
-# $Csoft: Makefile,v 1.17 2003/06/23 14:10:53 vedge Exp $
+# $Csoft: Makefile,v 1.18 2003/07/26 20:09:44 vedge Exp $
 
 TOP=..
 
@@ -28,15 +28,10 @@ SHARE=	Core.pm \
 	snprintf.pm \
 	vsnprintf.pm \
 	setlocale.pm \
-	gettext.pm
+	gettext.pm \
+	fastcgi.pm
 
 all:
-
-regress:
-	@for mod in ${SHARE}; do \
-	    echo "$$mod"; \
-	    perl "$$mod"; \
-	done
 
 install:
 	@if [ ! -d "${SHAREDIR}/Manuconf" ]; then \

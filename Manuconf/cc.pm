@@ -1,4 +1,4 @@
-# $Csoft$
+# $Csoft: cc.pm,v 1.8 2002/09/06 00:56:51 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
@@ -38,6 +38,10 @@ if [ "$CC" = "" ]; then
 			CC="${i}/gcc"
 		fi
 	done
+	if [ "$CC" = "" ]; then
+		echo "Could not find a C compiler, try setting CC."
+		exit 1
+	fi
 fi
 
 cat << 'EOT' > .cctest.c

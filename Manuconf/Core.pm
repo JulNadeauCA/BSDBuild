@@ -1,4 +1,4 @@
-# $Csoft: Core.pm,v 1.8 2002/11/27 04:52:22 vedge Exp $
+# $Csoft: Core.pm,v 1.9 2002/11/28 03:58:54 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -155,8 +155,8 @@ EOT
 EOF
 		print << 'EOF';
 compile="ok"
-echo "cc -o conftest conftest.c" >> config.log
-cc -o conftest conftest.c 2>>config.log
+echo "$CC -o conftest conftest.c" >> config.log
+$CC -o conftest conftest.c 2>>config.log
 if [ $? != 0 ]; then
 	echo "-> failed: compiler had non-zero exit status" >> config.log
 	compile="failed"
@@ -196,8 +196,8 @@ EOT
 EOF
 		print << "EOF";
 compile=\"ok\"
-echo cc $cflags -o conftest conftest.c $libs >> config.log
-cc $cflags -o conftest conftest.c $libs 2>>config.log
+echo \$CC $cflags -o conftest conftest.c $libs >> config.log
+\$CC $cflags -o conftest conftest.c $libs 2>>config.log
 EOF
 
 		print << 'EOF';

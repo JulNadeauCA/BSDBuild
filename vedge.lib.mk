@@ -2,22 +2,30 @@
 
 TYPE=	    lib
 
-PREFIX?=    /usr/local
-CFLAGS?=    -Wall -g
-SH?=	    sh
-CC?=	    cc
-AR?=	    ar
-RANLIB?=    ranlib
-MAKE?=	    make
-INSTALL?=   install
-LIBTOOL?=   libtool
+PREFIX?=	    /usr/local
+CFLAGS?=	    -Wall -g
+SH?=		    sh
+CC?=		    cc
+AR?=		    ar
+RANLIB?=	    ranlib
+MAKE?=		    make
+INSTALL?=	    install
+ASM?=		    nasm
+ASMOUT?=	    aoutb
+ASMFLAGS?=	    -f $(ASMOUT) -g -w-orphan-labels
+
+LIBTOOL?=	    libtool
+LTCONFIG?=	    ./ltconfig
+LTMAIN_SH?=	    ./ltmain.sh
+LTCONFIG_GUESS?=    ./config.guess
+LTCONFIG_SUB?=	    ./config.sub
+LTCONFIG_LOG?=	    ./config.log
+
 BINMODE?=   755
+
 STATIC?=    Yes
 SHARED?=    No
-
-ASM?=	    nasm
-ASMOUT?=    aoutb
-ASMFLAGS?=  -f $(ASMOUT) -g -w-orphan-labels
+VERSION?=   1:0:0
 
 .SUFFIXES:  .o .c .cc .C .cxx .y .s .S .asm .lo
 
@@ -35,45 +43,53 @@ CFLAGS+=    $(COPTS)
 	$(ASM) $(ASMFLAGS) -o $@ $< 
 
 
-all: all-subdir $(LIB)
+all: all-subdir lib$(LIB).a lib$(LIB).la
 
-$(LIB): $(OBJS)
+lib$(LIB).a: $(OBJS)
 	@if [ "$(STATIC)" = "Yes" ]; then \
-	    echo "===> $(LIB)"; \
-	    $(AR) -cru $(LIB) $(OBJS); \
-	    $(RANLIB) $(LIB); \
+	    echo "===> lib$(LIB).a"; \
+	    $(AR) -cru lib$(LIB).a $(OBJS); \
+	    $(RANLIB) lib$(LIB).a; \
 	fi
+
+lib$(LIB).la: $(LIBTOOL) $(SHOBJS)
 	@if [ "$(SHARED)" = "Yes" ]; then \
-	    echo "===> $(SHLIB)"; \
-	    $(LIBTOOL) $(CC) -o $(SHLIB) -rpath $(PREFIX)/lib -shared \
-		$(LDFLAGS) $(OBJS) $(LIBS); \
+	    echo "===> lib$(LIB).la"; \
+	    $(LIBTOOL) $(CC) -o lib$(LIB).la -rpath $(PREFIX)/lib -shared \
+		-version-info $(VERSION) $(LDFLAGS) $(SHOBJS) $(LIBS); \
 	fi
 
 clean: clean-subdir
-	@rm -f $(LIB) $(SHLIB) $(OBJS)
+	@rm -fr lib$(LIB).a lib$(LIB).la libs $(OBJS) $(SHOBJS)
+	@rm -f $(LIBTOOL) $(LTCONFIG_LOG)
 
-install: install-subdir $(LIB)
+install: install-subdir lib$(LIB).a lib$(LIB).la
 	@if [ "$(STATIC)" = "Yes" ]; then \
-	    echo "===> installing $(LIB)"; \
+	    echo "===> installing lib$(LIB).a"; \
 	    $(INSTALL) $(INSTALL_COPY) $(INSTALL_STRIP) \
-	    $(BINOWN) $(BINGRP) -m $(BINMODE) $(LIB) $(PREFIX)/lib; \
+		$(BINOWN) $(BINGRP) -m $(BINMODE) lib$(LIB).a $(PREFIX)/lib; \
 	fi
 	@if [ "$(SHARED)" = "Yes" ]; then \
-	    echo "===> installing $(SHLIB)"; \
+	    echo "===> installing lib$(LIB).la"; \
 	    $(LIBTOOL) --mode=install \
 	    $(INSTALL) $(INSTALL_COPY) $(INSTALL_STRIP) \
-	    $(BINOWN) $(BINGRP) -m $(BINMODE) $(SHLIB) $(PREFIX)/lib; \
+		$(BINOWN) $(BINGRP) -m $(BINMODE) lib$(LIB).la $(PREFIX)/lib; \
 	fi
 	
 uninstall: uninstall-subdir
 	@if [ "$(STATIC)" = "Yes" ]; then \
-	    echo "===> uninstalling $(LIB)"; \
-	    rm -f $(PREFIX)/lib/$(LIB); \
+	    echo "===> uninstalling lib$(LIB).a"; \
+		rm -f $(PREFIX)/lib/lib$(LIB).a; \
 	fi
 	@if [ "$(SHARED)" = "Yes" ]; then \
-	    echo "===> uninstalling $(SHLIB)"; \
+	    echo "===> uninstalling lib$(LIB).la"; \
 	    $(LIBTOOL) --mode=uninstall \
-	    rm -f $(PREFIX)/lib/$(SHLIB); \
+		rm -f $(PREFIX)/lib/lib$(LIB).la; \
+	fi
+
+$(LIBTOOL): $(LTCONFIG) $(LTMAIN_SH) $(LTCONFIG_GUESS) $(LTCONFIG_SUB)
+	@if [ "$(SHARED)" = "Yes" ]; then \
+	    $(SH) $(LTCONFIG) $(LTMAIN_SH); \
 	fi
 
 include $(TOP)/mk/vedge.common.mk

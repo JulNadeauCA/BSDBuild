@@ -1,4 +1,4 @@
-# $Csoft$
+# $Csoft: libqnet.pm,v 1.1 2004/10/24 12:16:31 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2004 CubeSoft Communications, Inc.
@@ -52,7 +52,6 @@ sub Test
 #include <sys/param.h>
 
 #include <qnet/qnet.h>
-#include <qnet/command.h>
 #include <qnet/server.h>
 
 int

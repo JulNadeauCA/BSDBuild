@@ -1,7 +1,6 @@
-# $Csoft: hstrip.pl,v 1.6 2001/10/09 04:50:51 vedge Exp $
-# Public domain
+# $Csoft: hstrip.pl,v 1.1 2002/12/02 07:07:31 vedge Exp $
 
-$no++ if($ARGV[0] eq 'contract.html'); # XXX
+$no++; #if($ARGV[0] eq 'contract.html'); # XXX
 
 my $pre = 0;
 while (<STDIN>) {

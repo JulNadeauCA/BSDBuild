@@ -1,4 +1,4 @@
-# $Csoft: Makefile,v 1.21 2004/01/01 00:33:47 vedge Exp $
+# $Csoft: Makefile,v 1.22 2004/02/02 01:43:54 vedge Exp $
 
 TOP=..
 
@@ -34,7 +34,8 @@ SHARE=	Core.pm \
 	arc4random.pm \
 	pctr.pm \
 	getpwuid.pm \
-	getuid.pm
+	getuid.pm \
+	agar.pm
 
 all:
 

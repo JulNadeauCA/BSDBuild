@@ -1,4 +1,5 @@
-# $Csoft: hstrip.pl,v 1.5 2001/09/15 12:13:37 vedge Exp $
+# $Csoft: hstrip.pl,v 1.6 2001/10/09 04:50:51 vedge Exp $
+# Public domain
 
 $no++ if($ARGV[0] eq 'contract.html'); # XXX
 

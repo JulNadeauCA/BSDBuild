@@ -1,6 +1,7 @@
-# $Csoft: setenv.pm,v 1.1 2002/08/23 09:41:32 vedge Exp $
+# $Csoft: getenv.pm,v 1.1 2002/08/23 09:47:51 vedge Exp $
+# vim:ts=4
 #
-# Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
+# Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without

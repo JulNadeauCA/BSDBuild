@@ -1,3 +1,5 @@
+# $Csoft$
+# vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.

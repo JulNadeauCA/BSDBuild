@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Csoft: manuconf.pl,v 1.2 2002/01/28 03:32:06 vedge Exp $
+# $Csoft: manuconf.pl,v 1.3 2002/01/28 04:58:56 vedge Exp $
 #
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -318,7 +318,13 @@ sub SHObtain
 {
     my ($bin, $args, $define) = @_;
 
-    return "$define=`$bin $args 2>/dev/null`\n";
+	return << "EOF"
+if [ -x "`which $bin`" ]; then
+$define=`$bin $args`
+else
+$define=""
+fi
+EOF
 }
 
 sub SHTest

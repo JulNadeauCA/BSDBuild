@@ -1,4 +1,4 @@
-# $Csoft: csoft.prog.mk,v 1.5 2001/12/04 16:47:24 vedge Exp $
+# $Csoft: csoft.prog.mk,v 1.6 2001/12/04 16:56:02 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -36,6 +36,7 @@ CC?=		cc
 CFLAGS?=	-O2
 CPPFLAGS?=
 CC_PICFLAGS?=	-fPIC -DPIC
+GMONOUT?=	gmon.out
 
 ASM?=		nasm
 ASMOUT?=	aoutb
@@ -49,7 +50,7 @@ LFLAGS?=
 YACC?=		yacc
 YFLAGS?=	-d
 
-.SUFFIXES: .o .so .c .cc .C .cxx .y .s .S .asm .l
+.SUFFIXES: .o .po .so .c .cc .C .cxx .y .s .S .asm .l
 
 #
 # C
@@ -61,11 +62,17 @@ YFLAGS?=	-d
 .s.o .S.o:
 	${CC} ${CFLAGS} ${CPPFLAGS} -c $<
 .c.so:
-	${CC} ${CC_PICFLAGS} ${CFLAGS} ${CPPFLAGS} -c $<
+	${CC} ${CC_PICFLAGS} ${CFLAGS} ${CPPFLAGS} -o $@ -c $<
 .cc.so:
-	${CXX} ${CC_PICFLAGS} ${CXXFLAGS} ${CPPFLAGS} -c $<
+	${CXX} ${CC_PICFLAGS} ${CXXFLAGS} ${CPPFLAGS} -o $@ -c $<
 .s.so .S.so:
-	${CC} ${CC_PICFLAGS} ${CFLAGS} ${CPPFLAGS} -c $<
+	${CC} ${CC_PICFLAGS} ${CFLAGS} ${CPPFLAGS} -o $@ -c $<
+.c.po:
+	${CC} -pg -DPROF ${CFLAGS} ${CPPFLAGS} -o $@ -c $<
+.cc.po:
+	${CXX} -pg -DPROF ${CXXFLAGS} ${CPPFLAGS} -o $@ -c $<
+.s.po .S.po:
+	${CC} -pg -DPROF ${CFLAGS} ${CPPFLAGS} -o $@ -c $<
 
 #
 # Assembly
@@ -87,6 +94,11 @@ YFLAGS?=	-d
 	${CC} ${CFLAGS} -c $@.yy.c
 	@mv -f $@.yy.o $@
 	@rm -f $@.yy.c
+.l.po:
+	${LEX} ${LFLAGS} -o$@.yy.c $<
+	${CC} -pg -DPROF ${CFLAGS} -c $@.yy.c
+	@mv -f $@.yy.o $@
+	@rm -f $@.yy.c
 
 #
 # Yacc
@@ -100,14 +112,22 @@ YFLAGS?=	-d
 	${CC} ${CFLAGS} -c $@.tab.c
 	@mv -f $@.tab.o $@
 	@rm -f $@.tab.c
+.y.po:
+	${YACC} ${YFLAGS} -b $@ $<
+	${CC} -pg -DPROF ${CFLAGS} -c $@.tab.c
+	@mv -f $@.tab.o $@
+	@rm -f $@.tab.c
 
 all: ${PROG} all-subdir
 
 ${PROG}: ${OBJS}
 	${CC} ${LDFLAGS} -o ${PROG} ${OBJS} ${LIBS}
 
+${GMONOUT}: ${OBJS}
+	${CC} -pg -DPROF ${LDFLAGS} -o ${GMONOUT} ${OBJS} ${LIBS}
+
 clean: clean-subdir
-	@rm -f ${PROG} ${OBJS}
+	@rm -f ${PROG} ${GMONOUT} ${OBJS}
 
 install: install-subdir ${PROG}
 	@if [ "${PROG}" != "" ]; then \

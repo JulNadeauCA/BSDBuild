@@ -1,4 +1,4 @@
-# $Csoft: csoft.man.mk,v 1.18 2002/12/24 09:00:55 vedge Exp $
+# $Csoft: csoft.man.mk,v 1.19 2003/03/05 16:12:17 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -24,7 +24,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-NROFF?=			nroff
+NROFF?=	nroff
 
 MANS=	${MAN1} ${MAN2} ${MAN3} ${MAN4} ${MAN5} ${MAN6} ${MAN7} ${MAN8} ${MAN9}
 CATMANS=${CATMAN1} ${CATMAN2} ${CATMAN3} ${CATMAN4} ${CATMAN5} ${CATMAN6} ${CATMAN7} ${CATMAN8} ${CATMAN9}
@@ -36,8 +36,8 @@ PSMANS=	${PSMAN1} ${PSMAN2} ${PSMAN3} ${PSMAN4} ${PSMAN5} ${PSMAN6} ${PSMAN7} ${
 	@echo "${NROFF} -Tascii -mandoc $< > $@"
 	@${NROFF} -Tascii -mandoc $< > $@ || (rm -f $@; false)
 
-.9.ps9 .8.ps8 .7.ps7 .6.ps6 .5.ps5 .4.ps4 .3p.ps3p .3.ps3 .2.ps2 .1.ps1:
-	@echo "nroff -Tps -mandoc $< > $@"
+.1.ps1 .2.ps2 .3.ps3 .4.ps4 .5.ps5 .6.ps6 .7.ps7 .8.ps8 .9.ps9:
+	@echo "${NROFF} -Tps -mandoc $< > $@"
 	@${NROFF} -Tps -mandoc $< > $@ || (rm -f $@; false)
 
 all: ${MANS} ${CATMANS} ${PSMANS}

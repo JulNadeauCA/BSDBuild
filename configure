@@ -129,6 +129,8 @@ HOST="$SYSTEM-$RELEASE-$MACHINE"
 
 echo "Host: $HOST"
 echo >Makefile.config
+mkdir config 1>/dev/null 2>&1
+echo "Host: $HOST" > config.log
 if [ "${help}" = "yes" ]
  then
 echo "Usage: ./configure [args]"
@@ -139,8 +141,8 @@ fi
 SHAREDIR="$PREFIX/share/csoft-mk"
 echo SHAREDIR=$SHAREDIR >> Makefile.config
 echo PREFIX=$PREFIX >> Makefile.config
-echo "#ifndef PREFIX" > /prefix.h
-echo "#define PREFIX \"$PREFIX\"" >> /prefix.h
-echo "#endif /* PREFIX */" >> /prefix.h
+echo "#ifndef PREFIX" > config/prefix.h
+echo "#define PREFIX \"$PREFIX\"" >> config/prefix.h
+echo "#endif /* PREFIX */" >> config/prefix.h
 echo "Don't forget to run \"make depend\"."
 echo "Don't forget to run \"make depend\"." >> config.log

@@ -1,6 +1,8 @@
-# $Csoft: configure.in,v 1.5 2003/03/05 15:52:04 vedge Exp $
+# $Csoft: configure.in,v 1.6 2003/05/05 11:00:33 vedge Exp $
 
 makeout(Makefile.config);
+inclout(config);
+logout(config.log);
 
 if [ "${help}" = "yes" ]; then
 	help();

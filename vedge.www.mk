@@ -17,7 +17,7 @@ DEFTMPL?=   sober
 	@for TMPL in $(TEMPLATE); do \
 	    echo "===> $$TMPL-$@"; \
 	    cp -f $< $(BASEDIR)/base.htm; \
-	    $(M4) -D_TMPL_=$$TMPL -D_TOP_=%TOP% -D_BASE_=$(BASEDIR) \
+	    $(M4) $(M4FLAGS) -D_TMPL_=$$TMPL -D_TOP_=%TOP% -D_BASE_=$(BASEDIR) \
 		-D_FILE_=$@ \
 		$(BASEDIR)/$$TMPL.m4 > $$TMPL-$@; \
 	done

@@ -1,4 +1,4 @@
-# $Csoft: setlocale.pm,v 1.1 2003/06/23 14:10:53 vedge Exp $
+# $Csoft: gettext.pm,v 1.1 2003/07/26 20:09:44 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2003 CubeSoft Communications, Inc.
@@ -28,15 +28,19 @@
 sub Test
 {
 	# XXX
-	TryLibCompile 'HAVE_GETTEXT', '-I/usr/local/include',
-	    '-L/usr/local/lib -lintl', << 'EOF';
+	print Define('GETTEXT_CFLAGS', '-I/usr/local/include');
+	print Define('GETTEXT_LIBS', '"-L/usr/local/lib -lintl"');
+	print Echo("ok");
+
+	print NEcho('checking whether gettext works...');
+	TryLibCompile 'HAVE_GETTEXT', '${GETTEXT_CFLAGS}',
+	    '${GETTEXT_LIBS}', << 'EOF';
 #include <libintl.h>
 
 int
 main(int argc, char *argv[])
 {
 	gettext("");
-	gettext_noop("");
 	return (0);
 }
 EOF

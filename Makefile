@@ -1,4 +1,4 @@
-# $Csoft: Makefile,v 1.15 2003/05/05 11:46:36 vedge Exp $
+# $Csoft: Makefile,v 1.16 2003/06/21 07:29:44 vedge Exp $
 
 TOP=.
 
@@ -37,7 +37,7 @@ cleandir:
 	rm -f Makefile.config config.log *~
 
 clean:
-	# nothing
+	rm -f manuconf mkify
 
 configure: configure.in
 	cat configure.in | ./manuconf.pl > configure

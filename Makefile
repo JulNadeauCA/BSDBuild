@@ -1,9 +1,9 @@
-# $Csoft: Makefile,v 1.6 2002/08/23 10:28:40 vedge Exp $
+# $Csoft: Makefile,v 1.7 2002/09/08 09:03:54 vedge Exp $
 
 TOP=.
 
 VERSION=	1.0
-PROJECT=	csoft-cvs
+PROJECT=	csoft-mk
 DIST=		${PROJECT}-${VERSION}
 DISTFILE=	${DIST}.tar.gz
 
@@ -31,6 +31,9 @@ install: install-subdir
 
 cleandir:
 	rm -f Makefile.config config.log *~
+
+clean:
+	# nothing
 
 configure: .PHONY
 	cat configure.in | ./manuconf.pl > configure

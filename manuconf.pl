@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.28 2003/03/05 16:13:09 vedge Exp $
+# $Csoft: manuconf.pl,v 1.29 2003/03/13 22:50:35 vedge Exp $
 #
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -122,7 +122,8 @@ EOF
 #
 
 optarg=
-for arg; do
+for arg
+do
 	case "$arg" in
 	-*=*)
 	    optarg=`echo "$arg" | sed 's/[-_a-zA-Z0-9]*=//'`

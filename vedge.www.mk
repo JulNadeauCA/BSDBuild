@@ -1,4 +1,4 @@
-# $Csoft: vedge.www.mk,v 1.24 2001/09/15 03:01:00 vedge Exp $
+# $Csoft: vedge.www.mk,v 1.25 2001/09/15 03:17:26 vedge Exp $
 
 TYPE=		www
 
@@ -13,7 +13,6 @@ HTMLMODE?=	644
 BASEDIR?=	$(TOP)/base
 TEMPLATE?=	fancy sober
 DEFTMPL?=	sober
-
 
 .SUFFIXES: .html .htm .jpg .jpeg .png .gif .m4
 

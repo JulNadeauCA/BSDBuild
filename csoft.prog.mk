@@ -1,4 +1,4 @@
-# $Csoft: csoft.prog.mk,v 1.3 2001/12/01 02:58:09 vedge Exp $
+# $Csoft: csoft.prog.mk,v 1.4 2001/12/03 04:47:00 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -20,72 +20,110 @@
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 # ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
 # ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# DAMAGES {INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION} HOWEVER
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+# OR TORT {INCLUDING NEGLIGENCE OR OTHERWISE} ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-TYPE=		prog
 
 PREFIX?=	/usr/local
 CFLAGS?=	-Wall -g
 INSTALL?=	install
-BINMODE?=	755
+
+BINMODE=	755
 
 CC?=		cc
 CFLAGS?=	-O2
 CPPFLAGS?=
 CC_PICFLAGS?=	-fPIC -DPIC
 
-AS?=		as
-AS_PICFLAGS?=	-k
-
 ASM?=		nasm
 ASMOUT?=	aoutb
-ASMFLAGS?=	-f $(ASMOUT) -g -w-orphan-labels
+ASMFLAGS?=	-f ${ASMOUT} -g -w-orphan-labels
 ASM_PICFLAGS?=	-DPIC
 
-.SUFFIXES:  .o .c .cc .C .cxx .y .s .S .asm .so
+LEX?=		lex
+LIBL?=		-ll
+LFLAGS?=
 
+YACC?=		yacc
+YFLAGS?=	-d
+
+.SUFFIXES: .o .so .c .cc .C .cxx .y .s .S .asm .l
+
+#
+# C
+#
 .c.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
+	${CC} ${CFLAGS} ${CPPFLAGS} -c $<
 .cc.o:
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $<
+	${CXX} ${CXXFLAGS} ${CPPFLAGS} -c $<
 .s.o .S.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
+	${CC} ${CFLAGS} ${CPPFLAGS} -c $<
 .c.so:
-	$(CC) $(CC_PICFLAGS) $(CFLAGS) $(CPPFLAGS) -c $<
+	${CC} ${CC_PICFLAGS} ${CFLAGS} ${CPPFLAGS} -c $<
 .cc.so:
-	$(CXX) $(CC_PICFLAGS) $(CXXFLAGS) $(CPPFLAGS) -c $<
+	${CXX} ${CC_PICFLAGS} ${CXXFLAGS} ${CPPFLAGS} -c $<
 .s.so .S.so:
-	$(CC) $(CC_PICFLAGS) $(CFLAGS) $(CPPFLAGS) -c $<
+	${CC} ${CC_PICFLAGS} ${CFLAGS} ${CPPFLAGS} -c $<
+
+#
+# Assembly
+#
+.asm.o:
+	${ASM} ${ASMFLAGS} ${CPPFLAGS} -o $@ $< 
 .asm.so:
-	$(ASM) $(ASM_PICFLAGS) $(ASMFLAGS) $(CPPFLAGS) -o $@ $< 
+	${ASM} ${ASM_PICFLAGS} ${ASMFLAGS} ${CPPFLAGS} -o $@ $< 
 
-all: $(PROG) all-subdir
+#
+# Lex
+#
+.l:
+	${LEX} ${LFLAGS} -o$@.yy.c $<
+	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $@.yy.c ${LIBL} ${LIBS}
+	@rm -f $@.yy.c
+.l.o:
+	${LEX} ${LFLAGS} -o$@.yy.c $<
+	${CC} ${CFLAGS} -c $@.yy.c
+	@mv -f $@.yy.o $@
+	@rm -f $@.yy.c
 
-$(PROG): $(OBJS)
-	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS) $(LIBS)
+#
+# Yacc
+#
+.y:
+	${YACC} ${YFLAGS} -b $@ $<
+	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $@.tab.c ${LIBS}
+	@rm -f $@.tab.c
+.y.o:
+	${YACC} ${YFLAGS} -b $@ $<
+	${CC} ${CFLAGS} -c $@.tab.c
+	@mv -f $@.tab.o $@
+	@rm -f $@.tab.c
+
+all: ${PROG} all-subdir
+
+${PROG}: ${OBJS}
+	${CC} ${LDFLAGS} -o ${PROG} ${OBJS} ${LIBS}
 
 clean: clean-subdir
-	@rm -f $(PROG) $(OBJS)
+	@rm -f ${PROG} ${OBJS}
 
-install: install-subdir $(PROG)
-	@if [ "$(PROG)" != "" ]; then \
-	    echo "$(INSTALL) $(INSTALL_COPY) $(INSTALL_STRIP) \
-	    $(BINOWN) $(BINGRP) -m $(BINMODE) $(PROG) $(PREFIX)/bin"; \
-	    $(INSTALL) $(INSTALL_COPY) $(INSTALL_STRIP) \
-	    $(BINOWN) $(BINGRP) -m $(BINMODE) $(PROG) $(PREFIX)/bin; \
+install: install-subdir ${PROG}
+	@if [ "${PROG}" != "" ]; then \
+	    echo "${INSTALL} ${INSTALL_COPY} ${INSTALL_STRIP} \
+	    -m ${BINMODE} ${PROG} ${PREFIX}/bin"; \
+	    ${INSTALL} ${INSTALL_COPY} ${INSTALL_STRIP} \
+	    -m ${BINMODE} ${PROG} ${PREFIX}/bin; \
 	fi
 	
 uninstall: uninstall-subdir
-	@if [ "$(PROG)" != "" ]; then \
-	    echo "rm -f $(PROG) $(PREFIX)/bin"; \
-	    rm -f $(PROG) $(PREFIX)/bin; \
+	@if [ "${PROG}" != "" ]; then \
+	    echo "rm -f ${PROG} ${PREFIX}/bin"; \
+	    rm -f ${PROG} ${PREFIX}/bin; \
 	fi
 
 regress: regress-subdir
 
-include $(TOP)/mk/csoft.common.mk
-include $(TOP)/mk/csoft.subdir.mk
+include ${TOP}/mk/csoft.common.mk
+include ${TOP}/mk/csoft.subdir.mk

@@ -1,4 +1,4 @@
-# $Csoft: Makefile,v 1.20 2003/10/01 03:50:57 vedge Exp $
+# $Csoft: Makefile,v 1.21 2003/12/07 05:41:08 vedge Exp $
 
 TOP=.
 
@@ -9,7 +9,8 @@ DISTFILE=	${DIST}.tar.gz
 
 SHARE=	csoft.common.mk csoft.dep.mk csoft.lib.mk csoft.man.mk \
 	csoft.perl.mk csoft.prog.mk csoft.subdir.mk csoft.www.mk \
-	hstrip.pl manuconf.pl mkdep mkify.pl mkconcurrent.pl csoft.po.mk
+	hstrip.pl manuconf.pl mkdep mkify.pl mkconcurrent.pl csoft.po.mk \
+	csoft.doc.mk
 
 LTFILES=config.guess config.sub configure configure.in ltconfig ltmain.sh
 

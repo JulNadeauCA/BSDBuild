@@ -1,11 +1,9 @@
-# $Id$
+# $Csoft$
 
 TYPE=	    www
 
 DOCROOT?=   ./docroot
-SH?=	    sh
 M4?=	    m4
-MAKE?=	    make
 INSTALL?=   install
 HTMLMODE?=  644
 

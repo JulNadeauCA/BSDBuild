@@ -1,4 +1,6 @@
-# $Id$
+# $Csoft$
+
+MAKE?=	    make
 
 all-subdir:
 	@for DIR in $(SUBDIR); do \

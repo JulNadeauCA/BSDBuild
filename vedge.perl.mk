@@ -1,6 +1,6 @@
-# $Id$
+# $Csoft$
 
-type=	    perl
+TYPE=	    perl
 
 PREFIX?=    /usr/local
 SH?=	    sh

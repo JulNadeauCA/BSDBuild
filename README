@@ -3,9 +3,10 @@ Csoft-mk
 
 DESCRIPTION
 
-    This is a minimal makefile library, which aims at being portable
-    to most make variants which support the `include' directive, as
-    an alternative to horrible autoconf-generated makefiles.
+    This is a minimal makefile library. It was tested with:
+
+	- BSD Make
+    	- GNU Make
 
     This makefile library is installed with the `mkify.pl' script.
 
@@ -20,22 +21,20 @@ MAKEFILES
 INCLUDES
 
     <csoft.lib.mk>
-      The lib include can create static and shared libraries from ${OBJS}.
-      For portability reasons, libtool is used for shared libraries, but
-      static libraries are linked with ${AR}.
+      The lib include, by default, creates a static library and does
+      not install it (unless ${LIB_INSTALL} is "Yes"). If ${SHARED}
+      is "Yes", a shared library is also created.
 
     <csoft.man.mk>
-      The man include does man pages (${MANn}).
+      The man include installs regular (${MANn}) manuel pages and cat
+      (${CATMANn}) manual pages.
 
     <csoft.perl.mk>
-      The perl include installs .pl .pm and .perl files in ${OBJS}.
+      The perl include installs .pl and .pm files.
 
     <csoft.prog.mk>
       The prog include makes .o and .so objects out of .c, .cc, .C,
-      .cxx, .s and .asm files.
-
-    <csoft.subdir.mk>
-      This simply executes standard targets in ${SUBDIR} directories.
+      .l, .y, .cxx, .s and .asm files, and links them to create ${PROG}.
 
     <csoft.www.mk>
       The www include looks for a M4 template in ${BASE}/html.m4, ${BASE}

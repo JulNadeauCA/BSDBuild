@@ -1,4 +1,4 @@
-# $Csoft: csoft.perl.mk,v 1.15 2003/12/10 02:29:30 vedge Exp $
+# $Csoft: csoft.perl.mk,v 1.16 2004/01/03 04:13:27 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -28,7 +28,7 @@ PERL?=	/usr/bin/perl
 SCRIPTS?=
 MODULES?=
 SHARE?=
-SCRIPTS_DIR?=	${INST_BINDIR}
+SCRIPTS_DIR?=	${BINDIR}
 MODULES_DIR?=	${SHAREDIR}/perl
 SCRIPTS_SUBST?=
 MODULES_SUBST?=

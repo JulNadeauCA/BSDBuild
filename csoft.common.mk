@@ -1,4 +1,4 @@
-# $Csoft: csoft.common.mk,v 1.20 2003/09/28 17:34:24 vedge Exp $
+# $Csoft: csoft.common.mk,v 1.21 2004/01/03 04:13:27 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -28,14 +28,14 @@ PREFIX?=	/usr/local
 LOCALSTATEDIR?=	${PREFIX}/share
 SYSCONFDIR?=	${PREFIX}/etc
 SHAREDIR?=	${PREFIX}/share
-INST_BINDIR?=	${PREFIX}/bin
-INST_LIBDIR?=	${PREFIX}/lib
-INST_MANDIR?=	${PREFIX}/man
-INST_PSDIR?=	${PREFIX}/man
+BINDIR?=	${PREFIX}/bin
+LIBDIR?=	${PREFIX}/lib
+MANDIR?=	${PREFIX}/man
+PSDIR?=		${PREFIX}/man
 
 SUDO?=
 
-INSTALL_PROG=		install -c -m 755
+INSTALL_PROG=		install -c -m 555
 INSTALL_LIB=		install -c -m 444
 INSTALL_DATA=		install -c -m 644
 INSTALL_PROG_DIR=	mkdir -p

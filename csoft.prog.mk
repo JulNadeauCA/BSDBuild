@@ -1,4 +1,4 @@
-# $Csoft: csoft.prog.mk,v 1.14 2002/02/01 03:37:05 vedge Exp $
+# $Csoft: csoft.prog.mk,v 1.15 2002/02/03 00:10:24 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -36,7 +36,7 @@ CPPFLAGS?=
 CC_PICFLAGS?=	-fPIC -DPIC
 GMONOUT?=	gmon.out
 
-ASM?=		nasm
+ASSEMBLER?=	nasm
 ASMFLAGS?=	-g -w-orphan-labels
 ASM_PICFLAGS?=	-DPIC
 
@@ -47,7 +47,7 @@ LFLAGS?=
 YACC?=		yacc
 YFLAGS?=	-d
 
-PROG_SHARE?=
+SHARE?=
 
 .SUFFIXES: .o .po .so .c .cc .C .cxx .y .s .S .asm .l
 
@@ -81,11 +81,11 @@ PROG_SHARE?=
 	@echo "IS ELF" >> .elftest
 	@echo "#endif" >> .elftest
 	@if [ "`cat .elftest | cpp -P -`" = "IS ELF" ]; then \
-	    echo "${ASM} -f elf ${ASMFLAGS} ${CPPFLAGS} -o $@ $<"; \
-	    ${ASM} -f elf ${ASMFLAGS} ${CPPFLAGS} -o $@ $<; \
+	    echo "${ASSEMBLER} -f elf ${ASMFLAGS} ${CPPFLAGS} -o $@ $<"; \
+	    ${ASSEMBLER} -f elf ${ASMFLAGS} ${CPPFLAGS} -o $@ $<; \
 	else \
-	    echo "${ASM} -f aoutb ${ASMFLAGS} ${CPPFLAGS} -o $@ $<"; \
-	    ${ASM} -f aoutb ${ASMFLAGS} ${CPPFLAGS} -o $@ $<; \
+	    echo "${ASSEMBLER} -f aoutb ${ASMFLAGS} ${CPPFLAGS} -o $@ $<"; \
+	    ${ASSEMBLER} -f aoutb ${ASMFLAGS} ${CPPFLAGS} -o $@ $<; \
 	fi
 	@rm -f .elftest
 
@@ -94,11 +94,11 @@ PROG_SHARE?=
 	@echo "IS ELF" >> .elftest
 	@echo "#endif" >> .elftest
 	@if [ "`cat .elftest | cpp -P -`" = "IS ELF" ]; then \
-	    echo "${ASM} -f elf ${ASMFLAGS} ${ASM_PICFLAGS} ${CPPFLAGS} -o $@ $<"; \
-	    ${ASM} -f elf ${ASMFLAGS} ${ASM_PICFLAGS} ${CPPFLAGS} -o $@ $<; \
+	    echo "${ASSEMBLER} -f elf ${ASMFLAGS} ${ASM_PICFLAGS} ${CPPFLAGS} -o $@ $<"; \
+	    ${ASSEMBLER} -f elf ${ASMFLAGS} ${ASM_PICFLAGS} ${CPPFLAGS} -o $@ $<; \
 	else \
-	    echo "${ASM} -f aoutb ${ASMFLAGS} ${ASM_PICFLAGS} ${CPPFLAGS} -o $@ $<"; \
-	    ${ASM} -f aoutb ${ASMFLAGS} ${ASM_PICFLAGS} ${CPPFLAGS} -o $@ $<; \
+	    echo "${ASSEMBLER} -f aoutb ${ASMFLAGS} ${ASM_PICFLAGS} ${CPPFLAGS} -o $@ $<"; \
+	    ${ASSEMBLER} -f aoutb ${ASMFLAGS} ${ASM_PICFLAGS} ${CPPFLAGS} -o $@ $<; \
 	fi
 	@rm -f .elftest
 
@@ -156,28 +156,28 @@ install: install-subdir ${PROG}
 	@if [ "${PROG}" != "" -a "${PROG_INSTALL}" != "No" ]; then \
 	    echo "${INSTALL_PROG} ${PROG} ${INST_BINDIR}"; \
 	    ${INSTALL_PROG} ${PROG} ${INST_BINDIR}; \
-	    if [ "${PROG_SHARE}" != "" -a \
-	        ! -d "${INST_SHAREDIR}/${PROG}" ]; then \
-	        echo "${INSTALL_DATA} ${INST_SHAREDIR}/${PROG}"; \
-	        ${INSTALL_DATA_DIR} ${INST_SHAREDIR}/${PROG}; \
+	    if [ "${SHARE}" != "" -a \
+	        ! -d "${PROG_SHAREDIR}" ]; then \
+	        echo "${INSTALL_DATA} ${PROG_SHAREDIR}"; \
+	        ${INSTALL_DATA_DIR} ${PROG_SHAREDIR}; \
 	    fi; \
-	    for F in ${PROG_SHARE}; do \
-	        echo "${INSTALL_DATA} $$F ${INST_SHAREDIR}/${PROG}"; \
-	        ${INSTALL_DATA} $$F ${INST_SHAREDIR}/${PROG}; \
+	    for F in ${SHARE}; do \
+	        echo "${INSTALL_DATA} $$F ${PROG_SHAREDIR}"; \
+	        ${INSTALL_DATA} $$F ${PROG_SHAREDIR}; \
 	    done; \
 	fi
 	
 deinstall: deinstall-subdir
 	@if [ "${PROG}" != "" -a "${PROG_INSTALL}" != "No" ]; then \
-	    echo "${DEINSTALL_PROG} ${INST_BINDIR}/${PROG}"; \
-	    ${DEINSTALL_PROG} ${INST_BINDIR}/${PROG}; \
-	    for F in ${PROG_SHARE}; do \
-	        echo "${DEINSTALL_DATA} ${INST_SHAREDIR}/${PROG}/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_SHAREDIR}/${PROG}/$$F; \
+	    echo "${DEINSTALL_PROG} ${INST_BINDIR}"; \
+	    ${DEINSTALL_PROG} ${INST_BINDIR}; \
+	    for F in ${SHARE}; do \
+	        echo "${DEINSTALL_DATA} ${PROG_SHAREDIR}/$$F"; \
+	        ${DEINSTALL_DATA} ${PROG_SHAREDIR}/$$F; \
 	    done; \
-	    if [ -d "${INST_SHAREDIR}/${PROG}" ]; then \
-	        echo "rmdir ${INST_SHAREDIR}/${PROG}"; \
-	        rmdir ${INST_SHAREDIR}/${PROG}; \
+	    if [ -d "${PROG_SHAREDIR}" ]; then \
+	        echo "rmdir ${PROG_SHAREDIR}"; \
+	        rmdir ${PROG_SHAREDIR}; \
 	    fi; \
 	fi
 

@@ -1,4 +1,4 @@
-# $Csoft: csoft.lib.mk,v 1.11 2002/02/01 03:37:05 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.12 2002/02/02 08:43:31 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -161,6 +161,15 @@ install:	install-subdir lib${LIB}.a lib${LIB}.la
 	        ${LIBTOOL} --mode=install \
 	            ${INSTALL_LIB} lib${LIB}.la ${INST_LIBDIR}; \
 	    fi; \
+	    if [ "${SHARE}" != "" -a \
+	        ! -d "${LIB_SHAREDIR}" ]; then \
+	        echo "${INSTALL_DATA} ${LIB_SHAREDIR}"; \
+	        ${INSTALL_DATA_DIR} ${LIB_SHAREDIR}; \
+	    fi; \
+	    for F in ${SHARE}; do \
+	        echo "${INSTALL_DATA} $$F ${LIB_SHAREDIR}"; \
+	        ${INSTALL_DATA} $$F ${LIB_SHAREDIR}; \
+	    done; \
 	fi
 	
 deinstall:	deinstall-subdir
@@ -172,6 +181,14 @@ deinstall:	deinstall-subdir
 		    rm -f ${PREFIX}/lib/lib${LIB}.la"; \
 	        ${LIBTOOL} --mode=uninstall \
 		    rm -f ${PREFIX}/lib/lib${LIB}.la; \
+	    fi; \
+	    for F in ${SHARE}; do \
+	        echo "${DEINSTALL_DATA} ${LIB_SHAREDIR}/$$F"; \
+	        ${DEINSTALL_DATA} ${LIB_SHAREDIR}/$$F; \
+	    done; \
+	    if [ -d "${LIB_SHAREDIR}" ]; then \
+	        echo "rmdir ${LIB_SHAREDIR}"; \
+	        rmdir ${LIB_SHAREDIR}; \
 	    fi; \
 	fi
 

@@ -1,4 +1,4 @@
-# $Csoft: csoft.dep.mk,v 1.9 2002/09/06 00:58:47 vedge Exp $
+# $Csoft: csoft.dep.mk,v 1.10 2002/12/24 09:33:43 vedge Exp $
 
 # Copyright (c) 2001, 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
 # All rights reserved.
@@ -24,12 +24,13 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 MKDEP=	sh ${TOP}/mk/mkdep
+CC?=	cc
 
 depend:	${DPADD} depend-subdir
 	@rm -f .depend
 	@files="${SRCS}"; \
 	 if [ "$$files" != "" ]; then \
-	  ${MKDEP} -a ${MKDEP} ${CFLAGS} $$files; \
+	  env CC=${CC} ${MKDEP} -a ${MKDEP} ${CFLAGS} -I`pwd` $$files; \
 	  if [ $$? != 0 ]; then \
 	   exit 1; \
 	  fi \

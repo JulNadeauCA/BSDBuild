@@ -1,4 +1,4 @@
-# $Csoft: csoft.lib.mk,v 1.21 2002/11/27 04:51:19 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.22 2002/12/24 07:18:11 vedge Exp $
 
 # Copyright (c) 2001, 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
 # All rights reserved.
@@ -54,19 +54,19 @@ CFLAGS+=    ${COPTS}
 SHARE?=
 
 .c.o:
-	${CC} ${CFLAGS} -c $<
+	${CC} -I`pwd` ${CFLAGS} -c $<
 
 .cc.o:
-	${CXX} ${CXXFLAGS} -c $<
+	${CXX} -I`pwd` ${CXXFLAGS} -c $<
 
 .c.lo:
-	${LIBTOOL} ${CC} ${CFLAGS} -c $<
+	${LIBTOOL} ${CC} -I`pwd` ${CFLAGS} -c $<
 .cc.lo:
-	${LIBTOOL} ${CXX} ${CXXFLAGS} -c $<
+	${LIBTOOL} ${CXX} -I`pwd` ${CXXFLAGS} -c $<
 .c.po:
-	${CC} -pg -DPROF ${CFLAGS} ${CPPFLAGS} -o $@ -c $<
+	${CC} -pg -DPROF -I`pwd` ${CFLAGS} ${CPPFLAGS} -o $@ -c $<
 .cc.po:
-	${CXX} -pg -DPROF ${CXXFLAGS} ${CPPFLAGS} -o $@ -c $<
+	${CXX} -pg -DPROF -I`pwd` ${CXXFLAGS} ${CPPFLAGS} -o $@ -c $<
 
 # Assembly
 .asm.o:

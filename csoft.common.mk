@@ -1,4 +1,4 @@
-# $Csoft: csoft.common.mk,v 1.6 2001/12/04 16:48:07 vedge Exp $
+# $Csoft: csoft.common.mk,v 1.7 2002/01/26 00:19:33 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -28,6 +28,20 @@
 
 VERSION=1.2
 
-INSTALLDATA?=	install -c -m 644
-INSTALLBIN?=	install -c -m 755
+PREFIX?=		/usr/local
+INSTALL_PROG=		install -c -m 755
+INSTALL_LIB=		install -c -m 444
+INSTALL_DATA=		install -c -m 644
+INSTALL_PROG_DIR=	mkdir -p
+INSTALL_LIB_DIR=	mkdir -p
+INSTALL_DATA_DIR=	mkdir -p
+
+DEINSTALL_PROG=	rm -f
+DEINSTALL_LIB=	rm -f
+DEINSTALL_DATA=	rm -f
+
+BINDIR?=	${PREFIX}/bin
+SHAREDIR?=	${PREFIX}/share
+LIBDIR?=	${PREFIX}/lib
+MANDIR?=	${PREFIX}/man
 

@@ -1,4 +1,4 @@
-# $Csoft: csoft.www.mk,v 1.17 2003/09/26 11:24:45 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.18 2003/09/26 12:29:25 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -55,9 +55,14 @@ depend: depend-subdir
 	        ${BASEDIR}/${TEMPLATE}.m4 \
 		| ${PERL} ${TOP}/mk/hstrip.pl > $@.$$LANG.prep; \
             ${XSLTPROC} --html --nonet --stringparam lang $$LANG ${XSL} \
-	        $@.$$LANG.prep > $@.$$LANG 2>/dev/null; \
+	        $@.$$LANG.prep > $@.$$LANG.utf8 2>/dev/null; \
 	    rm -f $@.$$LANG.prep; \
+	    cp -f $@.$$LANG.utf8 $@.$$LANG; \
 	    echo "URI: $@.$$LANG.utf8" >> $@.var; \
+	    echo "Content-language: $$LANG" >> $@.var; \
+	    echo "Content-type: text/html;encoding=UTF-8" >> $@.var; \
+	    echo "" >> $@.var; \
+	    echo "URI: $@.$$LANG" >> $@.var; \
 	    echo "Content-language: $$LANG" >> $@.var; \
 	    echo "Content-type: text/html;encoding=UTF-8" >> $@.var; \
 	    echo "" >> $@.var; \
@@ -189,7 +194,8 @@ install-www:
 			${INSTALL_DATA_DIR} ${HTMLDIR}/xsl; \
 		fi; \
 		for XSL in ${XSL}; do \
-			if [ -e ${HTMLDIR}/xsl/$$XSL ]; then \
+			if [ -e "${HTMLDIR}/xsl/$$XSL" \
+			     -a "${OVERWRITE}" = "" ]; then \
 				echo "xsl/$$XSL: exists; preserving"; \
 			else \
 				echo "${INSTALL_DATA} $$XSL ${HTMLDIR}/xsl"; \
@@ -201,7 +207,8 @@ install-www:
 			${INSTALL_DATA_DIR} ${HTMLDIR}/m4; \
 		fi; \
 		(cd m4; for M4IN in `ls -1 *.m4`; do \
-			if [ -e ${HTMLDIR}/m4/$$M4IN ]; then \
+			if [ -e "${HTMLDIR}/m4/$$M4IN" \
+			     -a "${OVERWRITE}" = "" ]; then \
 				echo "m4/$$M4IN: exists; preserving"; \
 			else \
 				echo "${INSTALL_DATA} $$M4IN ${HTMLDIR}/m4"; \
@@ -224,14 +231,16 @@ install-www:
 			echo "include mk/csoft.www.mk" >> ${HTMLDIR}/Makefile; \
 		fi; \
 		export SF=`echo $$F |sed s,.html$$,.htm,`; \
-		if [ -e "${HTMLDIR}/$$SF" ]; then \
+		if [ -e "${HTMLDIR}/$$SF" \
+		     -a "${OVERWRITE}" = "" ]; then \
 			echo "$$SF exists; preserving"; \
 		else \
 			echo "${INSTALL_DATA} $$SF ${HTMLDIR}"; \
 			${INSTALL_DATA} $$SF ${HTMLDIR}; \
 		fi; \
 		for LANG in ${LANGUAGES}; do \
-			if [ -e "${HTMLDIR}/$$F.$$LANG" ]; then \
+			if [ -e "${HTMLDIR}/$$F.$$LANG" \
+			     -a "${OVERWRITE}" = "" ]; then \
 				echo "$$F.$$LANG exists; preserving"; \
 			else \
 				echo "${INSTALL_DATA} $$F.$$LANG ${HTMLDIR}"; \

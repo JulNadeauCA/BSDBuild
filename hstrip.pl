@@ -1,4 +1,4 @@
-# $Csoft: hstrip.pl,v 1.1 2001/09/15 03:17:26 vedge Exp $
+# $Csoft: hstrip.pl,v 1.2 2001/09/15 04:10:11 vedge Exp $
 
 my $pre = 0;
 while (<STDIN>) {
@@ -11,5 +11,5 @@ while (<STDIN>) {
 	}
 
 	print;
-	print ' ' if(/\.$/);
+	print ' ';
 }

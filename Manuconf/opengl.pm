@@ -1,4 +1,4 @@
-# $Csoft: opengl.pm,v 1.4 2004/01/03 04:13:29 vedge Exp $
+# $Csoft: opengl.pm,v 1.5 2004/03/10 16:33:36 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
@@ -30,12 +30,21 @@ sub Test
 	my ($ver) = @_;
 
 	print << 'EOF';
-OPENGL_CFLAGS="${X11_CFLAGS}"
-OPENGL_LIBS="${X11_LIBS} -lGL"
+if [ "$SYSTEM" = "Darwin" ]; then
+	OPENGL_CFLAGS=""
+	OPENGL_LIBS="-framework OpenGL"
+else
+	OPENGL_CFLAGS="${X11_CFLAGS}"
+	OPENGL_LIBS="${X11_LIBS} -lGL"
+fi
 EOF
 	TryLibCompile 'HAVE_OPENGL',
 	    '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', << 'EOF';
-#include <GL/gl.h>
+#ifdef __APPLE__
+# include <OpenGL/gl.h>
+#else
+# include <GL/gl.h>
+#endif
 
 int
 main(int argc, char *argv[])

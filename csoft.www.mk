@@ -1,6 +1,6 @@
-# $Csoft: csoft.www.mk,v 1.6 2002/01/26 01:20:55 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.7 2002/04/24 06:55:51 vedge Exp $
 
-# Copyright (c) 2001 CubeSoft Communications, Inc.
+# Copyright (c) 2001, 2002 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,19 +26,21 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+include ${TOP}/Makefile.inc
+
 DOCROOT?=	./docroot
 M4?=		m4
 PERL?=		perl
 M4FLAGS?=
 
 BASEDIR?=	${TOP}/base
-TEMPLATE?=	fancy sober
-DEFTMPL?=	sober
+TEMPLATES?=	text
+DEFAULT_TMPL?=	text
 
 .SUFFIXES: .html .htm .jpg .jpeg .png .gif .m4
 
 .htm.html:
-	@for F in ${TEMPLATE}; do \
+	@for F in ${TEMPLATES}; do \
 	    echo "${M4} ${M4FLAGS} -D_TMPL_=$$F	\
 		-D_TOP_=${TOP} -D_BASE_=${BASEDIR} -D_FILE_=$@ \
 		${BASEDIR}/$$F.m4 | ${PERL} ${TOP}/mk/hstrip.pl $@"; \
@@ -48,12 +50,15 @@ DEFTMPL?=	sober
 		${BASEDIR}/$$F.m4 | ${PERL} ${TOP}/mk/hstrip.pl $@ \
 		> $$F-$@; \
 	done
-	@cp -f ${DEFTMPL}-$@ $@
+	@cp -f ${DEFAULT_TMPL}-$@ $@
 
 all: ${HTML} all-subdir
 
 clean: clean-subdir
-	rm -f ${HTML}
+	@if [ "${HTML}" != "" ]; then \
+	    echo "rm -f *.html"; \
+	    rm -f *.html; \
+	fi
 
 cleandir: cleandir-subdir
 	rm -f *~

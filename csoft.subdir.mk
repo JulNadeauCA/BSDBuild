@@ -1,6 +1,6 @@
-# $Csoft: csoft.subdir.mk,v 1.13 2002/02/01 03:37:05 vedge Exp $
+# $Csoft: csoft.subdir.mk,v 1.14 2002/04/24 06:55:51 vedge Exp $
 
-# Copyright (c) 2001 CubeSoft Communications, Inc.
+# Copyright (c) 2001, 2002 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 #
 # Redistribution and use in source and binary forms, with or without

@@ -1,6 +1,6 @@
-# $Csoft: csoft.dep.mk,v 1.4 2002/02/18 02:28:24 vedge Exp $
+# $Csoft: csoft.dep.mk,v 1.5 2002/04/24 06:55:16 vedge Exp $
 
-# Copyright (c) 2001 CubeSoft Communications, Inc.
+# Copyright (c) 2001, 2002 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 #
 # Redistribution and use in source and binary forms, with or without

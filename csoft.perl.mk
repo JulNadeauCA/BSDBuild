@@ -1,4 +1,4 @@
-# $Csoft: csoft.perl.mk,v 1.6 2001/12/07 18:45:20 vedge Exp $
+# $Csoft: csoft.perl.mk,v 1.7 2002/01/26 01:20:54 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -34,14 +34,14 @@ all: all-subdir
 
 install: install-subdir
 	@for F in ${PERL}; do \
-	    echo "${INSTALL_PROG} $$F ${BINDIR}"; \
-	    ${INSTALL_PROG} $$F ${BINDIR}; \
+	    echo "${INSTALL_PROG} $$F ${INST_BINDIR}"; \
+	    ${INSTALL_PROG} $$F ${INST_BINDIR}; \
 	done
 	
 deinstall: deinstall-subdir
 	@for F in ${PERL}; do \
-	    echo "${DEINSTALL_PROG} ${BINDIR}/$$F"; \
-	    ${DEINSTALL_PROG} ${BINDIR}/$$F; \
+	    echo "${DEINSTALL_PROG} ${INST_BINDIR}/$$F"; \
+	    ${DEINSTALL_PROG} ${INST_BINDIR}/$$F; \
 	done
 
 clean: clean-subdir

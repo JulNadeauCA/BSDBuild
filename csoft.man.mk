@@ -1,4 +1,4 @@
-# $Csoft: csoft.man.mk,v 1.6 2001/12/04 16:56:02 vedge Exp $
+# $Csoft: csoft.man.mk,v 1.7 2002/01/26 01:20:27 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -50,36 +50,36 @@ depend: depend-subdir
 
 install: install-subdir ${MANS}
 	@if [ "${MAN1}" != "" ]; then \
-	    echo "${INSTALL_DATA} ${MAN1} ${MANDIR}/man1"; \
-	    ${INSTALL_DATA} ${MAN1} ${MANDIR}/man1; \
+	    echo "${INSTALL_DATA} ${MAN1} ${INST_MANDIR}/man1"; \
+	    ${INSTALL_DATA} ${MAN1} ${INST_MANDIR}/man1; \
 	fi
 	@if [ "${MAN2}" != "" ]; then \
-	    echo "${INSTALL_DATA} ${MAN2} ${MANDIR}/man2"; \
-	    ${INSTALL_DATA} ${MAN2} ${MANDIR}/man1; \
+	    echo "${INSTALL_DATA} ${MAN2} ${INST_MANDIR}/man2"; \
+	    ${INSTALL_DATA} ${MAN2} ${INST_MANDIR}/man1; \
 	fi
 	@if [ "${MAN3}" != "" ]; then \
-	    echo "${INSTALL_DATA} ${MAN3} ${MANDIR}/man3"; \
-	    ${INSTALL_DATA} ${MAN3} ${MANDIR}/man1; \
+	    echo "${INSTALL_DATA} ${MAN3} ${INST_MANDIR}/man3"; \
+	    ${INSTALL_DATA} ${MAN3} ${INST_MANDIR}/man1; \
 	fi
 	@if [ "${MAN4}" != "" ]; then \
-	    echo "${INSTALL_DATA} ${MAN4} ${MANDIR}/man4"; \
-	    ${INSTALL_DATA} ${MAN4} ${MANDIR}/man1; \
+	    echo "${INSTALL_DATA} ${MAN4} ${INST_MANDIR}/man4"; \
+	    ${INSTALL_DATA} ${MAN4} ${INST_MANDIR}/man1; \
 	fi
 	@if [ "${MAN5}" != "" ]; then \
-	    echo "${INSTALL_DATA} ${MAN5} ${MANDIR}/man5"; \
-	    ${INSTALL_DATA} ${MAN5} ${MANDIR}/man1; \
+	    echo "${INSTALL_DATA} ${MAN5} ${INST_MANDIR}/man5"; \
+	    ${INSTALL_DATA} ${MAN5} ${INST_MANDIR}/man1; \
 	fi
 	@if [ "${MAN6}" != "" ]; then \
-	    echo "${INSTALL_DATA} ${MAN6} ${MANDIR}/man6"; \
-	    ${INSTALL_DATA} ${MAN6} ${MANDIR}/man1; \
+	    echo "${INSTALL_DATA} ${MAN6} ${INST_MANDIR}/man6"; \
+	    ${INSTALL_DATA} ${MAN6} ${INST_MANDIR}/man1; \
 	fi
 	@if [ "${MAN7}" != "" ]; then \
-	    echo "${INSTALL_DATA} ${MAN7} ${MANDIR}/man7"; \
-	    ${INSTALL_DATA} ${MAN7} ${MANDIR}/man1; \
+	    echo "${INSTALL_DATA} ${MAN7} ${INST_MANDIR}/man7"; \
+	    ${INSTALL_DATA} ${MAN7} ${INST_MANDIR}/man1; \
 	fi
 	@if [ "${MAN8}" != "" ]; then \
-	    echo "${INSTALL_DATA} ${MAN8} ${MANDIR}/man8"; \
-	    ${INSTALL_DATA} ${MAN8} ${MANDIR}/man1; \
+	    echo "${INSTALL_DATA} ${MAN8} ${INST_MANDIR}/man8"; \
+	    ${INSTALL_DATA} ${MAN8} ${INST_MANDIR}/man1; \
 	fi
 	
 deinstall: deinstall-subdir

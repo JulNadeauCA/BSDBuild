@@ -1,4 +1,4 @@
-# $Csoft: csoft.lib.mk,v 1.7 2002/01/26 00:19:58 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.8 2002/01/26 01:19:14 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -26,13 +26,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-PREFIX?=	/usr/local
 CFLAGS?=	-Wall -g
 SH?=		sh
 CC?=		cc
 AR?=		ar
 RANLIB?=	ranlib
-MAKE?=		make
+
+LIB_INSTALL=	No
 
 ASM?=		nasm
 ASMFLAGS?=	-g -w-orphan-labels
@@ -140,38 +140,36 @@ lib${LIB}.la:	${LIBTOOL} ${SHOBJS}
 
 clean:		clean-subdir
 	@if [ "${LIB}" != "" ]; then \
-		echo "rm -f lib${LIB}.a ${OBJS}"; \
-		rm -f lib${LIB}.a ${OBJS}; \
-		echo "rm -fr .libs"; \
-		rm -fr .libs}; \
-	fi
-	@if [ "${LIB}" != "" -a "${SHARED}" = "Yes" ]; then \
+	    echo "rm -f lib${LIB}.a ${OBJS}"; \
+	    rm -f lib${LIB}.a ${OBJS}; \
+	    if [ "${SHARED}" = "Yes" ]; then \
 		echo rm -f lib${LIB}.la ${SHOBJS} ${LIBTOOL} ${LTCONFIG_LOG}; \
 		rm -f lib${LIB}.la ${SHOBJS} ${LIBTOOL} ${LTCONFIG_LOG}; \
+	    fi; \
 	fi
 
 install:	install-subdir lib${LIB}.a lib${LIB}.la
-	@if [ "${LIB}" != "" ]; then \
-	    echo "${INSTALL_LIB} lib${LIB}.a ${LIBDIR}"; \
-	    ${INSTALL_LIB} lib${LIB}.a ${LIBDIR}; \
-	fi
-	@if [ "${LIB}" != "" -a "${SHARED}" = "Yes" ]; then \
-	    echo "${LIBTOOL} --mode=install \
-	        ${INSTALL_LIB} lib${LIB}.la ${LIBDIR}"; \
-	    ${LIBTOOL} --mode=install \
-	        ${INSTALL_LIB} lib${LIB}.la ${LIBDIR}; \
+	@if [ "${LIB}" != "" -a "${LIB_INSTALL}" != "No" ]; then \
+	    echo "${INSTALL_LIB} lib${LIB}.a ${INST_LIBDIR}"; \
+	    ${INSTALL_LIB} lib${LIB}.a ${INST_LIBDIR}; \
+	    if [ "${SHARED}" = "Yes" ]; then \
+	        echo "${LIBTOOL} --mode=install \
+	            ${INSTALL_LIB} lib${LIB}.la ${INST_LIBDIR}"; \
+	        ${LIBTOOL} --mode=install \
+	            ${INSTALL_LIB} lib${LIB}.la ${INST_LIBDIR}; \
+	    fi; \
 	fi
 	
 deinstall:	deinstall-subdir
-	@if [ "${LIB}" != "" ]; then \
+	@if [ "${LIB}" != "" -a "${LIB_INSTALL}" != "No" ]; then \
 	    echo "${DEINSTALL_LIB} ${PREFIX}/lib/lib${LIB}.a"; \
 	    ${DEINSTALL_LIB} ${PREFIX}/lib/lib${LIB}.a; \
-	    if [ "${SHARED}" == "Yes" ]; then
+	    if [ "${SHARED}" == "Yes" ]; then \
 	        echo "${LIBTOOL} --mode=uninstall \
 		    rm -f ${PREFIX}/lib/lib${LIB}.la"; \
 	        ${LIBTOOL} --mode=uninstall \
 		    rm -f ${PREFIX}/lib/lib${LIB}.la; \
-	    fi;
+	    fi; \
 	fi
 
 ${LIBTOOL}:	${LTCONFIG} ${LTMAIN_SH} ${LTCONFIG_GUESS} ${LTCONFIG_SUB}

@@ -1,4 +1,4 @@
-# $Csoft: csoft.prog.mk,v 1.9 2002/01/26 01:00:11 vedge Exp $
+# $Csoft: csoft.prog.mk,v 1.10 2002/01/26 01:20:54 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -28,7 +28,7 @@
 
 CFLAGS?=	-Wall -g
 
-BINMODE=	755
+PROG_INSTALL?=	Yes
 
 CC?=		cc
 CFLAGS?=	-O2
@@ -151,15 +151,15 @@ clean: clean-subdir
 	fi
 
 install: install-subdir ${PROG}
-	@if [ "${PROG}" != "" ]; then \
-	    echo "${INSTALL_PROG} ${PROG} ${PREFIX}/bin"; \
-	    ${INSTALL_PROG} ${PROG} ${PREFIX}/bin; \
+	@if [ "${PROG}" != "" -a "${PROG_INSTALL}" != "No" ]; then \
+	    echo "${INSTALL_PROG} ${PROG} ${INST_BINDIR}"; \
+	    ${INSTALL_PROG} ${PROG} ${INST_BINDIR}; \
 	fi
 	
 deinstall: deinstall-subdir
-	@if [ "${PROG}" != "" ]; then \
-	    echo "${DEINSTALL_PROG} ${PREFIX}/bin/${PROG}"; \
-	    ${DEINSTALL_PROG} ${PREFIX}/bin/${PROG}; \
+	@if [ "${PROG}" != "" -a "${PROG_INSTALL}" != "No" ]; then \
+	    echo "${DEINSTALL_PROG} ${INST_BINDIR}${PROG}"; \
+	    ${DEINSTALL_PROG} ${INST_BINDIR}/${PROG}; \
 	fi
 
 regress: regress-subdir

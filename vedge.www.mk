@@ -9,13 +9,15 @@ M4?=	    m4
 MAKE?=	    make
 INSTALL?=   install
 HTMLMODE?=  644
+BASEDIR?=   base
+TEMPLATE?=  $(BASEDIR)/html.m4
 
 .SUFFIXES=  .htm .html .jpg .jpeg .png .gif .m4
 
-.htm.html: base/html.m4
+.htm.html: $(TEMPLATE)
 	@echo "===> $@"
-	@cp -f $< base/base.htm
-	@m4 base/html.m4 > $@
+	@cp -f $< $(BASEDIR)/base.htm
+	@$(M4) $(TEMPLATE) > $@
 
 ALL: $(HTML) all-subdir
 

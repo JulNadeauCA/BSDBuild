@@ -4,6 +4,7 @@ TYPE=	    prog
 
 PREFIX?=    /usr/local
 CFLAGS?=    -Wall -g
+SH?=	    sh
 CC?=	    cc
 AR?=	    ar
 MAKE?=	    make
@@ -26,6 +27,9 @@ $(PROG): $(OBJS)
 
 clean: clean-subdir
 	rm -f $(PROG) $(OBJS) a.out
+
+tree:
+	(cd $(TOP)/mk && $(SH) maptree.sh none)
 
 install: install-subdir
 	@if [ "$(PROG)" != "" ]; then \

@@ -1,7 +1,9 @@
 #!/bin/sh
 # $Id$
 
+mklib=vedge
 type=$1
+
 if [ "$type" = "" ];
 then
     echo "Usage: $0 [default-type]"
@@ -20,15 +22,17 @@ do
 	    cat > $D/Makefile << EOF
 # \$Id\$
 
+TOP=%TOP%
 
 
-top=%TOP%
-include \$(top)/mk/vedge.$type.mk
+
+include \$(TOP)/mk/$mklib.$type.mk
 EOF
-	    sed -e "s|%TOP%|$fun|" -e "s|%MK%|$fun/mk|" \
-		$D/Makefile > $D/.Makefile
-	    mv -f $D/.Makefile $D/Makefile
 	fi
+	echo "===> $D/Makefile"
+	sed -e "s|%TOP%|$fun|" -e "s|%MK%|$fun/mk|" \
+	    $D/Makefile > $D/.Makefile
+	mv -f $D/.Makefile $D/Makefile
     fi
 done
 

@@ -3,6 +3,7 @@
 TYPE=	    www
 
 DOCROOT?=   ./docroot
+SH?=	    sh
 M4?=	    m4
 MAKE?=	    make
 INSTALL?=   install
@@ -28,6 +29,9 @@ ALL: $(HTML) all-subdir
 
 clean: clean-subdir
 	rm -f $(HTML) *.html
+
+tree:
+	(cd $(TOP)/mk && $(SH) maptree.sh none)
 
 install: install-subdir
 	@if [ "$(HTML)" != "" ]; then \

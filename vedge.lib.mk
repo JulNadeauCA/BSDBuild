@@ -4,6 +4,7 @@ TYPE=	    lib
 
 PREFIX?=    /usr/local
 CFLAGS?=    -Wall -g
+SH?=	    sh
 CC?=	    cc
 AR?=	    ar
 MAKE?=	    make
@@ -28,6 +29,9 @@ $(LIB): $(OBJS)
 clean: clean-subdir
 	rm -f $(LIB) $(OBJS) a.out
 
+tree:
+	(cd $(TOP)/mk && $(SH) maptree.sh none)
+
 install: install-subdir
 	@if [ "$(LIB)" != "" ]; then \
 	    $(LIBTOOL) --mode=install \
@@ -42,27 +46,27 @@ uninstall: uninstall-subdir
 
 all-subdir:
 	@for DIR in $(SUBDIR); do \
-	    echo "===> $(REL)$$DIR"; \
+	    echo "==> $(REL)$$DIR"; \
 	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/); \
 	done
 clean-subdir:
 	@for DIR in $(SUBDIR); do \
-	    echo "===> $(REL)$$DIR"; \
+	    echo "==> $(REL)$$DIR"; \
 	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/ clean); \
 	done
 depend-subdir:
 	@for DIR in $(SUBDIR); do \
-	    echo "===> $(REL)$$DIR"; \
+	    echo "==> $(REL)$$DIR"; \
 	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/ depend); \
 	done
 install-subdir:
 	@for DIR in $(SUBDIR); do \
-	    echo "===> $(REL)$$DIR"; \
+	    echo "==> $(REL)$$DIR"; \
 	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/ install); \
 	done
 uninstall-subdir:
 	@for DIR in $(SUBDIR); do \
-	    echo "===> $(REL)$$DIR"; \
+	    echo "==> $(REL)$$DIR"; \
 	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/ uninstall); \
 	done
 

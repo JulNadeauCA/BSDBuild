@@ -1,4 +1,4 @@
-# $Csoft: csoft.lib.mk,v 1.18 2002/08/20 10:01:18 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.19 2002/09/06 00:58:47 vedge Exp $
 
 # Copyright (c) 2001, 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
 # All rights reserved.
@@ -46,7 +46,7 @@ BINMODE?=	755
 
 STATIC?=	Yes
 SHARED?=	No
-VERSION?=	1:0:0
+SOVERSION?=	1:0:0
 
 .SUFFIXES:  .o .po .lo .c .cc .C .cxx .s .S .asm .y
 
@@ -135,9 +135,9 @@ lib${LIB}.a:	${OBJS}
 lib${LIB}.la:	${LIBTOOL} ${SHOBJS}
 	@if [ "${LIB}" != "" -a "${SHARED}" = "Yes" ]; then \
 	    echo "${LIBTOOL} ${CC} -o lib${LIB}.la -rpath ${PREFIX}/lib \
-	     -shared -version-info ${VERSION} ${LDFLAGS} ${SHOBJS} ${LIBS}"; \
+	     -shared -version-info ${SOVERSION} ${LDFLAGS} ${SHOBJS} ${LIBS}"; \
 	    ${LIBTOOL} ${CC} -o lib${LIB}.la -rpath ${PREFIX}/lib -shared \
-		-version-info ${VERSION} ${LDFLAGS} ${SHOBJS} ${LIBS}; \
+		-version-info ${SOVERSION} ${LDFLAGS} ${SHOBJS} ${LIBS}; \
 	fi
 
 clean:		clean-subdir

@@ -1,4 +1,4 @@
-# $Csoft: csoft.lib.mk,v 1.9 2002/01/26 01:31:28 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.10 2002/01/27 12:33:20 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -181,7 +181,10 @@ ${LIBTOOL}:	${LTCONFIG} ${LTMAIN_SH} ${LTCONFIG_GUESS} ${LTCONFIG_SUB}
 
 ${LTCONFIG} ${LTCONFIG_GUESS} ${LTCONFIG_SUB} ${LTMAIN_SH}:
 
+depend:	depend-subdir
+
 regress:	regress-subdir
 
 include ${TOP}/mk/csoft.common.mk
+include ${TOP}/mk/csoft.dep.mk
 include ${TOP}/mk/csoft.subdir.mk

@@ -1,4 +1,4 @@
-# $Csoft: csoft.prog.mk,v 1.12 2002/01/26 01:36:28 vedge Exp $
+# $Csoft: csoft.prog.mk,v 1.13 2002/01/26 01:46:40 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -183,5 +183,8 @@ deinstall: deinstall-subdir
 
 regress: regress-subdir
 
+depend: depend-subdir
+
 include ${TOP}/mk/csoft.common.mk
+include ${TOP}/mk/csoft.dep.mk
 include ${TOP}/mk/csoft.subdir.mk

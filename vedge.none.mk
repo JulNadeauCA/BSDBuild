@@ -19,7 +19,7 @@ $(NONE): $(OBJS)
 	echo "($(OBJS)) -> $(NONE)"
 
 clean: clean-subdir
-	rm -f $(NONE) $(OBJS)
+	@rm -f $(NONE) $(OBJS)
 
 depend: depend-subdir
 	echo NOOP

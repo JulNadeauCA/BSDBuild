@@ -11,3 +11,4 @@ TBL?=	    tbl
 .9.cat9 .8.cat8 .7.cat7 .6.cat6 .5.cat5 .4.cat4 .3.cat3 .2.cat2 .cat1.1:
 	$(NROFF) -mandoc $< > $@ || (rm -f $@; false)
 
+include $(TOP)/mk/vedge.common.mk

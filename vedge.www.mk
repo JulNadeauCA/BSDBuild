@@ -30,7 +30,7 @@ DEFTMPL?=   sober
 ALL: $(HTML) all-subdir
 
 clean: clean-subdir
-	rm -f $(HTML) *.html
+	@rm -f $(HTML) *.html
 
 depend: depend-subdir
 

@@ -25,7 +25,7 @@ $(PROG): $(OBJS)
 	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS) $(LIBS)
 
 clean: clean-subdir
-	rm -f $(PROG) $(OBJS)
+	@rm -f $(PROG) $(OBJS)
 
 install: install-subdir
 	@if [ "$(PROG)" != "" ]; then \

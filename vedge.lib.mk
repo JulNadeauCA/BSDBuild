@@ -27,7 +27,7 @@ $(LIB): $(OBJS)
 	$(CC) $(LDFLAGS) $(LIBS) $(OBJS)
 
 clean: clean-subdir
-	rm -f $(LIB) $(OBJS) a.out
+	@rm -f $(LIB) $(OBJS) a.out
 
 tree:
 	(cd $(TOP)/mk && $(SH) maptree.sh none)

@@ -13,7 +13,7 @@ BINMODE?=   755
 .nos.nop:
 	echo "$< -> $@"
 
-ALL: $(NONE) $(MAN) all-subdir
+ALL: $(NONE) all-subdir
 
 $(NONE): $(OBJS)
 	echo "($(OBJS)) -> $(NONE)"
@@ -35,10 +35,6 @@ uninstall: uninstall-subdir
 	@if [ "$(NONE)" != "" ]; then \
 	    rm -f $(NONE) $(PREFIX)/bin; \
 	fi
-
-tree:
-	(cd $(TOP)/mk && $(SH) maptree.sh none)
-
 
 include $(TOP)/mk/vedge.common.mk
 include $(TOP)/vedge.subdir.mk

@@ -1,4 +1,4 @@
-# $Csoft: cc.pm,v 1.16 2003/10/01 09:35:27 vedge Exp $
+# $Csoft: cc.pm,v 1.17 2003/10/01 09:40:49 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002, 2003 CubeSoft Communications
@@ -120,18 +120,19 @@ EOF
 	TryCompile 'HAVE_FORMAT_ATTRIBUTE', << 'EOF';
 #include <stdarg.h>
 
-void foo(char *, ...)
+void foo1(char *, ...)
      __attribute__((__format__ (printf, 1, 2)));
+void foo2(char *, ...)
+     __attribute__((__format__ (__printf__, 1, 2)));
 
-void
-foo(char *a, ...)
-{
-}
+void foo1(char *a, ...) {}
+void foo2(char *a, ...) {}
 
 int
 main(int argc, char *argv[])
 {
-	foo("foo %s", "bar");
+	foo1("foo %s", "bar");
+	foo2("foo %d", 1);
 	return (0);
 }
 EOF

@@ -1,4 +1,4 @@
-# $Csoft: csoft.common.mk,v 1.10 2002/01/26 01:33:07 vedge Exp $
+# $Csoft: csoft.dep.mk,v 1.1 2002/02/01 03:37:05 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -28,11 +28,16 @@
 
 MKDEP=	${TOP}/mk/mkdep
 
-depend:	depend-subdir
+depend:	${DPADD} depend-subdir
 	rm -f .depend
 	@files="${SRCS}"; \
 	 if [ "$$files" != "" ]; then \
 	  echo ${MKDEP} -a ${MKDEP} ${CFLAGS:M-[ID]*} $$files; \
 	  ${MKDEP} -a ${MKDEP} ${CFLAGS:M-[ID]*} $$files; \
 	 fi
+
+clean: clean-depend
+
+clean-depend:
+	rm -f .depend
 

@@ -1,4 +1,4 @@
-# $Csoft: csoft.man.mk,v 1.37 2004/04/24 04:42:49 vedge Exp $
+# $Csoft: csoft.man.mk,v 1.38 2004/04/24 05:40:31 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -24,7 +24,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-NROFF?=	nroff
+NROFF?=nroff
+PAGER?=more
 MAN1?=""
 MAN2?=""
 MAN3?=""

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Csoft: manuconf.pl,v 1.3 2002/01/28 04:58:56 vedge Exp $
+# $Csoft: manuconf.pl,v 1.4 2002/01/29 19:24:29 vedge Exp $
 #
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -32,6 +32,7 @@ sub x11;
 sub SDL;
 sub smpeg;
 sub glib;
+sub c64bit;
 
 sub Register;
 sub Help;
@@ -167,6 +168,11 @@ sub glib
 	        $require);
 
 	return (0);
+}
+
+sub c64bit
+{
+	# XXX
 }
 
 sub Register
@@ -346,6 +352,7 @@ BEGIN
 	$CHECK{'SDL'} = \&SDL;
 	$CHECK{'glib'} = \&glib;
 	$CHECK{'smpeg'} = \&smpeg;
+	$CHECK{'64bit'} = \&c64bit;
 
 	print << "EOF";
 #!/bin/sh

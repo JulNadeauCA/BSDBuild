@@ -1,4 +1,4 @@
-# $Csoft: csoft.man.mk,v 1.19 2003/03/05 16:12:17 vedge Exp $
+# $Csoft: csoft.man.mk,v 1.20 2003/03/05 17:01:12 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -40,27 +40,217 @@ PSMANS=	${PSMAN1} ${PSMAN2} ${PSMAN3} ${PSMAN4} ${PSMAN5} ${PSMAN6} ${PSMAN7} ${
 	@echo "${NROFF} -Tps -mandoc $< > $@"
 	@${NROFF} -Tps -mandoc $< > $@ || (rm -f $@; false)
 
-all: ${MANS} ${CATMANS} ${PSMANS}
+preformat-man:
+	@if [ "${MAN1}" != "" ]; then \
+	    if [ "${CATMAN1}" = "" ]; then \
+	        for F in ${MAN1}; do \
+	            CAT=`echo $$F | sed 's/.1$$/.cat1/'`; \
+	            PS=`echo $$F | sed 's/.1$$/.ps1/'`; \
+	            ${MAKE} $$CAT $$PS; \
+	        done; \
+	    else \
+	        ${MAKE} ${CATMAN1} ${PSMAN1}; \
+	    fi; \
+	fi
+	@if [ "${MAN2}" != "" ]; then \
+	    if [ "${CATMAN2}" = "" ]; then \
+	        for F in ${MAN2}; do \
+	            CAT=`echo $$F | sed 's/.2$$/.cat2/'`; \
+	            PS=`echo $$F | sed 's/.2$$/.ps2/'`; \
+	            ${MAKE} $$CAT $$PS; \
+	        done; \
+	    else \
+	        ${MAKE} ${CATMAN2} ${PSMAN2}; \
+	    fi; \
+	fi
+	@if [ "${MAN3}" != "" ]; then \
+	    if [ "${CATMAN3}" = "" ]; then \
+	        for F in ${MAN3}; do \
+	            CAT=`echo $$F | sed 's/.3$$/.cat3/'`; \
+	            PS=`echo $$F | sed 's/.3$$/.ps3/'`; \
+	            ${MAKE} $$CAT $$PS; \
+	        done; \
+	    else \
+	        ${MAKE} ${CATMAN3} ${PSMAN3}; \
+	    fi; \
+	fi
+	@if [ "${MAN4}" != "" ]; then \
+	    if [ "${CATMAN4}" = "" ]; then \
+	        for F in ${MAN4}; do \
+	            CAT=`echo $$F | sed 's/.4$$/.cat4/'`; \
+	            PS=`echo $$F | sed 's/.4$$/.ps4/'`; \
+	            ${MAKE} $$CAT $$PS; \
+	        done; \
+	    else \
+	        ${MAKE} ${CATMAN4} ${PSMAN4}; \
+	    fi; \
+	fi
+	@if [ "${MAN5}" != "" ]; then \
+	    if [ "${CATMAN5}" = "" ]; then \
+	        for F in ${MAN5}; do \
+	            CAT=`echo $$F | sed 's/.5$$/.cat5/'`; \
+	            PS=`echo $$F | sed 's/.5$$/.ps5/'`; \
+	            ${MAKE} $$CAT $$PS; \
+	        done; \
+	    else \
+	        ${MAKE} ${CATMAN5} ${PSMAN5}; \
+	    fi; \
+	fi
+	@if [ "${MAN6}" != "" ]; then \
+	    if [ "${CATMAN6}" = "" ]; then \
+	        for F in ${MAN6}; do \
+	            CAT=`echo $$F | sed 's/.6$$/.cat6/'`; \
+	            PS=`echo $$F | sed 's/.6$$/.ps6/'`; \
+	            ${MAKE} $$CAT $$PS; \
+	        done; \
+	    else \
+	        ${MAKE} ${CATMAN6} ${PSMAN6}; \
+	    fi; \
+	fi
+	@if [ "${MAN7}" != "" ]; then \
+	    if [ "${CATMAN7}" = "" ]; then \
+	        for F in ${MAN7}; do \
+	            CAT=`echo $$F | sed 's/.7$$/.cat7/'`; \
+	            PS=`echo $$F | sed 's/.7$$/.ps7/'`; \
+	            ${MAKE} $$CAT $$PS; \
+	        done; \
+	    else \
+	        ${MAKE} ${CATMAN7} ${PSMAN7}; \
+	    fi; \
+	fi
+	@if [ "${MAN8}" != "" ]; then \
+	    if [ "${CATMAN8}" = "" ]; then \
+	        for F in ${MAN8}; do \
+	            CAT=`echo $$F | sed 's/.8$$/.cat8/'`; \
+	            PS=`echo $$F | sed 's/.8$$/.ps8/'`; \
+	            ${MAKE} $$CAT $$PS; \
+	        done; \
+	    else \
+	        ${MAKE} ${CATMAN8} ${PSMAN8}; \
+	    fi; \
+	fi
+	@if [ "${MAN9}" != "" ]; then \
+	    if [ "${CATMAN9}" = "" ]; then \
+	        for F in ${MAN9}; do \
+	            CAT=`echo $$F | sed 's/.9$$/.cat9/'`; \
+	            PS=`echo $$F | sed 's/.9$$/.ps9/'`; \
+	            ${MAKE} $$CAT $$PS; \
+	        done; \
+	    else \
+	        ${MAKE} ${CATMAN9} ${PSMAN9}; \
+	    fi; \
+	fi
 
-clean: clean-man clean-ps
+all: preformat-man
 
-install: install-man install-ps
+clean: clean-man
 
-deinstall: deinstall-man deinstall-ps
+install: install-man
+
+deinstall: deinstall-man
 
 clean-man:
-	@if [ "${CATMANS}" != "       " ]; then \
-	    echo "rm -f ${CATMANS}"; \
-	    rm -f ${CATMANS}; \
+	@if [ "${MAN1}" != "" ]; then \
+	    if [ "${CATMAN1}" = "" ]; then \
+	        for F in ${MAN1}; do \
+	            CAT=`echo $$F | sed 's/.1$$/.cat1/'`; \
+	            PS=`echo $$F | sed 's/.1$$/.ps1/'`; \
+	            rm -f $$CAT $$PS; \
+	        done; \
+	     else \
+	         rm -f ${CATMAN1} ${PSMAN1}; \
+	     fi; \
+	fi
+	@if [ "${MAN2}" != "" ]; then \
+	    if [ "${CATMAN2}" = "" ]; then \
+	        for F in ${MAN2}; do \
+	            CAT=`echo $$F | sed 's/.2$$/.cat2/'`; \
+	            PS=`echo $$F | sed 's/.2$$/.ps2/'`; \
+	            rm -f $$CAT $$PS; \
+	        done; \
+	     else \
+	         rm -f ${CATMAN2} ${PSMAN2}; \
+	     fi; \
+	fi
+	@if [ "${MAN3}" != "" ]; then \
+	    if [ "${CATMAN3}" = "" ]; then \
+	        for F in ${MAN3}; do \
+	            CAT=`echo $$F | sed 's/.3$$/.cat3/'`; \
+	            PS=`echo $$F | sed 's/.3$$/.ps3/'`; \
+	            rm -f $$CAT $$PS; \
+	        done; \
+	     else \
+	         rm -f ${CATMAN3} ${PSMAN3}; \
+	     fi; \
+	fi
+	@if [ "${MAN4}" != "" ]; then \
+	    if [ "${CATMAN4}" = "" ]; then \
+	        for F in ${MAN4}; do \
+	            CAT=`echo $$F | sed 's/.4$$/.cat4/'`; \
+	            PS=`echo $$F | sed 's/.4$$/.ps4/'`; \
+	            rm -f $$CAT $$PS; \
+	        done; \
+	     else \
+	         rm -f ${CATMAN4} ${PSMAN4}; \
+	     fi; \
+	fi
+	@if [ "${MAN5}" != "" ]; then \
+	    if [ "${CATMAN5}" = "" ]; then \
+	        for F in ${MAN5}; do \
+	            CAT=`echo $$F | sed 's/.5$$/.cat5/'`; \
+	            PS=`echo $$F | sed 's/.5$$/.ps5/'`; \
+	            rm -f $$CAT $$PS; \
+	        done; \
+	     else \
+	         rm -f ${CATMAN5} ${PSMAN5}; \
+	     fi; \
+	fi
+	@if [ "${MAN6}" != "" ]; then \
+	    if [ "${CATMAN6}" = "" ]; then \
+	        for F in ${MAN6}; do \
+	            CAT=`echo $$F | sed 's/.6$$/.cat6/'`; \
+	            PS=`echo $$F | sed 's/.6$$/.ps6/'`; \
+	            rm -f $$CAT $$PS; \
+	        done; \
+	     else \
+	         rm -f ${CATMAN6} ${PSMAN6}; \
+	     fi; \
+	fi
+	@if [ "${MAN7}" != "" ]; then \
+	    if [ "${CATMAN7}" = "" ]; then \
+	        for F in ${MAN7}; do \
+	            CAT=`echo $$F | sed 's/.7$$/.cat7/'`; \
+	            PS=`echo $$F | sed 's/.7$$/.ps7/'`; \
+	            rm -f $$CAT $$PS; \
+	        done; \
+	     else \
+	         rm -f ${CATMAN7} ${PSMAN7}; \
+	     fi; \
+	fi
+	@if [ "${MAN8}" != "" ]; then \
+	    if [ "${CATMAN8}" = "" ]; then \
+	        for F in ${MAN8}; do \
+	            CAT=`echo $$F | sed 's/.8$$/.cat8/'`; \
+	            PS=`echo $$F | sed 's/.8$$/.ps8/'`; \
+	            rm -f $$CAT $$PS; \
+	        done; \
+	     else \
+	         rm -f ${CATMAN8} ${PSMAN8}; \
+	     fi; \
+	fi
+	@if [ "${MAN9}" != "" ]; then \
+	    if [ "${CATMAN9}" = "" ]; then \
+	        for F in ${MAN9}; do \
+	            CAT=`echo $$F | sed 's/.9$$/.cat9/'`; \
+	            PS=`echo $$F | sed 's/.9$$/.ps9/'`; \
+	            rm -f $$CAT $$PS; \
+	        done; \
+	     else \
+	         rm -f ${CATMAN9} ${PSMAN9}; \
+	     fi; \
 	fi
 
-clean-ps:
-	@if [ "${PSMANS}" != "       " ]; then \
-	    echo "rm -f ${PSMANS}"; \
-	    rm -f ${PSMANS}; \
-	fi
-
-install-man: ${MANS} ${CATMANS}
+install-man-dirs:
 	@if [ "${MANS}" != "       " ]; then \
 	    if [ ! -d "${INST_MANDIR}" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}"; \
@@ -102,44 +292,6 @@ install-man: ${MANS} ${CATMANS}
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/man9"; \
 	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/man9; \
 	    fi; \
-	    for F in ${MAN1}; do \
-	        echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man1"; \
-	        ${INSTALL_DATA} $$F ${INST_MANDIR}/man1; \
-	    done; \
-	    for F in ${MAN2}; do \
-	        echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man2"; \
-	        ${INSTALL_DATA} $$F ${INST_MANDIR}/man2; \
-	    done; \
-	    for F in ${MAN3}; do \
-	        echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man3"; \
-	        ${INSTALL_DATA} $$F ${INST_MANDIR}/man3; \
-	    done; \
-	    for F in ${MAN4}; do \
-	        echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man4"; \
-	        ${INSTALL_DATA} $$F ${INST_MANDIR}/man4; \
-	    done; \
-	    for F in ${MAN5}; do \
-	        echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man5"; \
-	        ${INSTALL_DATA} $$F ${INST_MANDIR}/man5; \
-	    done; \
-	    for F in ${MAN6}; do \
-	        echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man6"; \
-	        ${INSTALL_DATA} $$F ${INST_MANDIR}/man6; \
-	    done; \
-	    for F in ${MAN7}; do \
-	        echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man7"; \
-	        ${INSTALL_DATA} $$F ${INST_MANDIR}/man7; \
-	    done; \
-	    for F in ${MAN8}; do \
-	        echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man8"; \
-	        ${INSTALL_DATA} $$F ${INST_MANDIR}/man8; \
-	    done; \
-	    for F in ${MAN9}; do \
-	        echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man9"; \
-	        ${INSTALL_DATA} $$F ${INST_MANDIR}/man9; \
-	    done; \
-	fi
-	@if [ "${CATMANS}" != "       " ]; then \
 	    if [ ! -d "${INST_MANDIR}/cat1" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/cat1"; \
 	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/cat1; \
@@ -176,46 +328,6 @@ install-man: ${MANS} ${CATMANS}
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/cat9"; \
 	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/cat9; \
 	    fi; \
-	    for F in ${CATMAN1}; do \
-	         echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat1"; \
-	         ${INSTALL_DATA} $$F ${INST_MANDIR}/cat1; \
-	    done; \
-	    for F in ${CATMAN2}; do \
-	         echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat2"; \
-	         ${INSTALL_DATA} $$F ${INST_MANDIR}/cat2; \
-	    done; \
-	    for F in ${CATMAN3}; do \
-	         echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat3"; \
-	         ${INSTALL_DATA} $$F ${INST_MANDIR}/cat3; \
-	    done; \
-	    for F in ${CATMAN4}; do \
-	         echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat4"; \
-	         ${INSTALL_DATA} $$F ${INST_MANDIR}/cat4; \
-	    done; \
-	    for F in ${CATMAN5}; do \
-	         echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat5"; \
-	         ${INSTALL_DATA} $$F ${INST_MANDIR}/cat5; \
-	    done; \
-	    for F in ${CATMAN6}; do \
-	         echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat6"; \
-	         ${INSTALL_DATA} $$F ${INST_MANDIR}/cat6; \
-	    done; \
-	    for F in ${CATMAN7}; do \
-	         echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat7"; \
-	         ${INSTALL_DATA} $$F ${INST_MANDIR}/cat7; \
-	    done; \
-	    for F in ${CATMAN8}; do \
-	         echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat8"; \
-	         ${INSTALL_DATA} $$F ${INST_MANDIR}/cat8; \
-	    done; \
-	    for F in ${CATMAN9}; do \
-	         echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat9"; \
-	         ${INSTALL_DATA} $$F ${INST_MANDIR}/cat9; \
-	    done; \
-	fi
-
-install-ps: ${PSMANS}
-	@if [ "${PSMANS}" != "       " ]; then \
 	    if [ ! -d "${INST_PSDIR}" ]; then \
 	        echo "${INSTALL_PS_DIR} ${INST_PSDIR}"; \
 	        ${INSTALL_PS_DIR} ${INST_PSDIR}; \
@@ -256,162 +368,253 @@ install-ps: ${PSMANS}
 	        echo "${INSTALL_PS_DIR} ${INST_PSDIR}/ps9"; \
 	        ${INSTALL_PS_DIR} ${INST_PSDIR}/ps9; \
 	    fi; \
-	    for F in ${PSMAN1}; do \
-	        echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps1"; \
-	        ${INSTALL_DATA} $$F ${INST_PSDIR}/ps1; \
-	    done; \
-	    for F in ${PSMAN2}; do \
-	        echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps2"; \
-	        ${INSTALL_DATA} $$F ${INST_PSDIR}/ps2; \
-	    done; \
-	    for F in ${PSMAN3}; do \
-	        echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps3"; \
-	        ${INSTALL_DATA} $$F ${INST_PSDIR}/ps3; \
-	    done; \
-	    for F in ${PSMAN4}; do \
-	        echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps4"; \
-	        ${INSTALL_DATA} $$F ${INST_PSDIR}/ps4; \
-	    done; \
-	    for F in ${PSMAN5}; do \
-	        echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps5"; \
-	        ${INSTALL_DATA} $$F ${INST_PSDIR}/ps5; \
-	    done; \
-	    for F in ${PSMAN6}; do \
-	        echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps6"; \
-	        ${INSTALL_DATA} $$F ${INST_PSDIR}/ps6; \
-	    done; \
-	    for F in ${PSMAN7}; do \
-	        echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps7"; \
-	        ${INSTALL_DATA} $$F ${INST_PSDIR}/ps7; \
-	    done; \
-	    for F in ${PSMAN8}; do \
-	        echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps8"; \
-	        ${INSTALL_DATA} $$F ${INST_PSDIR}/ps8; \
-	    done; \
-	    for F in ${PSMAN9}; do \
-	        echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps9"; \
-	        ${INSTALL_DATA} $$F ${INST_PSDIR}/ps9; \
-	    done; \
 	fi
 
-deinstall-man:
-	@if [ "${MANS}" != "       " ]; then \
-	    for F in ${MAN1}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/man1/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/man1/$$F; \
-	    done; \
-	    for F in ${MAN2}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/man2/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/man2/$$F; \
-	    done; \
-	    for F in ${MAN3}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/man3/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/man3/$$F; \
-	    done; \
-	    for F in ${MAN4}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/man4/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/man4/$$F; \
-	    done; \
-	    for F in ${MAN5}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/man5/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/man5/$$F; \
-	    done; \
-	    for F in ${MAN6}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/man6/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/man6/$$F; \
-	    done; \
-	    for F in ${MAN7}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/man7/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/man7/$$F; \
-	    done; \
-	    for F in ${MAN8}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/man8/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/man8/$$F; \
-	    done; \
-	    for F in ${MAN9}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/man9/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/man9/$$F; \
-	    done; \
+install-man: preformat-man install-man-dirs
+	@if [ "${MAN1}" != "" ]; then \
+	    if [ "${CATMAN1}" = "" ]; then \
+	        for F in ${MAN1}; do \
+	            CAT=`echo $$F | sed 's/.1$$/.cat1/'`; \
+	            PS=`echo $$F | sed 's/.1$$/.ps1/'`; \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man1"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man1; \
+	            echo "${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat1"; \
+	            ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat1; \
+	            echo "${INSTALL_DATA} $$PS ${INST_PSDIR}/ps1"; \
+	            ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps1; \
+	        done; \
+	    else \
+	        for F in ${MAN1}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man1"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man1; \
+		done; \
+	        for F in ${CATMAN1}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat1"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/cat1; \
+		done; \
+	        for F in ${PSMAN1}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps1"; \
+	            ${INSTALL_DATA} $$F ${INST_PSDIR}/ps1; \
+		done; \
+	    fi; \
 	fi
-	@if [ "${CATMANS}" != "       " ]; then \
-	    for F in ${CATMAN1}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/cat1/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/cat1/$$F; \
-	    done; \
-	    for F in ${CATMAN2}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/cat2/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/cat2/$$F; \
-	    done; \
-	    for F in ${CATMAN3}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/cat3/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/cat3/$$F; \
-	    done; \
-	    for F in ${CATMAN4}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/cat4/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/cat4/$$F; \
-	    done; \
-	    for F in ${CATMAN5}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/cat5/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/cat5/$$F; \
-	    done; \
-	    for F in ${CATMAN6}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/cat6/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/cat6/$$F; \
-	    done; \
-	    for F in ${CATMAN7}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/cat7/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/cat7/$$F; \
-	    done; \
-	    for F in ${CATMAN8}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/cat8/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/cat8/$$F; \
-	    done; \
-	    for F in ${CATMAN9}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/cat9/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/cat9/$$F; \
-	    done; \
+	@if [ "${MAN2}" != "" ]; then \
+	    if [ "${CATMAN2}" = "" ]; then \
+	        for F in ${MAN2}; do \
+	            CAT=`echo $$F | sed 's/.2$$/.cat2/'`; \
+	            PS=`echo $$F | sed 's/.2$$/.ps2/'`; \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man2"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man2; \
+	            echo "${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat2"; \
+	            ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat2; \
+	            echo "${INSTALL_DATA} $$PS ${INST_PSDIR}/ps2"; \
+	            ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps2; \
+	        done; \
+	    else \
+	        for F in ${MAN2}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man2"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man2; \
+		done; \
+	        for F in ${CATMAN2}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat2"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/cat2; \
+		done; \
+	        for F in ${PSMAN2}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps2"; \
+	            ${INSTALL_DATA} $$F ${INST_PSDIR}/ps2; \
+		done; \
+	    fi; \
+	fi
+	@if [ "${MAN3}" != "" ]; then \
+	    if [ "${CATMAN3}" = "" ]; then \
+	        for F in ${MAN3}; do \
+	            CAT=`echo $$F | sed 's/.3$$/.cat3/'`; \
+	            PS=`echo $$F | sed 's/.3$$/.ps3/'`; \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man3"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man3; \
+	            echo "${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat3"; \
+	            ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat3; \
+	            echo "${INSTALL_DATA} $$PS ${INST_PSDIR}/ps3"; \
+	            ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps3; \
+	        done; \
+	    else \
+	        for F in ${MAN3}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man3"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man3; \
+		done; \
+	        for F in ${CATMAN3}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat3"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/cat3; \
+		done; \
+	        for F in ${PSMAN3}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps3"; \
+	            ${INSTALL_DATA} $$F ${INST_PSDIR}/ps3; \
+		done; \
+	    fi; \
+	fi
+	@if [ "${MAN4}" != "" ]; then \
+	    if [ "${CATMAN4}" = "" ]; then \
+	        for F in ${MAN4}; do \
+	            CAT=`echo $$F | sed 's/.4$$/.cat4/'`; \
+	            PS=`echo $$F | sed 's/.4$$/.ps4/'`; \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man4"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man4; \
+	            echo "${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat4"; \
+	            ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat4; \
+	            echo "${INSTALL_DATA} $$PS ${INST_PSDIR}/ps4"; \
+	            ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps4; \
+	        done; \
+	    else \
+	        for F in ${MAN4}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man4"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man4; \
+		done; \
+	        for F in ${CATMAN4}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat4"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/cat4; \
+		done; \
+	        for F in ${PSMAN4}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps4"; \
+	            ${INSTALL_DATA} $$F ${INST_PSDIR}/ps4; \
+		done; \
+	    fi; \
+	fi
+	@if [ "${MAN5}" != "" ]; then \
+	    if [ "${CATMAN5}" = "" ]; then \
+	        for F in ${MAN5}; do \
+	            CAT=`echo $$F | sed 's/.5$$/.cat5/'`; \
+	            PS=`echo $$F | sed 's/.5$$/.ps5/'`; \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man5"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man5; \
+	            echo "${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat5"; \
+	            ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat5; \
+	            echo "${INSTALL_DATA} $$PS ${INST_PSDIR}/ps5"; \
+	            ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps5; \
+	        done; \
+	    else \
+	        for F in ${MAN5}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man5"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man5; \
+		done; \
+	        for F in ${CATMAN5}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat5"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/cat5; \
+		done; \
+	        for F in ${PSMAN5}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps5"; \
+	            ${INSTALL_DATA} $$F ${INST_PSDIR}/ps5; \
+		done; \
+	    fi; \
+	fi
+	@if [ "${MAN6}" != "" ]; then \
+	    if [ "${CATMAN6}" = "" ]; then \
+	        for F in ${MAN6}; do \
+	            CAT=`echo $$F | sed 's/.6$$/.cat6/'`; \
+	            PS=`echo $$F | sed 's/.6$$/.ps6/'`; \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man6"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man6; \
+	            echo "${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat6"; \
+	            ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat6; \
+	            echo "${INSTALL_DATA} $$PS ${INST_PSDIR}/ps6"; \
+	            ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps6; \
+	        done; \
+	    else \
+	        for F in ${MAN6}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man6"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man6; \
+		done; \
+	        for F in ${CATMAN6}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat6"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/cat6; \
+		done; \
+	        for F in ${PSMAN6}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps6"; \
+	            ${INSTALL_DATA} $$F ${INST_PSDIR}/ps6; \
+		done; \
+	    fi; \
+	fi
+	@if [ "${MAN7}" != "" ]; then \
+	    if [ "${CATMAN7}" = "" ]; then \
+	        for F in ${MAN7}; do \
+	            CAT=`echo $$F | sed 's/.7$$/.cat7/'`; \
+	            PS=`echo $$F | sed 's/.7$$/.ps7/'`; \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man7"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man7; \
+	            echo "${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat7"; \
+	            ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat7; \
+	            echo "${INSTALL_DATA} $$PS ${INST_PSDIR}/ps7"; \
+	            ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps7; \
+	        done; \
+	    else \
+	        for F in ${MAN7}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man7"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man7; \
+		done; \
+	        for F in ${CATMAN7}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat7"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/cat7; \
+		done; \
+	        for F in ${PSMAN7}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps7"; \
+	            ${INSTALL_DATA} $$F ${INST_PSDIR}/ps7; \
+		done; \
+	    fi; \
+	fi
+	@if [ "${MAN8}" != "" ]; then \
+	    if [ "${CATMAN8}" = "" ]; then \
+	        for F in ${MAN8}; do \
+	            CAT=`echo $$F | sed 's/.8$$/.cat8/'`; \
+	            PS=`echo $$F | sed 's/.8$$/.ps8/'`; \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man8"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man8; \
+	            echo "${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat8"; \
+	            ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat8; \
+	            echo "${INSTALL_DATA} $$PS ${INST_PSDIR}/ps8"; \
+	            ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps8; \
+	        done; \
+	    else \
+	        for F in ${MAN8}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man8"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man8; \
+		done; \
+	        for F in ${CATMAN8}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat8"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/cat8; \
+		done; \
+	        for F in ${PSMAN8}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps8"; \
+	            ${INSTALL_DATA} $$F ${INST_PSDIR}/ps8; \
+		done; \
+	    fi; \
+	fi
+	@if [ "${MAN9}" != "" ]; then \
+	    if [ "${CATMAN9}" = "" ]; then \
+	        for F in ${MAN9}; do \
+	            CAT=`echo $$F | sed 's/.9$$/.cat9/'`; \
+	            PS=`echo $$F | sed 's/.9$$/.ps9/'`; \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man9"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man9; \
+	            echo "${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat9"; \
+	            ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat9; \
+	            echo "${INSTALL_DATA} $$PS ${INST_PSDIR}/ps9"; \
+	            ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps9; \
+	        done; \
+	    else \
+	        for F in ${MAN9}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man9"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man9; \
+		done; \
+	        for F in ${CATMAN9}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat9"; \
+	            ${INSTALL_DATA} $$F ${INST_MANDIR}/cat9; \
+		done; \
+	        for F in ${PSMAN9}; do \
+	            echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps9"; \
+	            ${INSTALL_DATA} $$F ${INST_PSDIR}/ps9; \
+		done; \
+	    fi; \
 	fi
 
-deinstall-ps:
-	@if [ "${PSMANS}" != "       " ]; then \
-	    for F in ${PSMAN1}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/ps1/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/ps1/$$F; \
-	    done; \
-	    for F in ${PSMAN2}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/ps2/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/ps2/$$F; \
-	    done; \
-	    for F in ${PSMAN3}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/ps3/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/ps3/$$F; \
-	    done; \
-	    for F in ${PSMAN4}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/ps4/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/ps4/$$F; \
-	    done; \
-	    for F in ${PSMAN5}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/ps5/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/ps5/$$F; \
-	    done; \
-	    for F in ${PSMAN6}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/ps6/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/ps6/$$F; \
-	    done; \
-	    for F in ${PSMAN7}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/ps7/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/ps7/$$F; \
-	    done; \
-	    for F in ${PSMAN8}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/ps8/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/ps8/$$F; \
-	    done; \
-	    for F in ${PSMAN9}; do \
-	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/ps9/$$F"; \
-	        ${DEINSTALL_DATA} ${INST_MANDIR}/ps9/$$F; \
-	    done; \
-	fi
-
-.PHONY: clean clean-man clean-ps install install-man install-ps deinstall deinstall-man deinstall-ps
+.PHONY: clean install deinstall preformat-man clean-man install-man install-man-dirs deinstall-man
 
 include ${TOP}/mk/csoft.common.mk

@@ -1,4 +1,4 @@
-# $Csoft: csoft.lib.mk,v 1.35 2003/12/10 02:21:16 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.36 2003/12/10 02:22:39 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -56,7 +56,7 @@ all: all-subdir lib${LIB}.a lib${LIB}.la
 install: install-lib install-subdir
 deinstall: deinstall-lib deinstall-subdir
 clean: clean-lib clean-subdir
-cleandir: cleandir-lib cleandir-subdir
+cleandir: clean-lib clean-subdir cleandir-lib cleandir-subdir
 regress: regress-subdir
 depend: depend-subdir
 
@@ -220,8 +220,10 @@ clean-lib:
 		    rm -f ${OBJS}; \
 		    echo "rm -f ${OBJS}"; \
 		fi; \
-		echo "rm -f lib${LIB}.la ${LIBTOOL} ${LTCONFIG_LOG} .libs"; \
-		rm -f lib${LIB}.la ${LIBTOOL} ${LTCONFIG_LOG} .libs; \
+		echo "rm -f lib${LIB}.la"; \
+		rm -f lib${LIB}.la; \
+		echo "rm -fR .libs"; \
+		rm -fR .libs; \
 	    fi; \
 	fi
 	@if [ "${CLEANFILES}" != "" ]; then \
@@ -230,7 +232,7 @@ clean-lib:
 	fi
 
 cleandir-lib:
-	rm -fR .libs
+	rm -f ${LIBTOOL} ${LTCONFIG_LOG}
 
 install-lib:
 	@if [ "${INCL}" != "" ]; then \

@@ -8,7 +8,7 @@ if [ "$type" = "" ]; then
 fi
 
 here=`pwd`
-me=vedge.prog.mk
+me=vedge.$type.mk
 
 for D in `find . -type d`; do
     echo "===> $D"
@@ -18,7 +18,7 @@ for D in `find . -type d`; do
 	cat > $D/Makefile << EOF
 # \$Id\$
 
-include .vedge.prog.mk
+include .vedge.$type.mk
 EOF
     fi
 done

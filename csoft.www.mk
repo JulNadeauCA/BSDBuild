@@ -1,4 +1,4 @@
-# $Csoft: csoft.www.mk,v 1.16 2003/09/24 07:49:38 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.17 2003/09/26 11:24:45 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -158,11 +158,11 @@ depend: depend-subdir
 
 clean-www:
 	@for F in ${HTML}; do \
-		echo "rm -f $$F"; \
-		rm -f $$F; \
+		echo "rm -f $$F $$F.var"; \
+		rm -f $$F $$F.var; \
 		for LANG in ${LANGUAGES}; do \
-			echo "rm -f $$F.$$LANG.* $$F.$$LANG $$F.$$LANG.var"; \
-			rm -f $$F.$$LANG.* $$F.$$LANG $$F.$$LANG.var; \
+			echo "rm -f $$F.$$LANG.* $$F.$$LANG"; \
+			rm -f $$F.$$LANG.* $$F.$$LANG; \
 		done; \
 	done
 

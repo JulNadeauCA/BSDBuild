@@ -1,4 +1,4 @@
-# $Csoft: csoft.dep.mk,v 1.15 2003/08/13 03:57:04 vedge Exp $
+# $Csoft: csoft.dep.mk,v 1.16 2004/01/03 04:13:27 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -28,17 +28,27 @@ MKDEP=	sh ${TOP}/mk/mkdep
 CC?=	cc
 
 depend:	${DPADD} depend-subdir
-	@rm -f .depend
+	@echo > .depend
 	@files="${SRCS}"; \
-	 if [ "$$files" != "" ]; then \
-	  if [ "${BUILD}" != "" ]; then \
-	   env CC=${CC} ${MKDEP} -a ${MKDEP} ${CFLAGS} -I${BUILD} \
-	       $$files; \
-	  else \
-	   env CC=${CC} ${MKDEP} -a ${MKDEP} ${CFLAGS} $$files; \
-	  fi; \
-	 fi
+	if [ "$$files" != "" ]; then \
+	    if [ "${BUILD}" != "" ]; then \
+	    	if [ "${LIB}" != "" -a "${LIB_SHARED}" = "Yes" ]; then \
+	   	     env CC=${CC} ${MKDEP} -a -l ${MKDEP} ${CFLAGS} -I${BUILD} \
+	       	         $$files; \
+		else \
+	   	     env CC=${CC} ${MKDEP} -a ${MKDEP} ${CFLAGS} -I${BUILD} \
+	       	         $$files; \
+		fi; \
+	    else \
+	    	if [ "${LIB}" != "" -a "${LIB_SHARED}" = "Yes" ]; then \
+	        	env CC=${CC} ${MKDEP} -a -l ${MKDEP} ${CFLAGS} \
+			    $$files; \
+		else \
+	        	env CC=${CC} ${MKDEP} -a ${MKDEP} ${CFLAGS} $$files; \
+		fi; \
+	    fi; \
+	fi
 
 clean-depend:
-	rm -f .depend
+	echo > .depend
 

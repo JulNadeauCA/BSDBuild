@@ -1,4 +1,4 @@
-# $Csoft: csoft.lib.mk,v 1.13 2002/02/18 02:07:36 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.14 2002/02/18 02:51:21 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -166,7 +166,7 @@ install:	install-subdir lib${LIB}.a lib${LIB}.la
 	fi
 	@if [ "${SHARE}" != "" ]; then \
 	    if [ ! -d "${SHAREDIR}" ]; then \
-	        echo "${INSTALL_DATA} ${SHAREDIR}"; \
+	        echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
 	        ${INSTALL_DATA_DIR} ${SHAREDIR}; \
 	    fi; \
 	    for F in ${SHARE}; do \
@@ -191,10 +191,7 @@ deinstall:	deinstall-subdir
 	        echo "${DEINSTALL_DATA} ${SHAREDIR}/$$F"; \
 	        ${DEINSTALL_DATA} ${SHAREDIR}/$$F; \
 	    done; \
-	    if [ -d "${SHAREDIR}" ]; then \
-	        echo "rmdir ${SHAREDIR}"; \
-	        rmdir ${SHAREDIR}; \
-	    fi
+	fi
 
 ${LIBTOOL}:	${LTCONFIG} ${LTMAIN_SH} ${LTCONFIG_GUESS} ${LTCONFIG_SUB}
 	@if [ "${LIB}" != "" -a "${SHARED}" = "Yes" ]; then \

@@ -1,4 +1,4 @@
-# $Csoft: csoft.prog.mk,v 1.16 2002/02/18 02:07:36 vedge Exp $
+# $Csoft: csoft.prog.mk,v 1.17 2002/02/18 02:51:21 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -159,7 +159,7 @@ install: install-subdir ${PROG}
 	fi
 	@if [ "${SHARE}" != "" ]; then \
 	    if [ ! -d "${SHAREDIR}" ]; then \
-	        echo "${INSTALL_DATA} ${SHAREDIR}"; \
+	        echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
 	        ${INSTALL_DATA_DIR} ${SHAREDIR}; \
 	    fi; \
 	    for F in ${SHARE}; do \
@@ -170,18 +170,14 @@ install: install-subdir ${PROG}
 
 deinstall: deinstall-subdir
 	@if [ "${PROG}" != "" -a "${PROG_INSTALL}" != "No" ]; then \
-	    echo "${DEINSTALL_PROG} ${INST_BINDIR}"; \
-	    ${DEINSTALL_PROG} ${INST_BINDIR}; \
+	    echo "${DEINSTALL_PROG} ${INST_BINDIR}/${PROG}"; \
+	    ${DEINSTALL_PROG} ${INST_BINDIR}/${PROG}; \
 	fi
 	@if [ "${SHARE}" != "" ]; then \
 	    for F in ${SHARE}; do \
 	        echo "${DEINSTALL_DATA} ${SHAREDIR}/$$F"; \
 	        ${DEINSTALL_DATA} ${SHAREDIR}/$$F; \
 	    done; \
-	    if [ -d "${SHAREDIR}" ]; then \
-	        echo "rmdir ${SHAREDIR}"; \
-	        rmdir ${SHAREDIR}; \
-	    fi; \
 	fi
 
 regress: regress-subdir

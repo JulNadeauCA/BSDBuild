@@ -1,4 +1,4 @@
-# $Csoft: csoft.man.mk,v 1.23 2003/08/26 03:22:33 vedge Exp $
+# $Csoft: csoft.man.mk,v 1.24 2003/09/22 02:15:04 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -25,10 +25,15 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 NROFF?=	nroff
-
 MANS=	${MAN1} ${MAN2} ${MAN3} ${MAN4} ${MAN5} ${MAN6} ${MAN7} ${MAN8} ${MAN9}
-CATMANS=${CATMAN1} ${CATMAN2} ${CATMAN3} ${CATMAN4} ${CATMAN5} ${CATMAN6} ${CATMAN7} ${CATMAN8} ${CATMAN9}
-PSMANS=	${PSMAN1} ${PSMAN2} ${PSMAN3} ${PSMAN4} ${PSMAN5} ${PSMAN6} ${PSMAN7} ${PSMAN8} ${PSMAN9}
+
+all: all-subdir preformat-man
+install: install-man install-subdir
+deinstall: deinstall-subdir
+clean: clean-man clean-subdir
+cleandir: cleandir-man cleandir-subdir
+regress: regress-subdir
+depend: depend-subdir
 
 .SUFFIXES: .1 .2 .3 .4 .5 .6 .7 .8 .9 .cat1 .cat2 .cat3 .cat4 .cat5 .cat6 .cat7 .cat8 .cat9 .ps1 .ps2 .ps3 .ps4 .ps5 .ps6 .ps7 .ps8 .ps9
 
@@ -148,14 +153,6 @@ preformat-man:
 	        ${MAKE} ${CATMAN9} ${PSMAN9}; \
 	    fi; \
 	fi
-
-all: preformat-man
-
-clean: clean-man
-
-install: install-man
-
-deinstall: deinstall-man
 
 clean-man:
 	@if [ "${MAN1}" != "" ]; then \
@@ -378,7 +375,7 @@ install-man-dirs:
 	    fi; \
 	fi
 
-install-man: preformat-man install-man-dirs
+install-man:
 	@if [ "${MAN1}" != "" ]; then \
 	    if [ "${CATMAN1}" = "" ]; then \
 	        for F in ${MAN1}; do \
@@ -632,6 +629,8 @@ man:
 		exit 1; \
 	fi
 
-.PHONY: clean install deinstall preformat-man clean-man install-man install-man-dirs deinstall-man man
+.PHONY: install deinstall clean cleandir regress depend
+.PHONY: install-man clean-man cleandir-man
+.PHONY: man performat-man install-man-dirs
 
 include ${TOP}/mk/csoft.common.mk

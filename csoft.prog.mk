@@ -1,4 +1,4 @@
-# $Csoft: csoft.prog.mk,v 1.29 2003/08/12 23:19:21 vedge Exp $
+# $Csoft: csoft.prog.mk,v 1.30 2003/08/13 03:57:04 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -25,45 +25,47 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 CFLAGS?=	-Wall -g
-
 PROG_INSTALL?=	Yes
-
 CC?=		cc
 CFLAGS?=	-O2
 CPPFLAGS?=
 GMONOUT?=	gmon.out
-
 ASM?=		nasm
 ASMFLAGS?=	-g -w-orphan-labels
-
 LEX?=		lex
 LIBL?=		-ll
 LFLAGS?=
-
 YACC?=		yacc
 YFLAGS?=	-d
-
 SHARE?=
+
+all: all-subdir ${PROG}
+install: install-prog install-subdir
+deinstall: deinstall-prog deinstall-subdir
+clean: clean-prog clean-subdir
+cleandir: cleandir-prog clean-subdir
+regress: regress-subdir
+depend: depend-subdir
 
 .SUFFIXES: .o .po .c .cc .asm .l .y
 
-# C
+# Compile C code into an object file
 .c.o:
 	${CC} ${CFLAGS} ${CPPFLAGS} -c $<
 .c.po:
 	${CC} -pg -DPROF ${CFLAGS} ${CPPFLAGS} -o $@ -c $<
 
-# C++
+# Compile C++ code into an object file
 .cc.o:
 	${CXX} ${CXXFLAGS} ${CPPFLAGS} -c $<
 .cc.po:
 	${CXX} -pg -DPROF ${CXXFLAGS} ${CPPFLAGS} -o $@ -c $<
 
-# Assembly
+# Compile assembly code into an object file
 .asm.o:
 	${ASM} ${ASMFLAGS} ${CPPFLAGS} -o $@ $<
 
-# Lex
+# Compile a Lex lexer into an object file
 .l:
 	${LEX} ${LFLAGS} -o$@.yy.c $<
 	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $@.yy.c ${LIBL} ${LIBS}
@@ -79,7 +81,7 @@ SHARE?=
 	@mv -f $@.yy.o $@
 	@rm -f $@.yy.c
 
-# Yacc
+# Compile a Yacc parser into an object file
 .y:
 	${YACC} ${YFLAGS} -b $@ $<
 	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $@.tab.c ${LIBS}
@@ -95,8 +97,7 @@ SHARE?=
 	@mv -f $@.tab.o $@
 	@rm -f $@.tab.c
 
-all: all-subdir ${PROG}
-
+# Build the program's object files.
 _prog_objs:
 	@if [ "${PROG}" != "" -a "${OBJS}" = "" ]; then \
 	    for F in ${SRCS}; do \
@@ -107,6 +108,7 @@ _prog_objs:
 	    done; \
 	fi
 
+# Build profiled versions of the program's object files.
 _prog_pobjs:
 	@if [ "${GMONOUT}" != "" -a "${POBJS}" = "" ]; then \
 	    for F in ${SRCS}; do \
@@ -117,6 +119,7 @@ _prog_pobjs:
 	    done; \
 	fi
 
+# Compile and link the program
 ${PROG}: _prog_objs ${OBJS}
 	@if [ "${PROG}" != "" ]; then \
 	    if [ "${OBJS}" = "" ]; then \
@@ -135,6 +138,7 @@ ${PROG}: _prog_objs ${OBJS}
 	    fi; \
 	fi
 
+# Compile and link a profiled version of the program
 ${GMONOUT}: _prog_pobjs ${POBJS}
 	if [ "${GMONOUT}" != "" ]; then \
 	    if [ "${OBJS}" = "" ]; then \
@@ -155,7 +159,7 @@ ${GMONOUT}: _prog_pobjs ${POBJS}
 	    fi; \
 	fi
 
-clean: clean-subdir
+clean-prog:
 	@if [ "${PROG}" != "" ]; then \
 	    if [ "${OBJS}" = "" ]; then \
                 for F in ${SRCS}; do \
@@ -189,10 +193,10 @@ clean: clean-subdir
 	    rm -f ${CLEANFILES}; \
 	fi
 
-cleandir: clean cleandir-subdir clean-depend
+cleandir-prog:
 	rm -f *.core *~
 
-install: install-subdir ${PROG}
+install-prog:
 	@if [ "${PROG}" != "" -a "${PROG_INSTALL}" != "No" ]; then \
 	    echo "${INSTALL_PROG} ${PROG} ${INST_BINDIR}"; \
 	    ${INSTALL_PROG} ${PROG} ${INST_BINDIR}; \
@@ -209,7 +213,7 @@ install: install-subdir ${PROG}
             done; \
 	fi
 
-deinstall: deinstall-subdir
+deinstall-prog:
 	@if [ "${PROG}" != "" -a "${PROG_INSTALL}" != "No" ]; then \
 	    echo "${DEINSTALL_PROG} ${INST_BINDIR}/${PROG}"; \
 	    ${DEINSTALL_PROG} ${INST_BINDIR}/${PROG}; \
@@ -221,11 +225,9 @@ deinstall: deinstall-subdir
 	    done; \
 	fi
 
-regress: regress-subdir
-
-depend: depend-subdir
-
-.PHONY: clean cleandir install deinstall regress depend _prog_objs _prog_pobjs
+.PHONY: install deinstall clean cleandir regress depend
+.PHONY: install-prog deinstall-prog clean-prog cleandir-prog
+.PHONY: _prog_objs _prog_pobjs
 
 include ${TOP}/mk/csoft.common.mk
 include ${TOP}/mk/csoft.dep.mk

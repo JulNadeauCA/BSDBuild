@@ -1,4 +1,4 @@
-# $Csoft: csoft.subdir.mk,v 1.17 2002/11/28 07:14:28 vedge Exp $
+# $Csoft: csoft.subdir.mk,v 1.18 2003/03/05 16:13:09 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -139,5 +139,6 @@ regress-subdir:
 		done; \
 	fi)
 
-.PHONY:	all-subdir clean-subdir cleandir-subdir install-subdir deinstall-subdir  depend-subdir regress-subdir
+.PHONY:	all-subdir clean-subdir cleandir-subdir
+.PHONY: install-subdir deinstall-subdir depend-subdir regress-subdir
 

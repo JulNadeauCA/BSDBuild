@@ -1,4 +1,4 @@
-# $Csoft: csoft.www.mk,v 1.14 2003/06/21 23:25:01 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.15 2003/06/25 02:49:40 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -23,15 +23,15 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-DOCROOT?=	./docroot
 M4?=		m4
 XSLTPROC?=	xsltproc
 PERL?=		perl
-
-BASEDIR?=	${TOP}/base
+BASEDIR?=	m4
 TEMPLATE?=	csoft
 LANGUAGES?=	en fr
-MLXSL?=		${TOP}/xsl/ml.xsl
+XSL?=		xsl/ml.xsl
+MKDEPS=		csoft.www.mk csoft.subdir.mk csoft.common.mk hstrip.pl
+HTMLDIR?=	none
 
 .SUFFIXES: .html .htm .jpg .jpeg .png .gif .m4
 
@@ -43,7 +43,7 @@ MLXSL?=		${TOP}/xsl/ml.xsl
 	    ${M4} -D__BASE_DIR=${BASEDIR} -D__FILE=$@ -D__LANG=$$LANG \
 	        ${BASEDIR}/${TEMPLATE}.m4 \
 		| ${PERL} ${TOP}/mk/hstrip.pl > $@.$$LANG.prep; \
-            ${XSLTPROC} --html --nonet --stringparam lang $$LANG ${MLXSL} \
+            ${XSLTPROC} --html --nonet --stringparam lang $$LANG ${XSL} \
 	        $@.$$LANG.prep > $@.$$LANG 2>/dev/null; \
 	    rm -f $@.$$LANG.prep; \
 	done; \
@@ -52,29 +52,124 @@ MLXSL?=		${TOP}/xsl/ml.xsl
 
 all: ${HTML} all-subdir
 
-clean: clean-subdir
+clean: clean-www clean-subdir
+
+install: install-www install-subdir
+
+deinstall: deinstall-www deinstall-subdir
+
+depend: depend-subdir
+
+clean-www:
 	@for F in ${HTML}; do \
+		echo "rm -f $$F"; \
 		rm -f $$F; \
 		for LANG in ${LANGUAGES}; do \
+			echo "rm -f $$F.$$LANG"; \
 			rm -f $$F.$$LANG; \
 		done; \
 	done
 
-cleandir: cleandir-subdir
-	rm -f *~
-
-depend: depend-subdir
-
-install: install-subdir ${HTML}
-	@if [ "${HTML}" != "" ]; then \
-	    echo "${INSTALL_DATA} ${HTML} ${DOCROOT}"; \
-	    ${INSTALL_DATA} ${HTML} ${DOCROOT}; \
+install-www: ${HTML}
+	@if [ "${HTMLDIR}" = "none" ]; then \
+		exit 0; \
 	fi
-	
-deinstall: deinstall-subdir
 	@for F in ${HTML}; do \
-	    echo "rm -f ${DOCROOT}/${TEMPLATE}"; \
-	    rm -f ${DOCROOT}/${TEMPLATE}; \
+		rm -f $$F; \
+        	if [ ! -d "${HTMLDIR}" ]; then \
+			echo "${INSTALL_DATA_DIR} ${HTMLDIR}"; \
+			${INSTALL_DATA_DIR} ${HTMLDIR}; \
+		fi; \
+        	if [ ! -d "${HTMLDIR}/mk" ]; then \
+			echo "${INSTALL_DATA_DIR} ${HTMLDIR}/mk"; \
+			${INSTALL_DATA_DIR} ${HTMLDIR}/mk; \
+		fi; \
+		for MK in ${MKDEPS}; do \
+			echo "${INSTALL_DATA} ${TOP}/mk/$$MK ${HTMLDIR}/mk"; \
+			${INSTALL_DATA} ${TOP}/mk/$$MK ${HTMLDIR}/mk; \
+		done; \
+        	if [ ! -d "${HTMLDIR}/xsl" ]; then \
+			echo "${INSTALL_DATA_DIR} ${HTMLDIR}/xsl"; \
+			${INSTALL_DATA_DIR} ${HTMLDIR}/xsl; \
+		fi; \
+		for XSL in ${XSL}; do \
+			if [ -e ${HTMLDIR}/xsl/$$XSL ]; then \
+				echo "xsl/$$XSL: exists; preserving"; \
+			else \
+				echo "${INSTALL_DATA} $$XSL ${HTMLDIR}/xsl"; \
+				${INSTALL_DATA} $$XSL ${HTMLDIR}/xsl; \
+			fi; \
+		done; \
+        	if [ ! -d "${HTMLDIR}/m4" ]; then \
+			echo "${INSTALL_DATA_DIR} ${HTMLDIR}/m4"; \
+			${INSTALL_DATA_DIR} ${HTMLDIR}/m4; \
+		fi; \
+		(cd m4; for M4IN in `ls -1 *.m4`; do \
+			if [ -e ${HTMLDIR}/m4/$$M4IN ]; then \
+				echo "m4/$$M4IN: exists; preserving"; \
+			else \
+				echo "${INSTALL_DATA} $$M4IN ${HTMLDIR}/m4"; \
+				${INSTALL_DATA} $$M4IN ${HTMLDIR}/m4; \
+			fi; \
+		done); \
+		if [ ! -e "${HTMLDIR}/Makefile" ]; then \
+			echo "${INSTALL_DATA} /dev/null ${HTMLDIR}/Makefile"; \
+			${INSTALL_DATA} /dev/null ${HTMLDIR}/Makefile; \
+			echo "TOP=." > ${HTMLDIR}/Makefile; \
+			echo "HTML=${HTML}" >> ${HTMLDIR}/Makefile; \
+			echo "HTMLDIR=none" >> ${HTMLDIR}/Makefile; \
+			echo "M4=${M4}" >> ${HTMLDIR}/Makefile; \
+			echo "XSLTPROC=${XSLTPROC}" >> ${HTMLDIR}/Makefile; \
+			echo "PERL=${PERL}" >> ${HTMLDIR}/Makefile; \
+			echo "BASEDIR=${BASEDIR}" >> ${HTMLDIR}/Makefile; \
+			echo "TEMPLATE=${TEMPLATE}" >> ${HTMLDIR}/Makefile; \
+			echo "LANGUAGES=${LANGUAGES}" >> ${HTMLDIR}/Makefile; \
+			echo "XSL=${XSL}" >> ${HTMLDIR}/Makefile; \
+			echo "include mk/csoft.www.mk" >> ${HTMLDIR}/Makefile; \
+		fi; \
+		export SF=`echo $$F |sed s,.html$$,.htm,`; \
+		if [ -e "${HTMLDIR}/$$SF" ]; then \
+			echo "$$SF exists; preserving"; \
+		else \
+			echo "${INSTALL_DATA} $$SF ${HTMLDIR}"; \
+			${INSTALL_DATA} $$SF ${HTMLDIR}; \
+		fi; \
+		for LANG in ${LANGUAGES}; do \
+			if [ -e "${HTMLDIR}/$$F.$$LANG" ]; then \
+				echo "$$F.$$LANG exists; preserving"; \
+			else \
+				echo "${INSTALL_DATA} $$F.$$LANG ${HTMLDIR}"; \
+				${INSTALL_DATA} $$F.$$LANG ${HTMLDIR}; \
+			fi; \
+		done; \
+	done
+
+deinstall-www:
+	@if [ "${HTMLDIR}" = "none" ]; then \
+		exit 0; \
+	fi
+	for F in ${HTML}; do \
+		echo "${DEINSTALL_DATA} ${HTMLDIR}/Makefile"; \
+		${DEINSTALL_DATA} ${HTMLDIR}/Makefile; \
+		echo "${DEINSTALL_DATA} ${HTMLDIR}/$$F"; \
+		${DEINSTALL_DATA} ${HTMLDIR}/$$F; \
+		export SF=`echo $$F |sed s,.html$$,.htm,`; \
+		echo "${DEINSTALL_DATA} ${HTMLDIR}/$$SF"; \
+		${DEINSTALL_DATA} ${HTMLDIR}/$$SF; \
+		for LANG in ${LANGUAGES}; do \
+			echo "${DEINSTALL_DATA} ${HTMLDIR}/$$F.$$LANG";\
+			${DEINSTALL_DATA} ${HTMLDIR}/$$F.$$LANG; \
+		done; \
+		for MK in ${MKDEPS}; do \
+			echo "${INSTALL_DATA} ${HTMLDIR}/mk/$$MK"; \
+			${DEINSTALL_DATA} ${HTMLDIR}/mk/$$MK; \
+		done; \
+		for XSL in ${XSL}; do \
+			echo "${DEINSTALL_DATA} ${HTMLDIR}/xsl/$$XSL"; \
+			${DEINSTALL_DATA} ${HTMLDIR}/xsl/$$XSL; \
+		done; \
+		${DEINSTALL_DATA_DIR} ${HTMLDIR}/mk; \
+		${DEINSTALL_DATA_DIR} ${HTMLDIR}/xsl; \
 	done
 
 regress: regress-subdir
@@ -82,4 +177,4 @@ regress: regress-subdir
 include ${TOP}/mk/csoft.common.mk
 include ${TOP}/mk/csoft.subdir.mk
 
-.PHONY: clean cleandir depend install deinstall regress
+.PHONY: clean depend install deinstall clean-www install-www deinstall-www

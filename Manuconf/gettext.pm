@@ -1,4 +1,4 @@
-# $Csoft: gettext.pm,v 1.2 2003/07/26 20:33:33 vedge Exp $
+# $Csoft: gettext.pm,v 1.3 2003/07/26 20:42:51 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2003 CubeSoft Communications, Inc.
@@ -48,7 +48,8 @@ EOF
 	print
 		Cond('"${HAVE_GETTEXT}" != ""',
 		MKSave('GETTEXT_CFLAGS') .
-		MKSave('GETTEXT_LIBS'),
+		MKSave('GETTEXT_LIBS') .
+		MKSave('HAVE_GETTEXT'),
 		Nothing());
 }
 

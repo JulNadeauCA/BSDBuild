@@ -1,4 +1,4 @@
-# $Csoft: csoft.po.mk,v 1.8 2003/08/13 03:57:04 vedge Exp $
+# $Csoft: csoft.po.mk,v 1.9 2003/08/26 06:10:29 vedge Exp $
 
 # Copyright (c) 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -132,6 +132,19 @@ deinstall:
             done; \
 	fi
 
-.PHONY: ${POTFILES}
+count:
+	@for F in ${POS}; do \
+		echo -n "$$F: "; \
+		cat $$F |grep "^msgid " |cut -c 7- |\
+		    perl -pe '!s/^\"(.*)\"/$$1/' | \
+		    perl -pe '!s/<.+>//g' | \
+		    perl -pe '!s/\\n//g' | \
+		    perl -pe '!s/&(lt|gt|nbsp|copy);//g' | \
+		    perl -pe '!s/`%[diouxXDOUeEfgGcspn]'\''/$$1/g' | \
+		    perl -pe '!s/%[diouxXDOUeEfgGcspn]/$$1/g' | \
+		    wc -w; \
+	done
+
+.PHONY: ${POTFILES} count
 
 include ${TOP}/mk/csoft.common.mk

@@ -1,4 +1,4 @@
-# $Csoft$
+# $Csoft: mkify.pl,v 1.1 2001/12/01 03:29:39 vedge Exp $
 
 sub MKCopy;
 
@@ -51,6 +51,7 @@ BEGIN
 	}
 
 	foreach my $f (@ARGV) {
+		$f = join('.', 'csoft', $f, 'mk');
 		my $src = $f;
 		my $dest = join('/', $mk, $f);
 

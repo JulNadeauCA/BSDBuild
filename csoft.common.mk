@@ -1,4 +1,4 @@
-# $Csoft: csoft.common.mk,v 1.11 2002/02/25 08:51:03 vedge Exp $
+# $Csoft: csoft.common.mk,v 1.12 2002/05/10 22:41:48 vedge Exp $
 
 # Copyright (c) 2001, 2002 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -26,7 +26,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-VERSION=1.3
+VERSION=1.4
 
 PREFIX?=		/usr/local
 INSTALL_PROG=		install -c -m 755

@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.22 2002/08/23 10:28:40 vedge Exp $
+# $Csoft: manuconf.pl,v 1.23 2002/09/06 00:54:00 vedge Exp $
 #
 # Copyright (c) 2001, 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
 # All rights reserved.
@@ -125,69 +125,67 @@ EOF
 
 echo > config.log
 
-mc_optarg=
-for mc_arg; do
-	case "$mc_arg" in
+optarg=
+for arg; do
+	case "$arg" in
 	-*=*)
-	    mc_optarg=`echo "$mc_arg" | sed 's/[-_a-zA-Z0-9]*=//'`
+	    optarg=`echo "$arg" | sed 's/[-_a-zA-Z0-9]*=//'`
 	    ;;
 	*)
-	    mc_optarg=
+	    optarg=
 	    ;;
 	esac
-	case "$mc_arg" in
+
+	case "$arg" in
 	--prefix=*)
-	    mc_prefix=$mc_optarg
+	    prefix=$optarg
 	    ;;
 	--enable-*)
-	    mc_option=`echo $mc_arg | sed -e 's/--enable-//' -e 's/=.*//'`
-	    mc_option=`echo $mc_option | sed 's/-/_/g'`
-	    case "$mc_option" in
+	    option=`echo $arg | sed -e 's/--enable-//' -e 's/=.*//'`
+	    option=`echo $option | sed 's/-/_/g'`
+	    case "$option" in
 	        *=*)
-	            eval "enable_${mc_option}='$mc_optarg'"
+	            eval "enable_${option}='$optarg'"
 		    ;;
 		*)
-	            eval "enable_${mc_option}=yes"
+	            eval "enable_${option}=yes"
 		    ;;
 	    esac
 	    ;;
 	--disable-*)
-	    mc_option=`echo $mc_arg | sed -e 's/--disable-//'`;
-	    mc_option=`echo $mc_option | sed 's/-/_/g'`
-	    eval "enable_${mc_option}=no"
+	    option=`echo $arg | sed -e 's/--disable-//'`;
+	    option=`echo $option | sed 's/-/_/g'`
+	    eval "enable_${option}=no"
 	    ;;
 	--with-*)
-	    mc_option=`echo $mc_arg | sed -e 's/--with-//' -e 's/=.*//'`
-	    mc_option=`echo $mc_option | sed 's/-/_/g'`
-	    case "$mc_option" in
+	    option=`echo $arg | sed -e 's/--with-//' -e 's/=.*//'`
+	    option=`echo $option | sed 's/-/_/g'`
+	    case "$option" in
 	        *=*)
-	            eval "with_${mc_option}='$mc_optarg'"
+	            eval "with_${option}='$optarg'"
 		    ;;
 		*)
-	            eval "with_${mc_option}=yes"
+	            eval "with_${option}=yes"
 		    ;;
 	    esac
 	    ;;
 	--without-*)
-	    mc_option=`echo $mc_arg | sed -e 's/--without-//'`;
-	    mc_option=`echo $mc_option | sed 's/-/_/g'`
-	    eval "with_${mc_option}=no"
+	    option=`echo $arg | sed -e 's/--without-//'`;
+	    option=`echo $option | sed 's/-/_/g'`
+	    eval "with_${option}=no"
 	    ;;
 	--help)
 	    help=yes
 	    ;;
-	--version)
-	    version=yes
-	    ;;
 	*)
-	    echo "invalid argument: $mc_arg"
+	    echo "invalid argument: $arg"
 	    echo "try ./configure --help"
 	    exit 1
 	    ;;
 	esac
 done
-if [ "${mc_prefix}" != "" ]; then
-    PREFIX=$mc_prefix
+if [ "${prefix}" != "" ]; then
+    PREFIX=$prefix
 else
     PREFIX=/usr/local
 fi
@@ -237,8 +235,6 @@ EOF
 				    Register(@args);
 				} elsif ($1 eq 'help') {
 				    Help(@args);
-				} elsif ($1 eq 'version') {
-				    Version(@args);
 				} elsif ($1 eq 'makeout') {
 				    $CONF{'makeout'} = $args[0];
 				    print "echo >$CONF{'makeout'}\n";

@@ -1,4 +1,4 @@
-# $Csoft: Core.pm,v 1.7 2002/09/06 00:56:51 vedge Exp $
+# $Csoft: Core.pm,v 1.8 2002/11/27 04:52:22 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -30,10 +30,11 @@ sub Obtain
 
 	return << "EOF"
 $define=""
-which="`which $bin`"
-if [ -n "\$which" -a -x "\$which" ]; then
-	$define=`\${which} $args`
-fi
+for path in `echo \$PATH | sed 's/:/ /g'`; do
+	if [ -x "\${path}/$bin" ]; then
+		$define=`\${path}/$bin $args`
+	fi
+done
 EOF
 }
 

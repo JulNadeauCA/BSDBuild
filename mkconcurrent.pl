@@ -37,6 +37,9 @@ sub ConvertMakefile
 		}
 	}
 
+	print DSTMAKEFILE "SRC=$SRC\n";
+	print DSTMAKEFILE "BUILD=$BUILD\n";
+
 	my @deps = ();
 
 	foreach $_ (@lines) {
@@ -61,7 +64,8 @@ sub ConvertMakefile
 				push @deps, "$obj: $SRC/$ndir/$objsrc";
 				if ($type eq 'OBJS') {			# C
 					push @deps, << 'EOF';
-	${CC} ${CFLAGS} -I`pwd` ${CPPFLAGS} -c $<
+	@echo "${CC} ${CFLAGS} ${CPPFLAGS}" -c $<
+	@${CC} ${CFLAGS} -I`pwd` -I${BUILD} ${CPPFLAGS} -c $<
 EOF
 				} elsif ($type =~ /CATMAN\d/) {		# Nroff
 					push @deps, << 'EOF';

@@ -1,4 +1,4 @@
-# $Csoft: csoft.www.mk,v 1.22 2003/09/27 23:21:20 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.23 2003/09/28 17:34:24 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -59,7 +59,18 @@ depend: depend-subdir
 	        $@.$$LANG.prep > $@.$$LANG.utf8 2>/dev/null; \
 	    rm -f $@.$$LANG.prep; \
 	    case "$$LANG" in \
-	    ab|af|eu|ca|da|nl|en|fo|fr|fi|de|is|ga|it|no|nb|nn|pt|rm|gd|es|sv|sw) \
+	    en) \
+	        echo "URI: $@.$$LANG" >> $@.var; \
+	        echo "Content-language: $$LANG" >> $@.var; \
+	        echo "Content-type: text/html" >> $@.var; \
+	        echo "" >> $@.var; \
+	        cat $@.$$LANG.utf8 | \
+		    sed s/charset=UTF-8/charset=ISO-8859-1/ | \
+		    ${ICONV} -f UTF-8 -t ISO-8859-1 > \
+		    $@.$$LANG; \
+		rm -f $@.$$LANG.utf8; \
+	        ;; \
+	    ab|af|eu|ca|da|nl|fo|fr|fi|de|is|ga|it|no|nb|nn|pt|rm|gd|es|sv|sw) \
 	        echo "URI: $@.$$LANG.utf8" >> $@.var; \
 	        echo "Content-language: $$LANG" >> $@.var; \
 	        echo "Content-type: text/html;encoding=UTF-8" >> $@.var; \
@@ -68,13 +79,14 @@ depend: depend-subdir
 	        echo "Content-language: $$LANG" >> $@.var; \
 	        echo "Content-type: text/html;charset=ISO-8859-1" >> $@.var; \
 	        echo "" >> $@.var; \
-	        cat $@.$$LANG.utf8 | sed s/charset=UTF-8/charset=ISO-8859-1/ | \
+	        cat $@.$$LANG.utf8 | \
+		    sed s/charset=UTF-8/charset=ISO-8859-1/ | \
 		    ${ICONV} -f UTF-8 -t ISO-8859-1 > \
 		    $@.$$LANG.iso8859-1; \
 		cp -f $@.$$LANG.iso8859-1 $@.$$LANG \
-		;; \
+	        ;; \
 	    *) \
-		;; \
+	        ;; \
 	    esac; \
 	    echo >> $@.var; \
 	done; \
@@ -160,6 +172,13 @@ install-www:
 			echo "${INSTALL_DATA} $$SF ${HTMLDIR}"; \
 			${SUDO} ${INSTALL_DATA} $$SF ${HTMLDIR}; \
 		fi; \
+		if [ -e "${HTMLDIR}/$$F.var" \
+		     -a "${OVERWRITE}" = "" ]; then \
+			echo "$$F.var exists; preserving"; \
+		else \
+			echo "${INSTALL_DATA} $$F.var ${HTMLDIR}"; \
+			${SUDO} ${INSTALL_DATA} $$F.var ${HTMLDIR}; \
+		fi; \
 		for LANG in ${LANGUAGES}; do \
 			if [ -e "${HTMLDIR}/$$F.$$LANG" \
 			     -a "${OVERWRITE}" = "" ]; then \
@@ -168,15 +187,15 @@ install-www:
 				echo "${INSTALL_DATA} $$F.$$LANG ${HTMLDIR}"; \
 				${SUDO} ${INSTALL_DATA} $$F.$$LANG ${HTMLDIR}; \
 			fi; \
-			if [ -e "${HTMLDIR}/$$F.$$LANG.utf8" \
-			     -a "${OVERWRITE}" = "" ]; then \
-				echo "$$F.$$LANG.utf8 exists; preserving"; \
-			else \
-				echo "${INSTALL_DATA} $$F.$$LANG.utf8 \
-				    ${HTMLDIR}"; \
-				${SUDO} ${INSTALL_DATA} $$F.$$LANG.utf8 \
-				    ${HTMLDIR}; \
-			fi; \
+			for ENC in `ls -1 $$F.$$LANG.*`; do \
+			    if [ -e "${HTMLDIR}/$$ENC" \
+			         -a "${OVERWRITE}" = "" ]; then \
+				    echo "$$ENC exists; preserving"; \
+			    else \
+				    echo "${INSTALL_DATA} $$ENC ${HTMLDIR}"; \
+				    ${SUDO} ${INSTALL_DATA} $$ENC ${HTMLDIR}; \
+			    fi; \
+			done; \
 		done; \
 	done
 

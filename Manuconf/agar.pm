@@ -1,4 +1,4 @@
-# $Csoft: agar.pm,v 1.2 2004/03/10 16:33:36 vedge Exp $
+# $Csoft: agar.pm,v 1.3 2004/04/26 02:57:28 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2004 CubeSoft Communications, Inc.
@@ -57,8 +57,8 @@ static struct engine_proginfo info = { "test", "Test", "", "1.0" };
 int
 main(int argc, char *argv[])
 {
-	engine_preinit(argc, argv, &info, ENGINE_INIT_GFX);
-	engine_postinit();
+	engine_preinit(argc, argv, &info, 0);
+	engine_postinit(GFX_ENGINE_GUI, TEXT_ENGINE_TTF);
 	event_loop();
 	engine_destroy();
 	return (0);

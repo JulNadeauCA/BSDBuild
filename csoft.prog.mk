@@ -1,4 +1,4 @@
-# $Csoft: csoft.prog.mk,v 1.1 2001/10/09 04:50:31 vedge Exp $
+# $Csoft: csoft.prog.mk,v 1.2 2001/10/30 07:18:11 vedge Exp $
 
 TYPE=		prog
 
@@ -47,12 +47,15 @@ clean: clean-subdir
 
 install: install-subdir $(PROG)
 	@if [ "$(PROG)" != "" ]; then \
+	    echo "$(INSTALL) $(INSTALL_COPY) $(INSTALL_STRIP) \
+	    $(BINOWN) $(BINGRP) -m $(BINMODE) $(PROG) $(PREFIX)/bin"; \
 	    $(INSTALL) $(INSTALL_COPY) $(INSTALL_STRIP) \
 	    $(BINOWN) $(BINGRP) -m $(BINMODE) $(PROG) $(PREFIX)/bin; \
 	fi
 	
 uninstall: uninstall-subdir
 	@if [ "$(PROG)" != "" ]; then \
+	    echo "rm -f $(PROG) $(PREFIX)/bin"; \
 	    rm -f $(PROG) $(PREFIX)/bin; \
 	fi
 

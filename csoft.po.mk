@@ -1,4 +1,4 @@
-# $Csoft: csoft.po.mk,v 1.16 2004/10/01 03:40:30 vedge Exp $
+# $Csoft: csoft.po.mk,v 1.9 2004/10/19 16:06:59 vedge Exp $
 
 # Copyright (c) 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -84,7 +84,7 @@ ${DOMAIN}.pot: ${POTFILES}
 		    --files-from=${POTFILES} \
 		    ${XGETTEXT_FLAGS} -o $@" != 0 ]; then \
 			echo "skipping $@ (xgettext failed); "; \
-		fi
+		fi; \
 	else \
 		echo "skipping $@ (no gettext)"; \
 	fi

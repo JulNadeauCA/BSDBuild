@@ -20,3 +20,8 @@ It takes the type of package an an argument, one of:
 The vedge-mk library should be installed as ./mk in the top-level
 build directory, you don't need to bundle ./mk with your package.
 
+The www library looks for a M4 template in $(BASE)/html.m4, $(BASE)
+defaulting to ./base. The M4 template includes base.htm. The files
+.htm are converted to .html, the .htm files being M4 files defining
+_TITLE_ and _CONTENT_. The quotes default to `{' and `}'.
+

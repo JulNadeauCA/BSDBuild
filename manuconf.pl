@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.19 2002/07/27 06:33:57 vedge Exp $
+# $Csoft: manuconf.pl,v 1.20 2002/07/29 03:42:40 vedge Exp $
 #
 # Copyright (c) 2001, 2002 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -42,8 +42,8 @@ sub MDefine
 	my ($def, $val) = @_;
 
 	print
-	    SHDefine($def, $val) .
-	    SHMKSave($def);
+	    Define($def, $val) .
+	    MKSave($def);
 }
 
 sub HDefine
@@ -51,8 +51,8 @@ sub HDefine
 	my ($def, $val) = @_;
 
 	print
-	    SHDefine($def, $val) .
-	    SHHSave($def);
+	    Define($def, $val) .
+	    HSave($def);
 }
 
 sub Register
@@ -196,7 +196,7 @@ else
     PREFIX=/usr/local
 fi
 EOF
-	print SHObtain('pwd', '', 'S');
+	print Obtain('pwd', '', 'S');
 	while (<STDIN>) {
 		chop;
 		if (/^#/) {
@@ -213,7 +213,6 @@ EOF
 				$REQUIRE = 0;
 				if ($1 eq 'check' or $1 eq 'require') {
 					my $app = shift(@args);
-					my $req = 0;
 					my $mod =
 					  "$INSTALLDIR/Manuconf/${app}.pm";
 					
@@ -227,15 +226,13 @@ EOF
 						exit (1);
 					}
 					my $c = $TESTS{$app};
+					die "missing test" unless $c;
 					print STDERR
 					    "+ $app: $DESCR{$app}\n";
 
-					if ($1 eq 'require') {
-						$req++;
-					}
-					print SHNEcho(
+					print NEcho(
 					"checking for $DESCR{$app}...");
-					&$c($req, @args);
+					&$c(@args);
 				} elsif ($1 eq 'register') {
 				    Register(@args);
 				} elsif ($1 eq 'help') {
@@ -260,7 +257,7 @@ EOF
 			}
 		}
 	}
-	print SHMKSave('PREFIX'), SHHSaveS('PREFIX');
-	print SHEcho("Don't forget to run \\\"make depend\\\".");
+	print MKSave('PREFIX'), HSaveS('PREFIX');
+	print Echo("Don't forget to run \\\"make depend\\\".");
 }
 

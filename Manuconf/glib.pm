@@ -1,4 +1,4 @@
-# $Csoft: glib.pm,v 1.4 2002/05/06 00:00:20 vedge Exp $
+# $Csoft: glib.pm,v 1.5 2002/07/30 23:44:42 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -40,13 +40,13 @@ sub Test
 	print Obtain('glib12-config', '--libs', 'glib12_libs');
 	
 	print
-	    Test('"${glib_version}" != ""',
+	    Cond('"${glib_version}" != ""',
 	    Define('glib_found', 'yes') .
 	        MKSave('GLIB_CFLAGS') .
 	        MKSave('GLIB_LIBS'),
 	    Nothing());
 	print
-	    Test('"${glib12_version}" != ""',
+	    Cond('"${glib12_version}" != ""',
 	    Define('glib_found', 'yes') .
 	        Define('GLIB_CFLAGS', '$glib12_cflags') .
 	        Define('GLIB_LIBS', '$glib12_libs') .
@@ -54,7 +54,7 @@ sub Test
 	        MKSave('GLIB_LIBS'),
 	    Nothing());
 	print
-	    Test('"${glib_found}" = "yes"',
+	    Cond('"${glib_found}" = "yes"',
 	    Echo('ok'),
 	    Fail("glib missing"));
 

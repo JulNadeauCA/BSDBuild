@@ -1,4 +1,4 @@
-# $Csoft: x11.pm,v 1.7 2002/05/21 04:39:20 vedge Exp $
+# $Csoft: x11.pm,v 1.8 2002/07/30 23:44:42 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -30,20 +30,20 @@ sub Test
 {
 	while ($dir = shift(@_)) {
 	    print
-	        Test("-d $dir",
+	        Cond("-d $dir",
 		Define('X11BASE', $dir) .
 		    Define('X11_CFLAGS', "-I$dir/include") .
 		    Define('X11_LIBS', "\"-L$dir/lib -lX11\""),
 		Nothing());
 	}
 	print
-	    Test('"${X11BASE}" != ""',
+	    Cond('"${X11BASE}" != ""',
 	    NEcho('ok') . Echo(', $X11BASE') .
 		Define('x11_found', "yes") .
 	        MKSave('X11BASE') .
 	        MKSave('X11_CFLAGS') .
 	        MKSave('X11_LIBS'),
-	    Fail('missing');
+	    Fail('missing'));
 }
 
 BEGIN

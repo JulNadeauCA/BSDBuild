@@ -1,4 +1,4 @@
-# $Csoft: sdl.pm,v 1.5 2002/07/30 23:44:42 vedge Exp $
+# $Csoft: sdl.pm,v 1.4 2002/05/06 00:00:20 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -29,42 +29,21 @@
 sub Test
 {
 	my ($ver) = @_;
-	
-	print Obtain('sdl-config', '--version', 'sdl_version');
-	print Obtain('sdl-config', '--cflags', 'SDL_CFLAGS');
-	print Obtain('sdl-config', '--libs', 'SDL_LIBS');
 
-	# FreeBSD port
-	print Obtain('sdl11-config', '--version', 'sdl11_version');
-	print Obtain('sdl11-config', '--cflags', 'sdl11_cflags');
-	print Obtain('sdl11-config', '--libs', 'sdl11_libs');
-
+	# XXX
 	print
-	    Cond('"${sdl_version}" != ""',
-	    Define('sdl_found', 'yes') .
-	        MKSave('SDL_CFLAGS') .
-	        MKSave('SDL_LIBS'),
-	    Nothing());
-	print
-	    Cond('"${sdl11_version}" != ""',
-	    Define('sdl_found', 'yes') .
-	        Define('SDL_CFLAGS', '$sdl11_cflags') .
-	        Define('SDL_LIBS', '$sdl11_libs') .
-	        MKSave('SDL_CFLAGS') .
-	        MKSave('SDL_LIBS'),
-	    Nothing());
-	print
-	    Cond('"${sdl_found}" = "yes"',
-	    Echo('ok'),
-	    Fail('Missing SDL'));
+	    Cond('-x `which showfont` -a -x `which glfont`',
+	        Define('found', 'yes') . Echo('ok'),
+	        Fail('missing'));
 
 	return (0);
 }
 
 BEGIN
 {
-	$TESTS{'sdl'} = \&Test;
-	$DESCR{'sdl'} = 'SDL (http://www.libsdl.org)';
+	$HOMEPAGE = 'http://www.libsdl.org/projects/SDL_ttf/release/';
+	$TESTS{'sdl_ttf'} = \&Test;
+	$DESCR{'sdl_ttf'} = "SDL_ttf ($HOMEPAGE)";
 }
 
 ;1

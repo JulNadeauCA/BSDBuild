@@ -1,4 +1,4 @@
-# $Csoft: smpeg.pm,v 1.4 2002/05/06 00:00:20 vedge Exp $
+# $Csoft: smpeg.pm,v 1.5 2002/07/30 23:44:42 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -35,7 +35,7 @@ sub Test
 	print Obtain('smpeg-config', '--libs', 'SMPEG_LIBS');
 
 	print
-	    Test('"${smpeg_version}" != ""',
+	    Cond('"${smpeg_version}" != ""',
 	    Echo("ok") . 
 	    	HSave('CONF_SMPEG') .
 	        MKSave('SMPEG_CFLAGS') .

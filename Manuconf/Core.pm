@@ -1,4 +1,4 @@
-# $Csoft: Core.pm,v 1.2 2002/05/13 07:41:37 vedge Exp $
+# $Csoft: Core.pm,v 1.3 2002/07/30 23:44:42 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -28,19 +28,18 @@
 
 sub Obtain
 {
-    my ($bin, $args, $define) = @_;
+	my ($bin, $args, $define) = @_;
 
 	return << "EOF"
 $define=""
-for i in `echo \$PATH |sed 's/:/ /g'`; do
-	if [ -x "\${i}/$bin" ]; then
-		$define=`\${i}/$bin $args`
-	fi
-done
+which="`which $bin`"
+if [ -n "\$which" -a -x "\$which" ]; then
+	$define=`\${which} $args`
+fi
 EOF
 }
 
-sub Test
+sub Cond
 {
 	my ($cond, $yese, $noe) = @_;
 
@@ -53,9 +52,9 @@ EOF
 
 sub Define
 {
-    my ($arg, $val) = @_;
+	my ($arg, $val) = @_;
 
-    return "$arg=$val\n";
+	return "$arg=$val\n";
 }
 
 sub Echo
@@ -76,12 +75,12 @@ sub Fail
 {
 	my $msg = shift;
     
-	unless ($REQUIRE) {
-		return Nothing();
-	}
+#	unless ($REQUIRE) {
+#		return Nothing();
+#	}
 
 	return << "EOF";
-echo \"ERROR: $msg\"
+echo \"$msg\"
 exit 1
 EOF
 }
@@ -146,7 +145,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(%TESTS %DESCR Obtain Test Define Require Echo Necho Fail MKSave HSave HSaveS Nothing);
+    @EXPORT = qw(%TESTS %DESCR Obtain Cond Define Echo Necho Fail MKSave HSave HSaveS Nothing REQUIRE);
 }
 
 ;1

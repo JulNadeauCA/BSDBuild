@@ -1,4 +1,4 @@
-# $Csoft: freetype.pm,v 1.11 2004/01/03 04:13:29 vedge Exp $
+# $Csoft: freetype.pm,v 1.12 2004/03/10 16:33:36 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
@@ -54,10 +54,9 @@ sub Test
 	print NEcho('checking whether FreeType works...');
 	TryLibCompile 'HAVE_FREETYPE',
 	    '${FREETYPE_CFLAGS}', '${FREETYPE_LIBS}', << 'EOF';
-#include <stdio.h>
-
-#include <freetype/freetype.h>
-#include <freetype/ftoutln.h>
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_OUTLINE_H
 
 int
 main(int argc, char *argv[])

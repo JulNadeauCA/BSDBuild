@@ -38,7 +38,9 @@ install: install-subdir
 	fi
 	
 uninstall: uninstall-subdir
-	@if [ "$(PROG)" != "" ]; then rm -f $(PROG) $(PREFIX)/bin; fi
+	@if [ "$(PROG)" != "" ]; then \
+	    rm -f $(PROG) $(PREFIX)/bin; \
+	fi
 
 all-subdir:
 	@for DIR in $(SUBDIR); do \

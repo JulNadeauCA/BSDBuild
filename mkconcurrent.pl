@@ -46,10 +46,6 @@ sub ConvertMakefile
 		my @srcs = ();
 		my @objs = ();
 
-		s/%SRC%/$SRC/g;
-		s/%BUILD%/$BUILD/g;
-		s/%SEPARATE_BUILD%/concurrent/g;
-		
 		if (/^\s*(OBJS|CATMAN\d)\s*=\s*(.+)$/) {
 			my $type = $1;
 			foreach my $obj (split(/\s/, $2)) {
@@ -87,13 +83,18 @@ EOF
 				$srcs[$i] = "$SRC/$ndir/$srcs[$i]";
 				$i++;
 			}
-			print DSTMAKEFILE "${type}=" . join(' ', @srcs), "\n";
+			print DSTMAKEFILE $type . '=' . join(' ', @srcs), "\n";
 		} else {
 			print DSTMAKEFILE $_, "\n";
 		}
 	}
-	print DSTMAKEFILE "\n", join("\n", @deps), "\n";
-	
+	if (@deps) {
+		print DSTMAKEFILE "\n", join("\n", @deps), "\n";
+		if (-e "$BUILD/$ndir/.depend") {			# Hack
+			print DSTMAKEFILE 'include .depend'."\n";
+		}
+	}
+
 	close(DSTMAKEFILE);
 	close(SRCMAKEFILE);
 }

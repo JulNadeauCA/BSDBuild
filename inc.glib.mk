@@ -1,4 +1,6 @@
-# $Csoft: inc.sdl.mk,v 1.2 2001/10/30 07:15:02 vedge Exp $
+# $Csoft: inc.glib.mk,v 1.1 2001/12/01 03:57:42 vedge Exp $
+
+HOMEPAGE=	http://www.gtk.org/
 
 GLIBCFLAGS!=	glib-config --cflags 2>/dev/null
 GLIBLIBS!=	glib-config --libs 2>/dev/null
@@ -11,7 +13,10 @@ LIBS+=		${GLIBLIBS}
 
 inc-sdl-begin:
 	@if [ "${GLIBVER}" == "" ]; then \
-		echo "Glib is missing. Get it from http://www.gnu.org/"; \
+		echo "-"; \
+		echo "* Glib is missing."; \
+		echo "* Get it from ${HOMEPAGE}"; \
+		echo "-"; \
 		exit 1; \
 	fi
 

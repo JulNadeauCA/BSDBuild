@@ -1,8 +1,9 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.25 2002/12/24 08:59:38 vedge Exp $
+# $Csoft: manuconf.pl,v 1.26 2003/02/06 01:50:25 vedge Exp $
 #
-# Copyright (c) 2001, 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
+# Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
+# <http://www.csoft.org>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -95,7 +96,8 @@ BEGIN
 EOF
 
 	print << 'EOF';
-# Copyright (c) 2001, 2002, CubeSoft Communications, Inc. <http://www.csoft.org>
+# Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
+# <http://www.csoft.org>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -103,9 +105,9 @@ EOF
 # are met:
 # 1. Redistribution of source code must retain the above copyright
 #    notice, this list of conditions and the following disclaimer.
-# 2. Neither the name of CubeSoft Communications, nor the names of
-#    its contributors may be used to endorse or promote products derived
-#    from this software without specific prior written permission.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
 # 
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -217,8 +219,7 @@ RELEASE=`uname -r 2>/dev/null` || RELEASE=unknown
 SYSTEM=`uname -s 2>/dev/null` || SYSTEM=unknown
 HOST="$SYSTEM-$RELEASE-$MACHINE"
 
-echo "Host: $HOST" > config.log
-echo "configuring for $HOST"
+echo "Host: $HOST"
 EOF
 	while (<STDIN>) {
 		chop;
@@ -283,6 +284,10 @@ if [ ! -e "$CONF{'inclout'}" ]; then
 		exit 1
 	fi
 fi
+EOF
+				} elsif ($1 eq 'logout') {
+				    print << "EOF";
+echo > config.log
 EOF
 				} elsif ($1 eq 'exit') {
 				    print "exit $args[0]\n";

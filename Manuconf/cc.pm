@@ -25,16 +25,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#
-# Uses: ${CC}
-# Defines: ${GCC} if ${CC} is gcc.
-#
 sub Test
 {
 	my $require = shift;
 
 	print << 'EOF';
-# $Csoft$
+# $Csoft: cc.pm,v 1.1 2002/05/05 22:10:22 vedge Exp $
 
 if [ "$CC" = "" ]; then
     if [ -x "`which cc`" ]; then
@@ -63,8 +59,9 @@ if [ $? != 0 -o ! -e .cctest ]; then
     exit 1
 fi
 
+cc_is_gcc=no
 if ./.cctest; then
-    GCC=Yes
+    cc_is_gcc=yes
     echo "yes, gcc"
 else
     echo "yes"

@@ -1,4 +1,4 @@
-# $Csoft$
+# $Csoft: sdl.pm,v 1.1 2002/05/05 22:10:22 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -29,6 +29,7 @@
 sub Test
 {
 	my ($require, $ver) = @_;
+	print '# $Csoft$', "\n";
 
 	print SHObtain('sdl-config', '--version', 'SDL_VERSION');
 	print SHObtain('sdl-config', '--cflags', 'SDL_CFLAGS');

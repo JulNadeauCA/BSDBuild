@@ -1,4 +1,4 @@
-# $Csoft$
+# $Csoft: x11.pm,v 1.1 2002/05/05 22:10:22 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -29,6 +29,7 @@
 sub Test
 {
 	my $require = shift;
+	print '# $Csoft$', "\n";
 
 	while ($dir = shift(@_)) {
 	    print
@@ -41,7 +42,7 @@ sub Test
 	}
 	print
 	    SHTest('"$X11BASE" != ""',
-	    SHEcho('ok') . SHEcho('$X11BASE') .
+	    SHNEcho('ok') . SHEcho('$X11BASE') .
 		SHHSave('CONF_X11') .
 	        SHMKSave('X11BASE') .
 	        SHMKSave('X11_CFLAGS') .

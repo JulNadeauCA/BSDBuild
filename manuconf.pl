@@ -1,6 +1,6 @@
-#!/usr/bin/perl -I/home/vedge/src/csoft-mk
+#!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.16 2002/05/11 02:21:57 vedge Exp $
+# $Csoft: manuconf.pl,v 1.17 2002/05/29 21:33:21 vedge Exp $
 #
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>

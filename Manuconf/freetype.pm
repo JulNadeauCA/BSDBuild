@@ -1,4 +1,4 @@
-# $Csoft: freetype.pm,v 1.3 2002/11/27 04:53:17 vedge Exp $
+# $Csoft: freetype.pm,v 1.4 2002/11/27 05:03:28 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -27,22 +27,28 @@
 sub Test
 {
 	my ($ver) = @_;
-	
+
+	# Ask freetype-config for compiler flags and libraries.
 	print Obtain('freetype-config', '--version', 'FREETYPE_VERSION');
 	print Obtain('freetype-config', '--cflags', 'FREETYPE_CFLAGS');
 	print Obtain('freetype-config', '--libs', 'FREETYPE_LIBS');
 
+	# XXX IRIX package hack.
+	print
+	    Cond('-d /usr/freeware/include',
+	    Define('FREETYPE_CFLAGS', '${FREETYPE_CFLAGS} -I/usr/freeware/include') ,
+	    Nothing());
+	
+	# Save the cflags/libs. Fail if FreeType is not installed.
 	print
 	    Cond('"${FREETYPE_VERSION}" != ""',
 	    Define('freetype_found', 'yes') .
 	        MKSave('FREETYPE_CFLAGS') .
-	        MKSave('FREETYPE_LIBS'),
-	    Nothing());
-	print
-	    Cond('"${freetype_found}" = "yes"',
-	    Echo('yes'),
+	        MKSave('FREETYPE_LIBS') .
+			Echo('yes'),
 	    Fail('Could not find the FreeType library'));
 
+	# Try a test FreeType program.
 	print NEcho('checking whether FreeType works...');
 	TryLibCompile 'freetype_works',
 	    '${FREETYPE_CFLAGS}', '${FREETYPE_LIBS}', << 'EOF';
@@ -58,12 +64,8 @@ main(int argc, char *argv[])
 	FT_Bitmap bitmap;
 	FT_Face face;
 	FT_Library library;
-	FT_Error error;
 
-	error = FT_Init_FreeType(&library);
-	if (error) {
-		return (1);
-	}
+	FT_Init_FreeType(&library);
 	return (0);
 }
 EOF

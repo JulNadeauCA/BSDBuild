@@ -1,4 +1,4 @@
-# $Csoft: x11.pm,v 1.16 2003/10/01 09:24:19 vedge Exp $
+# $Csoft: fastcgi.pm,v 1.1 2003/10/25 23:46:11 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002, 2003 CubeSoft Communications, Inc.
@@ -37,12 +37,12 @@ sub Test
 	foreach my $dir (@dirs) {
 	    print Cond("-e $dir/include/fcgi_stdio.h",
 		           Define('FASTCGI_CFLAGS', "\"-I$dir/include\"") .
-		           Define('FASTCGI_LIBS', "\"-L$dir/lib\"") .
+		           Define('FASTCGI_LIBS', "\"-L$dir/lib -lfcgi\"") .
 				   Define('fastcgi_found', "yes"),
 				   Nothing());
 	}
 
-	TryLibCompile 'HAVE_FASTCGI', '${FASTCGI_CFLAGS}', '${FASTCGI_LIBS} -lfcgi',
+	TryLibCompile 'HAVE_FASTCGI', '${FASTCGI_CFLAGS}', '${FASTCGI_LIBS}',
 	    << 'EOF';
 #include <fcgi_stdio.h>
 

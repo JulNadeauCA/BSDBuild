@@ -1,4 +1,4 @@
-# $Csoft: x11.pm,v 1.13 2002/12/31 05:37:08 vedge Exp $
+# $Csoft: freetype.pm,v 1.8 2002/12/27 02:27:16 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -24,61 +24,34 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-my @include_dirs = (
-	'/usr/include',
-	'/usr/local/include',
-	'/usr/include/X11',
-	'/usr/include/X11R6',
-	'/usr/local/X11/include',
-	'/usr/local/X11R6/include',
-	'/usr/local/include/X11',
-	'/usr/local/include/X11R6',
-	'/usr/X11/include',
-	'/usr/X11R6/include',
-);
-
-my @lib_dirs = (
-	'/usr/local/lib',
-	'/usr/lib',
-	'/usr/lib32',
-	'/usr/local/X11/lib',
-	'/usr/local/X11R6/lib',
-	'/usr/X11/lib',
-	'/usr/X11R6/lib',
-);
-
 sub Test
 {
-	print Define('x11_found_includes', 'no');
-	print Define('x11_found_libs', 'no');
+	my ($ver) = @_;
 
-	foreach my $dir (@include_dirs) {
-	    print Cond("-d $dir/X11",
-		           Define('X11_CFLAGS', "\"-I$dir\"") .
-				   Define('x11_found_includes', "yes"),
-				   Nothing());
-	}
-	foreach my $dir (@lib_dirs) {
-	    print Cond("-d $dir",
-		           Define('X11_LIBS', "\"-L$dir\"") .
-				   Define('x11_found_libs', "yes"),
-				   Nothing());
-	}
-	print Cond('"${x11_found_includes}" != "" -a ${x11_found_libs} != ""',
-	        Echo('yes') .
-			    Define('x11_found', "yes") .
-			    HDefine('HAVE_X11') .
-			    MKSave('X11_CFLAGS') .
-				MKSave('X11_LIBS'),
-	        Echo('no') .
-			    Define('x11_found', "no") .
-				HUndef('HAVE_X11'));
+	print << 'EOF';
+OPENGL_CFLAGS="${X11_CFLAGS}"
+OPENGL_LIBS="${X11_LIBS} -lGL"
+EOF
+	TryLibCompile 'HAVE_OPENGL',
+	    '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', << 'EOF';
+#include <GL/gl.h>
+
+int
+main(int argc, char *argv[])
+{
+	GLdouble d;
+
+	glFlush();
+	return (0);
+}
+EOF
+	return (0);
 }
 
 BEGIN
 {
-	$TESTS{'x11'} = \&Test;
-	$DESCR{'x11'} = 'the X window system';
+	$TESTS{'opengl'} = \&Test;
+	$DESCR{'opengl'} = 'OpenGL (http://www.sgi.com/software/opengl)';
 }
 
 ;1

@@ -1,4 +1,4 @@
-# $Csoft: Core.pm,v 1.14 2003/03/25 07:45:25 vedge Exp $
+# $Csoft: Core.pm,v 1.15 2003/08/07 19:36:11 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -120,16 +120,15 @@ sub MKSave
     my $var = shift;
     my $s = '';
    
-    if ($CONF{'makeout'}) {
-		$s = "echo $var=\$$var >> $CONF{'makeout'}\n";
-    }
+	$s = "echo \"$var=\$$var\" >> Makefile.config\n";
     return ($s);
 }
 
 sub HDefine
 {
     my $var = shift;
-	my $include = $CONF{'inclout'}.'/'.lc($var).'.h';
+	my $include = 'config/'.lc($var).'.h';
+
 	return << "EOF"
 echo "#ifndef $var" > $include
 echo "#define $var" \$$var >> $include
@@ -140,7 +139,8 @@ EOF
 sub HUndef
 {
     my $var = shift;
-	my $include = $CONF{'inclout'}.'/'.lc($var).'.h';
+	my $include = 'config/'.lc($var).'.h';
+
 	return << "EOF"
 echo "#undef $var" > $include
 EOF
@@ -149,7 +149,7 @@ EOF
 sub HDefineString
 {
     my $var = shift;
-	my $include = $CONF{'inclout'}.'/'.lc($var).'.h';
+	my $include = 'config/'.lc($var).'.h';
 	return << "EOF"
 echo "#ifndef $var" > $include
 echo "#define $var \\\"\$$var\\\"" >> $include
@@ -248,7 +248,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(%TESTS %DESCR ReadOut Which Cond Define Echo Necho Fail MKSave HDefine HDefineString HUndef Nothing REQUIRE TryCompile Log);
+    @EXPORT = qw(%TESTS %DESCR ReadOut Which Cond Define Echo Necho Fail MKSave HDefine HDefineString HUndef Nothing TryCompile Log);
 }
 
 ;1

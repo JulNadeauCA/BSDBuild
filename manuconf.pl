@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.30 2003/03/25 07:32:28 vedge Exp $
+# $Csoft: manuconf.pl,v 1.31 2003/03/25 07:45:23 vedge Exp $
 #
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -61,10 +61,13 @@ sub Help
     my $prefix_desc = 'Installation prefix [/usr/local]';
     my $srcdir_opt = pack('A' x 30, split('', '--srcdir'));
     my $srcdir_desc = 'Source tree for concurrent builds [.]';
+    my $help_opt = pack('A' x 30, split('', '--help'));
+    my $help_desc = 'Display this message';
 
     my $regs = join("\n",
         "echo \"    $prefix_opt $prefix_desc\"",
         "echo \"    $srcdir_opt $srcdir_desc\"",
+        "echo \"    $help_opt $help_desc\"",
 	@HELP);
 
     print << "EOF";
@@ -77,7 +80,7 @@ EOF
 sub Version
 {
     print << "EOF";
-echo "Csoft-mk ${CSOFT_MK_VERSION}"
+echo "Csoft-mk %VERSION%"
 exit 1
 EOF
 }
@@ -85,13 +88,12 @@ EOF
 BEGIN
 {
 	$INSTALLDIR = '%PREFIX%/share/csoft-mk';
-	$CSOFT_MK_VERSION = 	'1.5';
 
 	print << "EOF";
 #!/bin/sh
 #
 # Do not edit!
-# File generated from configure.in by csoft-mk ${CSOFT_MK_VERSION}.
+# File generated from configure.in by csoft-mk %VERSION%.
 #
 EOF
 
@@ -219,24 +221,45 @@ MACHINE=`uname -m 2>/dev/null` || MACHINE=unknown
 RELEASE=`uname -r 2>/dev/null` || RELEASE=unknown
 SYSTEM=`uname -s 2>/dev/null` || SYSTEM=unknown
 HOST="$SYSTEM-$RELEASE-$MACHINE"
-
 echo "Host: $HOST"
+
+echo > Makefile.config
+echo "Host: $HOST" > config.log
+mkdir config 1>/dev/null 2>&1
 EOF
+
+	my $registers = 1;
 	while (<STDIN>) {
 		chop;
 		if (/^#/) {
 		    next;
 		}
 		foreach my $s (split(';')) {
-			if ($s =~ /(\w+)\((.*)\)/) {
+			if ($s =~ /([A-Z]+)\((.*)\)/) {
+				my $cmd = lc($1);
+				my $argspec = $2;
 				my @args = ();
-				foreach my $arg (split(',', $2)) {
+
+				foreach my $arg (split(',', $argspec)) {
 					$arg =~ s/^\s+//;
 					$arg =~ s/\s+$//;
 					push @args, $arg;
 				}
-				$REQUIRE = 0;
-				if ($1 eq 'check' or $1 eq 'require') {
+
+				if ($cmd eq 'register') {
+					Register(@args);
+				} else {
+					if ($registers) {
+						print << 'EOF';
+if [ "${help}" = "yes" ]; then
+EOF
+						Help();
+						print "fi\n";
+						$registers = 0;
+					}
+				}
+
+				if ($cmd eq 'check' or $cmd eq 'require') {
 					my $app = shift(@args);
 					my $mod =
 					  "$INSTALLDIR/Manuconf/${app}.pm";
@@ -251,38 +274,21 @@ EOF
 						exit (1);
 					}
 					my $c = $TESTS{$app};
-					die "missing test" unless $c;
-					print STDERR
-					    "+ $app: $DESCR{$app}\n";
-
+					unless ($c) {
+						die "missing test";
+					}
+					print STDERR "+ $app: $DESCR{$app}\n";
 					print NEcho(
 					"checking for $DESCR{$app}...");
-					
 					&$c(@args);
-				} elsif ($1 eq 'register') {
-				    Register(@args);
-				} elsif ($1 eq 'help') {
-				    Help(@args);
-				} elsif ($1 eq 'makeout') {
-				    $CONF{'makeout'} = $args[0];
-				    print "echo >$CONF{'makeout'}\n";
-				} elsif ($1 eq 'mdefine') {
+				} elsif ($cmd eq 'mdefine') {
 				    MDefine(@args);
-				} elsif ($1 eq 'hdefine') {
+				} elsif ($cmd eq 'hdefine') {
 				    print Define($args[0], $args[1]) .
 				          HDefine($args[0]);
-				} elsif ($1 eq 'hundef') {
+				} elsif ($cmd eq 'hundef') {
 					print HUndef($args[0]);
-				} elsif ($1 eq 'inclout') {
-				    $CONF{'inclout'} = $args[0];
-				    print << "EOF";
-mkdir $CONF{'inclout'} 1>/dev/null 2>&1
-EOF
-				} elsif ($1 eq 'logout') {
-				    print << "EOF";
-echo "Host: \$HOST" > config.log
-EOF
-				} elsif ($1 eq 'exit') {
+				} elsif ($cmd eq 'exit') {
 				    print "exit $args[0]\n";
 				}
 			} else {

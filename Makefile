@@ -1,4 +1,4 @@
-# $Csoft: Makefile,v 1.16 2003/06/21 07:29:44 vedge Exp $
+# $Csoft: Makefile,v 1.17 2003/08/07 21:59:07 vedge Exp $
 
 TOP=.
 
@@ -16,7 +16,8 @@ SUBDIR=	Manuconf
 all:	manuconf mkify all-subdir
 
 manuconf: manuconf.pl
-	sed s,%PREFIX%,${PREFIX}, manuconf.pl > manuconf
+	sed -e s,%PREFIX%,${PREFIX}, -e s,%VERSION%,${VERSION}, \
+	    manuconf.pl > manuconf
 
 mkify: mkify.pl
 	sed s,%PREFIX%,${PREFIX}, mkify.pl > mkify

@@ -1,14 +1,15 @@
+Csoft-mk
+========
 
-Description
+DESCRIPTION
 
     This is a minimal makefile library, which aims at being portable
     to most make variants which support the `include' directive, as
     an alternative to horrible autoconf-generated makefiles.
 
-    This makefile library should be installed as ./mk in the top-level
-    build directory.
+    This makefile library is installed with the `mkify.pl' script.
 
-Makefiles
+MAKEFILES
 
     The resulting makefiles resemble BSD-style makefiles, with some
     variables and the include directive at the bottom. Obviously we
@@ -16,13 +17,32 @@ Makefiles
     must define the top-level directory, and include the appropriate
     include(s) at the end.
 
-csoft.www.mk
+INCLUDES
 
-    The www include looks for a M4 template in $(BASE)/html.m4, $(BASE)
-    defaulting to ./base. The M4 template includes base.htm; additional
-    M4 include files should be in $(BASE). The M4 quotes default to `{'
-    and `}'. This is compatible with both BSD and GNU M4.
+    <csoft.lib.mk>
+      The lib include can create static and shared libraries from ${OBJS}.
+      For portability reasons, libtool is used for shared libraries, but
+      static libraries are linked with ${AR}.
 
-    This system supports flavoring -- one .html file per template may
-    be generated from a single .htm, with appropriate macro expansions.
+    <csoft.man.mk>
+      The man include does man pages (${MANn}).
+
+    <csoft.perl.mk>
+      The perl include installs .pl .pm and .perl files in ${OBJS}.
+
+    <csoft.prog.mk>
+      The prog include makes .o and .so objects out of .c, .cc, .C,
+      .cxx, .s and .asm files.
+
+    <csoft.subdir.mk>
+      This simply executes standard targets in ${SUBDIR} directories.
+
+    <csoft.www.mk>
+      The www include looks for a M4 template in ${BASE}/html.m4, ${BASE}
+      defaulting to ./base. The M4 template includes base.htm; additional
+      M4 include files should be in $(BASE). The M4 quotes default to `{'
+      and `}'. This is compatible with both BSD and GNU M4.
+
+      This system supports flavoring -- one .html file per template may
+      be generated from a single .htm, with appropriate macro expansions.
  

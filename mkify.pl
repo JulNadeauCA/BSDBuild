@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Csoft: mkify.pl,v 1.13 2002/12/24 10:15:49 vedge Exp $
+# $Csoft: mkify.pl,v 1.14 2003/03/05 16:13:09 vedge Exp $
 #
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -38,10 +38,11 @@ sub MKCopy
 	print "copying $src\n";
 
 	unless (-f $srcmk) {
+		print STDERR "$srcmk: $!\n";
 		return 0;
 	}
 	unless (-f $destmk) {
-		print STDERR "creating $destmk\n";
+		print STDERR "$destmk: $!\n";
 	}
 
 	unless (open(SRC, $srcmk)) {

@@ -1,0 +1,16 @@
+
+vedge-mk
+
+This is a minimal makefile library, which aims at being portable
+to most make variants which support the include directive, as an
+alternative to horrible autoconf-generated makefiles.
+
+The resulting makefiles resemble BSD-style makefiles, with some
+variables and the include directive at the bottom. It processes
+directories recursively. The maptree.sh script substitutes %TOP%
+to the top-level build directory, and creates default makefiles
+if they are not present. It is only useful to the maintainer.
+
+The vedge-mk library should be installed as ./mk in the top-level
+build directory, it is required by the makefiles.
+

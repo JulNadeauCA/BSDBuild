@@ -2,8 +2,6 @@
 
 TYPE=	    www
 
-include %TOP%/config.mk
-
 DOCROOT?=   ./docroot
 M4?=	    m4
 MAKE?=	    make

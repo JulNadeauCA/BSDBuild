@@ -2,8 +2,6 @@
 
 TYPE=	    prog
 
-include %TOP%/config.mk
-
 PREFIX?=    /usr/local
 CFLAGS?=    -Wall -g
 CC?=	    cc

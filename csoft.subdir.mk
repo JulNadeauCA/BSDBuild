@@ -1,4 +1,4 @@
-# $Csoft: csoft.subdir.mk,v 1.4 2001/12/04 16:53:19 vedge Exp $
+# $Csoft: csoft.subdir.mk,v 1.5 2001/12/04 16:56:02 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -31,31 +31,31 @@ MAKE?=	    make
 all-subdir:
 	@for DIR in ${SUBDIR}; do \
 	    echo "==> ${REL}$$DIR"; \
-	    {cd $$DIR && ${MAKE} REL=${REL}$$DIR/}; \
+	    (cd $$DIR && ${MAKE} REL=${REL}$$DIR/); \
 	done
 clean-subdir:
 	@for DIR in ${SUBDIR}; do \
 	    echo "==> ${REL}$$DIR"; \
-	    {cd $$DIR && ${MAKE} REL=${REL}$$DIR/ clean}; \
+	    (cd $$DIR && ${MAKE} REL=${REL}$$DIR/ clean); \
 	done
 depend-subdir:
 	@for DIR in ${SUBDIR}; do \
 	    echo "==> ${REL}$$DIR"; \
-	    {cd $$DIR && ${MAKE} REL=${REL}$$DIR/ depend}; \
+	    (cd $$DIR && ${MAKE} REL=${REL}$$DIR/ depend); \
 	done
 install-subdir:
 	@for DIR in ${SUBDIR}; do \
 	    echo "==> ${REL}$$DIR"; \
-	    {cd $$DIR && ${MAKE} REL=${REL}$$DIR/ install}; \
+	    (cd $$DIR && ${MAKE} REL=${REL}$$DIR/ install); \
 	done
 uninstall-subdir:
 	@for DIR in ${SUBDIR}; do \
 	    echo "==> ${REL}$$DIR"; \
-	    {cd $$DIR && ${MAKE} REL=${REL}$$DIR/ uninstall}; \
+	    (cd $$DIR && ${MAKE} REL=${REL}$$DIR/ uninstall); \
 	done
 regress-subdir:
 	@for DIR in ${SUBDIR}; do \
 	    echo "==> ${REL}$$DIR"; \
-	    {cd $$DIR && ${MAKE} REL=${REL}$$DIR/ regress}; \
+	    (cd $$DIR && ${MAKE} REL=${REL}$$DIR/ regress); \
 	done
 

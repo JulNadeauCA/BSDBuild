@@ -1,4 +1,4 @@
-# $Csoft: Core.pm,v 1.12 2002/12/24 08:59:39 vedge Exp $
+# $Csoft: Core.pm,v 1.13 2003/03/13 22:50:37 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -160,11 +160,6 @@ $CC -o conftest conftest.c 2>>config.log
 if [ $? != 0 ]; then
 	echo "-> failed: non-zero exit status" >> config.log
 	compile="failed"
-else
-    if [ ! -e "conftest" ]; then
-	    echo "-> failed: compiler did not produce an executable" >> config.log
-	    compile="failed"
-    fi
 fi
 rm -f conftest conftest.c
 EOF
@@ -204,10 +199,6 @@ EOF
 
 		print << 'EOF';
 if [ $? != 0 ]; then
-	echo "failed" >> config.log
-	compile="failed"
-fi
-if [ ! -e "conftest" ]; then
 	echo "failed" >> config.log
 	compile="failed"
 fi

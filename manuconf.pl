@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.29 2003/03/13 22:50:35 vedge Exp $
+# $Csoft: manuconf.pl,v 1.30 2003/03/25 07:32:28 vedge Exp $
 #
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -192,26 +192,26 @@ fi
 
 if [ "${srcdir}" != "" ]; then
 	echo "concurrent build (source in ${srcdir})"
-	if [ ! -e "${srcdir}" ]; then
-		echo "Cannot find source directory: ${srcdir}"
-		exit 1
-	fi
-	if [ ! -e "${srcdir}/configure.in" ]; then
-		echo "Invalid source directory: ${srcdir}"
-		exit 1
-	fi
-	if [ -e "${srcdir}/config" ]; then
-		echo "Source directory is already configured: ${srcdir}"
-		exit 1
-	fi
+#	if [ ! -e "${srcdir}" ]; then
+#		echo "Cannot find source directory: ${srcdir}"
+#		exit 1
+#	fi
+#	if [ ! -e "${srcdir}/configure.in" ]; then
+#		echo "Invalid source directory: ${srcdir}"
+#		exit 1
+#	fi
+#	if [ -e "${srcdir}/config" ]; then
+#		echo "Source directory is already configured: ${srcdir}"
+#		exit 1
+#	fi
 	SRC=${srcdir}
 
 	perl ${SRC}/mk/mkconcurrent.pl ${SRC}
 else
-	if [ ! -e "configure.in" ]; then
-		echo "Missing --srcdir argument"
-		exit 1
-	fi
+#	if [ ! -e "configure.in" ]; then
+#		echo "Missing --srcdir argument"
+#		exit 1
+#	fi
 	SRC=`pwd`
 fi
 
@@ -276,12 +276,7 @@ EOF
 				} elsif ($1 eq 'inclout') {
 				    $CONF{'inclout'} = $args[0];
 				    print << "EOF";
-if [ ! -e "$CONF{'inclout'}" ]; then
-	mkdir $CONF{'inclout'}
-	if [ \$? != 0 ]; then
-		exit 1
-	fi
-fi
+mkdir $CONF{'inclout'} 1>/dev/null 2>&1
 EOF
 				} elsif ($1 eq 'logout') {
 				    print << "EOF";

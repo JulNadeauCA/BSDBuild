@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Csoft: manuconf.pl,v 1.6 2002/02/18 03:12:49 vedge Exp $
+# $Csoft: manuconf.pl,v 1.7 2002/02/20 23:23:55 vedge Exp $
 #
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -33,6 +33,9 @@ sub SDL;
 sub smpeg;
 sub glib;
 sub c64bit;
+
+sub MDefine;
+sub HDefine;
 
 sub Register;
 sub Help;
@@ -186,6 +189,24 @@ sub c64bit
 	    SHDefine('ARCH64', '1') .
 	        SHHSave('ARCH64') ,
 	    SHNothing());
+}
+
+sub MDefine
+{
+	my ($def, $val) = @_;
+
+	print
+	    SHDefine($def, $val) .
+	    SHMKSave($def);
+}
+
+sub HDefine
+{
+	my ($def, $val) = @_;
+
+	print
+	    SHDefine($def, $val) .
+	    SHHSave($def);
 }
 
 sub Register
@@ -454,6 +475,10 @@ EOF
 				} elsif ($1 eq 'makeout') {
 				    $makeout = $args[0];
 				    print "echo >$makeout\n";
+				} elsif ($1 eq 'mdefine') {
+				    MDefine(@args);
+				} elsif ($1 eq 'hdefine') {
+				    HDefine(@args);
 				} elsif ($1 eq 'inclout') {
 				    $inclout = $args[0];
 				    print "echo >$inclout\n";

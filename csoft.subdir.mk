@@ -1,4 +1,4 @@
-# $Csoft: csoft.subdir.mk,v 1.12 2002/01/28 00:30:12 vedge Exp $
+# $Csoft: csoft.subdir.mk,v 1.13 2002/02/01 03:37:05 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -91,6 +91,19 @@ depend-subdir:
 		for F in $$SUBDIR; do \
 		    echo "==> ${REL}$$F"; \
 		    (cd $$F && ${MAKE} REL=${REL}$$F/ depend); \
+		done; \
+	fi)
+
+cleandir-subdir:
+	@(if [ "${SUBDIR}" = "" ]; then \
+	    SUBDIR="NONE"; \
+	else \
+	    SUBDIR="${SUBDIR}"; \
+	fi; \
+	if [ "$$SUBDIR" != "" -a "$$SUBDIR" != "NONE" ]; then \
+		for F in $$SUBDIR; do \
+		    echo "==> ${REL}$$F"; \
+		    (cd $$F && ${MAKE} REL=${REL}$$F/ cleandir); \
 		done; \
 	fi)
 

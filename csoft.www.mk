@@ -1,4 +1,4 @@
-# $Csoft: csoft.www.mk,v 1.5 2001/12/04 16:56:02 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.6 2002/01/26 01:20:55 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -54,6 +54,9 @@ all: ${HTML} all-subdir
 
 clean: clean-subdir
 	rm -f ${HTML}
+
+cleandir: cleandir-subdir
+	rm -f *~
 
 depend: depend-subdir
 

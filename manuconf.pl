@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.31 2003/03/25 07:45:23 vedge Exp $
+# $Csoft: manuconf.pl,v 1.32 2003/08/07 22:41:10 vedge Exp $
 #
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -58,16 +58,17 @@ sub Register
 sub Help
 {
     my $prefix_opt = pack('A' x 30, split('', '--prefix'));
-    my $prefix_desc = 'Installation prefix [/usr/local]';
     my $srcdir_opt = pack('A' x 30, split('', '--srcdir'));
-    my $srcdir_desc = 'Source tree for concurrent builds [.]';
     my $help_opt = pack('A' x 30, split('', '--help'));
-    my $help_desc = 'Display this message';
+    my $nls_opt = pack('A' x 30, split('', '--enable-nls'));
+    my $gettext_opt = pack('A' x 30, split('', '--with-gettext'));
 
     my $regs = join("\n",
-        "echo \"    $prefix_opt $prefix_desc\"",
-        "echo \"    $srcdir_opt $srcdir_desc\"",
-        "echo \"    $help_opt $help_desc\"",
+        "echo \"    $prefix_opt Installation prefix [/usr/local]\"",
+        "echo \"    $srcdir_opt Source tree for concurrent build [.]\"",
+        "echo \"    $help_opt Display this message\"",
+        "echo \"    $nls_opt Native Language Support\"",
+        "echo \"    $gettext_opt Gettext tools (xgettext, msgmerge, msgfmt)\"",
 	@HELP);
 
     print << "EOF";
@@ -254,12 +255,38 @@ EOF
 if [ "${help}" = "yes" ]; then
 EOF
 						Help();
-						print "fi\n";
+						print << 'EOF';
+fi
+if [ "${enable_nls}" != "no" ]; then
+	ENABLE_NLS="yes"
+	echo "#ifndef ENABLE_NLS" > config/enable_nls.h
+	echo "#define ENABLE_NLS 1" >> config/enable_nls.h
+	echo "#endif /* ENABLE_NLS */" >> config/enable_nls.h
+
+	msgfmt=""
+	for path in `echo $PATH | sed 's/:/ /g'`; do
+		if [ -x "${path}/msgfmt" ]; then
+			msgfmt=${path}/msgfmt
+		fi
+	done
+	if [ "${msgfmt}" != "" ]; then
+		HAVE_GETTEXT="yes"
+	else
+		HAVE_GETTEXT="no"
+	fi
+else
+	ENABLE_NLS="no"
+	HAVE_GETTEXT="no"
+	echo "#undef ENABLE_NLS" > config/enable_nls.h
+fi
+echo "ENABLE_NLS=${ENABLE_NLS}" >> Makefile.config
+echo "HAVE_GETTEXT=${HAVE_GETTEXT}" >> Makefile.config
+EOF
 						$registers = 0;
 					}
 				}
 
-				if ($cmd eq 'check' or $cmd eq 'require') {
+				if ($cmd eq 'check' || $cmd eq 'require') {
 					my $app = shift(@args);
 					my $mod =
 					  "$INSTALLDIR/Manuconf/${app}.pm";

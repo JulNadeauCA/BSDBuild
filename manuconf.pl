@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I/home/vedge/src/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.15 2002/05/10 22:24:01 vedge Exp $
+# $Csoft: manuconf.pl,v 1.16 2002/05/11 02:21:57 vedge Exp $
 #
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -129,14 +129,8 @@ EOF
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-mc_last_arg=
 mc_optarg=
 for mc_arg; do
-	if test -n "$mc_last_arg"; then
-		eval "$mc_last_arg=\$mc_arg"
-		mc_last_arg=
-		continue
-	fi
 	case "$mc_arg" in
 	-*=*)
 	    mc_optarg=`echo "$mc_arg" | sed 's/[-_a-zA-Z0-9]*=//'`
@@ -145,7 +139,6 @@ for mc_arg; do
 	    mc_optarg=
 	    ;;
 	esac
-
 	case "$mc_arg" in
 	--prefix=*)
 	    mc_prefix=$mc_optarg
@@ -268,6 +261,6 @@ EOF
 		}
 	}
 	print SHMKSave('PREFIX'), SHHSaveS('PREFIX');
-#	print SHEcho("Don't forget to run \\\"make depend\\\".");
+	print SHEcho("Don't forget to run \\\"make depend\\\".");
 }
 

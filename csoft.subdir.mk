@@ -1,4 +1,4 @@
-# $Csoft: vedge.subdir.mk,v 1.2 2001/08/16 05:52:32 vedge Exp $
+# $Csoft: csoft.subdir.mk,v 1.1 2001/10/09 04:50:31 vedge Exp $
 
 MAKE?=	    make
 
@@ -26,5 +26,10 @@ uninstall-subdir:
 	@for DIR in $(SUBDIR); do \
 	    echo "==> $(REL)$$DIR"; \
 	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/ uninstall); \
+	done
+regress-subdir:
+	@for DIR in $(SUBDIR); do \
+	    echo "==> $(REL)$$DIR"; \
+	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/ regress); \
 	done
 

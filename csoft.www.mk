@@ -1,4 +1,4 @@
-# $Csoft: vedge.www.mk,v 1.27 2001/09/15 12:08:14 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.1 2001/10/09 04:50:31 vedge Exp $
 
 TYPE=		www
 
@@ -46,6 +46,8 @@ uninstall: uninstall-subdir
 		rm -f $(DOCROOT)/$$DOC;	\
 	    done;			\
 	fi
+
+regress: regress-subdir
 
 include $(TOP)/mk/csoft.common.mk
 include $(TOP)/mk/csoft.subdir.mk

@@ -1,31 +1,31 @@
-# $Csoft: csoft.lib.mk,v 1.1 2001/10/09 04:50:30 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.2 2001/10/30 07:10:15 vedge Exp $
 
-TYPE=	    lib
+TYPE=		lib
 
-PREFIX?=    /usr/local
-CFLAGS?=    -Wall -g
-SH?=	    sh
-CC?=	    cc
-AR?=	    ar
-RANLIB?=    ranlib
-MAKE?=	    make
-INSTALL?	    install
-ASM?=	    nasm
-ASMOUT?=    aoutb
-ASMFLAGS=    -f $(ASMOUT) -g -w-orphan-labels
+PREFIX?=	/usr/local
+CFLAGS?=	-Wall -g
+SH?=		sh
+CC?=		cc
+AR?=		ar
+RANLIB?=	ranlib
+MAKE?=		make
+INSTALL?=	install
+ASM?=		nasm
+ASMOUT?=	aoutb
+ASMFLAGS=	-f $(ASMOUT) -g -w-orphan-labels
 
-LIBTOOL?=	    libtool
-LTCONFIG?=	    ./ltconfig
-LTMAIN_SH?=	    ./ltmain.sh
-LTCONFIG_GUESS?=    ./config.guess
-LTCONFIG_SUB?=	    ./config.sub
-LTCONFIG_LOG?=	    ./config.log
+LIBTOOL?=	libtool
+LTCONFIG?=	./ltconfig
+LTMAIN_SH?=	./ltmain.sh
+LTCONFIG_GUESS?=./config.guess
+LTCONFIG_SUB?=	./config.sub
+LTCONFIG_LOG?=	./config.log
 
-BINMODE?=   755
+BINMODE?=	755
 
-STATIC?=    Yes
-SHARED?=    No
-VERSION?=   1:0:0
+STATIC?=	Yes
+SHARED?=	No
+VERSION?=	1:0:0
 
 .SUFFIXES:  .o .c .cc .C .cxx .y .s .S .asm .lo
 
@@ -41,7 +41,6 @@ CFLAGS+=    $(COPTS)
 	$(LIBTOOL) $(CXX) $(CXXFLAGS) -c $<
 .asm.o:
 	$(ASM) $(ASMFLAGS) -o $@ $< 
-
 
 all: all-subdir lib$(LIB).a lib$(LIB).la
 
@@ -91,6 +90,8 @@ $(LIBTOOL): $(LTCONFIG) $(LTMAIN_SH) $(LTCONFIG_GUESS) $(LTCONFIG_SUB)
 	@if [ "$(SHARED)" = "Yes" ]; then \
 	    $(SH) $(LTCONFIG) $(LTMAIN_SH); \
 	fi
+
+regress: regress-subdir
 
 include $(TOP)/mk/csoft.common.mk
 include $(TOP)/mk/csoft.subdir.mk

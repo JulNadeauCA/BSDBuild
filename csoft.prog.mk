@@ -1,4 +1,4 @@
-# $Csoft: vedge.prog.mk,v 1.15 2001/08/16 05:55:48 vedge Exp $
+# $Csoft: csoft.prog.mk,v 1.1 2001/10/09 04:50:31 vedge Exp $
 
 TYPE=		prog
 
@@ -55,6 +55,8 @@ uninstall: uninstall-subdir
 	@if [ "$(PROG)" != "" ]; then \
 	    rm -f $(PROG) $(PREFIX)/bin; \
 	fi
+
+regress: regress-subdir
 
 include $(TOP)/mk/csoft.common.mk
 include $(TOP)/mk/csoft.subdir.mk

@@ -1,4 +1,4 @@
-# $Csoft: csoft.man.mk,v 1.1 2001/10/09 04:50:31 vedge Exp $
+# $Csoft: csoft.man.mk,v 1.2 2001/10/30 07:10:52 vedge Exp $
 
 TYPE=		man
 
@@ -114,6 +114,8 @@ uninstall: uninstall-subdir
 	    echo "deinstalling $(MAN9) from $(PREFIX)"; \
 	    (cd $(PREFIX)/man/man9 && rm -f $(MAN9)); \
 	fi
+
+regress: regress-subdir
 
 include $(TOP)/mk/csoft.common.mk
 include $(TOP)/mk/csoft.subdir.mk

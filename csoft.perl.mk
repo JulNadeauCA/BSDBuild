@@ -1,4 +1,4 @@
-# $Csoft: vedge.perl.mk,v 1.8 2001/08/16 05:52:32 vedge Exp $
+# $Csoft: csoft.perl.mk,v 1.1 2001/10/09 04:50:31 vedge Exp $
 
 TYPE=	    perl
 
@@ -32,6 +32,8 @@ uninstall: uninstall-subdir
 		rm -f $(PREFIX)/$$OBJ; \
 	    done; \
 	fi
+
+regress: regress-subdir
 
 include $(TOP)/mk/csoft.common.mk
 include $(TOP)/mk/csoft.subdir.mk

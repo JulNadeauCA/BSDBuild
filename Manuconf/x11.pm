@@ -1,4 +1,4 @@
-# $Csoft: x11.pm,v 1.11 2002/12/31 04:57:45 vedge Exp $
+# $Csoft: x11.pm,v 1.12 2002/12/31 05:36:01 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -59,7 +59,7 @@ sub Test
 	}
 	foreach my $dir (@lib_dirs) {
 	    print Cond("-d $dir",
-		           Define('X11_LIBS', "\"-L$dir -lX11\"") .
+		           Define('X11_LIBS', "\"-L$dir\"") .
 				   Define('x11_found_libs', "yes"),
 				   Nothing());
 	}

@@ -1,4 +1,4 @@
-# $Csoft: Makefile,v 1.2 2002/07/27 06:30:33 vedge Exp $
+# $Csoft: Makefile,v 1.3 2002/07/30 23:00:54 vedge Exp $
 
 TOP=..
 
@@ -12,6 +12,12 @@ SHARE=	Core.pm \
 	make.pm
 
 all:
+
+regress:
+	@for mod in ${SHARE}; do \
+	    echo "$$mod"; \
+	    perl "$$mod"; \
+	done
 
 install:
 	@if [ ! -d "${SHAREDIR}/Manuconf" ]; then \

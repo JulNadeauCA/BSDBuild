@@ -1,4 +1,4 @@
-# $Csoft: agar.pm,v 1.3 2004/04/26 02:57:28 vedge Exp $
+# $Csoft: agar.pm,v 1.4 2004/04/26 03:45:28 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2004 CubeSoft Communications, Inc.
@@ -58,7 +58,7 @@ int
 main(int argc, char *argv[])
 {
 	engine_preinit(argc, argv, &info, 0);
-	engine_postinit(GFX_ENGINE_GUI, TEXT_ENGINE_TTF);
+	engine_init(GFX_ENGINE_GUI, TEXT_ENGINE_TTF);
 	event_loop();
 	engine_destroy();
 	return (0);

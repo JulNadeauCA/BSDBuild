@@ -1,4 +1,4 @@
-# $Csoft: asprintf.pm,v 1.1 2002/10/19 06:34:13 vedge Exp $
+# $Csoft: flock.pm,v 1.1 2002/10/19 06:53:52 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -27,11 +27,7 @@
 sub Test
 {
 	TryCompile 'HAVE_FLOCK', << 'EOF';
-#ifdef __linux__
 #include <sys/file.h>
-#else
-#include <fcntl.h>
-#endif
 
 int
 main(int argc, char *argv[])

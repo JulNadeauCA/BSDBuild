@@ -1,13 +1,13 @@
-# $Csoft: configure.in,v 1.1 2002/05/10 23:07:36 vedge Exp $
+# $Csoft: configure.in,v 1.2 2002/05/13 07:41:36 vedge Exp $
 
 makeout(Makefile.config);
 
-if ("${version}" = "yes") {
+if [ "${version}" = "yes" ]; then
 	version();
-};
-if ("${help}" = "yes") {
+fi
+if [ "${help}" = "yes" ]; then
 	help();
-};
+fi
 
 mdefine(SHAREDIR, "$PREFIX/share/csoft-mk");
 

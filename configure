@@ -110,15 +110,17 @@ for i in `echo $PATH |sed 's/:/ /g'`; do
 	fi
 done
 echo >Makefile.config
-if ("${version}" == "yes") {
+if [ "${version}" = "yes" ]
+ then
 echo "Manuconf v1.2"
 exit 1
-}
-if ("${help}" == "yes") {
+fi
+if [ "${help}" = "yes" ]
+ then
 echo "Usage: ./configure [args]"
 echo "    --prefix             Installation prefix [/usr/local]"
 exit 1
-}
+fi
 SHAREDIR="$PREFIX/share/csoft-mk"
 echo SHAREDIR=$SHAREDIR >> Makefile.config
 echo PREFIX=$PREFIX >> Makefile.config

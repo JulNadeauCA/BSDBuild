@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Csoft: mkify.pl,v 1.15 2003/06/25 02:48:27 vedge Exp $
+# $Csoft: mkify.pl,v 1.16 2003/09/27 02:43:08 vedge Exp $
 #
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -94,7 +94,7 @@ BEGIN
 		my $dest = join('/', $mk, $f);
 
 		MKCopy($f, $dir);
-		if ($f eq 'www') {
+		if ($f eq 'csoft.www.mk') {
 			MKCopy('hstrip.pl', $dir);
 		}
 	}

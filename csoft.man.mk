@@ -1,4 +1,4 @@
-# $Csoft: csoft.man.mk,v 1.5 2001/12/04 16:53:19 vedge Exp $
+# $Csoft: csoft.man.mk,v 1.6 2001/12/04 16:56:02 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -27,116 +27,93 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 CENTER?=	documentation
-RELEASE?=	${CSOFT_MK_VERSION}
+RELEASE?=	1.0
 
 NROFF?=		nroff -Tascii
 TBL?=		tbl
 
-PREFIX?=	/usr/local
-INSTALL?=	install
 MANMODE?=	644
 POD2MAN?=	pod2man
 
-MANS=		${MAN1} ${MAN2} ${MAN3} ${MAN4} ${MAN5} ${MAN6} ${MAN7} \
-		${MAN8} ${MAN9}
+MANS=		${MAN1} ${MAN2} ${MAN3} ${MAN4} ${MAN5} ${MAN6} ${MAN7} ${MAN8}
 
-.SUFFIXES:  .1 .2 .3 .4 .5 .6 .7 .8 .9 .pod
+.SUFFIXES:  .1 .2 .3 .4 .5 .6 .7 .8 .pod
 
-.pod.1 .pod.2 .pod.3 .pod.4 .pod.5 .pod.6 .pod.7 .pod.8 .pod.9:
-	@echo "===> $<"
+.pod.1 .pod.2 .pod.3 .pod.4 .pod.5 .pod.6 .pod.7 .pod.8:
 	${POD2MAN} '--center=${CENTER}' '--release=${RELEASE}' $< > $@
 
-all: ${MANS}
-all: all-subdir
+all: all-subdirs ${MANS}
 
 clean: clean-subdir
-	@rm -f *~
 
 depend: depend-subdir
 
 install: install-subdir ${MANS}
 	@if [ "${MAN1}" != "" ]; then \
-	    echo "installing ${MAN1} into ${PREFIX}"; \
-	    ${INSTALL} ${INSTALL_COPY} ${INSTALL_STRIP} \
-	    ${BINOWN} ${BINGRP} -m ${MANMODE} ${MAN7} ${PREFIX}/man/man1; \
+	    echo "${INSTALL_DATA} ${MAN1} ${MANDIR}/man1"; \
+	    ${INSTALL_DATA} ${MAN1} ${MANDIR}/man1; \
 	fi
 	@if [ "${MAN2}" != "" ]; then \
-	    echo "installing ${MAN1} into ${PREFIX}"; \
-	    ${INSTALL} ${INSTALL_COPY} ${INSTALL_STRIP} \
-	    ${BINOWN} ${BINGRP} -m ${MANMODE} ${MAN7} ${PREFIX}/man/man2; \
+	    echo "${INSTALL_DATA} ${MAN2} ${MANDIR}/man2"; \
+	    ${INSTALL_DATA} ${MAN2} ${MANDIR}/man1; \
 	fi
 	@if [ "${MAN3}" != "" ]; then \
-	    echo "installing ${MAN1} into ${PREFIX}"; \
-	    ${INSTALL} ${INSTALL_COPY} ${INSTALL_STRIP} \
-	    ${BINOWN} ${BINGRP} -m ${MANMODE} ${MAN7} ${PREFIX}/man/man3; \
+	    echo "${INSTALL_DATA} ${MAN3} ${MANDIR}/man3"; \
+	    ${INSTALL_DATA} ${MAN3} ${MANDIR}/man1; \
 	fi
 	@if [ "${MAN4}" != "" ]; then \
-	    echo "installing ${MAN1} into ${PREFIX}"; \
-	    ${INSTALL} ${INSTALL_COPY} ${INSTALL_STRIP} \
-	    ${BINOWN} ${BINGRP} -m ${MANMODE} ${MAN7} ${PREFIX}/man/man4; \
+	    echo "${INSTALL_DATA} ${MAN4} ${MANDIR}/man4"; \
+	    ${INSTALL_DATA} ${MAN4} ${MANDIR}/man1; \
 	fi
 	@if [ "${MAN5}" != "" ]; then \
-	    echo "installing ${MAN1} into ${PREFIX}"; \
-	    ${INSTALL} ${INSTALL_COPY} ${INSTALL_STRIP} \
-	    ${BINOWN} ${BINGRP} -m ${MANMODE} ${MAN7} ${PREFIX}/man/man5; \
+	    echo "${INSTALL_DATA} ${MAN5} ${MANDIR}/man5"; \
+	    ${INSTALL_DATA} ${MAN5} ${MANDIR}/man1; \
 	fi
 	@if [ "${MAN6}" != "" ]; then \
-	    echo "installing ${MAN1} into ${PREFIX}"; \
-	    ${INSTALL} ${INSTALL_COPY} ${INSTALL_STRIP} \
-	    ${BINOWN} ${BINGRP} -m ${MANMODE} ${MAN7} ${PREFIX}/man/man6; \
+	    echo "${INSTALL_DATA} ${MAN6} ${MANDIR}/man6"; \
+	    ${INSTALL_DATA} ${MAN6} ${MANDIR}/man1; \
 	fi
 	@if [ "${MAN7}" != "" ]; then \
-	    echo "installing ${MAN7} into ${PREFIX}"; \
-	    ${INSTALL} ${INSTALL_COPY} ${INSTALL_STRIP} \
-	    ${BINOWN} ${BINGRP} -m ${MANMODE} ${MAN7} ${PREFIX}/man/man7; \
+	    echo "${INSTALL_DATA} ${MAN7} ${MANDIR}/man7"; \
+	    ${INSTALL_DATA} ${MAN7} ${MANDIR}/man1; \
 	fi
 	@if [ "${MAN8}" != "" ]; then \
-	    echo "installing ${MAN9} into ${PREFIX}"; \
-	    ${INSTALL} ${INSTALL_COPY} ${INSTALL_STRIP} \
-	    ${BINOWN} ${BINGRP} -m ${MANMODE} ${MAN9} ${PREFIX}/man/man8; \
-	fi
-	@if [ "${MAN9}" != "" ]; then \
-	    echo "installing ${MAN9} into ${PREFIX}"; \
-	    ${INSTALL} ${INSTALL_COPY} ${INSTALL_STRIP} \
-	    ${BINOWN} ${BINGRP} -m ${MANMODE} ${MAN9} ${PREFIX}/man/man9; \
+	    echo "${INSTALL_DATA} ${MAN8} ${MANDIR}/man8"; \
+	    ${INSTALL_DATA} ${MAN8} ${MANDIR}/man1; \
 	fi
 	
-uninstall: uninstall-subdir
+deinstall: deinstall-subdir
 	@if [ "${MAN1}" != "" ]; then \
-	    echo "deinstalling ${MAN1} from ${PREFIX}"; \
-	    {cd ${PREFIX}/man/man1 && rm -f ${MAN1}}; \
+	    (cd ${PREFIX}/man/man1 && echo "${DEINSTALL_DATA} ${MAN1}"; \
+	        ${DEINSTALL_DATA} ${MAN1}); \
 	fi
 	@if [ "${MAN2}" != "" ]; then \
-	    echo "deinstalling ${MAN2} from ${PREFIX}"; \
-	    {cd ${PREFIX}/man/man2 && rm -f ${MAN2}}; \
+	    (cd ${PREFIX}/man/man2 && echo "${DEINSTALL_DATA} ${MAN2}"; \
+	        ${DEINSTALL_DATA} ${MAN2}); \
 	fi
 	@if [ "${MAN3}" != "" ]; then \
-	    echo "deinstalling ${MAN3} from ${PREFIX}"; \
-	    {cd ${PREFIX}/man/man3 && rm -f ${MAN3}}; \
+	    (cd ${PREFIX}/man/man3 && echo "${DEINSTALL_DATA} ${MAN3}"; \
+	        ${DEINSTALL_DATA} ${MAN3}); \
 	fi
 	@if [ "${MAN4}" != "" ]; then \
-	    echo "deinstalling ${MAN4} from ${PREFIX}"; \
-	    {cd ${PREFIX}/man/man4 && rm -f ${MAN4}}; \
+	    (cd ${PREFIX}/man/man4 && echo "${DEINSTALL_DATA} ${MAN4}"; \
+	        ${DEINSTALL_DATA} ${MAN4}); \
 	fi
 	@if [ "${MAN5}" != "" ]; then \
-	    echo "deinstalling ${MAN5} from ${PREFIX}"; \
-	    {cd ${PREFIX}/man/man5 && rm -f ${MAN5}}; \
+	    (cd ${PREFIX}/man/man5 && echo "${DEINSTALL_DATA} ${MAN5}"; \
+	        ${DEINSTALL_DATA} ${MAN5}); \
 	fi
 	@if [ "${MAN6}" != "" ]; then \
-	    echo "deinstalling ${MAN6} from ${PREFIX}"; \
-	    {cd ${PREFIX}/man/man6 && rm -f ${MAN6}}; \
+	    (cd ${PREFIX}/man/man6 && echo "${DEINSTALL_DATA} ${MAN6}"; \
+	        ${DEINSTALL_DATA} ${MAN6}); \
 	fi
 	@if [ "${MAN7}" != "" ]; then \
-	    echo "deinstalling ${MAN7} from ${PREFIX}"; \
-	    {cd ${PREFIX}/man/man7 && rm -f ${MAN7}}; \
+	    (cd ${PREFIX}/man/man7 && echo "${DEINSTALL_DATA} ${MAN7}"; \
+	        ${DEINSTALL_DATA} ${MAN7}); \
 	fi
 	@if [ "${MAN8}" != "" ]; then \
-	    echo "deinstalling ${MAN8} from ${PREFIX}"; \
-	    {cd ${PREFIX}/man/man8 && rm -f ${MAN8}}; \
-	fi
-	@if [ "${MAN9}" != "" ]; then \
-	    echo "deinstalling ${MAN9} from ${PREFIX}"; \
-	    {cd ${PREFIX}/man/man9 && rm -f ${MAN9}}; \
+	    (cd ${PREFIX}/man/man8 && echo "${DEINSTALL_DATA} ${MAN8}"; \
+	        ${DEINSTALL_DATA} ${MAN8}); \
 	fi
 
 regress: regress-subdir

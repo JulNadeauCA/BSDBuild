@@ -1,4 +1,4 @@
-# $Csoft: freetype.pm,v 1.2 2002/09/06 00:56:51 vedge Exp $
+# $Csoft: freetype.pm,v 1.3 2002/11/27 04:53:17 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -43,10 +43,8 @@ sub Test
 	    Echo('yes'),
 	    Fail('Could not find the FreeType library'));
 
-	Define('CFLAGS', '${CFLAGS} ${FREETYPE_CFLAGS} ${FREETYPE_LIBS}');
-
 	print NEcho('checking whether FreeType works...');
-	TryLibCompile 'HAVE_FREETYPE',
+	TryLibCompile 'freetype_works',
 	    '${FREETYPE_CFLAGS}', '${FREETYPE_LIBS}', << 'EOF';
 #include <stdio.h>
 
@@ -70,8 +68,8 @@ main(int argc, char *argv[])
 }
 EOF
 	print
-	    Cond('"${HAVE_FREETYPE}" = "yes"',
-	    Nothing,
+	    Cond('"${freetype_works}" = "yes"',
+	    Nothing(),
 	    Fail('The FreeType test would not compile.'));
 
 	return (0);

@@ -10,7 +10,11 @@ MAKE?=	    make
 INSTALL?=   install
 BINMODE?=   755
 
-.SUFFIXES:  .o .c .cc .C .cxx .y .s .8 .7 .6 .5 .4 .3 .2 .1 .0
+ASM?=	    nasm
+ASMOUT?=    aoutb
+ASMFLAGS?=  -f $(ASMOUT) -g -w-orphan-labels
+
+.SUFFIXES:  .o .c .cc .C .cxx .y .s .S .asm
 
 CFLAGS+=    $(COPTS)
 
@@ -18,8 +22,14 @@ CFLAGS+=    $(COPTS)
 	$(CC) $(CFLAGS) -c $<
 .cc.o:
 	$(CXX) $(CXXFLAGS) -c $<
+.s.o:
+	$(CC) $(CFLAGS) -c $<
+.S.o:
+	$(CC) $(CFLAGS) -c $<
+.asm.o:
+	$(ASM) $(ASMFLAGS) -o $@ $< 
 
-ALL: $(PROG) $(MAN) all-subdir
+ALL: $(PROG) all-subdir
 
 $(PROG): $(OBJS)
 	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS) $(LIBS)

@@ -1,4 +1,4 @@
-# $Csoft: strlcpy.pm,v 1.3 2003/10/01 09:24:19 vedge Exp $
+# $Csoft: pctr.pm,v 1.1 2004/01/01 00:33:47 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2003 CubeSoft Communications, Inc.
@@ -28,6 +28,8 @@
 sub Test
 {
 	TryCompile 'HAVE_PCTR', << 'EOF';
+#include <sys/types.h>
+#include <stdio.h>
 #include <machine/pctr.h>
 int
 main(int argc, char *argv[])

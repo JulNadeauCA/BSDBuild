@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.35 2003/08/26 03:07:49 vedge Exp $
+# $Csoft: manuconf.pl,v 1.36 2003/08/29 03:31:30 vedge Exp $
 #
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -71,7 +71,7 @@ sub Help
         "echo \"    $prefix_opt Installation prefix [/usr/local]\"",
         "echo \"    $sysconfdir_opt System-wide configuration prefix [/etc]\"",
         "echo \"    $sharedir_opt Share prefix [\$PREFIX/share]\"",
-        "echo \"    $localedir_opt Locale prefix [\$PREFIX/locale]\"",
+        "echo \"    $localedir_opt Locale prefix [\$PREFIX/share/locale]\"",
         "echo \"    $srcdir_opt Source tree for concurrent build [.]\"",
         "echo \"    $help_opt Display this message\"",
         "echo \"    $nls_opt Native Language Support [yes]\"",

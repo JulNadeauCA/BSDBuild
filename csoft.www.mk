@@ -1,4 +1,4 @@
-# $Csoft: csoft.www.mk,v 1.27 2003/10/02 04:48:40 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.28 2003/10/05 12:13:02 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -62,6 +62,10 @@ depend: depend-subdir
 	    rm -f $@.$$LANG.prep; \
 	    case "$$LANG" in \
 	    en) \
+	        echo "URI: $@.$$LANG.utf-8" >> $@.var; \
+	        echo "Content-language: $$LANG" >> $@.var; \
+	        echo "Content-type: text/html;encoding=UTF-8" >> $@.var; \
+	        echo "" >> $@.var; \
 	        echo "URI: $@.$$LANG" >> $@.var; \
 	        echo "Content-language: $$LANG" >> $@.var; \
 	        echo "Content-type: text/html" >> $@.var; \
@@ -70,7 +74,6 @@ depend: depend-subdir
 		    sed s/charset=UTF-8/charset=ISO-8859-1/ | \
 		    ${ICONV} -f UTF-8 -t ISO-8859-1 > \
 		    $@.$$LANG; \
-		rm -f $@.$$LANG.utf-8; \
 	        ;; \
 	    ab|af|eu|ca|da|nl|fo|fr|fi|de|is|ga|it|no|nb|nn|pt|rm|gd|es|sv|sw) \
 	        echo "URI: $@.$$LANG.utf-8" >> $@.var; \

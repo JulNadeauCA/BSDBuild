@@ -1,4 +1,4 @@
-# $Csoft: csoft.subdir.mk,v 1.15 2002/05/10 22:41:48 vedge Exp $
+# $Csoft: csoft.subdir.mk,v 1.16 2002/09/06 00:58:47 vedge Exp $
 
 # Copyright (c) 2001, 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
 # All rights reserved.
@@ -35,6 +35,9 @@ all-subdir:
 		for F in $$SUBDIR; do \
 		    echo "==> ${REL}$$F"; \
 		    (cd $$F && ${MAKE} REL=${REL}$$F/); \
+		    if [ $$? != 0 ]; then \
+		    	exit 1; \
+		    fi; \
 		done; \
 	fi)
 
@@ -48,6 +51,9 @@ clean-subdir:
 		for F in $$SUBDIR; do \
 		    echo "==> ${REL}$$F"; \
 		    (cd $$F && ${MAKE} REL=${REL}$$F/ clean); \
+		    if [ $$? != 0 ]; then \
+		    	exit 1; \
+		    fi; \
 		done; \
 	fi)
 
@@ -61,6 +67,9 @@ install-subdir:
 		for F in $$SUBDIR; do \
 		    echo "==> ${REL}$$F"; \
 		    (cd $$F && ${MAKE} REL=${REL}$$F/ install); \
+		    if [ $$? != 0 ]; then \
+		    	exit 1; \
+		    fi; \
 		done; \
 	fi)
 
@@ -75,6 +84,9 @@ deinstall-subdir:
 		for F in $$SUBDIR; do \
 		    echo "==> ${REL}$$F"; \
 		    (cd $$F && ${MAKE} REL=${REL}$$F/ deinstall); \
+		    if [ $$? != 0 ]; then \
+		    	exit 1; \
+		    fi; \
 		done; \
 	fi)
 
@@ -88,6 +100,9 @@ depend-subdir:
 		for F in $$SUBDIR; do \
 		    echo "==> ${REL}$$F"; \
 		    (cd $$F && ${MAKE} REL=${REL}$$F/ depend); \
+		    if [ $$? != 0 ]; then \
+		    	exit 1; \
+		    fi; \
 		done; \
 	fi)
 
@@ -101,6 +116,9 @@ cleandir-subdir:
 		for F in $$SUBDIR; do \
 		    echo "==> ${REL}$$F"; \
 		    (cd $$F && ${MAKE} REL=${REL}$$F/ cleandir); \
+		    if [ $$? != 0 ]; then \
+		    	exit 1; \
+		    fi; \
 		done; \
 	fi)
 
@@ -114,6 +132,9 @@ regress-subdir:
 		for F in $$SUBDIR; do \
 		    echo "==> ${REL}$$F"; \
 		    (cd $$F && ${MAKE} REL=${REL}$$F/ regress); \
+		    if [ $$? != 0 ]; then \
+		    	exit 1; \
+		    fi; \
 		done; \
 	fi)
 

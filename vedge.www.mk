@@ -1,4 +1,4 @@
-# $Csoft: vedge.www.mk,v 1.25 2001/09/15 03:17:26 vedge Exp $
+# $Csoft: vedge.www.mk,v 1.26 2001/09/15 12:07:36 vedge Exp $
 
 TYPE=		www
 
@@ -22,7 +22,7 @@ DEFTMPL?=	sober
 	    cp -f $< $(BASEDIR)/base.htm;				\
 	    $(M4) $(M4FLAGS) -D_TMPL_=$$TMPL				\
 		-D_TOP_=$(TOP) -D_BASE_=$(BASEDIR) -D_FILE_=$@		\
-		$(BASEDIR)/$$TMPL.m4 | $(PERL) $(TOP)/mk/hstrip.pl	\
+		$(BASEDIR)/$$TMPL.m4 | $(PERL) $(TOP)/mk/hstrip.pl $@	\
 		> $$TMPL-$@;						\
 	done
 	@cp -f $(DEFTMPL)-$@ $@

@@ -1,4 +1,4 @@
-# $Csoft: sdl.pm,v 1.6 2002/07/31 00:28:03 vedge Exp $
+# $Csoft: sdl.pm,v 1.7 2002/09/06 00:56:51 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -54,7 +54,44 @@ sub Test
 	print
 	    Cond('"${sdl_found}" = "yes"',
 	    Echo('ok'),
-	    Fail('Missing SDL'));
+	    Fail('Could not find the SDL library. '.
+		     'Make sure sdl-config is in $PATH.'));
+	
+	print NEcho('checking whether SDL works...');
+	TryLibCompile 'sdl_works',
+	    '${SDL_CFLAGS}', '${SDL_LIBS}', << 'EOF';
+
+#include <stdio.h>
+
+#include <SDL.h>
+
+int
+main(int argc, char *argv[])
+{
+	SDL_Surface su;
+	SDL_TimerID tid;
+	SDL_Color color;
+	SDL_Event event;
+	Uint8 u8;
+	Uint16 u16;
+	Uint32 u32;
+	Sint8 s8;
+	Sint16 s16;
+	Sint32 s32;
+
+	if (SDL_Init(SDL_INIT_TIMER|SDL_INIT_NOPARACHUTE) != 0) {
+		fprintf("SDL_Init: %s\n", SDL_GetError());
+		return (1);
+	}
+	SDL_Quit();
+	return (0);
+}
+
+EOF
+	print
+	    Cond('"${sdl_works}" = "yes"',
+	    Nothing(),
+	    Fail('The SDL test would not compile.'));
 
 	return (0);
 }

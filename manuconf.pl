@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.41 2005/01/06 03:22:39 vedge Exp $
+# $Csoft: manuconf.pl,v 1.42 2005/01/06 03:23:42 vedge Exp $
 #
 # Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -305,6 +305,7 @@ EOF
 						print << 'EOF';
 fi
 if [ "${enable_debug}" = "yes" ]; then
+	echo "LDFLAGS=-g" >> Makefile.config
 	echo "#ifndef DEBUG" > config/debug.h
 	echo "#define DEBUG 1" >> config/debug.h
 	echo "#endif /* DEBUG */" >> config/debug.h

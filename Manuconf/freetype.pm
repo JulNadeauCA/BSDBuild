@@ -1,4 +1,4 @@
-# $Csoft: freetype.pm,v 1.4 2002/11/27 05:03:28 vedge Exp $
+# $Csoft: freetype.pm,v 1.5 2002/11/28 10:12:34 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -36,7 +36,8 @@ sub Test
 	# XXX IRIX package hack.
 	print
 	    Cond('-d /usr/freeware/include',
-	    Define('FREETYPE_CFLAGS', '${FREETYPE_CFLAGS} -I/usr/freeware/include') ,
+	    Define('FREETYPE_CFLAGS',
+		    '"${FREETYPE_CFLAGS} -I/usr/freeware/include"') ,
 	    Nothing());
 	
 	# Save the cflags/libs. Fail if FreeType is not installed.

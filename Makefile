@@ -1,4 +1,4 @@
-# $Csoft: Makefile,v 1.13 2003/05/05 11:03:08 vedge Exp $
+# $Csoft: Makefile,v 1.14 2003/05/05 11:44:13 vedge Exp $
 
 TOP=.
 
@@ -30,8 +30,8 @@ install: install-subdir
 	    echo "${INSTALL_DATA} $$F ${SHAREDIR}"; \
 	    ${INSTALL_DATA} $$F ${SHAREDIR}; \
 	done
-	${INSTALL_BIN} manuconf ${INST_BINDIR}
-	${INSTALL_BIN} mkify ${INST_BINDIR}
+	${INSTALL_PROG} manuconf ${INST_BINDIR}
+	${INSTALL_PROG} mkify ${INST_BINDIR}
 
 cleandir:
 	rm -f Makefile.config config.log *~

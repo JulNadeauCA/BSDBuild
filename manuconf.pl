@@ -1,8 +1,8 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.18 2002/07/27 06:32:41 vedge Exp $
+# $Csoft: manuconf.pl,v 1.19 2002/07/27 06:33:57 vedge Exp $
 #
-# Copyright (c) 2001 CubeSoft Communications, Inc.
+# Copyright (c) 2001, 2002 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -63,13 +63,13 @@ sub Register
 	$descr =~ /\"(.*)\"/;
 	$descr = $1;
 
-	my $darg = pack('A' x 20, split('', $arg));
+	my $darg = pack('A' x 30, split('', $arg));
 	push @HELP, "echo \"    $darg $descr\"";
 }
 
 sub Help
 {
-    my $darg = pack('A' x 20, split('', '--prefix'));
+    my $darg = pack('A' x 30, split('', '--prefix'));
     my $descr = 'Installation prefix [/usr/local]';
     my $regs = join("\n", "echo \"    $darg $descr\"", @HELP);
 

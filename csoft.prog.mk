@@ -1,4 +1,4 @@
-# $Csoft: csoft.prog.mk,v 1.8 2002/01/26 00:20:35 vedge Exp $
+# $Csoft: csoft.prog.mk,v 1.9 2002/01/26 01:00:11 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -146,8 +146,8 @@ ${GMONOUT}: ${OBJS}
 
 clean: clean-subdir
 	@if [ "${PROG}" != "" ]; then \
-	    echo "rm -f ${PROG} ${GMONOUT} ${OBJS}"
-	    rm -f ${PROG} ${GMONOUT} ${OBJS}
+	    echo "rm -f ${PROG} ${GMONOUT} ${OBJS}"; \
+	    rm -f ${PROG} ${GMONOUT} ${OBJS}; \
 	fi
 
 install: install-subdir ${PROG}

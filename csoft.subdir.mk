@@ -1,4 +1,4 @@
-# $Csoft: csoft.subdir.mk,v 1.5 2001/12/04 16:56:02 vedge Exp $
+# $Csoft: csoft.subdir.mk,v 1.6 2001/12/07 13:51:56 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -48,10 +48,10 @@ install-subdir:
 	    echo "==> ${REL}$$DIR"; \
 	    (cd $$DIR && ${MAKE} REL=${REL}$$DIR/ install); \
 	done
-uninstall-subdir:
+deinstall-subdir:
 	@for DIR in ${SUBDIR}; do \
 	    echo "==> ${REL}$$DIR"; \
-	    (cd $$DIR && ${MAKE} REL=${REL}$$DIR/ uninstall); \
+	    (cd $$DIR && ${MAKE} REL=${REL}$$DIR/ deinstall); \
 	done
 regress-subdir:
 	@for DIR in ${SUBDIR}; do \

@@ -1,4 +1,4 @@
-# $Csoft: csoft.none.mk,v 1.3 2001/12/03 04:47:00 vedge Exp $
+# $Csoft: csoft.none.mk,v 1.4 2001/12/04 16:53:19 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -27,10 +27,7 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 NONE?=	    dummy
-PREFIX?=    /usr/local
 SH?=	    sh
-INSTALL?=   install
-BINMODE?=   755
 
 .SUFFIXES:  .nop .nos
 
@@ -43,21 +40,20 @@ $(NONE): $(OBJS)
 	echo "($(OBJS)) -> $(NONE)"
 
 clean: clean-subdir
-	@rm -f $(NONE) $(OBJS)
+	rm -f $(NONE) $(OBJS)
 
 depend: depend-subdir
-	echo NOOP
-
 
 install: install-subdir $(NONE)
 	@if [ "$(NONE)" != "" ]; then \
-	    $(INSTALL) $(INSTALL_COPY) $(INSTALL_STRIP) \
-	    $(BINOWN) $(BINGRP) -m $(BINMODE) $(NONE) $(PREFIX)/bin; \
+	    echo "$(INSTALL_PROG) $(NONE) $(BINDIR)"; \
+	    $(INSTALL_PROG) $(NONE) $(BINDIR); \
 	fi
 	
 uninstall: uninstall-subdir
 	@if [ "$(NONE)" != "" ]; then \
-	    rm -f $(NONE) $(PREFIX)/bin; \
+	    echo "$(DEINSTALL_PROG) $(BINDIR)"; \
+	    $(DEINSTALL_PROG) $(BINDIR); \
 	fi
 
 regress: regress-subdir

@@ -1,4 +1,4 @@
-# $Csoft: csoft.perl.mk,v 1.5 2001/12/04 16:56:02 vedge Exp $
+# $Csoft: csoft.perl.mk,v 1.6 2001/12/07 18:45:20 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -26,36 +26,27 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-PREFIX?=    /usr/local
-SH?=	    sh
-INSTALL?=   install -c
-PERLMODE?=   755
+.SUFFIXES:  .pl .pm
 
-.SUFFIXES:  .PL .pl .pm .perl
+PERL?=
 
 all: all-subdir
 
+install: install-subdir
+	@for F in ${PERL}; do \
+	    echo "${INSTALL_PROG} $$F ${BINDIR}"; \
+	    ${INSTALL_PROG} $$F ${BINDIR}; \
+	done
+	
+deinstall: deinstall-subdir
+	@for F in ${PERL}; do \
+	    echo "${DEINSTALL_PROG} ${BINDIR}/$$F"; \
+	    ${DEINSTALL_PROG} ${BINDIR}/$$F; \
+	done
+
 clean: clean-subdir
-	@rm -f *~
 
 depend: depend-subdir
-
-install: install-subdir
-	@if [ "${OBJS}" != "" ]; then \
-	    for OBJ in ${OBJS}; do \
-		echo "===> $$OBJ"; \
-		${INSTALL} ${BINOWN} ${BINGRP} -m ${PERLMODE} \
-		    $$OBJ ${PREFIX}/bin; \
-	    done; \
-	fi
-	
-uninstall: uninstall-subdir
-	@if [ "${OBJS}" != "" ]; then \
-	    for OBJ in ${OBJS}; do \
-		echo "===> $$OBJ"; \
-		rm -f ${PREFIX}/bin/$$OBJ; \
-	    done; \
-	fi
 
 regress: regress-subdir
 

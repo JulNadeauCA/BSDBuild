@@ -1,4 +1,4 @@
-# $Csoft: Makefile,v 1.12 2002/12/31 03:47:22 vedge Exp $
+# $Csoft: Makefile,v 1.13 2002/12/31 05:40:36 vedge Exp $
 
 TOP=..
 
@@ -21,7 +21,8 @@ SHARE=	Core.pm \
 	asprintf.pm \
 	flock.pm \
 	progname.pm \
-	opengl.pm
+	opengl.pm \
+	math.pm
 
 all:
 

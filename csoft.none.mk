@@ -1,4 +1,4 @@
-# $Csoft: csoft.none.mk,v 1.2 2001/10/30 07:18:11 vedge Exp $
+# $Csoft: csoft.none.mk,v 1.3 2001/12/03 04:47:00 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -25,8 +25,6 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-TYPE=	    none
 
 NONE?=	    dummy
 PREFIX?=    /usr/local

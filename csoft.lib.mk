@@ -1,4 +1,4 @@
-# $Csoft: csoft.lib.mk,v 1.3 2001/10/30 07:18:10 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.4 2001/12/03 04:47:00 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -20,13 +20,11 @@
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 # ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
 # ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# DAMAGES {INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION} HOWEVER
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+# OR TORT {INCLUDING NEGLIGENCE OR OTHERWISE} ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-TYPE=		lib
 
 PREFIX?=	/usr/local
 CFLAGS?=	-Wall -g
@@ -36,9 +34,11 @@ AR?=		ar
 RANLIB?=	ranlib
 MAKE?=		make
 INSTALL?=	install
+
+# XXX elf
 ASM?=		nasm
 ASMOUT?=	aoutb
-ASMFLAGS=	-f $(ASMOUT) -g -w-orphan-labels
+ASMFLAGS=	-f ${ASMOUT} -g -w-orphan-labels
 
 LIBTOOL?=	libtool
 LTCONFIG?=	./ltconfig
@@ -53,71 +53,71 @@ STATIC?=	Yes
 SHARED?=	No
 VERSION?=	1:0:0
 
-.SUFFIXES:  .o .c .cc .C .cxx .y .s .S .asm .lo
+.SUFFIXES:  .o .lo .c .cc .C .cxx .s .S .asm .y
 
-CFLAGS+=    $(COPTS)
+CFLAGS+=    ${COPTS}
 
 .c.o:
-	$(CC) $(CFLAGS) -c $<
+	${CC} ${CFLAGS} -c $<
 .cc.o:
-	$(CXX) $(CXXFLAGS) -c $<
+	${CXX} ${CXXFLAGS} -c $<
 .c.lo:
-	$(LIBTOOL) $(CC) $(CFLAGS) -c $<
+	${LIBTOOL} ${CC} ${CFLAGS} -c $<
 .cc.lo:
-	$(LIBTOOL) $(CXX) $(CXXFLAGS) -c $<
+	${LIBTOOL} ${CXX} ${CXXFLAGS} -c $<
 .asm.o:
-	$(ASM) $(ASMFLAGS) -o $@ $< 
+	${ASM} ${ASMFLAGS} -o $@ $< 
 
-all: all-subdir lib$(LIB).a lib$(LIB).la
+all:	all-subdir lib${LIB}.a lib${LIB}.la
 
-lib$(LIB).a: $(OBJS)
-	@if [ "$(STATIC)" = "Yes" ]; then \
-	    echo "===> lib$(LIB).a"; \
-	    $(AR) -cru lib$(LIB).a $(OBJS); \
-	    $(RANLIB) lib$(LIB).a; \
+lib${LIB}.a:	${OBJS}
+	@if [ "${STATIC}" = "Yes" ]; then \
+	    echo "===> lib${LIB}.a"; \
+	    ${AR} -cru lib${LIB}.a ${OBJS}; \
+	    ${RANLIB} lib${LIB}.a; \
 	fi
 
-lib$(LIB).la: $(LIBTOOL) $(SHOBJS)
-	@if [ "$(SHARED)" = "Yes" ]; then \
-	    echo "===> lib$(LIB).la"; \
-	    $(LIBTOOL) $(CC) -o lib$(LIB).la -rpath $(PREFIX)/lib -shared \
-		-version-info $(VERSION) $(LDFLAGS) $(SHOBJS) $(LIBS); \
+lib${LIB}.la:	${LIBTOOL} ${SHOBJS}
+	@if [ "${SHARED}" = "Yes" ]; then \
+	    echo "===> lib${LIB}.la"; \
+	    ${LIBTOOL} ${CC} -o lib${LIB}.la -rpath ${PREFIX}/lib -shared \
+		-version-info ${VERSION} ${LDFLAGS} ${SHOBJS} ${LIBS}; \
 	fi
 
-clean: clean-subdir
-	@rm -fr lib$(LIB).a lib$(LIB).la libs $(OBJS) $(SHOBJS)
-	@rm -f $(LIBTOOL) $(LTCONFIG_LOG)
+clean:		clean-subdir
+	@rm -fr lib${LIB}.a lib${LIB}.la libs ${OBJS} ${SHOBJS}
+	@rm -f ${LIBTOOL} ${LTCONFIG_LOG}
 
-install: install-subdir lib$(LIB).a lib$(LIB).la
-	@if [ "$(STATIC)" = "Yes" ]; then \
-	    echo "===> installing lib$(LIB).a"; \
-	    $(INSTALL) $(INSTALL_COPY) $(INSTALL_STRIP) \
-		$(BINOWN) $(BINGRP) -m $(BINMODE) lib$(LIB).a $(PREFIX)/lib; \
+install:	install-subdir lib${LIB}.a lib${LIB}.la
+	@if [ "${STATIC}" = "Yes" ]; then \
+	    echo "===> installing lib${LIB}.a"; \
+	    ${INSTALL} ${INSTALL_COPY} ${INSTALL_STRIP} \
+		${BINOWN} ${BINGRP} -m ${BINMODE} lib${LIB}.a ${PREFIX}/lib; \
 	fi
-	@if [ "$(SHARED)" = "Yes" ]; then \
-	    echo "===> installing lib$(LIB).la"; \
-	    $(LIBTOOL) --mode=install \
-	    $(INSTALL) $(INSTALL_COPY) $(INSTALL_STRIP) \
-		$(BINOWN) $(BINGRP) -m $(BINMODE) lib$(LIB).la $(PREFIX)/lib; \
+	@if [ "${SHARED}" = "Yes" ]; then \
+	    echo "===> installing lib${LIB}.la"; \
+	    ${LIBTOOL} --mode=install \
+	    ${INSTALL} ${INSTALL_COPY} ${INSTALL_STRIP} \
+		${BINOWN} ${BINGRP} -m ${BINMODE} lib${LIB}.la ${PREFIX}/lib; \
 	fi
 	
-uninstall: uninstall-subdir
-	@if [ "$(STATIC)" = "Yes" ]; then \
-	    echo "===> uninstalling lib$(LIB).a"; \
-		rm -f $(PREFIX)/lib/lib$(LIB).a; \
+uninstall:	uninstall-subdir
+	@if [ "${STATIC}" = "Yes" ]; then \
+	    echo "===> uninstalling lib${LIB}.a"; \
+		rm -f ${PREFIX}/lib/lib${LIB}.a; \
 	fi
-	@if [ "$(SHARED)" = "Yes" ]; then \
-	    echo "===> uninstalling lib$(LIB).la"; \
-	    $(LIBTOOL) --mode=uninstall \
-		rm -f $(PREFIX)/lib/lib$(LIB).la; \
-	fi
-
-$(LIBTOOL): $(LTCONFIG) $(LTMAIN_SH) $(LTCONFIG_GUESS) $(LTCONFIG_SUB)
-	@if [ "$(SHARED)" = "Yes" ]; then \
-	    $(SH) $(LTCONFIG) $(LTMAIN_SH); \
+	@if [ "${SHARED}" = "Yes" ]; then \
+	    echo "===> uninstalling lib${LIB}.la"; \
+	    ${LIBTOOL} --mode=uninstall \
+		rm -f ${PREFIX}/lib/lib${LIB}.la; \
 	fi
 
-regress: regress-subdir
+${LIBTOOL}:	${LTCONFIG} ${LTMAIN_SH} ${LTCONFIG_GUESS} ${LTCONFIG_SUB}
+	@if [ "${SHARED}" = "Yes" ]; then \
+	    ${SH} ${LTCONFIG} ${LTMAIN_SH}; \
+	fi
 
-include $(TOP)/mk/csoft.common.mk
-include $(TOP)/mk/csoft.subdir.mk
+regress:	regress-subdir
+
+include ${TOP}/mk/csoft.common.mk
+include ${TOP}/mk/csoft.subdir.mk

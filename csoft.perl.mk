@@ -1,6 +1,6 @@
-# $Csoft: csoft.perl.mk,v 1.2 2001/10/30 07:18:11 vedge Exp $
+# $Csoft: csoft.perl.mk,v 1.3 2001/12/03 04:47:00 vedge Exp $
 
-# Copyright (c) 2001 CubeSoft Communications, Inc.
+# Copyright {c} 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -20,13 +20,11 @@
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 # ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
 # ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# DAMAGES {INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION} HOWEVER
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+# OR TORT {INCLUDING NEGLIGENCE OR OTHERWISE} ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-TYPE=	    perl
 
 PREFIX?=    /usr/local
 SH?=	    sh
@@ -43,23 +41,23 @@ clean: clean-subdir
 depend: depend-subdir
 
 install: install-subdir
-	@if [ "$(OBJS)" != "" ]; then \
-	    for OBJ in $(OBJS); do \
+	@if [ "${OBJS}" != "" ]; then \
+	    for OBJ in ${OBJS}; do \
 		echo "===> $$OBJ"; \
-		$(INSTALL) $(BINOWN) $(BINGRP) -m $(PERLMODE) \
-		    $$OBJ $(PREFIX); \
+		${INSTALL} ${BINOWN} ${BINGRP} -m ${PERLMODE} \
+		    $$OBJ ${PREFIX}; \
 	    done; \
 	fi
 	
 uninstall: uninstall-subdir
-	@if [ "$(OBJS)" != "" ]; then \
-	    for OBJ in $(OBJS); do \
+	@if [ "${OBJS}" != "" ]; then \
+	    for OBJ in ${OBJS}; do \
 		echo "===> $$OBJ"; \
-		rm -f $(PREFIX)/$$OBJ; \
+		rm -f ${PREFIX}/$$OBJ; \
 	    done; \
 	fi
 
 regress: regress-subdir
 
-include $(TOP)/mk/csoft.common.mk
-include $(TOP)/mk/csoft.subdir.mk
+include ${TOP}/mk/csoft.common.mk
+include ${TOP}/mk/csoft.subdir.mk

@@ -1,6 +1,6 @@
-# $Csoft: csoft.subdir.mk,v 1.2 2001/10/30 07:18:11 vedge Exp $
+# $Csoft: csoft.subdir.mk,v 1.3 2001/12/03 04:47:00 vedge Exp $
 
-# Copyright (c) 2001 CubeSoft Communications, Inc.
+# Copyright {c} 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -20,42 +20,42 @@
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 # ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
 # ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# DAMAGES {INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION} HOWEVER
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+# OR TORT {INCLUDING NEGLIGENCE OR OTHERWISE} ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 MAKE?=	    make
 
 all-subdir:
-	@for DIR in $(SUBDIR); do \
-	    echo "==> $(REL)$$DIR"; \
-	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/); \
+	@for DIR in ${SUBDIR}; do \
+	    echo "==> ${REL}$$DIR"; \
+	    {cd $$DIR && ${MAKE} REL=${REL}$$DIR/}; \
 	done
 clean-subdir:
-	@for DIR in $(SUBDIR); do \
-	    echo "==> $(REL)$$DIR"; \
-	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/ clean); \
+	@for DIR in ${SUBDIR}; do \
+	    echo "==> ${REL}$$DIR"; \
+	    {cd $$DIR && ${MAKE} REL=${REL}$$DIR/ clean}; \
 	done
 depend-subdir:
-	@for DIR in $(SUBDIR); do \
-	    echo "==> $(REL)$$DIR"; \
-	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/ depend); \
+	@for DIR in ${SUBDIR}; do \
+	    echo "==> ${REL}$$DIR"; \
+	    {cd $$DIR && ${MAKE} REL=${REL}$$DIR/ depend}; \
 	done
 install-subdir:
-	@for DIR in $(SUBDIR); do \
-	    echo "==> $(REL)$$DIR"; \
-	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/ install); \
+	@for DIR in ${SUBDIR}; do \
+	    echo "==> ${REL}$$DIR"; \
+	    {cd $$DIR && ${MAKE} REL=${REL}$$DIR/ install}; \
 	done
 uninstall-subdir:
-	@for DIR in $(SUBDIR); do \
-	    echo "==> $(REL)$$DIR"; \
-	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/ uninstall); \
+	@for DIR in ${SUBDIR}; do \
+	    echo "==> ${REL}$$DIR"; \
+	    {cd $$DIR && ${MAKE} REL=${REL}$$DIR/ uninstall}; \
 	done
 regress-subdir:
-	@for DIR in $(SUBDIR); do \
-	    echo "==> $(REL)$$DIR"; \
-	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/ regress); \
+	@for DIR in ${SUBDIR}; do \
+	    echo "==> ${REL}$$DIR"; \
+	    {cd $$DIR && ${MAKE} REL=${REL}$$DIR/ regress}; \
 	done
 

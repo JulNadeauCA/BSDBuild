@@ -1,6 +1,6 @@
-# $Csoft: csoft.www.mk,v 1.2 2001/10/30 07:18:11 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.3 2001/12/03 04:47:00 vedge Exp $
 
-# Copyright (c) 2001 CubeSoft Communications, Inc.
+# Copyright {c} 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -20,13 +20,11 @@
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 # ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
 # ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# DAMAGES {INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION} HOWEVER
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+# OR TORT {INCLUDING NEGLIGENCE OR OTHERWISE} ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-TYPE=		www
 
 DOCROOT?=	./docroot
 M4?=		m4
@@ -36,44 +34,44 @@ M4FLAGS?=
 INSTALL?=	install
 HTMLMODE?=	644
 
-BASEDIR?=	$(TOP)/base
+BASEDIR?=	${TOP}/base
 TEMPLATE?=	fancy sober
 DEFTMPL?=	sober
 
 .SUFFIXES: .html .htm .jpg .jpeg .png .gif .m4
 
 .htm.html:
-	@for TMPL in $(TEMPLATE); do					\
+	@for TMPL in ${TEMPLATE}; do					\
 	    echo "===> $$TMPL-$@";					\
-	    cp -f $< $(BASEDIR)/base.htm;				\
-	    $(M4) $(M4FLAGS) -D_TMPL_=$$TMPL				\
-		-D_TOP_=$(TOP) -D_BASE_=$(BASEDIR) -D_FILE_=$@		\
-		$(BASEDIR)/$$TMPL.m4 | $(PERL) $(TOP)/mk/hstrip.pl $@	\
+	    cp -f $< ${BASEDIR}/base.htm;				\
+	    ${M4} ${M4FLAGS} -D_TMPL_=$$TMPL				\
+		-D_TOP_=${TOP} -D_BASE_=${BASEDIR} -D_FILE_=$@		\
+		${BASEDIR}/$$TMPL.m4 | ${PERL} ${TOP}/mk/hstrip.pl $@	\
 		> $$TMPL-$@;						\
 	done
-	@cp -f $(DEFTMPL)-$@ $@
+	@cp -f ${DEFTMPL}-$@ $@
 
-all: $(HTML) all-subdir
+all: ${HTML} all-subdir
 
 clean: clean-subdir
-	@rm -f $(HTML) *.html
+	@rm -f ${HTML} *.html
 
 depend: depend-subdir
 
-install: install-subdir $(HTML)
-	@if [ "$(HTML)" != "" ]; then					\
-	    $(INSTALL) $(INSTALL_COPY) $(INSTALL_STRIP)			\
-	    $(BINOWN) $(BINGRP) -m $(HTMLMODE) $(HTML) $(DOCROOT);	\
+install: install-subdir ${HTML}
+	@if [ "${HTML}" != "" ]; then					\
+	    ${INSTALL} ${INSTALL_COPY} ${INSTALL_STRIP}			\
+	    ${BINOWN} ${BINGRP} -m ${HTMLMODE} ${HTML} ${DOCROOT};	\
 	fi
 	
 uninstall: uninstall-subdir
-	@if [ "$(HTML)" != "" ]; then	\
-	    @for DOC in $(HTML); do	\
-		rm -f $(DOCROOT)/$$DOC;	\
+	@if [ "${HTML}" != "" ]; then	\
+	    @for DOC in ${HTML}; do	\
+		rm -f ${DOCROOT}/$$DOC;	\
 	    done;			\
 	fi
 
 regress: regress-subdir
 
-include $(TOP)/mk/csoft.common.mk
-include $(TOP)/mk/csoft.subdir.mk
+include ${TOP}/mk/csoft.common.mk
+include ${TOP}/mk/csoft.subdir.mk

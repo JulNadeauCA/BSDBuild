@@ -1,19 +1,19 @@
-# $Csoft: vedge.www.mk,v 1.22 2001/08/16 05:52:32 vedge Exp $
+# $Csoft: vedge.www.mk,v 1.23 2001/09/15 02:58:37 vedge Exp $
 
-TYPE=	    www
+TYPE=		www
 
-DOCROOT?=   ./docroot
-M4?=	    m4
+DOCROOT?=	./docroot
+M4?=		m4
 M4FLAGS?=
-INSTALL?=   install
-HTMLMODE?=  644
+INSTALL?=	install
+HTMLMODE?=	644
 
-BASEDIR?=   $(TOP)/base
-TEMPLATE?=  fancy sober
-DEFTMPL?=   sober
+BASEDIR?=	$(TOP)/base
+TEMPLATE?=	fancy sober
+DEFTMPL?=	sober
 
 
-.SUFFIXES:  .html .htm .jpg .jpeg .png .gif .m4
+.SUFFIXES: .html .htm .jpg .jpeg .png .gif .m4
 
 .htm.html:
 	@for TMPL in $(TEMPLATE); do				\

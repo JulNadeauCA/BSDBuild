@@ -1,42 +1,47 @@
-# $Csoft: mkify.pl,v 1.2 2001/12/01 03:30:44 vedge Exp $
+# $Csoft: mkify.pl,v 1.3 2001/12/01 03:36:28 vedge Exp $
 
 sub MKCopy;
 
 sub MKCopy
 {
-	my ($src, $dest, $dir) = @_;
+	my ($src, $dir) = @_;
+	my $destmk = join('/', 'mk', $src);
+	my $srcmk = join('/', $dir, $src);
+	my @deps = ();
 
-	unless (-f $src) {
+	unless (-f $srcmk) {
 		print STDERR "$src: $!\n";
 		exit (1);
 	}
-	unless (-f $dest) {
-		print STDERR "creating $dest\n";
+	unless (-f $destmk) {
+		print STDERR "creating $destmk\n";
 	}
 
-	unless (open(SRC, $src)) {
-		print STDERR "$src: $!\n";
+	unless (open(SRC, $srcmk)) {
+		print STDERR "$srcmk: $!\n";
 		return 0;
 	}
-	unless (open(DEST, '>', $dest)) {
-		print STDERR "$dest: $!\n";
+	chop(@src = <SRC>);
+	close(SRC);
+
+	unless (open(DEST, '>', $destmk)) {
+		print STDERR "$destmk: $!\n";
 		close(SRC);
 		return 0;
 	}
-
-	foreach $_ (<SRC>) {
-		chop;
+	foreach $_ (@src) {
+		print DEST $_, "\n";
 
 		if (/^include .+\/mk\/(.+)$/) {
 			print "$src: depends on $1\n";
 			push @deps, $1;
-			MKCopy(join('/', $dir, $1), join('/', 'mk', $1));
 		}
-		print DEST $_, "\n";
 	}
-
-	close(SRC);
 	close(DEST);
+
+	foreach my $dep (@deps) {
+		MKCopy($dep, $dir);
+	}
 
 	return 1;
 }
@@ -49,7 +54,6 @@ BEGIN
 	if ($0 =~ /(\/.+)\/mkify\.pl/) {
 		$dir = $1;
 	}
-	print "dir = $dir\n";
 
 	if (! -d $mk && !mkdir($mk)) {
 		print STDERR "$mk: $!\n";
@@ -58,9 +62,8 @@ BEGIN
 
 	foreach my $f (@ARGV) {
 		$f = join('.', 'csoft', $f, 'mk');
-		my $src = join('/', $dir, $f);
 		my $dest = join('/', $mk, $f);
 
-		MKCopy($src, $dest, $dir);
+		MKCopy($f, $dir);
 	}
 }

@@ -1,4 +1,4 @@
-# $Csoft$
+# $Csoft: make.pm,v 1.1 2002/05/29 21:31:59 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -48,7 +48,7 @@ ASSIGN+= bar
 
 all: write-test
 
-write-test: .PHONY
+write-test:
 	@echo > .maketest2
 
 .BEGIN:

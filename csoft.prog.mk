@@ -1,4 +1,4 @@
-# $Csoft: csoft.prog.mk,v 1.31 2003/09/26 11:28:00 vedge Exp $
+# $Csoft: csoft.prog.mk,v 1.32 2003/09/28 17:34:24 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -105,6 +105,10 @@ _prog_objs:
 	        F=`echo $$F | sed 's/.cc$$/.o/'`; \
 	        F=`echo $$F | sed 's/.asm$$/.o/'`; \
 	        ${MAKE} $$F; \
+		if [ $$? != 0 ]; then \
+			echo "${MAKE}: failure"; \
+			exit 1; \
+		fi; \
 	    done; \
 	fi
 
@@ -116,6 +120,10 @@ _prog_pobjs:
 	        F=`echo $$F | sed 's/.cc$$/.po/'`; \
 	        F=`echo $$F | sed 's/.asm$$/.po/'`; \
 	        ${MAKE} $$F; \
+		if [ $$? != 0 ]; then \
+			echo "${MAKE}: failure"; \
+			exit 1; \
+		fi; \
 	    done; \
 	fi
 

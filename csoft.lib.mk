@@ -1,4 +1,4 @@
-# $Csoft: csoft.lib.mk,v 1.30 2003/09/28 17:34:24 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.31 2003/10/05 01:41:41 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -117,6 +117,10 @@ _lib_objs:
 	        F=`echo $$F | sed 's/.cc$$/.o/'`; \
 	        F=`echo $$F | sed 's/.asm$$/.o/'`; \
 	        ${MAKE} $$F; \
+		if [ $$? != 0 ]; then \
+			echo "${MAKE}: failure"; \
+			exit 1; \
+		fi; \
             done; \
 	fi
 
@@ -129,6 +133,10 @@ _lib_shobjs:
 	        F=`echo $$F | sed 's/.cc$$/.so/'`; \
 	        F=`echo $$F | sed 's/.asm$$/.so/'`; \
 	        ${MAKE} $$F; \
+		if [ $$? != 0 ]; then \
+			echo "${MAKE}: failure"; \
+			exit 1; \
+		fi; \
             done; \
 	fi
 

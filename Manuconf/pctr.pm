@@ -1,4 +1,4 @@
-# $Csoft: pctr.pm,v 1.1 2004/01/01 00:33:47 vedge Exp $
+# $Csoft: pctr.pm,v 1.2 2004/01/01 00:35:01 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2003 CubeSoft Communications, Inc.
@@ -34,7 +34,7 @@ sub Test
 int
 main(int argc, char *argv[])
 {
-	pctrval_t v;
+	pctrval v;
 
 	v = rdtsc();
 	return (0);

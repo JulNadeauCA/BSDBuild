@@ -1,4 +1,4 @@
-# $Csoft: glib.pm,v 1.6 2002/07/31 00:28:03 vedge Exp $
+# $Csoft: glib.pm,v 1.7 2002/09/06 00:56:51 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -28,14 +28,14 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	print Obtain('glib-config', '--version', 'glib_version');
-	print Obtain('glib-config', '--cflags', 'GLIB_CFLAGS');
-	print Obtain('glib-config', '--libs', 'GLIB_LIBS');
+	print ReadOut('glib-config', '--version', 'glib_version');
+	print ReadOut('glib-config', '--cflags', 'GLIB_CFLAGS');
+	print ReadOut('glib-config', '--libs', 'GLIB_LIBS');
 
 	# FreeBSD port
-	print Obtain('glib12-config', '--version', 'glib12_version');
-	print Obtain('glib12-config', '--cflags', 'glib12_cflags');
-	print Obtain('glib12-config', '--libs', 'glib12_libs');
+	print ReadOut('glib12-config', '--version', 'glib12_version');
+	print ReadOut('glib12-config', '--cflags', 'glib12_cflags');
+	print ReadOut('glib12-config', '--libs', 'glib12_libs');
 	
 	print
 	    Cond('"${glib_version}" != ""',

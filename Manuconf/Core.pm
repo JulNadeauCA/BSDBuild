@@ -1,4 +1,4 @@
-# $Csoft: Core.pm,v 1.13 2003/03/13 22:50:37 vedge Exp $
+# $Csoft: Core.pm,v 1.14 2003/03/25 07:45:25 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -24,7 +24,25 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Obtain
+# Read the output of a program into a variable.
+# Set an empty string if the binary is not found.
+sub ReadOut
+{
+	my ($bin, $args, $define) = @_;
+
+	return << "EOF"
+$define=""
+for path in `echo \$PATH | sed 's/:/ /g'`; do
+	if [ -x "\${path}/$bin" ]; then
+		$define=`\${path}/$bin $args`
+	fi
+done
+EOF
+}
+
+# Return the absolute path name of a binary into a variable.
+# Set an empty string if the binary is not found.
+sub Which
 {
 	my ($bin, $args, $define) = @_;
 
@@ -230,7 +248,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(%TESTS %DESCR Obtain Cond Define Echo Necho Fail MKSave HDefine HDefineString HUndef Nothing REQUIRE TryCompile Log);
+    @EXPORT = qw(%TESTS %DESCR ReadOut Which Cond Define Echo Necho Fail MKSave HDefine HDefineString HUndef Nothing REQUIRE TryCompile Log);
 }
 
 ;1

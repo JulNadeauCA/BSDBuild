@@ -1,4 +1,4 @@
-# $Csoft: freetype.pm,v 1.7 2002/12/23 05:45:04 vedge Exp $
+# $Csoft: freetype.pm,v 1.8 2002/12/27 02:27:16 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -29,9 +29,9 @@ sub Test
 	my ($ver) = @_;
 
 	# Ask freetype-config for compiler flags and libraries.
-	print Obtain('freetype-config', '--version', 'FREETYPE_VERSION');
-	print Obtain('freetype-config', '--cflags', 'FREETYPE_CFLAGS');
-	print Obtain('freetype-config', '--libs', 'FREETYPE_LIBS');
+	print ReadOut('freetype-config', '--version', 'FREETYPE_VERSION');
+	print ReadOut('freetype-config', '--cflags', 'FREETYPE_CFLAGS');
+	print ReadOut('freetype-config', '--libs', 'FREETYPE_LIBS');
 
 	# XXX IRIX package hack.
 	print

@@ -1,4 +1,4 @@
-# $Csoft: smpeg.pm,v 1.8 2002/12/24 08:59:39 vedge Exp $
+# $Csoft: smpeg.pm,v 1.9 2003/05/22 08:25:15 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -28,9 +28,9 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	print Obtain('smpeg-config', '--version', 'smpeg_version');
-	print Obtain('smpeg-config', '--cflags', 'SMPEG_CFLAGS');
-	print Obtain('smpeg-config', '--libs', 'SMPEG_LIBS');
+	print ReadOut('smpeg-config', '--version', 'smpeg_version');
+	print ReadOut('smpeg-config', '--cflags', 'SMPEG_CFLAGS');
+	print ReadOut('smpeg-config', '--libs', 'SMPEG_LIBS');
 
 	print
 	    Cond('"${smpeg_version}" != ""',

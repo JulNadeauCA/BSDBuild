@@ -97,11 +97,10 @@ else
     PREFIX=/usr/local
 fi
 S=""
-for i in `echo $PATH |sed 's/:/ /g'`; do
-	if [ -x "${i}/pwd" ]; then
-		S=`${i}/pwd `
-	fi
-done
+which="`which pwd`"
+if [ -n "$which" -a -x "$which" ]; then
+	S=`${which} `
+fi
 echo >Makefile.config
 echo -n "checking for a usable make(1)..."
 if [ "$MAKE" = "" ]; then
@@ -121,7 +120,7 @@ ASSIGN+= bar
 
 all: write-test
 
-write-test: .PHONY
+write-test:
 	@echo > .maketest2
 
 .BEGIN:
@@ -152,7 +151,7 @@ fi
 if [ "${help}" = "yes" ]
  then
 echo "Usage: ./configure [args]"
-echo "    --prefix             Installation prefix [/usr/local]"
+echo "    --prefix                       Installation prefix [/usr/local]"
 exit 1
 fi
 SHAREDIR="$PREFIX/share/csoft-mk"

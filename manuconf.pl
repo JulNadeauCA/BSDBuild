@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.20 2002/07/29 03:42:40 vedge Exp $
+# $Csoft: manuconf.pl,v 1.21 2002/07/31 00:27:58 vedge Exp $
 #
 # Copyright (c) 2001, 2002 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -129,6 +129,8 @@ EOF
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+echo > config.log
+
 mc_optarg=
 for mc_arg; do
 	case "$mc_arg" in
@@ -232,6 +234,10 @@ EOF
 
 					print NEcho(
 					"checking for $DESCR{$app}...");
+					
+					print Log(
+					"checking for $DESCR{$app}...");
+
 					&$c(@args);
 				} elsif ($1 eq 'register') {
 				    Register(@args);

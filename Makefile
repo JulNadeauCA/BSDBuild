@@ -1,4 +1,4 @@
-# $Csoft: Makefile,v 1.4 2002/07/27 06:33:00 vedge Exp $
+# $Csoft: Makefile,v 1.5 2002/07/29 03:53:32 vedge Exp $
 
 TOP=.
 
@@ -27,9 +27,15 @@ install: install-subdir
 cleandir:
 	rm -f Makefile.config configure *~
 
+clean:
+	# nothing
+
 configure: .PHONY
 	cat configure.in | ./manuconf.pl > configure
 	chmod 755 configure
+
+depend:
+	# nothing
 
 include ${TOP}/csoft.common.mk
 include ${TOP}/csoft.subdir.mk

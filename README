@@ -10,6 +10,12 @@ variables and the include directive at the bottom. It processes
 directories recursively. The maptree.sh script substitutes %TOP%
 to the top-level build directory, and creates default makefiles
 if they are not present. It is only useful to the maintainer.
+It takes the type of package an an argument, one of:
+
+    lib	    A library (build shared and static).
+    man	    Simple manual pages, requires nroff.
+    prog    A program in C or C++.
+    www	    HTML pages, requires M4.
 
 The vedge-mk library should be installed as ./mk in the top-level
 build directory, it is required by the makefiles.

@@ -1,4 +1,4 @@
-# $Csoft: cc.pm,v 1.10 2002/12/22 04:57:38 vedge Exp $
+# $Csoft: cc.pm,v 1.11 2002/12/22 09:54:05 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
@@ -57,7 +57,6 @@ main(int argc, char *argv[])
 }
 EOT
 
-echo "$CC -o .cctest .cctest.c" >>config.log
 $CC -o .cctest .cctest.c 2>>config.log
 if [ $? != 0 -o ! -e .cctest ]; then
     echo "-> failure" >> config.log
@@ -68,11 +67,11 @@ fi
 cc_is_gcc=no
 if ./.cctest; then
     cc_is_gcc=yes
-    echo "-> success: gcc" >> config.log
+    echo "ok (gcc)" >> config.log
     echo "yes"
 else
     echo "yes"
-    echo "-> success" >> config.log
+    echo "ok" >> config.log
 fi
 
 rm -f .cctest .cctest.c

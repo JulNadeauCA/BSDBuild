@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.27 2003/03/01 02:21:32 vedge Exp $
+# $Csoft: manuconf.pl,v 1.28 2003/03/05 16:13:09 vedge Exp $
 #
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -257,9 +257,6 @@ EOF
 					print NEcho(
 					"checking for $DESCR{$app}...");
 					
-					print Log(
-					"checking for $DESCR{$app}...");
-
 					&$c(@args);
 				} elsif ($1 eq 'register') {
 				    Register(@args);
@@ -287,7 +284,7 @@ fi
 EOF
 				} elsif ($1 eq 'logout') {
 				    print << "EOF";
-echo > config.log
+echo "Host: \$HOST" > config.log
 EOF
 				} elsif ($1 eq 'exit') {
 				    print "exit $args[0]\n";

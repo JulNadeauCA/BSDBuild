@@ -1,4 +1,4 @@
-# $Csoft: Core.pm,v 1.11 2002/12/22 04:57:38 vedge Exp $
+# $Csoft: Core.pm,v 1.12 2002/12/24 08:59:39 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -156,7 +156,6 @@ EOT
 EOF
 		print << 'EOF';
 compile="ok"
-echo "$CC -o conftest conftest.c" >> config.log
 $CC -o conftest conftest.c 2>>config.log
 if [ $? != 0 ]; then
 	echo "-> failed: non-zero exit status" >> config.log
@@ -175,7 +174,7 @@ EOF
 
 		print << "EOF";
 if [ "\${compile}" = "ok" ]; then
-	echo "-> success" >> config.log
+	echo "ok" >> config.log
 	$define
 	echo "yes"
 else
@@ -200,17 +199,16 @@ EOT
 EOF
 		print << "EOF";
 compile=\"ok\"
-echo \$CC $cflags -o conftest conftest.c $libs >> config.log
 \$CC $cflags -o conftest conftest.c $libs 2>>config.log
 EOF
 
 		print << 'EOF';
 if [ $? != 0 ]; then
-	echo "-> failed: compiler had non-zero exit status" >> config.log
+	echo "failed" >> config.log
 	compile="failed"
 fi
 if [ ! -e "conftest" ]; then
-	echo "-> failed: compiler did not produce an executable" >> config.log
+	echo "failed" >> config.log
 	compile="failed"
 fi
 rm -f conftest conftest.c
@@ -222,7 +220,7 @@ EOF
 
 		print << "EOF";
 if [ "\${compile}" = "ok" ]; then
-	echo "-> success" >> config.log
+	echo "ok" >> config.log
 	$hdefine
 	$define
 	echo "yes"

@@ -1,4 +1,4 @@
-# $Csoft: csoft.common.mk,v 1.3 2001/12/01 03:53:31 vedge Exp $
+# $Csoft: csoft.common.mk,v 1.4 2001/12/03 04:47:00 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -26,7 +26,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-VERSION=1.1
+VERSION=1.2
 
 tree:
 	(cd $(TOP)/mk && $(SH) maptree.sh none)

@@ -1,4 +1,4 @@
-# $Csoft: csoft.lib.mk,v 1.39 2004/01/03 04:13:27 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.40 2004/03/10 13:46:17 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -234,8 +234,8 @@ clean-lib:
 		    rm -f ${OBJS}; \
 		    echo "rm -f ${OBJS}"; \
 		fi; \
-		echo "rm -f lib${LIB}.la .libs"; \
-		rm -f lib${LIB}.la .libs; \
+		echo "rm -fR lib${LIB}.la .libs"; \
+		rm -fR lib${LIB}.la .libs; \
 	    fi; \
 	fi
 	@if [ "${CLEANFILES}" != "" ]; then \

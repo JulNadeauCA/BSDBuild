@@ -22,7 +22,7 @@ CFLAGS+=    $(COPTS)
 ALL: $(PROG) $(MAN) all-subdir
 
 $(PROG): $(OBJS)
-	$(CC) $(LDFLAGS) $(LIBS) $(OBJS)
+	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS) $(LIBS)
 
 clean: clean-subdir
 	rm -f $(PROG) $(OBJS) a.out

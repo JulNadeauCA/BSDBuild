@@ -1,7 +1,5 @@
 # $Id$
 
-TYPE=	    man
-
 NROFF?=	    nroff -Tascii
 TBL?=	    tbl
 

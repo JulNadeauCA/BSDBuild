@@ -1,4 +1,4 @@
-# $Csoft: csoft.dep.mk,v 1.8 2002/05/13 08:23:53 vedge Exp $
+# $Csoft: csoft.dep.mk,v 1.9 2002/09/06 00:58:47 vedge Exp $
 
 # Copyright (c) 2001, 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
 # All rights reserved.
@@ -23,7 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-MKDEP=	${TOP}/mk/mkdep
+MKDEP=	sh ${TOP}/mk/mkdep
 
 depend:	${DPADD} depend-subdir
 	@rm -f .depend

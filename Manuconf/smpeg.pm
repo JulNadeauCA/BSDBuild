@@ -1,4 +1,4 @@
-# $Csoft: smpeg.pm,v 1.3 2002/05/05 23:28:11 vedge Exp $
+# $Csoft: smpeg.pm,v 1.4 2002/05/06 00:00:20 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -28,26 +28,27 @@
 
 sub Test
 {
-	my ($require, $ver) = @_;
+	my ($ver) = @_;
 	
-	print SHObtain('smpeg-config', '--version', 'smpeg_version');
-	print SHObtain('smpeg-config', '--cflags', 'SMPEG_CFLAGS');
-	print SHObtain('smpeg-config', '--libs', 'SMPEG_LIBS');
+	print Obtain('smpeg-config', '--version', 'smpeg_version');
+	print Obtain('smpeg-config', '--cflags', 'SMPEG_CFLAGS');
+	print Obtain('smpeg-config', '--libs', 'SMPEG_LIBS');
 
 	print
-	    SHTest('"${smpeg_version}" != ""',
-	    SHEcho("ok") . 
-	    	SHHSave('CONF_SMPEG') .
-	        SHMKSave('SMPEG_CFLAGS') .
-	        SHMKSave('SMPEG_LIBS'),
-	    SHRequire('smpeg', $ver, 'http://www.icculus.org/'));
+	    Test('"${smpeg_version}" != ""',
+	    Echo("ok") . 
+	    	HSave('CONF_SMPEG') .
+	        MKSave('SMPEG_CFLAGS') .
+	        MKSave('SMPEG_LIBS'),
+	    Fail('missing'));
 
 	return (0);
 }
 
 BEGIN
 {
-	$DESCR{'smpeg'} = 'smpeg (http://www.lokigames.com/)';
+	$HOMEPAGE = 'http://www.lokigames.com/development/smpeg.php3';
+	$DESCR{'smpeg'} = "smpeg ($HOMEPAGE)";
 	$TESTS{'smpeg'} = \&Test;
 }
 

@@ -1,4 +1,4 @@
-# $Csoft: make.pm,v 1.1 2002/05/29 21:31:59 vedge Exp $
+# $Csoft: make.pm,v 1.2 2002/06/12 23:05:59 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -28,8 +28,6 @@
 
 sub Test
 {
-	my $require = shift;
-
 	print << 'EOF';
 if [ "$MAKE" = "" ]; then
 	for i in `echo $PATH |sed 's/:/ /g'`; do

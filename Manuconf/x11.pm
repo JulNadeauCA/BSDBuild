@@ -1,4 +1,4 @@
-# $Csoft: x11.pm,v 1.6 2002/05/21 04:35:53 vedge Exp $
+# $Csoft: x11.pm,v 1.7 2002/05/21 04:39:20 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -28,24 +28,22 @@
 
 sub Test
 {
-	my $require = shift;
-
 	while ($dir = shift(@_)) {
 	    print
-	        SHTest("-d $dir",
-		SHDefine('X11BASE', $dir) .
-		    SHDefine('X11_CFLAGS', "-I$dir/include") .
-		    SHDefine('X11_LIBS', "\"-L$dir/lib -lX11\""),
-		SHNothing());
+	        Test("-d $dir",
+		Define('X11BASE', $dir) .
+		    Define('X11_CFLAGS', "-I$dir/include") .
+		    Define('X11_LIBS', "\"-L$dir/lib -lX11\""),
+		Nothing());
 	}
 	print
-	    SHTest('"${X11BASE}" != ""',
-	    SHNEcho('ok') . SHEcho(', $X11BASE') .
-		SHDefine('x11_found', "yes") .
-	        SHMKSave('X11BASE') .
-	        SHMKSave('X11_CFLAGS') .
-	        SHMKSave('X11_LIBS'),
-	    SHRequire('X11R6', '3', 'http://www.xfree86.org/'));
+	    Test('"${X11BASE}" != ""',
+	    NEcho('ok') . Echo(', $X11BASE') .
+		Define('x11_found', "yes") .
+	        MKSave('X11BASE') .
+	        MKSave('X11_CFLAGS') .
+	        MKSave('X11_LIBS'),
+	    Fail('missing');
 }
 
 BEGIN

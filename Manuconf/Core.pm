@@ -1,4 +1,4 @@
-# $Csoft: Core.pm,v 1.1 2002/05/05 22:10:22 vedge Exp $
+# $Csoft: Core.pm,v 1.2 2002/05/13 07:41:37 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -26,7 +26,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub SHObtain
+sub Obtain
 {
     my ($bin, $args, $define) = @_;
 
@@ -40,7 +40,7 @@ done
 EOF
 }
 
-sub SHTest
+sub Test
 {
 	my ($cond, $yese, $noe) = @_;
 
@@ -51,45 +51,34 @@ ${noe}fi
 EOF
 }
 
-sub SHDefine
+sub Define
 {
     my ($arg, $val) = @_;
 
     return "$arg=$val\n";
 }
 
-sub SHRequire
-{
-    my ($pkg, $ver, $home) = @_;
-
-    unless ($REQUIRE) {
-	return SHNothing();
-    }
-    
-    my $s = SHEcho("*** $pkg >= $ver is required") . 
-	    SHEcho("*** Get it from $home") . 
-	    SHFail("$pkg >= $ver is missing");
-
-    return ($s);
-}
-
-sub SHEcho
+sub Echo
 {
 	my $msg = shift;
 
 	return "echo \"$msg\"\n";
 }
 
-sub SHNEcho
+sub NEcho
 {
 	my $msg = shift;
 
 	return "echo -n \"$msg\"\n";
 }
 
-sub SHFail
+sub Fail
 {
 	my $msg = shift;
+    
+	unless ($REQUIRE) {
+		return Nothing();
+	}
 
 	return << "EOF";
 echo \"ERROR: $msg\"
@@ -97,7 +86,7 @@ exit 1
 EOF
 }
 
-sub SHMKSave
+sub MKSave
 {
     my $var = shift;
     my $s = '';
@@ -105,12 +94,12 @@ sub SHMKSave
     if ($CONF{'makeout'}) {
 	$s = "echo $var=\$$var >> $CONF{'makeout'}\n";
     } else {
-	print STDERR "SHMKSave: not saving `$var'\n";
+	print STDERR "mdefine: not saving `$var'\n";
     }
     return ($s);
 }
 
-sub SHHSave
+sub HSave
 {
     my $var = shift;
     my $s = '';
@@ -118,16 +107,16 @@ sub SHHSave
     if ($CONF{'inclout'}) {
 	$s = << "EOF"
 echo "#ifndef $var" >> $CONF{'inclout'}
-echo "#define $var \$$var" >> $CONF{'inclout'}
+echo "#define $var" \$$var >> $CONF{'inclout'}
 echo "#endif /* $var */" >> $CONF{'inclout'}
 EOF
     } else {
-	print STDERR "SHMKSave: not saving `$var'\n";
+	print STDERR "hdefine: not saving `$var'\n";
     }
     return ($s);
 }
 
-sub SHHSaveS
+sub HSaveS
 {
     my $var = shift;
     my $s = '';
@@ -139,12 +128,12 @@ echo "#define $var \\\"\$$var\\\"" >> $CONF{'inclout'}
 echo "#endif /* $var */" >> $CONF{'inclout'}
 EOF
     } else {
-	print STDERR "SHMKSave: not saving `$var'\n";
+	print STDERR "mdefine: not saving `$var'\n";
     }
     return ($s);
 }
 
-sub SHNothing
+sub Nothing
 {
     return "NONE=1\n";
 }
@@ -157,7 +146,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(%TESTS %DESCR SHObtain SHTest SHDefine SHRequire SHEcho SHNecho SHFail SHMKSave SHHSave SHHSaveS SHNothing);
+    @EXPORT = qw(%TESTS %DESCR Obtain Test Define Require Echo Necho Fail MKSave HSave HSaveS Nothing);
 }
 
 ;1

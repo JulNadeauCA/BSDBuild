@@ -1,4 +1,4 @@
-# $Csoft: glib.pm,v 1.3 2002/05/05 23:28:11 vedge Exp $
+# $Csoft: glib.pm,v 1.4 2002/05/06 00:00:20 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -28,43 +28,35 @@
 
 sub Test
 {
-	my ($require, $ver) = @_;
-	my $onfail = '';
+	my ($ver) = @_;
 	
-	if ($require) {
-		$onfail =
-		    SHEcho("*** This package requires glib >= $ver") .
-		    sHEcho("*** Get it from http://www.gtk.org/") .
-		    SHFail("Missing glib");
-	}
-	
-	print SHObtain('glib-config', '--version', 'glib_version');
-	print SHObtain('glib-config', '--cflags', 'GLIB_CFLAGS');
-	print SHObtain('glib-config', '--libs', 'GLIB_LIBS');
+	print Obtain('glib-config', '--version', 'glib_version');
+	print Obtain('glib-config', '--cflags', 'GLIB_CFLAGS');
+	print Obtain('glib-config', '--libs', 'GLIB_LIBS');
 
 	# FreeBSD port
-	print SHObtain('glib12-config', '--version', 'glib12_version');
-	print SHObtain('glib12-config', '--cflags', 'glib12_cflags');
-	print SHObtain('glib12-config', '--libs', 'glib12_libs');
+	print Obtain('glib12-config', '--version', 'glib12_version');
+	print Obtain('glib12-config', '--cflags', 'glib12_cflags');
+	print Obtain('glib12-config', '--libs', 'glib12_libs');
 	
 	print
-	    SHTest('"${glib_version}" != ""',
-	    SHDefine('glib_found', 'yes') .
-	        SHMKSave('GLIB_CFLAGS') .
-	        SHMKSave('GLIB_LIBS'),
-	    SHNothing());
+	    Test('"${glib_version}" != ""',
+	    Define('glib_found', 'yes') .
+	        MKSave('GLIB_CFLAGS') .
+	        MKSave('GLIB_LIBS'),
+	    Nothing());
 	print
-	    SHTest('"${glib12_version}" != ""',
-	    SHDefine('glib_found', 'yes') .
-	        SHDefine('GLIB_CFLAGS', '$glib12_cflags') .
-	        SHDefine('GLIB_LIBS', '$glib12_libs') .
-	        SHMKSave('GLIB_CFLAGS') .
-	        SHMKSave('GLIB_LIBS'),
-	    SHNothing());
+	    Test('"${glib12_version}" != ""',
+	    Define('glib_found', 'yes') .
+	        Define('GLIB_CFLAGS', '$glib12_cflags') .
+	        Define('GLIB_LIBS', '$glib12_libs') .
+	        MKSave('GLIB_CFLAGS') .
+	        MKSave('GLIB_LIBS'),
+	    Nothing());
 	print
-	    SHTest('"${glib_found}" = "yes"',
-	    SHEcho('ok'),
-	    SHEcho("missing") . $onfail);
+	    Test('"${glib_found}" = "yes"',
+	    Echo('ok'),
+	    Fail("glib missing"));
 
 	return (0);
 }

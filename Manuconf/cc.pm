@@ -27,8 +27,6 @@
 
 sub Test
 {
-	my $require = shift;
-
 	print << 'EOF';
 if [ "$CC" = "" ]; then
 	for i in `echo $PATH |sed 's/:/ /g'`; do

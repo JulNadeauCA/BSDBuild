@@ -1,4 +1,4 @@
-# $Csoft: csoft.perl.mk,v 1.10 2002/09/06 00:58:47 vedge Exp $
+# $Csoft: csoft.perl.mk,v 1.11 2002/10/01 08:37:44 vedge Exp $
 
 # Copyright (c) 2001, 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
 # All rights reserved.

@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.38 2004/01/03 04:13:27 vedge Exp $
+# $Csoft: manuconf.pl,v 1.39 2004/03/10 13:44:51 vedge Exp $
 #
 # Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -65,6 +65,8 @@ sub Help
     my $help_opt = pack('A' x 30, split('', '--help'));
     my $nls_opt = pack('A' x 30, split('', '--enable-nls'));
     my $gettext_opt = pack('A' x 30, split('', '--with-gettext'));
+    my $manpages_opt = pack('A' x 30, split('', '--with-manpages'));
+    my $docs_opt = pack('A' x 30, split('', '--with-docs'));
     my $debug_opt = pack('A' x 30, split('', '--enable-debug'));
 
     my $regs = join("\n",
@@ -76,6 +78,8 @@ sub Help
         "echo \"    $help_opt Display this message\"",
         "echo \"    $nls_opt Native Language Support [yes]\"",
         "echo \"    $gettext_opt Use gettext tools (msgmerge, ...) [check]\"",
+        "echo \"    $manpages_opt Manual pages (-mdoc) [yes]\"",
+        "echo \"    $docs_opt Printable docs (-me/tbl/eqn/pic/refer) [no]\"",
         "echo \"    $debug_opt Include debugging code [no]\"",
 	@HELP);
 
@@ -263,6 +267,13 @@ echo "Host: $HOST"
 echo > Makefile.config
 echo "Host: $HOST" > config.log
 mkdir config 1>/dev/null 2>&1
+
+if [ "${with_manpages}" = "no" ]; then
+    echo "NOMAN=yes" >> Makefile.config
+fi
+if [ "${with_docs}" = "no" ]; then
+    echo "NODOC=yes" >> Makefile.config
+fi
 EOF
 
 	my $registers = 1;

@@ -28,6 +28,8 @@ clean: clean-subdir
 	rm -f $(PROG) $(OBJS) a.out
 distclean:
 	rm -f `find %TOP% -name \.vedge\.\*\.mk`
+tree:
+	sh %TOP%/mk/maptree.sh $(TYPE)
 
 install: install-subdir
 	@if [ "$(PROG)" != "" ]; then \

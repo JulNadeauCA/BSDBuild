@@ -38,4 +38,4 @@ uninstall: uninstall-subdir
 	fi
 
 include $(TOP)/mk/vedge.common.mk
-include $(TOP)/vedge.subdir.mk
+include $(TOP)/mk/vedge.subdir.mk

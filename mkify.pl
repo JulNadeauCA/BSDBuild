@@ -1,6 +1,8 @@
-# $Csoft: mkify.pl,v 1.9 2002/04/24 06:55:51 vedge Exp $
-
-# Copyright (c) 2001 CubeSoft Communications, Inc.
+#!/usr/bin/perl
+#
+# $Csoft: mkify.pl,v 1.10 2002/05/10 22:41:48 vedge Exp $
+#
+# Copyright (c) 2001, 2002 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -50,7 +52,7 @@ sub MKCopy
 	chop(@src = <SRC>);
 	close(SRC);
 
-	unless (open(DEST, '>', $destmk)) {
+	unless (open(DEST, ">$destmk")) {
 		print STDERR "$destmk: $!\n";
 		close(SRC);
 		return 0;
@@ -74,12 +76,8 @@ sub MKCopy
 
 BEGIN
 {
-	my $dir = '.';
+	my $dir = '%INSTALLDIR%';
 	my $mk = './mk';
-
-	if ($0 =~ /(\/.+)\/mkify\.pl/) {
-		$dir = $1;
-	}
 
 	if (! -d $mk && !mkdir($mk)) {
 		print STDERR "$mk: $!\n";

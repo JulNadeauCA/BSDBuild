@@ -1,4 +1,4 @@
-# $Csoft: smpeg.pm,v 1.11 2003/10/01 09:24:19 vedge Exp $
+# $Csoft: smpeg.pm,v 1.12 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
@@ -33,14 +33,20 @@ sub Test
 	print ReadOut('smpeg-config', '--cflags', 'SMPEG_CFLAGS');
 	print ReadOut('smpeg-config', '--libs', 'SMPEG_LIBS');
 
+	# TODO Test
+
 	print
 	    Cond('"${smpeg_version}" != ""',
 	    Echo("yes") . 
-	    	HDefine('HAVE_SMPEG') .
-	        MKSave('SMPEG_CFLAGS') .
-	        MKSave('SMPEG_LIBS'),
+        MKSave('SMPEG_CFLAGS') .
+        MKSave('SMPEG_LIBS') .
+    	HDefine('HAVE_SMPEG') .
+    	HDefineStr('SMPEG_LIBS') .
+    	HDefineStr('SMPEG_CFLAGS') ,
 	    Echo("no") .
-		    HUndef('HAVE_SMPEG'));
+	    HUndef('HAVE_SMPEG') .
+		HUndef('SMPEG_LIBS') .
+		HUndef('SMPEG_CFLAGS'));
 
 	return (0);
 }

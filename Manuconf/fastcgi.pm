@@ -1,4 +1,4 @@
-# $Csoft: fastcgi.pm,v 1.2 2003/10/26 00:00:49 vedge Exp $
+# $Csoft: fastcgi.pm,v 1.3 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
@@ -35,11 +35,12 @@ sub Test
 	print Define('fastcgi_found', 'no');
 
 	foreach my $dir (@dirs) {
-	    print Cond("-e $dir/include/fcgi_stdio.h",
-		           Define('FASTCGI_CFLAGS', "\"-I$dir/include\"") .
-		           Define('FASTCGI_LIBS', "\"-L$dir/lib -lfcgi\"") .
-				   Define('fastcgi_found', "yes"),
-				   Nothing());
+	    print
+			Cond("-e $dir/include/fcgi_stdio.h",
+		    Define('FASTCGI_CFLAGS', "\"-I$dir/include\"") .
+		    Define('FASTCGI_LIBS', "\"-L$dir/lib -lfcgi\"") .
+			Define('fastcgi_found', "yes") ,
+			Nothing());
 	}
 
 	TryLibCompile 'HAVE_FASTCGI', '${FASTCGI_CFLAGS}', '${FASTCGI_LIBS}',
@@ -54,13 +55,14 @@ main(int argc, char *argv[])
 }
 EOF
 	
-	print Cond('"${HAVE_FASTCGI}" != ""',
-			Define('fastcgi_found', "yes") .
-			    HDefine('HAVE_X11') .
-			    MKSave('FASTCGI_CFLAGS') .
-				MKSave('FASTCGI_LIBS'),
-			Define('fastcgi_found', "no") .
-				HUndef('HAVE_FASTCGI'));
+	print
+		Cond('"${HAVE_FASTCGI}" != ""',
+		Define('fastcgi_found', "yes") .
+		HDefine('HAVE_FASTCGI') .
+		MKSave('FASTCGI_CFLAGS') .
+		MKSave('FASTCGI_LIBS') ,
+		Define('fastcgi_found', "no") .
+		HUndef('HAVE_FASTCGI'));
 }
 
 BEGIN

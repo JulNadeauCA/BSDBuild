@@ -1,4 +1,4 @@
-# $Csoft: freetype.pm,v 1.10 2003/10/01 09:24:19 vedge Exp $
+# $Csoft: freetype.pm,v 1.11 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
@@ -38,17 +38,17 @@ sub Test
 	print
 	    Cond('-d /usr/freeware/include',
 	    Define('FREETYPE_CFLAGS',
-		    '"${FREETYPE_CFLAGS} -I/usr/freeware/include"') ,
+		'"${FREETYPE_CFLAGS} -I/usr/freeware/include"'),
 	    Nothing());
 	
 	# Save the cflags/libs. Fail if FreeType is not installed.
 	print
 	    Cond('"${FREETYPE_VERSION}" != ""',
 	    Define('freetype_found', 'yes') .
-	        MKSave('FREETYPE_CFLAGS') .
-	        MKSave('FREETYPE_LIBS') .
-			Echo('yes'),
-	    Fail('Cannot find FreeType. Make sure freetype-config is in your $PATH.'));
+	    MKSave('FREETYPE_CFLAGS') .
+	    MKSave('FREETYPE_LIBS') .
+		Echo('yes') ,
+	    Fail('Cannot find FreeType. Is freetype-config in your $PATH?'));
 
 	# Try a test FreeType program.
 	print NEcho('checking whether FreeType works...');
@@ -73,7 +73,10 @@ main(int argc, char *argv[])
 EOF
 	print
 	    Cond('"${HAVE_FREETYPE}" = "yes"',
-	    Nothing(),
+	    HDefineStr('FREETYPE_LIBS') .
+		HDefineStr('FREETYPE_CFLAGS') ,
+		HUndef('FREETYPE_LIBS') .
+		HUndef('FREETYPE_CFLAGS') .
 	    Fail('The FreeType test would not compile.'));
 
 	return (0);

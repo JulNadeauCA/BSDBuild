@@ -1,4 +1,4 @@
-# $Csoft: x11.pm,v 1.16 2003/10/01 09:24:19 vedge Exp $
+# $Csoft: x11.pm,v 1.17 2004/01/03 04:13:30 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
@@ -49,16 +49,18 @@ sub Test
 	print Define('x11_found_libs', 'no');
 
 	foreach my $dir (@include_dirs) {
-	    print Cond("-d $dir/X11",
-		           Define('X11_CFLAGS', "\"-I$dir\"") .
-				   Define('x11_found_includes', "yes"),
-				   Nothing());
+	    print
+			Cond("-d $dir/X11",
+		    Define('X11_CFLAGS', "\"-I$dir\"") .
+			Define('x11_found_includes', "yes") ,
+			Nothing());
 	}
 	foreach my $dir (@lib_dirs) {
-	    print Cond("-d $dir",
-		           Define('X11_LIBS', "\"-L$dir\"") .
-				   Define('x11_found_libs', "yes"),
-				   Nothing());
+	    print
+			Cond("-d $dir",
+		    Define('X11_LIBS', "\"-L$dir\"") .
+			Define('x11_found_libs', "yes") ,
+			Nothing());
 	}
 
 	TryLibCompile 'HAVE_X11', '${X11_CFLAGS}', '${X11_LIBS} -lX11', << 'EOF';
@@ -75,13 +77,14 @@ main(int argc, char *argv[])
 }
 EOF
 	
-	print Cond('"${HAVE_X11}" != ""',
-			Define('x11_found', "yes") .
-			    HDefine('HAVE_X11') .
-			    MKSave('X11_CFLAGS') .
-				MKSave('X11_LIBS'),
-			Define('x11_found', "no") .
-				HUndef('HAVE_X11'));
+	print
+		Cond('"${HAVE_X11}" != ""',
+		MKSave('X11_CFLAGS') .
+		MKSave('X11_LIBS') .
+	    HDefineStr('X11_LIBS') .
+	    HDefineStr('X11_CFLAGS') ,
+		HUndef('X11_CFLAGS') .
+		HUndef('X11_LIBS'));
 }
 
 BEGIN

@@ -1,4 +1,4 @@
-# $Csoft: sdl.pm,v 1.15 2003/10/01 09:24:19 vedge Exp $
+# $Csoft: sdl.pm,v 1.16 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
@@ -41,22 +41,22 @@ sub Test
 	print
 	    Cond('"${sdl_version}" != ""',
 	    Define('sdl_found', 'yes') .
-	        MKSave('SDL_CFLAGS') .
-	        MKSave('SDL_LIBS'),
+	    MKSave('SDL_CFLAGS') .
+	    MKSave('SDL_LIBS') ,
 	    Nothing());
 	print
 	    Cond('"${sdl11_version}" != ""',
 	    Define('sdl_found', 'yes') .
-	        Define('SDL_CFLAGS', '$sdl11_cflags') .
-	        Define('SDL_LIBS', '$sdl11_libs') .
-	        MKSave('SDL_CFLAGS') .
-	        MKSave('SDL_LIBS'),
+	    Define('SDL_CFLAGS', '$sdl11_cflags') .
+	    Define('SDL_LIBS', '$sdl11_libs') .
+	    MKSave('SDL_CFLAGS') .
+	    MKSave('SDL_LIBS') ,
 	    Nothing());
 	print
 	    Cond('"${sdl_found}" = "yes"',
-	    Echo('ok'),
-	    Fail('Could not find the SDL library. '.
-		     'Make sure sdl-config is in PATH.'));
+	    Echo('ok')
+		,
+	    Fail('Could not find the SDL library. Is sdl-config in $PATH?'));
 	
 	print NEcho('checking whether SDL works...');
 	TryLibCompile 'HAVE_SDL',
@@ -90,9 +90,22 @@ main(int argc, char *argv[])
 EOF
 	print
 	    Cond('"${HAVE_SDL}" = "yes"',
-	    Nothing(),
+	    HDefineStr('SDL_LIBS') .
+	    HDefineStr('SDL_CFLAGS'),
+		HUndef('SDL_LIBS') .
+		HUndef('SDL_CFLAGS') .
 	    Fail('The SDL test would not compile.'));
 
+	print << 'EOF';
+echo "#ifndef SDL_LIBS" > config/sdl_libs.h
+echo "#define SDL_LIBS \"${SDL_LIBS}\"" >> config/sdl_libs.h
+echo "#endif /* SDL_LIBS */" >> config/sdl_libs.h
+EOF
+	print << 'EOF';
+echo "#ifndef SDL_CFLAGS" > config/sdl_cflags.h
+echo "#define SDL_CFLAGS \"${SDL_CFLAGS}\"" >> config/sdl_cflags.h
+echo "#endif /* SDL_CFLAGS */" >> config/sdl_cflags.h
+EOF
 	return (0);
 }
 

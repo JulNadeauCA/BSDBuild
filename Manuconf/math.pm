@@ -1,4 +1,4 @@
-# $Csoft: math.pm,v 1.2 2003/10/01 09:24:19 vedge Exp $
+# $Csoft: math.pm,v 1.3 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
@@ -46,8 +46,9 @@ main(int argc, char *argv[])
 EOF
 	print
 	    Cond('"${HAVE_MATH}" = "yes"',
-	    MKSave('MATH_LIBS'),
-	    Nothing());
+	    MKSave('MATH_LIBS') .
+		HDefineStr('MATH_LIBS') ,
+		HUndef('MATH_LIBS'));
 
 	return (0);
 }

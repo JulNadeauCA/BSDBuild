@@ -1,4 +1,4 @@
-# $Csoft: csoftadm.pm,v 1.1 2003/12/10 02:54:28 vedge Exp $
+# $Csoft: csoftadm.pm,v 1.2 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2003, 2004 CubeSoft Communications, Inc.
@@ -34,12 +34,18 @@ sub Test
 	print ReadOut('csoftadm-config', '--libs', 'CSOFTADM_LIBS');
 
 	print
-	    Cond('"${csoftadm_version}" != ""',
+	    Cond('"${csoftadm_version}" != ""'
+		,
 	    Echo('ok') .
 	    Define('csoftadm_found', 'yes') .
-	        MKSave('CSOFTADM_CFLAGS') .
-	        MKSave('CSOFTADM_LIBS'),
-	    Nothing());
+	    MKSave('CSOFTADM_CFLAGS') .
+	    MKSave('CSOFTADM_LIBS') .
+		HDefine('HAVE_CSOFTADM') .
+		HDefineStr('CSOFTADM_CFLAGS') .
+		HDefineStr('CSOFTADM_LIBS') ,
+		HUndef('HAVE_CSOFTADM') .
+	    HUndef('CSOFTADM_CFLAGS') .
+		HUndef('CSOFTADM_LIBS'));
 	
 	print NEcho('checking whether csoftadm works...');
 	TryLibCompile 'HAVE_CSOFTADM',
@@ -56,13 +62,6 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-
-	print
-		Cond('"${HAVE_CSOFTADM}" != ""',
-		MKSave('CSOFTADM_CFLAGS') .
-		MKSave('CSOFTADM_LIBS'),
-		Nothing());
-
 	return (0);
 }
 

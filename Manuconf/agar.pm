@@ -1,4 +1,4 @@
-# $Csoft: sdl.pm,v 1.16 2004/01/03 04:13:29 vedge Exp $
+# $Csoft: agar.pm,v 1.1 2004/03/10 14:11:06 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2004 CubeSoft Communications, Inc.
@@ -36,11 +36,15 @@ sub Test
 	print
 	    Cond('"${agar_version}" != ""',
 	    Echo("yes") . 
-	    	HDefine('HAVE_AGAR') .
-	        MKSave('AGAR_CFLAGS') .
-	        MKSave('AGAR_LIBS'),
+        MKSave('AGAR_CFLAGS') .
+        MKSave('AGAR_LIBS') .
+    	HDefine('HAVE_AGAR') .
+		HDefineStr('AGAR_CFLAGS') .
+		HDefineStr('AGAR_LIBS') ,
 	    Echo("no") .
-		    HUndef('HAVE_AGAR'));
+	    HUndef('HAVE_AGAR') .
+	    HUndef('AGAR_CFLAGS') .
+	    HUndef('AGAR_LIBS'));
 
 	print NEcho('checking whether Agar works...');
 	TryLibCompile 'HAVE_AGAR',
@@ -54,7 +58,6 @@ int
 main(int argc, char *argv[])
 {
 	engine_init(argc, argv, &info, ENGINE_INIT_GFX);
-	prop_set_bool(config, "foo", 1);
 	event_loop();
 	engine_destroy();
 	return (0);

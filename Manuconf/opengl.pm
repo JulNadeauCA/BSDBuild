@@ -1,4 +1,4 @@
-# $Csoft: opengl.pm,v 1.3 2003/10/01 09:24:19 vedge Exp $
+# $Csoft: opengl.pm,v 1.4 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
@@ -47,10 +47,14 @@ main(int argc, char *argv[])
 }
 EOF
 
-	print Cond('"${HAVE_OPENGL}" = "yes"',
-	    MKSave('OPENGL_CFLAGS', '$OPENGL_CFLAGS') .
-		MKSave('OPENGL_LIBS', '$OPENGL_LIBS'),
-		Nothing());
+	print
+		Cond('"${HAVE_OPENGL}" = "yes"',
+		MKSave('OPENGL_CFLAGS') .
+		MKSave('OPENGL_LIBS') .
+		HDefineStr('OPENGL_CFLAGS') .
+		HDefineStr('OPENGL_LIBS') ,
+		HUndef('OPENGL_CFLAGS') .
+		HUndef('OPENGL_LIBS'));
 
 	return (0);
 }

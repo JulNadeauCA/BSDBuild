@@ -1,4 +1,4 @@
-# $Csoft: jpeg.pm,v 1.3 2003/10/01 09:24:19 vedge Exp $
+# $Csoft: jpeg.pm,v 1.4 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
@@ -29,6 +29,7 @@ sub Test
 {
 	my ($ver) = @_;
 
+	# XXX
 	print Define('JPEG_CFLAGS', '-I/usr/local/include');
 	print Define('JPEG_LIBS', '"-L/usr/local/lib -ljpeg"');
 	print Echo("ok");
@@ -64,8 +65,11 @@ EOF
 	print
 		Cond('"${HAVE_JPEG}" != ""',
 		MKSave('JPEG_CFLAGS') .
-		MKSave('JPEG_LIBS'),
-		Nothing());
+		MKSave('JPEG_LIBS') .
+		HDefineStr('JPEG_CFLAGS') .
+		HDefineStr('JPEG_LIBS') ,
+		HUndef('JPEG_CFLAGS') .
+		HUndef('JPEG_LIBS'));
 
 	return (0);
 }

@@ -1,4 +1,4 @@
-# $Csoft: Core.pm,v 1.18 2003/11/22 03:57:33 vedge Exp $
+# $Csoft: Core.pm,v 1.19 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
@@ -147,7 +147,7 @@ echo "#undef $var" > $include
 EOF
 }
 
-sub HDefineString
+sub HDefineStr
 {
     my $var = shift;
 	my $include = 'config/'.lc($var).'.h';
@@ -286,7 +286,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(%TESTS %DESCR ReadOut Which Cond Define Echo Necho Fail MKSave HDefine HDefineString HUndef Nothing TryCompile TryLibCompile TryCompileFlags Log);
+    @EXPORT = qw(%TESTS %DESCR ReadOut Which Cond Define Echo Necho Fail MKSave HDefine HDefineStr HUndef Nothing TryCompile TryLibCompile TryCompileFlags Log);
 }
 
 ;1

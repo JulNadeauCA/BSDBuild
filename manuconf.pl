@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 
-# $Csoft: mkconf.pl,v 1.1 2002/01/26 19:47:47 vedge Exp $
-# vim:ai:sw=4:bs=2:sts=4:syn=perl
+# $Csoft: manuconf.pl,v 1.1 2002/01/28 02:41:38 vedge Exp $
 #
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -35,38 +34,37 @@ sub smpeg;
 sub glib;
 
 sub Register;
+sub Help;
+sub Version;
 sub SHEcho;
 sub SHNEcho;
-sub SHSave;
+sub SHMKSave;
+sub SHHSave;
+sub SHHSaveS;
 sub SHDefine;
 sub SHObtain;
 sub SHTest;
 
 sub x11
 {
-	my $require = '';
-	
-	if ($REQUIRE) {
-		$require =
-		    SHEcho("*** This package requires X11") .
-		        SHFail("Cannot find X11");
-	}
-
 	print SHNEcho("checking for x11...");
 	while ($dir = shift(@_)) {
-	    print SHTest("-d $dir",
-		SHDefine('XFOUND', $dir) .
+	    print
+	        SHTest("-d $dir",
+		SHDefine('X11BASE', $dir) .
+		    SHDefine('CONF_X11FOUND', 1) .
 		    SHDefine('X11_CFLAGS', "-I$dir/include") .
 		    SHDefine('X11_LIBS', "-L$dir/lib"),
-		SHDefine('XNOTFOUND', $dir));
+		SHNothing());
 	}
-	print SHTest('"$XFOUND" != ""',
-	    SHEcho('$XFOUND') . 
-	        SHSave('X11BASE') . 
-	        SHSave('X11_CFLAGS') . 
-	        SHSave('X11_LIBS'),
-	    SHEcho("missing") .
-	        $require);
+	print
+	    SHTest('"$X11BASE" != ""',
+	    SHEcho('$X11BASE') .
+		SHHSave('CONF_X11FOUND') .
+	        SHMKSave('X11BASE') .
+	        SHMKSave('X11_CFLAGS') .
+	        SHMKSave('X11_LIBS'),
+	    SHRequire('X11R6', '3', 'http://www.xfree86.org/'));
 
 	return (0);
 }
@@ -74,15 +72,7 @@ sub x11
 sub SDL
 {
 	my ($ver) = @_;
-	my $require = '';
-	
-	if ($REQUIRE) {
-		$require =
-		    SHEcho("*** This package requires SDL >= $ver") . 
-		        SHEcho("*** Get it from http://www.libsdl.org/") . 
-		        SHFail("Missing SDL");
-	}
-	
+
 	print SHNEcho("checking for SDL >= $ver...");
 
 	print SHObtain('sdl-config', '--version', 'SDL_VERSION');
@@ -92,22 +82,24 @@ sub SDL
 	print SHObtain('sdl11-config', '--cflags', 'SDL11_CFLAGS');
 	print SHObtain('sdl11-config', '--libs', 'SDL11_LIBS');
 
-	print SHTest('"$SDL_VERSION" != ""',
+	print
+	    SHTest('"$SDL_VERSION" != ""',
 	    SHDefine('SDL_FOUND', 'yes') .
-	        SHSave('SDL_CFLAGS') .
-	        SHSave('SDL_LIBS'),
-	    "false\n");
-	print SHTest('"$SDL11_VERSION" != ""',
+	        SHMKSave('SDL_CFLAGS') .
+	        SHMKSave('SDL_LIBS'),
+	    SHNothing());
+	print
+	    SHTest('"$SDL11_VERSION" != ""',
 	    SHDefine('SDL_FOUND', 'yes') .
 	        SHDefine('SDL_CFLAGS', '$SDL11_CFLAGS') .
 	        SHDefine('SDL_LIBS', '$SDL11_LIBS') .
-	        SHSave('SDL_CFLAGS') .
-	        SHSave('SDL_LIBS'),
-	    "false\n");
-	print SHTest('"$SDL_FOUND" = "yes"',
+	        SHMKSave('SDL_CFLAGS') .
+	        SHMKSave('SDL_LIBS'),
+	    SHNothing());
+	print
+	    SHTest('"$SDL_FOUND" = "yes"',
 	    SHEcho('ok'),
-	    SHEcho("missing") .
-	        $require);
+	    SHRequire('SDL', $ver, 'http://www.libsdl.org/'));
 
 	return (0);
 }
@@ -115,14 +107,6 @@ sub SDL
 sub smpeg
 {
 	my ($ver) = @_;
-	my $require = '';
-	
-	if ($REQUIRE) {
-		$require =
-		    SHEcho("*** This package requires smpeg >= $ver") .
-		        SHEcho("*** Get it from http://www.icculus.org/") .
-		        SHFail("Missing smpeg");
-	}
 	
 	print SHNEcho("checking for smpeg >= $ver...");
 
@@ -130,12 +114,12 @@ sub smpeg
 	print SHObtain('smpeg-config', '--cflags', 'SMPEG_CFLAGS');
 	print SHObtain('smpeg-config', '--libs', 'SMPEG_LIBS');
 
-	print SHTest('"$SMPEG_VERSION" != ""',
+	print
+	    SHTest('"$SMPEG_VERSION" != ""',
 	    SHEcho("ok") . 
-	        SHSave('SMPEG_CFLAGS') .
-	        SHSave('SMPEG_LIBS'),
-	    SHEcho("missing") .
-	        $require);
+	        SHMKSave('SMPEG_CFLAGS') .
+	        SHMKSave('SMPEG_LIBS'),
+	    SHRequire('smpeg', $ver, 'http://www.icculus.org/'));
 
 	return (0);
 }
@@ -161,19 +145,22 @@ sub glib
 	print SHObtain('glib12-config', '--cflags', 'GLIB12_CFLAGS');
 	print SHObtain('glib12-config', '--libs', 'GLIB12_LIBS');
 	
-	print SHTest('"$GLIB_VERSION" != ""',
+	print
+	    SHTest('"$GLIB_VERSION" != ""',
 	    SHDefine('GLIB_FOUND', 'yes') .
-	        SHSave('GLIB_CFLAGS') .
-	        SHSave('GLIB_LIBS'),
-	    "false\n");
-	print SHTest('"$GLIB12_VERSION" != ""',
+	        SHMKSave('GLIB_CFLAGS') .
+	        SHMKSave('GLIB_LIBS'),
+	    SHNothing());
+	print
+	    SHTest('"$GLIB12_VERSION" != ""',
 	    SHDefine('GLIB_FOUND', 'yes') .
 	        SHDefine('GLIB_CFLAGS', '$GLIB12_CFLAGS') .
 	        SHDefine('GLIB_LIBS', '$GLIB12_LIBS') .
-	        SHSave('GLIB_CFLAGS') .
-	        SHSave('GLIB_LIBS'),
-	    "false\n");
-	print SHTest('"$GLIB_FOUND" = "yes"',
+	        SHMKSave('GLIB_CFLAGS') .
+	        SHMKSave('GLIB_LIBS'),
+	    SHNothing());
+	print
+	    SHTest('"$GLIB_FOUND" = "yes"',
 	    SHEcho('ok'),
 	    SHEcho("missing") .
 	        $require);
@@ -183,26 +170,27 @@ sub glib
 
 sub Register
 {
-    my ($arg, $descr) = @_;
-    $arg =~ /\"(.*)\"/;
-    $arg = $1;
-    $descr =~ /\"(.*)\"/;
-    $descr = $1;
-    my $hopt = $arg;
+	my ($arg, $descr) = @_;
+	$arg =~ /\"(.*)\"/;
+	$arg = $1;
+	$descr =~ /\"(.*)\"/;
+	$descr = $1;
+	my $hopt = $arg;
 
-    $hopt =~ s/^\-\-(with|without|enable|disable)\-//;
-    $hopt = "$1_$hopt";
-    $hopt = uc($hopt);
+	$hopt =~ s/^\-\-(with|without|enable|disable)\-//;
+	$hopt = "$1_$hopt";
+	$hopt = uc($hopt);
 
-    $arg = pack('A' x 20, split('', $arg));
+	my $darg = pack('A' x 20, split('', $arg));
 
-    push @HELP, "echo \"    $arg $descr\"";
-    print "for OPT in \$@; do\n";
-    print SHTest("\"\$OPT\" = \"$arg\"",
-        SHDefine($hopt, 1) .
-	    SHSave($hopt),
-	"false\n");
-    print "done\n";
+	push @HELP, "echo \"    $darg $descr\"";
+	print "for OPT in \$@; do\n";
+	print
+	    SHTest("\"\$OPT\" = \"$arg\"",
+	    SHDefine($hopt, 1) .
+	        SHMKSave($hopt),
+	    SHNothing());
+	print "done\n";
 }
 
 sub Help
@@ -213,6 +201,28 @@ sub Help
 echo "Usage: ./configure [args]"
 $regs
 EOF
+}
+
+sub Version
+{
+    print << "EOF";
+echo "Manuconf v${VERSION}"
+EOF
+}
+
+sub SHRequire
+{
+    my ($pkg, $ver, $home) = @_;
+
+    unless ($REQUIRE) {
+	return SHNothing();
+    }
+    
+    my $s = SHEcho("*** $pkg >= $ver is required") . 
+	    SHEcho("*** Get it from $home") . 
+	    SHFail("$pkg >= $ver is missing");
+
+    return ($s);
 }
 
 sub SHEcho
@@ -233,43 +243,76 @@ sub SHFail
 {
 	my $msg = shift;
 
-	return qq{
+	return << "EOF";
 echo \"ERROR: $msg\"
 exit 1
-};
+EOF
 }
 
-sub SHSave
+sub SHMKSave
 {
     my $var = shift;
     my $s = '';
    
     if ($makeout) {
 	$s = "echo $var=\$$var >> $makeout\n";
+    } else {
+	print STDERR "SHMKSave: not saving `$var'\n";
     }
-    if ($inclout) {
-	$s = q{
-echo #ifndef $var
-echo #define $var \"\$$var\" >> $inclout";
-echo #endif /* $var */
-}
-    }
-
     return ($s);
+}
+
+sub SHHSave
+{
+    my $var = shift;
+    my $s = '';
+
+    if ($inclout) {
+	$s = << "EOF"
+echo "#ifndef $var" >> $inclout
+echo "#define $var \$$var" >> $inclout
+echo "#endif /* $var */" >> $inclout
+EOF
+    } else {
+	print STDERR "SHMKSave: not saving `$var'\n";
+    }
+    return ($s);
+}
+
+sub SHHSaveS
+{
+    my $var = shift;
+    my $s = '';
+
+    if ($inclout) {
+	$s = << "EOF"
+echo "#ifndef $var" >> $inclout
+echo "#define $var \\\"\$$var\\\"" >> $inclout
+echo "#endif /* $var */" >> $inclout
+EOF
+    } else {
+	print STDERR "SHMKSave: not saving `$var'\n";
+    }
+    return ($s);
+}
+
+sub SHNothing
+{
+    return "NONE=1\n";
 }
 
 sub SHDefine
 {
-	my ($def, $val) = @_;
+    my ($arg, $val) = @_;
 
-	return "$def=$val\n";
+    return "$arg=$val\n";
 }
 
 sub SHObtain
 {
-	my ($bin, $args, $define) = @_;
+    my ($bin, $args, $define) = @_;
 
-	return "$define=`$bin $args 2>/dev/null`\n";
+    return "$define=`$bin $args 2>/dev/null`\n";
 }
 
 sub SHTest
@@ -285,14 +328,46 @@ EOF
 
 BEGIN
 {
+    	$VERSION = '1.1';
+
 	$CHECK{'x11'} = \&x11;
 	$CHECK{'SDL'} = \&SDL;
 	$CHECK{'glib'} = \&glib;
 	$CHECK{'smpeg'} = \&smpeg;
 
-	print "#!/bin/sh\n";
-	print "# Do not edit: File generated from configure.in\n";
-
+	print << "EOF";
+#!/bin/sh
+#
+# Do not edit!
+# File generated from configure.in by manuconf v${VERSION}.
+#
+# Copyright (c) 2001, CubeSoft Communications, Inc.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistribution of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistribution in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. Neither the name of CubeSoft Communications, nor the names of
+#    its contributors may be used to endorse or promote products derived
+#    from this software without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+# USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+EOF
 	while (<STDIN>) {
 		chop;
 		if (/^#/) {
@@ -301,9 +376,9 @@ BEGIN
 		foreach my $s (split(';')) {
 			if ($s =~ /if\s*\((.+)\)\s*\{/) {
 			    print "if [ $1 ]; then\n";
-			} elsif ($s =~ /^\} else \{$/) {
+			} elsif ($s =~ /^\}\s*else\s*\{$/) {
 			    print "else\n";
-			} elsif ($s =~ /^\} else if\s*\((.+)\)\s*\{$/) {
+			} elsif ($s =~ /^\}\s*else if\s*\((.+)\)\s*\{$/) {
 			    print "elif [ $1 ]\n";
 			} elsif ($s =~ /^\}$/) {
 			    print "fi\n";
@@ -332,10 +407,13 @@ BEGIN
 				    Register(@args);
 				} elsif ($1 eq 'help') {
 				    Help(@args);
+				} elsif ($1 eq 'version') {
+				    Version(@args);
 				} elsif ($1 eq 'makeout') {
 				    $makeout = $args[0];
 				    print "echo >$makeout\n";
 				} elsif ($1 eq 'inclout') {
+				    $inclout = $args[0];
 				    print "echo >$inclout\n";
 				} elsif ($1 eq 'exit') {
 				    print "exit $args[0]\n";

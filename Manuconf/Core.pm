@@ -1,7 +1,7 @@
-# $Csoft: Core.pm,v 1.17 2003/10/01 09:24:19 vedge Exp $
+# $Csoft: Core.pm,v 1.18 2003/11/22 03:57:33 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002, 2003 CubeSoft Communications, Inc.
+# Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 # All rights reserved.
 #

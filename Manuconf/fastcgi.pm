@@ -1,7 +1,7 @@
-# $Csoft: fastcgi.pm,v 1.1 2003/10/25 23:46:11 vedge Exp $
+# $Csoft: fastcgi.pm,v 1.2 2003/10/26 00:00:49 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002, 2003 CubeSoft Communications, Inc.
+# Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 # All rights reserved.
 #

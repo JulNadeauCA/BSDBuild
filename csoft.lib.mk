@@ -1,6 +1,6 @@
-# $Csoft: csoft.lib.mk,v 1.37 2003/12/10 02:28:54 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.38 2003/12/31 01:05:15 vedge Exp $
 
-# Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
+# Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 # All rights reserved.
 #

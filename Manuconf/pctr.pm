@@ -1,7 +1,7 @@
-# $Csoft: pctr.pm,v 1.2 2004/01/01 00:35:01 vedge Exp $
+# $Csoft: pctr.pm,v 1.3 2004/01/01 00:35:28 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2003 CubeSoft Communications, Inc.
+# Copyright (c) 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 # All rights reserved.
 #

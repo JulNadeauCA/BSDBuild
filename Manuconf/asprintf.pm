@@ -1,7 +1,7 @@
-# $Csoft: asprintf.pm,v 1.1 2002/10/19 06:34:13 vedge Exp $
+# $Csoft: asprintf.pm,v 1.2 2003/10/01 09:24:19 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002, 2003 CubeSoft Communications, Inc.
+# Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 # All rights reserved.
 #

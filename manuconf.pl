@@ -1,8 +1,8 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.36 2003/08/29 03:31:30 vedge Exp $
+# $Csoft: manuconf.pl,v 1.37 2003/09/10 05:01:16 vedge Exp $
 #
-# Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
+# Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 # All rights reserved.
 #
@@ -107,7 +107,7 @@ BEGIN
 EOF
 
 	print << 'EOF';
-# Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
+# Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 # All rights reserved.
 #

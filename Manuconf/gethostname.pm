@@ -1,7 +1,7 @@
-# $Csoft: getenv.pm,v 1.2 2002/09/06 00:56:51 vedge Exp $
+# $Csoft: gethostname.pm,v 1.1 2003/03/25 11:37:16 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002, 2003 CubeSoft Communications, Inc.
+# Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 # All rights reserved.
 #

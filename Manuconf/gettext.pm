@@ -1,7 +1,7 @@
-# $Csoft: gettext.pm,v 1.4 2003/07/27 20:17:12 vedge Exp $
+# $Csoft: gettext.pm,v 1.5 2003/10/01 09:24:19 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2003 CubeSoft Communications, Inc.
+# Copyright (c) 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 # All rights reserved.
 #

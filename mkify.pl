@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 #
-# $Csoft: mkify.pl,v 1.17 2003/09/27 02:44:02 vedge Exp $
+# $Csoft: mkify.pl,v 1.18 2003/12/07 05:41:08 vedge Exp $
 #
-# Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
+# Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 # All rights reserved.
 #

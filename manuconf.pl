@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Csoft: manuconf.pl,v 1.7 2002/02/20 23:23:55 vedge Exp $
+# $Csoft: manuconf.pl,v 1.8 2002/02/25 08:45:02 vedge Exp $
 #
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -431,6 +431,7 @@ if [ "\$PREFIX" = "" ]; then
 PREFIX=/usr/local
 fi
 EOF
+	print SHObtain('pwd', '', 'S');
 	while (<STDIN>) {
 		chop;
 		if (/^#/) {

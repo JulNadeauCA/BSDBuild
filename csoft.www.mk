@@ -1,4 +1,4 @@
-# $Csoft: csoft.www.mk,v 1.19 2003/09/27 04:08:08 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.20 2003/09/27 04:13:38 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -50,10 +50,6 @@ depend: depend-subdir
 	@cp -f $< ${BASEDIR}/base.htm
 	@echo -n "$@:"
 	@echo > $@.var
-	@echo "URI: $@" >> $@.var
-	@echo "Content-language: ${DEF_LANGUAGE}" >> $@.var
-	@echo "Content-type: text/html" >> $@.var
-	@echo "" >> $@.var
 	@for LANG in ${LANGUAGES}; do \
 	    echo -n " $$LANG"; \
 	    ${M4} -D__BASE_DIR=${BASEDIR} -D__FILE=$@ -D__LANG=$$LANG \
@@ -62,101 +58,20 @@ depend: depend-subdir
             ${XSLTPROC} --html --nonet --stringparam lang $$LANG ${XSL} \
 	        $@.$$LANG.prep > $@.$$LANG.utf8 2>/dev/null; \
 	    rm -f $@.$$LANG.prep; \
-	    cp -f $@.$$LANG.utf8 $@.$$LANG; \
-	    echo "URI: $@.$$LANG.utf8" >> $@.var; \
-	    echo "Content-language: $$LANG" >> $@.var; \
-	    echo "Content-type: text/html;encoding=UTF-8" >> $@.var; \
-	    echo "" >> $@.var; \
-	    echo "URI: $@.$$LANG" >> $@.var; \
-	    echo "Content-language: $$LANG" >> $@.var; \
-	    echo "Content-type: text/html;encoding=UTF-8" >> $@.var; \
-	    echo "" >> $@.var; \
 	    case "$$LANG" in \
 	    ab|af|eu|ca|da|nl|en|fo|fr|fi|de|is|ga|it|no|nb|nn|pt|rm|gd|es|sv|sw) \
+	        echo "URI: $@.$$LANG.utf8" >> $@.var; \
+	        echo "Content-language: $$LANG" >> $@.var; \
+	        echo "Content-type: text/html;encoding=UTF-8" >> $@.var; \
+	        echo "" >> $@.var; \
 	        echo "URI: $@.$$LANG.iso8859-1" >> $@.var; \
 	        echo "Content-language: $$LANG" >> $@.var; \
 	        echo "Content-type: text/html;charset=ISO-8859-1" >> $@.var; \
 	        echo "" >> $@.var; \
-	        ${ICONV} -f UTF-8 -t ISO-8859-1 $@.$$LANG > \
+	        cat $@.$$LANG.utf8 | sed s/charset=UTF-8/charset=ISO-8859-1/ | \
+		    ${ICONV} -f UTF-8 -t ISO-8859-1 > \
 		    $@.$$LANG.iso8859-1; \
-		;; \
-	    cs) \
-	        echo "URI: $@.$$LANG.iso8859-2" >> $@.var; \
-	        echo "Content-language: $$LANG" >> $@.var; \
-	        echo "Content-type: text/html;charset=ISO-8859-2" >> $@.var; \
-	        echo "" >> $@.var; \
-	        ${ICONV} -f UTF-8 -t ISO-8859-2 $@.cz > $@.cz.iso8859-2; \
-		;; \
-	    he) \
-	        echo "URI: $@.$$LANG.iso8859-8" >> $@.var; \
-	        echo "Content-language: $$LANG" >> $@.var; \
-	        echo "Content-type: text/html;charset=ISO-8859-8" >> $@.var; \
-	        echo "" >> $@.var; \
-	        ${ICONV} -f UTF-8 -t ISO-8859-8 $@.he > $@.he.iso8859-8; \
-		;; \
-	    hr) \
-	        echo "URI: $@.$$LANG.iso8859-2" >> $@.var; \
-	        echo "Content-language: $$LANG" >> $@.var; \
-	        echo "Content-type: text/html;charset=ISO-8859-2" >> $@.var; \
-	        echo "" >> $@.var; \
-	        ${ICONV} -f UTF-8 -t ISO-8859-2 $@.hr > $@.hr.iso8859-2; \
-		;; \
-	    ja) \
-	        echo "URI: $@.$$LANG.iso2022-jp" >> $@.var; \
-	        echo "Content-language: $$LANG" >> $@.var; \
-	        echo "Content-type: text/html;charset=ISO-2022-JP" >> $@.var; \
-	        echo "" >> $@.var; \
-	        ${ICONV} -f UTF-8 -t ISO-2022-JP $@ > $@.iso2022-jp; \
-		;; \
-	    ko) \
-	        echo "URI: $@.$$LANG.euc-kr" >> $@.var; \
-	        echo "Content-language: $$LANG" >> $@.var; \
-	        echo "Content-type: text/html;charset=EUC-KR" >> $@.var; \
-	        echo "" >> $@.var; \
-	        ${ICONV} -f UTF-8 -t EUC-KR $@ > $@.euc-kr ; \
-		;; \
-	    po) \
-	        echo "URI: $@.$$LANG.iso8859-2" >> $@.var; \
-	        echo "Content-language: $$LANG" >> $@.var; \
-	        echo "Content-type: text/html;charset=ISO-8859-2" >> $@.var; \
-	        echo "" >> $@.var; \
-	        ${ICONV} -f UTF-8 -t ISO-8859-2 $@ > $@.iso8859-2; \
-		;; \
-	    ru) \
-	        echo "URI: $@.ru.cp1251" >> $@.var; \
-	        echo "Content-language: ru" >> $@.var; \
-	        echo "Content-type: text/html;charset=WINDOWS-1251" >> $@.var;\
-		echo "" >> $@.var; \
-		${ICONV} -f UTF-8 -t CP1251 $@ > $@.ru.cp1251; \
-	        echo "URI: $@.ru.cp866" >> $@.var; \
-	        echo "Content-language: ru" >> $@.var; \
-	        echo "Content-type: text/html;charset=CP866" >> $@.var; \
-	        echo "" >> $@.var; \
-	        ${ICONV} -f UTF-8 -t CP866 $@ > $@.ru.cp866; \
-	        echo "URI: $@.ru.iso-ru" >> $@.var; \
-	        echo "Content-language: ru" >> $@.var; \
-	        echo "Content-type: text/html;charset=ISO-8859-5" >> $@.var; \
-		echo "" >> $@.var; \
-	        ${ICONV} -f UTF-8 -t ISO-8859-5 $@ > $@.ru.iso-ru; \
-	        echo "URI: $@.ru.koi8-r" >> $@.var; \
-	        echo "Content-language: ru" >> $@.var; \
-	        echo "Content-type: text/html;charset=KOI8-r" >> $@.var; \
-		echo "" >> $@.var; \
-	        ${ICONV} -f UTF-8 -t KOI8-R $@ > $@.ru.koi8-r; \
-	        ;; \
-	    zh-CN) \
-	        echo "URI: $@.$$LANG.gb2312" >> $@.var; \
-	        echo "Content-language: $$LANG" >> $@.var; \
-	        echo "Content-type: text/html;charset=GB2312" >> $@.var; \
-	        echo "" >> $@.var; \
-	        ${ICONV} -f UTF-8 -t GB2312 $@ > $@.gb2312; \
-		;; \
-	    tw|zh-TW) \
-	        echo "URI: $@.$$LANG.big5" >> $@.var; \
-	        echo "Content-language: $$LANG" >> $@.var; \
-	        echo "Content-type: text/html;charset=Big5" >> $@.var; \
-	        echo "" >> $@.var; \
-	        ${ICONV} -f UTF-8 -t BIG-5 $@ > $@.big5; \
+		cp -f $@.$$LANG.iso8859-1 $@.$$LANG \
 		;; \
 	    *) \
 		;; \

@@ -1,8 +1,8 @@
-# $Csoft: Makefile,v 1.18 2003/08/07 22:41:10 vedge Exp $
+# $Csoft: Makefile,v 1.19 2003/08/08 00:09:15 vedge Exp $
 
 TOP=.
 
-VERSION=	1.8
+VERSION=	1.9
 PROJECT=	csoft-mk
 DIST=		${PROJECT}-${VERSION}
 DISTFILE=	${DIST}.tar.gz

@@ -1,4 +1,4 @@
-# $Csoft: Makefile,v 1.6 2002/08/23 10:27:17 vedge Exp $
+# $Csoft: Makefile,v 1.7 2002/09/21 08:09:33 vedge Exp $
 
 TOP=..
 
@@ -17,7 +17,8 @@ SHARE=	Core.pm \
 	strsep.pm \
 	getenv.pm \
 	vasprintf.pm \
-	mmap.pm
+	mmap.pm \
+	setproctitle.pm
 
 all:
 

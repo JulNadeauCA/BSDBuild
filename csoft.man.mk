@@ -1,4 +1,4 @@
-# $Csoft: csoft.man.mk,v 1.22 2003/08/26 03:07:16 vedge Exp $
+# $Csoft: csoft.man.mk,v 1.23 2003/08/26 03:22:33 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -34,11 +34,19 @@ PSMANS=	${PSMAN1} ${PSMAN2} ${PSMAN3} ${PSMAN4} ${PSMAN5} ${PSMAN6} ${PSMAN7} ${
 
 .1.cat1 .2.cat2 .3.cat3 .4.cat4 .5.cat5 .6.cat6 .7.cat7 .8.cat8 .9.cat9:
 	@echo "${NROFF} -Tascii -mandoc $< > $@"
-	@${NROFF} -Tascii -mandoc $< > $@ || (rm -f $@; false)
+	@(cat $< | \
+	  sed s,\$$SYSCONFDIR,${SYSCONFDIR}, | \
+	  sed s,\$$PREFIX,${PREFIX}, | \
+	  sed s,\$$SHAREDIR,${SHAREDIR}, | \
+	  ${NROFF} -Tascii -mandoc > $@) || (rm -f $@; false)
 
 .1.ps1 .2.ps2 .3.ps3 .4.ps4 .5.ps5 .6.ps6 .7.ps7 .8.ps8 .9.ps9:
 	@echo "${NROFF} -Tps -mandoc $< > $@"
-	@${NROFF} -Tps -mandoc $< > $@ || (rm -f $@; false)
+	@(cat $< | \
+	  sed s,\$$SYSCONFDIR,${SYSCONFDIR}, | \
+	  sed s,\$$PREFIX,${PREFIX}, | \
+	  sed s,\$$SHAREDIR,${SHAREDIR}, | \
+	  ${NROFF} -Tps -mandoc > $@) || (rm -f $@; false)
 
 preformat-man:
 	@if [ "${MAN1}" != "" ]; then \

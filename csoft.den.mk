@@ -1,4 +1,4 @@
-# $Csoft: Makefile.inc,v 1.2 2003/06/21 07:06:12 vedge Exp $
+# $Csoft: csoft.den.mk,v 1.1 2004/03/10 13:43:34 vedge Exp $
 # ex:syn=make
 
 # Copyright (c) 2004 CubeSoft Communications, Inc.
@@ -44,7 +44,7 @@ DEN_KEYWORDS?=	""
 
 all: all-subdir ${DEN}
 install: install-den install-subdir
-deinstall: install-den deinstall-subdir
+deinstall: deinstall-den deinstall-subdir
 clean: clean-den clean-subdir
 cleandir: cleandir-subdir
 regress: regress-subdir
@@ -87,8 +87,6 @@ deinstall-den:
 	if [ "${DEN}" != "" ]; then \
 		echo "${DEINSTALL_DATA} ${SHAREDIR}/${DEN_DIR}/${DEN}"; \
 		${DEINSTALL_DATA} ${SHAREDIR}/${DEN_DIR}/${DEN}; \
-		echo "${DEINSTALL_DATA_DIR} ${SHAREDIR}/${DEN_DIR}"; \
-		${DEINSTALL_DATA_DIR} ${SHAREDIR}/${DEN_DIR}; \
 	fi
 
 .PHONY: install deinstall clean cleandir regress depend

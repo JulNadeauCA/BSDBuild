@@ -34,7 +34,7 @@ clean: clean-subdir
 
 depend: depend-subdir
 
-install: install-subdir
+install: install-subdir $(HTML)
 	@if [ "$(HTML)" != "" ]; then \
 	    $(INSTALL) $(INSTALL_COPY) $(INSTALL_STRIP) \
 	    $(BINOWN) $(BINGRP) -m $(HTMLMODE) $(HTML) $(DOCROOT); \

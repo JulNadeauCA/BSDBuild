@@ -27,7 +27,7 @@ $(PROG): $(OBJS)
 clean: clean-subdir
 	@rm -f $(PROG) $(OBJS)
 
-install: install-subdir
+install: install-subdir $(PROG)
 	@if [ "$(PROG)" != "" ]; then \
 	    $(INSTALL) $(INSTALL_COPY) $(INSTALL_STRIP) \
 	    $(BINOWN) $(BINGRP) -m $(BINMODE) $(PROG) $(PREFIX)/bin; \

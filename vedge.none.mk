@@ -25,7 +25,7 @@ depend: depend-subdir
 	echo NOOP
 
 
-install: install-subdir
+install: install-subdir $(NONE)
 	@if [ "$(NONE)" != "" ]; then \
 	    $(INSTALL) $(INSTALL_COPY) $(INSTALL_STRIP) \
 	    $(BINOWN) $(BINGRP) -m $(BINMODE) $(NONE) $(PREFIX)/bin; \

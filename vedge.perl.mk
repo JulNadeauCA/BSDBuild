@@ -22,7 +22,7 @@ clean: clean-subdir
 
 depend: depend-subdir
 
-install: install-subdir
+install: install-subdir $(OBJS)
 	@if [ "$(OBJS)" != "" ]; then \
 	    for OBJ in $(OBJS); do \
 		echo "===> $$OBJ"; \

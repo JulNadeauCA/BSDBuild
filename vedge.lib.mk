@@ -32,7 +32,7 @@ clean: clean-subdir
 tree:
 	(cd $(TOP)/mk && $(SH) maptree.sh none)
 
-install: install-subdir
+install: install-subdir $(LIB)
 	@if [ "$(LIB)" != "" ]; then \
 	    $(LIBTOOL) --mode=install \
 	    $(INSTALL) $(INSTALL_COPY) $(INSTALL_STRIP) \

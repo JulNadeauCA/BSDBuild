@@ -1,4 +1,4 @@
-# $Csoft: cc.pm,v 1.8 2002/09/06 00:56:51 vedge Exp $
+# $Csoft: cc.pm,v 1.9 2002/11/28 09:50:42 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
@@ -29,6 +29,7 @@
 
 sub Test
 {
+	# Look for a compiler.
 	print << 'EOF';
 if [ "$CC" = "" ]; then
 	for i in `echo $PATH |sed 's/:/ /g'`; do
@@ -67,14 +68,55 @@ fi
 cc_is_gcc=no
 if ./.cctest; then
     cc_is_gcc=yes
-    echo "-> success (gcc)" >> config.log
-    echo "yes, gcc"
+    echo "-> success: gcc" >> config.log
+    echo "yes"
 else
     echo "yes"
     echo "-> success" >> config.log
 fi
 
 rm -f .cctest .cctest.c
+EOF
+
+	# Check for float type.
+	print NEcho('checking for float...');
+	TryCompile 'HAVE_FLOAT', << 'EOF';
+#include <stdio.h>
+
+int
+main(int argc, char *argv[])
+{
+	float f = 0.1;
+
+	printf("%f\n", f);
+	return (0);
+}
+EOF
+	
+	# Check for double type.
+	print NEcho('checking for double...');
+	TryCompile 'HAVE_DOUBLE', << 'EOF';
+int
+main(int argc, char *argv[])
+{
+	double d = 0.1;
+	
+	printf("%f\n", d);
+	return (0);
+}
+EOF
+
+	# Check for long double type.
+	print NEcho('checking for long double...');
+	TryCompile 'HAVE_LONG_DOUBLE', << 'EOF';
+int
+main(int argc, char *argv[])
+{
+	long double ld = 0.1;
+	
+	printf("%Lf\n", ld);
+	return (0);
+}
 EOF
 }
 

@@ -1,4 +1,4 @@
-# $Csoft: Core.pm,v 1.9 2002/11/28 03:58:54 vedge Exp $
+# $Csoft: Core.pm,v 1.10 2002/11/28 09:50:42 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -60,20 +60,29 @@ sub Echo
 {
 	my $msg = shift;
 
-	return "echo \"$msg\"\n";
+	$msg =~ s/["]/\"/g;			# Escape quotes
+	return << "EOF";
+echo "$msg"
+echo "$msg" >> config.log
+EOF
 }
 
 sub NEcho
 {
 	my $msg = shift;
 
-	return "echo -n \"$msg\"\n";
+	$msg =~ s/["]/\"/g;			# Escape quotes
+	return << "EOF";
+echo -n "$msg"
+echo -n "$msg" >> config.log
+EOF
 }
 
 sub Log
 {
 	my $msg = shift;
 
+	$msg =~ s/["]/\"/g;							# Escape quotes
 	return "echo \"$msg\" >> config.log\n";
 }
 
@@ -81,10 +90,7 @@ sub Fail
 {
 	my $msg = shift;
     
-#	unless ($REQUIRE) {
-#		return Nothing();
-#	}
-
+	$msg =~ s/["]/\"/g;							# Escape quotes
 	return << "EOF";
 echo \"$msg\"
 exit 1

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Csoft: mkify.pl,v 1.11 2002/05/10 23:07:13 vedge Exp $
+# $Csoft: mkify.pl,v 1.12 2002/09/06 00:59:03 vedge Exp $
 #
 # Copyright (c) 2001, 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
 # All rights reserved.
@@ -34,9 +34,10 @@ sub MKCopy
 	my $srcmk = join('/', $dir, $src);
 	my @deps = ();
 
+	print "copying $src\n";
+
 	unless (-f $srcmk) {
-		print STDERR "$src: $!\n";
-		exit (1);
+		return 0;
 	}
 	unless (-f $destmk) {
 		print STDERR "creating $destmk\n";
@@ -98,4 +99,6 @@ BEGIN
 
 		MKCopy($f, $dir);
 	}
+	MKCopy('mkdep', $dir);
+	MKCopy('mkconcurrent.pl', $dir);
 }

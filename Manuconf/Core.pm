@@ -1,4 +1,5 @@
-# $Csoft: Core.pm,v 1.3 2002/07/30 23:44:42 vedge Exp $
+# $Csoft: Core.pm,v 1.4 2002/07/31 00:28:03 vedge Exp $
+# vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -71,6 +72,13 @@ sub NEcho
 	return "echo -n \"$msg\"\n";
 }
 
+sub Log
+{
+	my $msg = shift;
+
+	return "echo \"$msg\" >> config.log\n";
+}
+
 sub Fail
 {
 	my $msg = shift;
@@ -110,7 +118,7 @@ echo "#define $var" \$$var >> $CONF{'inclout'}
 echo "#endif /* $var */" >> $CONF{'inclout'}
 EOF
     } else {
-	print STDERR "hdefine: not saving `$var'\n";
+		print STDERR "hdefine: not saving `$var'\n";
     }
     return ($s);
 }
@@ -137,6 +145,43 @@ sub Nothing
     return "NONE=1\n";
 }
 
+sub TryCompile
+{
+	my $def = shift;
+
+	while (my $code = shift) {
+		print << "EOF";
+cat << EOT > conftest.c
+$code
+EOT
+EOF
+		print << 'EOF';
+compile="ok"
+echo "cc -o conftest conftest.c" >> config.log
+cc -o conftest conftest.c 2>>config.log
+if [ $? != 0 ]; then
+	echo "-> failed: compiler had non-zero exit status" >> config.log
+	compile="failed"
+fi
+if [ ! -e "conftest" ]; then
+	echo "-> failed: compiler did not produce an executable" >> config.log
+	compile="failed"
+fi
+EOF
+
+		my $define = HSave($def);
+
+		print << "EOF";
+if [ "\${compile}" = "ok" ]; then
+	echo "-> success" >> config.log
+	$define
+	echo "yes"
+else
+	echo "no"
+fi
+EOF
+	}
+}
 
 BEGIN
 {
@@ -145,7 +190,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(%TESTS %DESCR Obtain Cond Define Echo Necho Fail MKSave HSave HSaveS Nothing REQUIRE);
+    @EXPORT = qw(%TESTS %DESCR Obtain Cond Define Echo Necho Fail MKSave HSave HSaveS Nothing REQUIRE TryCompile Log);
 }
 
 ;1

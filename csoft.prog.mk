@@ -1,4 +1,4 @@
-# $Csoft: csoft.prog.mk,v 1.10 2002/01/26 01:20:54 vedge Exp $
+# $Csoft: csoft.prog.mk,v 1.11 2002/01/26 01:31:28 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -158,7 +158,7 @@ install: install-subdir ${PROG}
 	
 deinstall: deinstall-subdir
 	@if [ "${PROG}" != "" -a "${PROG_INSTALL}" != "No" ]; then \
-	    echo "${DEINSTALL_PROG} ${INST_BINDIR}${PROG}"; \
+	    echo "${DEINSTALL_PROG} ${INST_BINDIR}/${PROG}"; \
 	    ${DEINSTALL_PROG} ${INST_BINDIR}/${PROG}; \
 	fi
 

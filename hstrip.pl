@@ -1,6 +1,6 @@
-# $Csoft: hstrip.pl,v 1.4 2001/09/15 12:07:36 vedge Exp $
+# $Csoft: hstrip.pl,v 1.5 2001/09/15 12:13:37 vedge Exp $
 
-$no++ if($ARGV[0] eq 'contract.html');
+$no++ if($ARGV[0] eq 'contract.html'); # XXX
 
 my $pre = 0;
 while (<STDIN>) {

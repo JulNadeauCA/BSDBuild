@@ -1,6 +1,11 @@
-# $Csoft: Makefile,v 1.5 2002/07/29 03:53:32 vedge Exp $
+# $Csoft: Makefile,v 1.6 2002/08/23 10:28:40 vedge Exp $
 
 TOP=.
+
+VERSION=	1.0
+PROJECT=	csoft-cvs
+DIST=		${PROJECT}-${VERSION}
+DISTFILE=	${DIST}.tar.gz
 
 SHARE=	csoft.common.mk csoft.dep.mk csoft.lib.mk csoft.man.mk \
 	csoft.perl.mk csoft.prog.mk csoft.subdir.mk csoft.www.mk \
@@ -25,10 +30,7 @@ install: install-subdir
 	chmod 555 ${INST_BINDIR}/mkify
 
 cleandir:
-	rm -f Makefile.config configure *~
-
-clean:
-	# nothing
+	rm -f Makefile.config config.log *~
 
 configure: .PHONY
 	cat configure.in | ./manuconf.pl > configure
@@ -36,6 +38,18 @@ configure: .PHONY
 
 depend:
 	# nothing
+
+release: cleandir
+	(cd .. && rm -fr ${DIST} && \
+	 cp -fRp ${PROJECT} ${DIST} && \
+	 rm -fr ${DIST}/CVS && \
+	 tar -f ${DIST}.tar -c ${DIST} && \
+	 gzip -9f ${DIST}.tar && \
+	 md5 ${DISTFILE} > ${DISTFILE}.md5 && \
+	 rmd160 ${DISTFILE} >> ${DISTFILE}.md5 && \
+	 sha1 ${DISTFILE} >> ${DISTFILE}.md5 && \
+	 scp ${DISTFILE} \
+	     ${DISTFILE}.md5 vedge@resin:www/stable.csoft.org/${PROJECT})
 
 include ${TOP}/csoft.common.mk
 include ${TOP}/csoft.subdir.mk

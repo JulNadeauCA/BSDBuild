@@ -1,4 +1,4 @@
-# $Csoft: freetype.pm,v 1.8 2002/12/27 02:27:16 vedge Exp $
+# $Csoft: opengl.pm,v 1.1 2002/12/31 05:40:36 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -45,6 +45,12 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
+
+	print Cond('"${HAVE_OPENGL}" = "yes"',
+	    MKSave('OPENGL_CFLAGS', '$OPENGL_CFLAGS') .
+		MKSave('OPENGL_LIBS', '$OPENGL_LIBS'),
+		Nothing());
+
 	return (0);
 }
 

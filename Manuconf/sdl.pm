@@ -1,4 +1,4 @@
-# $Csoft: sdl.pm,v 1.2 2002/05/05 23:27:03 vedge Exp $
+# $Csoft: sdl.pm,v 1.3 2002/05/05 23:28:11 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -30,29 +30,31 @@ sub Test
 {
 	my ($require, $ver) = @_;
 
-	print SHObtain('sdl-config', '--version', 'SDL_VERSION');
+	print SHObtain('sdl-config', '--version', 'sdl_version');
 	print SHObtain('sdl-config', '--cflags', 'SDL_CFLAGS');
 	print SHObtain('sdl-config', '--libs', 'SDL_LIBS');
-	print SHObtain('sdl11-config', '--version', 'SDL11_VERSION');
-	print SHObtain('sdl11-config', '--cflags', 'SDL11_CFLAGS');
-	print SHObtain('sdl11-config', '--libs', 'SDL11_LIBS');
+
+	# FreeBSD port
+	print SHObtain('sdl11-config', '--version', 'sdl11_version');
+	print SHObtain('sdl11-config', '--cflags', 'sdl11_cflags');
+	print SHObtain('sdl11-config', '--libs', 'sdl11_libs');
 
 	print
-	    SHTest('"$SDL_VERSION" != ""',
-	    SHDefine('SDL_FOUND', 'yes') .
+	    SHTest('"${sdl_version}" != ""',
+	    SHDefine('sdl_found', 'yes') .
 	        SHMKSave('SDL_CFLAGS') .
 	        SHMKSave('SDL_LIBS'),
 	    SHNothing());
 	print
-	    SHTest('"$SDL11_VERSION" != ""',
-	    SHDefine('SDL_FOUND', 'yes') .
-	        SHDefine('SDL_CFLAGS', '$SDL11_CFLAGS') .
-	        SHDefine('SDL_LIBS', '$SDL11_LIBS') .
+	    SHTest('"${sdl11_version}" != ""',
+	    SHDefine('sdl_found', 'yes') .
+	        SHDefine('SDL_CFLAGS', '$sdl11_cflags') .
+	        SHDefine('SDL_LIBS', '$sdl11_libs') .
 	        SHMKSave('SDL_CFLAGS') .
 	        SHMKSave('SDL_LIBS'),
 	    SHNothing());
 	print
-	    SHTest('"$SDL_FOUND" = "yes"',
+	    SHTest('"${sdl_found}" = "yes"',
 	    SHEcho('ok'),
 	    SHRequire('SDL', $ver, 'http://www.libsdl.org/'));
 

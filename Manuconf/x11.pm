@@ -1,4 +1,4 @@
-# $Csoft: x11.pm,v 1.2 2002/05/05 23:27:03 vedge Exp $
+# $Csoft: x11.pm,v 1.3 2002/05/05 23:28:11 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -40,7 +40,7 @@ sub Test
 		SHNothing());
 	}
 	print
-	    SHTest('"$X11BASE" != ""',
+	    SHTest('"${X11BASE}" != ""',
 	    SHNEcho('ok') . SHEcho('$X11BASE') .
 		SHHSave('CONF_X11') .
 	        SHMKSave('X11BASE') .

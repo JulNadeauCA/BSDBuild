@@ -1,4 +1,4 @@
-# $Csoft: glib.pm,v 1.2 2002/05/05 23:27:03 vedge Exp $
+# $Csoft: glib.pm,v 1.3 2002/05/05 23:28:11 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -38,29 +38,31 @@ sub Test
 		    SHFail("Missing glib");
 	}
 	
-	print SHObtain('glib-config', '--version', 'GLIB_VERSION');
+	print SHObtain('glib-config', '--version', 'glib_version');
 	print SHObtain('glib-config', '--cflags', 'GLIB_CFLAGS');
 	print SHObtain('glib-config', '--libs', 'GLIB_LIBS');
-	print SHObtain('glib12-config', '--version', 'GLIB12_VERSION');
-	print SHObtain('glib12-config', '--cflags', 'GLIB12_CFLAGS');
-	print SHObtain('glib12-config', '--libs', 'GLIB12_LIBS');
+
+	# FreeBSD port
+	print SHObtain('glib12-config', '--version', 'glib12_version');
+	print SHObtain('glib12-config', '--cflags', 'glib12_cflags');
+	print SHObtain('glib12-config', '--libs', 'glib12_libs');
 	
 	print
-	    SHTest('"$GLIB_VERSION" != ""',
-	    SHDefine('GLIB_FOUND', 'yes') .
+	    SHTest('"${glib_version}" != ""',
+	    SHDefine('glib_found', 'yes') .
 	        SHMKSave('GLIB_CFLAGS') .
 	        SHMKSave('GLIB_LIBS'),
 	    SHNothing());
 	print
-	    SHTest('"$GLIB12_VERSION" != ""',
-	    SHDefine('GLIB_FOUND', 'yes') .
-	        SHDefine('GLIB_CFLAGS', '$GLIB12_CFLAGS') .
-	        SHDefine('GLIB_LIBS', '$GLIB12_LIBS') .
+	    SHTest('"${glib12_version}" != ""',
+	    SHDefine('glib_found', 'yes') .
+	        SHDefine('GLIB_CFLAGS', '$glib12_cflags') .
+	        SHDefine('GLIB_LIBS', '$glib12_libs') .
 	        SHMKSave('GLIB_CFLAGS') .
 	        SHMKSave('GLIB_LIBS'),
 	    SHNothing());
 	print
-	    SHTest('"$GLIB_FOUND" = "yes"',
+	    SHTest('"${glib_found}" = "yes"',
 	    SHEcho('ok'),
 	    SHEcho("missing") . $onfail);
 

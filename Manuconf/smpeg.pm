@@ -1,4 +1,4 @@
-# $Csoft: smpeg.pm,v 1.2 2002/05/05 23:27:03 vedge Exp $
+# $Csoft: smpeg.pm,v 1.3 2002/05/05 23:28:11 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -30,12 +30,12 @@ sub Test
 {
 	my ($require, $ver) = @_;
 	
-	print SHObtain('smpeg-config', '--version', 'SMPEG_VERSION');
+	print SHObtain('smpeg-config', '--version', 'smpeg_version');
 	print SHObtain('smpeg-config', '--cflags', 'SMPEG_CFLAGS');
 	print SHObtain('smpeg-config', '--libs', 'SMPEG_LIBS');
 
 	print
-	    SHTest('"$SMPEG_VERSION" != ""',
+	    SHTest('"${smpeg_version}" != ""',
 	    SHEcho("ok") . 
 	    	SHHSave('CONF_SMPEG') .
 	        SHMKSave('SMPEG_CFLAGS') .

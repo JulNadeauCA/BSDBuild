@@ -50,7 +50,8 @@ main(int argc, char *argv[])
 }
 EOT
 
-$CC -o .cctest .cctest.c
+echo "$CC -o .cctest .cctest.c" >>config.log
+$CC -o .cctest .cctest.c 2>>config.log
 if [ $? != 0 -o ! -e .cctest ]; then
     echo "no"
     rm -f .cctest .cctest.c

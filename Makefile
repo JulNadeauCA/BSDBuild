@@ -1,4 +1,4 @@
-# $Csoft: Makefile,v 1.12 2003/04/29 07:10:03 vedge Exp $
+# $Csoft: Makefile,v 1.13 2003/05/05 11:03:08 vedge Exp $
 
 TOP=.
 
@@ -13,7 +13,13 @@ SHARE=	csoft.common.mk csoft.dep.mk csoft.lib.mk csoft.man.mk \
 
 SUBDIR=	Manuconf
 
-all:	all-subdir
+all:	manuconf mkify all-subdir
+
+manuconf: manuconf.pl
+	sed s,%PREFIX%,${PREFIX}, manuconf.pl > manuconf
+
+mkify: mkify.pl
+	sed s,%PREFIX%,${PREFIX}, mkify.pl > mkify
 
 install: install-subdir
 	@if [ ! -d "${SHAREDIR}" ]; then \
@@ -24,10 +30,8 @@ install: install-subdir
 	    echo "${INSTALL_DATA} $$F ${SHAREDIR}"; \
 	    ${INSTALL_DATA} $$F ${SHAREDIR}; \
 	done
-	sed s,%PREFIX%,${PREFIX}, manuconf.pl > ${INST_BINDIR}/manuconf
-	chmod 555 ${INST_BINDIR}/manuconf
-	sed s,%INSTALLDIR%,${SHAREDIR}, mkify.pl > ${INST_BINDIR}/mkify
-	chmod 555 ${INST_BINDIR}/mkify
+	${INSTALL_BIN} manuconf ${INST_BINDIR}
+	${INSTALL_BIN} mkify ${INST_BINDIR}
 
 cleandir:
 	rm -f Makefile.config config.log *~
@@ -35,7 +39,7 @@ cleandir:
 clean:
 	# nothing
 
-configure: .PHONY
+configure: configure.in
 	cat configure.in | ./manuconf.pl > configure
 	chmod 755 configure
 

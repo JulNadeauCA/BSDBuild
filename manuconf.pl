@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.37 2003/09/10 05:01:16 vedge Exp $
+# $Csoft: manuconf.pl,v 1.38 2004/01/03 04:13:27 vedge Exp $
 #
 # Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -243,6 +243,9 @@ if [ "${srcdir}" != "" ]; then
 	SRC=${srcdir}
 
 	perl ${SRC}/mk/mkconcurrent.pl ${SRC}
+	if [ $? != 0 ]; then
+		exit 1;
+	fi
 else
 #	if [ ! -e "configure.in" ]; then
 #		echo "Missing --srcdir argument"

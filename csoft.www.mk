@@ -1,4 +1,4 @@
-# $Csoft: csoft.www.mk,v 1.18 2003/09/26 12:29:25 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.19 2003/09/27 04:08:08 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -31,6 +31,7 @@ BASEDIR?=	m4
 XSLDIR?=	xsl
 TEMPLATE?=	csoft
 LANGUAGES?=	en fr
+DEF_LANGUAGE?=	en
 XSL?=		${XSLDIR}/ml.xsl
 MKDEPS=		csoft.www.mk csoft.subdir.mk csoft.common.mk hstrip.pl
 HTMLDIR?=	none
@@ -47,8 +48,12 @@ depend: depend-subdir
 
 .htm.html:
 	@cp -f $< ${BASEDIR}/base.htm
-	@echo > $@.var
 	@echo -n "$@:"
+	@echo > $@.var
+	@echo "URI: $@" >> $@.var
+	@echo "Content-language: ${DEF_LANGUAGE}" >> $@.var
+	@echo "Content-type: text/html" >> $@.var
+	@echo "" >> $@.var
 	@for LANG in ${LANGUAGES}; do \
 	    echo -n " $$LANG"; \
 	    ${M4} -D__BASE_DIR=${BASEDIR} -D__FILE=$@ -D__LANG=$$LANG \

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Csoft: manuconf.pl,v 1.9 2002/02/25 08:51:20 vedge Exp $
+# $Csoft: manuconf.pl,v 1.10 2002/02/25 10:17:27 vedge Exp $
 #
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -69,7 +69,7 @@ main(int argc, char *argv[])
 }
 EOT
 $CC -o .gcctest .gcctest.c
-if ./.test; then
+if ./.gcctest; then
     GCC=Yes
     echo "yes"
 else

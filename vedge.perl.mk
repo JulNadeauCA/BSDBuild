@@ -9,20 +9,14 @@ PERLMODE?=   755
 
 .SUFFIXES:  .PL .pl .pm .perl
 
-.pl.PL:
-	@echo "===> $<"
-	@if perl $<; then \
-	    touch $@; \
-	fi
-
-ALL: $(OBJS) all-subdir
+ALL: all-subdir
 
 clean: clean-subdir
-	@rm -f $(OBJS)
+	@rm -f *~
 
 depend: depend-subdir
 
-install: install-subdir $(OBJS)
+install: install-subdir
 	@if [ "$(OBJS)" != "" ]; then \
 	    for OBJ in $(OBJS); do \
 		echo "===> $$OBJ"; \

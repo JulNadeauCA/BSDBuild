@@ -1,4 +1,4 @@
-# $Csoft: csoft.man.mk,v 1.20 2003/03/05 17:01:12 vedge Exp $
+# $Csoft: csoft.man.mk,v 1.21 2003/08/13 03:57:04 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -615,6 +615,15 @@ install-man: preformat-man install-man-dirs
 	    fi; \
 	fi
 
-.PHONY: clean install deinstall preformat-man clean-man install-man install-man-dirs deinstall-man
+man:
+	if [ "${MAN}" != "" ]; then \
+		echo "${NROFF} -Tascii -mandoc ${MAN} | ${PAGER}"; \
+		${NROFF} -Tascii -mandoc ${MAN} | ${PAGER}; \
+	else \
+		echo "Usage: ${MAKE} read MAN=(manpage)"; \
+		exit 1; \
+	fi
+
+.PHONY: clean install deinstall preformat-man clean-man install-man install-man-dirs deinstall-man man
 
 include ${TOP}/mk/csoft.common.mk

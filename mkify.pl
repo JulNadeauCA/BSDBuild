@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Csoft: mkify.pl,v 1.16 2003/09/27 02:43:08 vedge Exp $
+# $Csoft: mkify.pl,v 1.17 2003/09/27 02:44:02 vedge Exp $
 #
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -64,6 +64,22 @@ sub MKCopy
 	foreach my $dep (@deps) {
 		MKCopy($dep, $dir);
 	}
+	if ($src eq 'csoft.www.mk') {
+		MKCopy('hstrip.pl', $dir);
+	}
+	if ($src eq 'csoft.lib.mk') {
+		mkdir("mk/libtool");
+		for $lf ('config.guess', 'config.sub', 'configure',
+		         'configure.in', 'ltconfig', 'ltmain.sh') {
+			if (open(LF, "$dir/libtool/$lf")) {
+				open(DF, ">mk/libtool/$lf");
+				print DF <LF>;
+				close(DF);
+				close(LF);
+			}
+		}
+		chmod(0755, 'mk/libtool/config.sub');
+	}
 
 	return 1;
 }
@@ -94,9 +110,6 @@ BEGIN
 		my $dest = join('/', $mk, $f);
 
 		MKCopy($f, $dir);
-		if ($f eq 'csoft.www.mk') {
-			MKCopy('hstrip.pl', $dir);
-		}
 	}
 	MKCopy('mkdep', $dir);
 	MKCopy('mkconcurrent.pl', $dir);

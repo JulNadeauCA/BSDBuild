@@ -1,4 +1,4 @@
-# $Csoft: csoft.lib.mk,v 1.31 2003/10/05 01:41:41 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.32 2003/11/28 01:48:29 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -29,18 +29,21 @@ SH?=		sh
 CC?=		cc
 AR?=		ar
 RANLIB?=	ranlib
-LIB_INSTALL=	No
+LIB_INSTALL?=	No
+LIB_SHARED?=	No
 ASM?=		nasm
 ASMFLAGS?=	-g -w-orphan-labels
 LIBTOOL?=	libtool
-LTCONFIG?=	./ltconfig
-LTMAIN_SH?=	./ltmain.sh
-LTCONFIG_GUESS?=./config.guess
-LTCONFIG_SUB?=	./config.sub
+
+# Required files
+LTCONFIG?=	${TOP}/mk/libtool/ltconfig
+LTCONFIG_GUESS?=${TOP}/mk/libtool/config.guess
+LTCONFIG_SUB?=	${TOP}/mk/libtool/config.sub
+LTMAIN_SH?=	${TOP}/mk/libtool/ltmain.sh
+
 LTCONFIG_LOG?=	./config.log
 BINMODE?=	755
 STATIC?=	Yes
-SHARED?=	No
 SOVERSION?=	1:0:0
 CFLAGS+=    ${COPTS}
 SHARE?=
@@ -127,11 +130,11 @@ _lib_objs:
 # Build PIC versions of the library's object files.
 _lib_shobjs:
 	@if [ "${LIB}" != "" -a "${SHOBJS}" = "" \
-	      -a "${SHARED}" = "Yes" ]; then \
+	      -a "${LIB_SHARED}" = "Yes" ]; then \
 	    for F in ${SRCS}; do \
-	        F=`echo $$F | sed 's/.[cly]$$/.so/'`; \
-	        F=`echo $$F | sed 's/.cc$$/.so/'`; \
-	        F=`echo $$F | sed 's/.asm$$/.so/'`; \
+	        F=`echo $$F | sed 's/.[cly]$$/.lo/'`; \
+	        F=`echo $$F | sed 's/.cc$$/.lo/'`; \
+	        F=`echo $$F | sed 's/.asm$$/.lo/'`; \
 	        ${MAKE} $$F; \
 		if [ $$? != 0 ]; then \
 			echo "${MAKE}: failure"; \
@@ -163,13 +166,13 @@ lib${LIB}.a: _lib_objs ${OBJS}
 
 # Build a Libtool version of the library.
 lib${LIB}.la: ${LIBTOOL} _lib_shobjs
-	@if [ "${LIB}" != "" -a "${SHARED}" = "Yes" ]; then \
+	@if [ "${LIB}" != "" -a "${LIB_SHARED}" = "Yes" ]; then \
 	    if [ "${SHOBJS}" = "" ]; then \
 	        export _shobjs=""; \
 	        for F in ${SRCS}; do \
-	    	    F=`echo $$F | sed 's/.[cly]$$/.so/'`; \
-	    	    F=`echo $$F | sed 's/.cc$$/.so/'`; \
-	    	    F=`echo $$F | sed 's/.asm$$/.so/'`; \
+	    	    F=`echo $$F | sed 's/.[cly]$$/.lo/'`; \
+	    	    F=`echo $$F | sed 's/.cc$$/.lo/'`; \
+	    	    F=`echo $$F | sed 's/.asm$$/.lo/'`; \
 	    	    _shobjs="$$_shobjs $$F"; \
                 done; \
 	        echo "${LIBTOOL} ${CC} -o lib${LIB}.la -rpath ${PREFIX}/lib \
@@ -202,12 +205,12 @@ clean-lib:
 	    fi; \
 	    echo "rm -f lib${LIB}.a"; \
 	    rm -f lib${LIB}.a; \
-	    if [ "${SHARED}" = "Yes" ]; then \
+	    if [ "${LIB_SHARED}" = "Yes" ]; then \
 	        if [ "${OBJS}" != "" ]; then \
                     for F in ${SRCS}; do \
-	    	        F=`echo $$F | sed 's/.[cly]$$/.so/'`; \
-	    	        F=`echo $$F | sed 's/.cc$$/.so/'`; \
-	    	        F=`echo $$F | sed 's/.asm$$/.so/'`; \
+	    	        F=`echo $$F | sed 's/.[cly]$$/.lo/'`; \
+	    	        F=`echo $$F | sed 's/.cc$$/.lo/'`; \
+	    	        F=`echo $$F | sed 's/.asm$$/.lo/'`; \
 	    	        echo "rm -f $$F"; \
 	    	        rm -f $$F; \
                     done; \
@@ -231,7 +234,7 @@ install-lib:
 	@if [ "${LIB}" != "" -a "${LIB_INSTALL}" != "No" ]; then \
 	    echo "${INSTALL_LIB} lib${LIB}.a ${INST_LIBDIR}"; \
 	    ${SUDO} ${INSTALL_LIB} lib${LIB}.a ${INST_LIBDIR}; \
-	    if [ "${SHARED}" = "Yes" ]; then \
+	    if [ "${LIB_SHARED}" = "Yes" ]; then \
 	        echo "${LIBTOOL} --mode=install \
 	            ${INSTALL_LIB} lib${LIB}.la ${INST_LIBDIR}"; \
 	        ${SUDO} ${LIBTOOL} --mode=install \
@@ -254,7 +257,7 @@ deinstall-lib:
 	@if [ "${LIB}" != "" -a "${LIB_INSTALL}" != "No" ]; then \
 	    echo "${DEINSTALL_LIB} ${PREFIX}/lib/lib${LIB}.a"; \
 	    ${SUDO} ${DEINSTALL_LIB} ${PREFIX}/lib/lib${LIB}.a; \
-	    if [ "${SHARED}" == "Yes" ]; then \
+	    if [ "${LIB_SHARED}" == "Yes" ]; then \
 	        echo "${LIBTOOL} --mode=uninstall \
 		    rm -f ${PREFIX}/lib/lib${LIB}.la"; \
 	        ${SUDO} ${LIBTOOL} --mode=uninstall \
@@ -269,7 +272,7 @@ deinstall-lib:
 	fi
 
 ${LIBTOOL}: ${LTCONFIG} ${LTMAIN_SH} ${LTCONFIG_GUESS} ${LTCONFIG_SUB}
-	@if [ "${LIB}" != "" -a "${SHARED}" = "Yes" ]; then \
+	@if [ "${LIB}" != "" -a "${LIB_SHARED}" = "Yes" ]; then \
 	    echo "${SH} ${LTCONFIG} ${LTMAIN_SH}"; \
 	    ${SH} ${LTCONFIG} ${LTMAIN_SH}; \
 	fi

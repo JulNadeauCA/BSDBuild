@@ -1,4 +1,4 @@
-# $Csoft: Makefile,v 1.19 2003/08/08 00:09:15 vedge Exp $
+# $Csoft: Makefile,v 1.20 2003/10/01 03:50:57 vedge Exp $
 
 TOP=.
 
@@ -10,6 +10,8 @@ DISTFILE=	${DIST}.tar.gz
 SHARE=	csoft.common.mk csoft.dep.mk csoft.lib.mk csoft.man.mk \
 	csoft.perl.mk csoft.prog.mk csoft.subdir.mk csoft.www.mk \
 	hstrip.pl manuconf.pl mkdep mkify.pl mkconcurrent.pl csoft.po.mk
+
+LTFILES=config.guess config.sub configure configure.in ltconfig ltmain.sh
 
 SUBDIR=	Manuconf
 
@@ -26,10 +28,18 @@ install: install-subdir
 	@if [ ! -d "${SHAREDIR}" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
 	    ${INSTALL_DATA_DIR} ${SHAREDIR}; \
-	fi; \
-	for F in ${SHARE}; do \
+	fi
+	@if [ ! -d "${SHAREDIR}/libtool" ]; then \
+	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/libtool"; \
+	    ${INSTALL_DATA_DIR} ${SHAREDIR}/libtool; \
+	fi
+	@for F in ${SHARE}; do \
 	    echo "${INSTALL_DATA} $$F ${SHAREDIR}"; \
 	    ${INSTALL_DATA} $$F ${SHAREDIR}; \
+	done
+	@for F in ${LTFILES}; do \
+	    echo "${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool"; \
+	    ${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool; \
 	done
 	${INSTALL_PROG} manuconf ${INST_BINDIR}
 	${INSTALL_PROG} mkify ${INST_BINDIR}

@@ -1,4 +1,4 @@
-# $Csoft: csoft.doc.mk,v 1.1 2004/01/10 10:39:02 vedge Exp $
+# $Csoft: csoft.doc.mk,v 1.1 2004/01/19 10:30:30 vedge Exp $
 
 # Copyright (c) 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -24,29 +24,26 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-DOC?=		untitled.ps
+DOCPS?=		untitled.ps
+DOCPDF?=	untitled.pdf
 DOCSRC?=
 
 ROFF?=		nroff
-EQN?=		eqn
-PIC?=		pic
-TBL?=		tbl
 ROFFFLAGS?=
 MACROS?=
+EQN?=		eqn
 EQNFLAGS?=
+PIC?=		pic
 PICFLAGS?=
+TBL?=		tbl
 TBLFLAGS?=
+REFER?=		refer
 REFERFLAGS?=
-
-REFER?=		refer
 REFERDB?=
-SOELIM?=	soelim
-GRIND?=		vgrind -f
-BIB?=		bib
-INDXBIB?=	indxbib
-REFER?=		refer
+PS2PDF?=	ps2pdf13
+PS2PDFFLAGS?=
 
-all: all-subdir ${DOC}
+all: all-subdir ${DOCPS} ${DOCPDF}
 install: install-doc-dirs install-doc install-subdir
 deinstall: deinstall-subdir
 clean: clean-doc clean-subdir
@@ -54,25 +51,30 @@ cleandir: clean-doc clean-subdir cleandir-subdir
 regress: regress-subdir
 depend: depend-subdir
 
-${DOC}: ${DOCSRC} ${REFERDB}
+${DOCPS}: ${DOCSRC} ${REFERDB}
 	@if [ "${REFERDB}" = "" ]; then \
 		echo "cat ${DOCSRC} | ${PIC} ${PICFLAGS}| ${EQN} ${EQNFLAGS}|\
 		    ${TBL} ${TBLFLAGS} | ${REFER} ${REFERFLAGS} |\
 		    ${ROFF} ${ROFFFLAGS} -Tps ${MACROS} > $@"; \
-		cat ${DOCSRC} | ${PIC} ${PICFLAGS}| ${EQN} ${EQNFLAGS}|\
+		(cat ${DOCSRC} | ${PIC} ${PICFLAGS}| ${EQN} ${EQNFLAGS}|\
 		    ${TBL} ${TBLFLAGS} | ${REFER} ${REFERFLAGS} |\
-		    ${ROFF} ${ROFFFLAGS} -Tps ${MACROS} > $@; \
+		    ${ROFF} ${ROFFFLAGS} -Tps ${MACROS} > $@) || \
+		    (rm -f $@; false); \
 	else \
 		echo "cat ${DOCSRC} | ${PIC} ${PICFLAGS}| ${EQN} ${EQNFLAGS}|\
 		    ${TBL} ${TBLFLAGS} | ${REFER} ${REFERFLAGS} -p${REFERDB} |\
 		    ${ROFF} ${ROFFFLAGS} -Tps ${MACROS} > $@"; \
-		cat ${DOCSRC} | ${PIC} ${PICFLAGS}| ${EQN} ${EQNFLAGS}|\
+		(cat ${DOCSRC} | ${PIC} ${PICFLAGS}| ${EQN} ${EQNFLAGS}|\
 		    ${TBL} ${TBLFLAGS} | ${REFER} ${REFERFLAGS} -p${REFERDB} |\
-		    ${ROFF} ${ROFFFLAGS} -Tps ${MACROS} > $@; \
+		    ${ROFF} ${ROFFFLAGS} -Tps ${MACROS} > $@) || \
+		    (rm -f $@; false); \
 	fi
 
+${DOCPDF}: ${DOCPS}
+	(${PS2PDF} ${PS2PDFFLAGS} ${DOCPS} > ${DOCPDF}) || (rm -f $@; false)
+
 clean-doc:
-	rm -f ${DOC}
+	rm -f ${DOCPS} ${DOCPDF}
 
 .PHONY: install deinstall clean cleandir regress depend
 .PHONY: clean-doc

@@ -1,4 +1,4 @@
-# $Csoft: csoft.prog.mk,v 1.37 2004/03/10 13:46:17 vedge Exp $
+# $Csoft: csoft.prog.mk,v 1.38 2004/09/03 09:32:54 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -24,13 +24,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-CFLAGS?=	-Wall -g
-CXXFLAGS?=
-MFLAGS?=
-PROG_INSTALL?=	Yes
 CC?=		cc
-CFLAGS?=	-O2
+CFLAGS?=	-O2 -g
+CXXFLAGS?=
+OBJCFLAGS?=	${CFLAGS}
 CPPFLAGS?=
+PROG_INSTALL?=	Yes
 GMONOUT?=	gmon.out
 ASM?=		nasm
 ASMFLAGS?=	-g -w-orphan-labels
@@ -51,7 +50,7 @@ cleandir: clean-prog clean-subdir cleandir-prog cleandir-subdir
 regress: regress-subdir
 depend: depend-subdir
 
-.SUFFIXES: .o .po .c .cc .asm .l .y
+.SUFFIXES: .o .po .c .cc .asm .l .y .m
 
 # Compile C code into an object file
 .c.o:
@@ -65,11 +64,11 @@ depend: depend-subdir
 .cc.po:
 	${CXX} -pg -DPROF ${CXXFLAGS} ${CPPFLAGS} -o $@ -c $<
 
-# Compile Objective-C code into an object file
+# Compile C+Objective-C code into an object file
 .m.o:
-	${CC} ${MFLAGS} ${CPPFLAGS} -c $<
+	${CC} ${OBJCFLAGS} ${CPPFLAGS} -c $<
 .m.po:
-	${CC} -pg -DPROF ${MFLAGS} ${CPPFLAGS} -o $@ -c $<
+	${CC} -pg -DPROF ${OBJCFLAGS} ${CPPFLAGS} -o $@ -c $<
 
 # Compile assembly code into an object file
 .asm.o:

@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.33 2003/08/07 23:30:14 vedge Exp $
+# $Csoft: manuconf.pl,v 1.34 2003/08/08 00:18:02 vedge Exp $
 #
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -279,16 +279,28 @@ if [ "${enable_nls}" != "no" ]; then
 	done
 	if [ "${msgfmt}" != "" ]; then
 		HAVE_GETTEXT="yes"
+		echo "LOCALEDIR=${PREFIX}/share/locale" >> Makefile.config
+		echo "#ifndef LOCALEDIR" > config/localedir.h
+		echo "#define LOCALEDIR \"${PREFIX}/share/locale\"" >> config/localedir.h
+		echo "#endif /* LOCALEDIR */" >> config/localedir.h
 	else
 		HAVE_GETTEXT="no"
+		echo "#undef LOCALEDIR" > config/localedir.h
 	fi
 else
 	ENABLE_NLS="no"
 	HAVE_GETTEXT="no"
 	echo "#undef ENABLE_NLS" > config/enable_nls.h
+	echo "#undef LOCALEDIR" > config/localedir.h
 fi
 echo "ENABLE_NLS=${ENABLE_NLS}" >> Makefile.config
 echo "HAVE_GETTEXT=${HAVE_GETTEXT}" >> Makefile.config
+
+echo "SHAREDIR=${PREFIX}/share" >> Makefile.config
+echo "#ifndef SHAREDIR" > config/sharedir.h
+echo "#define SHAREDIR \"${PREFIX}/share\"" >> config/sharedir.h
+echo "#endif /* SHAREDIR */" >> config/sharedir.h
+echo "SHAREDIR=${PREFIX}/share" >> Makefile.config
 EOF
 						$registers = 0;
 					}

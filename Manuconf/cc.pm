@@ -1,4 +1,4 @@
-# $Csoft: cc.pm,v 1.15 2003/10/01 09:24:19 vedge Exp $
+# $Csoft: cc.pm,v 1.16 2003/10/01 09:35:27 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002, 2003 CubeSoft Communications
@@ -111,6 +111,46 @@ main(int argc, char *argv[])
 	char buf[32];
 
 	foo(buf, sizeof(buf));
+	return (0);
+}
+EOF
+	
+	# Check for the gcc __format__ attribute.
+	print NEcho('checking __format__ attribute...');
+	TryCompile 'HAVE_FORMAT_ATTRIBUTE', << 'EOF';
+#include <stdarg.h>
+
+void foo(char *, ...)
+     __attribute__((__format__ (printf, 1, 2)));
+
+void
+foo(char *a, ...)
+{
+}
+
+int
+main(int argc, char *argv[])
+{
+	foo("foo %s", "bar");
+	return (0);
+}
+EOF
+
+	# Check for the gcc __nonnull__ attribute.
+	print NEcho('checking __nonnull__ attribute...');
+	TryCompile 'HAVE_NONNULL_ATTRIBUTE', << 'EOF';
+void foo(char *)
+     __attribute__((__nonnull__ (1)));
+
+void
+foo(char *a)
+{
+}
+
+int
+main(int argc, char *argv[])
+{
+	foo("foo");
 	return (0);
 }
 EOF

@@ -1,4 +1,4 @@
-# $Csoft: vedge.www.mk,v 1.26 2001/09/15 12:07:36 vedge Exp $
+# $Csoft: vedge.www.mk,v 1.27 2001/09/15 12:08:14 vedge Exp $
 
 TYPE=		www
 
@@ -47,5 +47,5 @@ uninstall: uninstall-subdir
 	    done;			\
 	fi
 
-include $(TOP)/mk/vedge.common.mk
-include $(TOP)/mk/vedge.subdir.mk
+include $(TOP)/mk/csoft.common.mk
+include $(TOP)/mk/csoft.subdir.mk

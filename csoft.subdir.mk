@@ -1,4 +1,4 @@
-# $Csoft$
+# $Csoft: vedge.subdir.mk,v 1.2 2001/08/16 05:52:32 vedge Exp $
 
 MAKE?=	    make
 

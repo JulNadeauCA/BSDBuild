@@ -1,4 +1,4 @@
-# $Csoft$
+# $Csoft: vedge.none.mk,v 1.8 2001/08/16 05:52:32 vedge Exp $
 
 TYPE=	    none
 
@@ -36,5 +36,5 @@ uninstall: uninstall-subdir
 	    rm -f $(NONE) $(PREFIX)/bin; \
 	fi
 
-include $(TOP)/mk/vedge.common.mk
-include $(TOP)/mk/vedge.subdir.mk
+include $(TOP)/mk/csoft.common.mk
+include $(TOP)/mk/csoft.subdir.mk

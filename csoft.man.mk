@@ -1,9 +1,9 @@
-# $Csoft$
+# $Csoft: vedge.man.mk,v 1.6 2001/08/16 05:52:32 vedge Exp $
 
 TYPE=	    man
 
 CENTER?=    documentation
-RELEASE?=   vedge.com.ar
+RELEASE?=   $(CSOFT_MK_VERSION)
 
 NROFF?=	    nroff -Tascii
 TBL?=	    tbl
@@ -44,5 +44,5 @@ install: install-subdir $(MAN7) $(MAN9)
 uninstall: uninstall-subdir
 	# TODO
 
-include $(TOP)/mk/vedge.common.mk
-include $(TOP)/mk/vedge.subdir.mk
+include $(TOP)/mk/csoft.common.mk
+include $(TOP)/mk/csoft.subdir.mk

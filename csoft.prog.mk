@@ -1,4 +1,4 @@
-# $Csoft: vedge.prog.mk,v 1.14 2001/08/16 05:52:32 vedge Exp $
+# $Csoft: vedge.prog.mk,v 1.15 2001/08/16 05:55:48 vedge Exp $
 
 TYPE=		prog
 
@@ -56,5 +56,5 @@ uninstall: uninstall-subdir
 	    rm -f $(PROG) $(PREFIX)/bin; \
 	fi
 
-include $(TOP)/mk/vedge.common.mk
-include $(TOP)/mk/vedge.subdir.mk
+include $(TOP)/mk/csoft.common.mk
+include $(TOP)/mk/csoft.subdir.mk

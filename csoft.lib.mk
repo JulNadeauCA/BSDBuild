@@ -1,4 +1,4 @@
-# $Csoft$
+# $Csoft: vedge.lib.mk,v 1.9 2001/08/16 05:52:32 vedge Exp $
 
 TYPE=	    lib
 
@@ -92,5 +92,5 @@ $(LIBTOOL): $(LTCONFIG) $(LTMAIN_SH) $(LTCONFIG_GUESS) $(LTCONFIG_SUB)
 	    $(SH) $(LTCONFIG) $(LTMAIN_SH); \
 	fi
 
-include $(TOP)/mk/vedge.common.mk
-include $(TOP)/mk/vedge.subdir.mk
+include $(TOP)/mk/csoft.common.mk
+include $(TOP)/mk/csoft.subdir.mk

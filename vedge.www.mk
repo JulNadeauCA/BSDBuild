@@ -8,19 +8,22 @@ MAKE?=	    make
 INSTALL?=   install
 HTMLMODE?=  644
 BASEDIR?=   %TOP%/base
-TEMPLATE?=  $(BASEDIR)/html.m4
+TEMPLATE?=  fancy sober
 
 .SUFFIXES:  .html .htm .jpg .jpeg .png .gif .m4
 
-.htm.html: $(TEMPLATE)
-	@echo "===> $@"
-	@cp -f $< $(BASEDIR)/base.htm
-	@$(M4) $(TEMPLATE) > $@
+.htm.html:
+	@for TMPL in $(TEMPLATE); do \
+	    echo "===> $$TMPL-$@"; \
+	    cp -f $< $(BASEDIR)/base.htm; \
+	    $(M4) -D_TMPL_=$$TMPL -D_TOP_=%TOP% -D_BASE_=$(BASEDIR) \
+		$(BASEDIR)/$$TMPL.m4 > $$TMPL-$@; \
+	done
 
 ALL: $(HTML) all-subdir
 
 clean: clean-subdir
-	rm -f $(HTML)
+	rm -f $(HTML) *.html
 distclean:
 	rm -f `find %TOP% -name \.vedge\.\*\.mk`
 tree:

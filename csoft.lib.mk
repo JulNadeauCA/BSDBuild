@@ -1,4 +1,4 @@
-# $Csoft: csoft.lib.mk,v 1.34 2003/12/07 05:56:24 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.35 2003/12/10 02:21:16 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -220,8 +220,8 @@ clean-lib:
 		    rm -f ${OBJS}; \
 		    echo "rm -f ${OBJS}"; \
 		fi; \
-		echo "rm -f lib${LIB}.la ${LIBTOOL} ${LTCONFIG_LOG}"; \
-		rm -f lib${LIB}.la ${LIBTOOL} ${LTCONFIG_LOG}; \
+		echo "rm -f lib${LIB}.la ${LIBTOOL} ${LTCONFIG_LOG} .libs"; \
+		rm -f lib${LIB}.la ${LIBTOOL} ${LTCONFIG_LOG} .libs; \
 	    fi; \
 	fi
 	@if [ "${CLEANFILES}" != "" ]; then \

@@ -1,4 +1,4 @@
-# $Csoft: sdl.pm,v 1.8 2002/11/27 05:03:46 vedge Exp $
+# $Csoft: sdl.pm,v 1.9 2002/11/28 08:09:46 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -58,7 +58,7 @@ sub Test
 		     'Make sure sdl-config is in $PATH.'));
 	
 	print NEcho('checking whether SDL works...');
-	TryLibCompile 'sdl_works',
+	TryLibCompile 'HAVE_SDL',
 	    '${SDL_CFLAGS}', '${SDL_LIBS}', << 'EOF';
 
 #include <stdio.h>
@@ -89,7 +89,7 @@ main(int argc, char *argv[])
 
 EOF
 	print
-	    Cond('"${sdl_works}" = "yes"',
+	    Cond('"${HAVE_SDL}" = "yes"',
 	    Nothing(),
 	    Fail('The SDL test would not compile.'));
 

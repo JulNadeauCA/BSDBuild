@@ -1,4 +1,4 @@
-# $Csoft: csoft.lib.mk,v 1.5 2001/12/04 16:53:19 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.6 2001/12/04 16:56:02 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -53,7 +53,7 @@ STATIC?=	Yes
 SHARED?=	No
 VERSION?=	1:0:0
 
-.SUFFIXES:  .o .lo .c .cc .C .cxx .s .S .asm .y
+.SUFFIXES:  .o .po .lo .c .cc .C .cxx .s .S .asm .y
 
 CFLAGS+=    ${COPTS}
 
@@ -65,57 +65,116 @@ CFLAGS+=    ${COPTS}
 	${LIBTOOL} ${CC} ${CFLAGS} -c $<
 .cc.lo:
 	${LIBTOOL} ${CXX} ${CXXFLAGS} -c $<
+.c.po:
+	${CC} -pg -DPROF ${CFLAGS} ${CPPFLAGS} -o $@ -c $<
+.cc.po:
+	${CXX} -pg -DPROF ${CXXFLAGS} ${CPPFLAGS} -o $@ -c $<
+
+#
+# Assembly
+#
 .asm.o:
 	${ASM} ${ASMFLAGS} -o $@ $< 
+
+#
+# Lex
+#
+.l:
+	${LEX} ${LFLAGS} -o$@.yy.c $<
+	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $@.yy.c ${LIBL} ${LIBS}
+	@rm -f $@.yy.c
+.l.o:
+	${LEX} ${LFLAGS} -o$@.yy.c $<
+	${CC} ${CFLAGS} -c $@.yy.c
+	@mv -f $@.yy.o $@
+	@rm -f $@.yy.c
+.l.po:
+	${LEX} ${LFLAGS} -o$@.yy.c $<
+	${CC} -pg -DPROF ${CFLAGS} -c $@.yy.c
+	@mv -f $@.yy.o $@
+	@rm -f $@.yy.c
+
+#
+# Yacc
+#
+.y:
+	${YACC} ${YFLAGS} -b $@ $<
+	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $@.tab.c ${LIBS}
+	@rm -f $@.tab.c
+.y.o:
+	${YACC} ${YFLAGS} -b $@ $<
+	${CC} ${CFLAGS} -c $@.tab.c
+	@mv -f $@.tab.o $@
+	@rm -f $@.tab.c
+.y.po:
+	${YACC} ${YFLAGS} -b $@ $<
+	${CC} -pg -DPROF ${CFLAGS} -c $@.tab.c
+	@mv -f $@.tab.o $@
+	@rm -f $@.tab.c
+
 
 all:	all-subdir lib${LIB}.a lib${LIB}.la
 
 lib${LIB}.a:	${OBJS}
-	@if [ "${STATIC}" = "Yes" ]; then \
-	    echo "===> lib${LIB}.a"; \
-	    ${AR} -cru lib${LIB}.a ${OBJS}; \
-	    ${RANLIB} lib${LIB}.a; \
+	@if [ "${LIB}" != "" ]; then \
+		echo "${AR} -cru lib${LIB}.a ${OBJS}"; \
+		${AR} -cru lib${LIB}.a ${OBJS}; \
+		${RANLIB} lib${LIB}.a; \
 	fi
 
 lib${LIB}.la:	${LIBTOOL} ${SHOBJS}
-	@if [ "${SHARED}" = "Yes" ]; then \
-	    echo "===> lib${LIB}.la"; \
+	@if [ "${LIB}" != "" -a "${SHARED}" = "Yes" ]; then \
+	    echo ${LIBTOOL} ${CC} -o lib${LIB}.la -rpath ${PREFIX}/lib -shared \
+		-version-info ${VERSION} ${LDFLAGS} ${SHOBJS} ${LIBS}; \
 	    ${LIBTOOL} ${CC} -o lib${LIB}.la -rpath ${PREFIX}/lib -shared \
 		-version-info ${VERSION} ${LDFLAGS} ${SHOBJS} ${LIBS}; \
 	fi
 
 clean:		clean-subdir
-	@rm -fr lib${LIB}.a lib${LIB}.la libs ${OBJS} ${SHOBJS}
-	@rm -f ${LIBTOOL} ${LTCONFIG_LOG}
+	@if [ "${LIB}" != "" ]; then \
+		echo "rm -fr lib${LIB}.a ${OBJS}"; \
+		rm -fr lib${LIB}.a ${OBJS}; \
+	fi
+	@if [ "${LIB}" != "" -a "${SHARED}" = "Yes" ]; then \
+		echo rm -f lib${LIB}.la ${SHOBJS} ${LIBTOOL} ${LTCONFIG_LOG}; \
+		rm -f lib${LIB}.la ${SHOBJS} ${LIBTOOL} ${LTCONFIG_LOG}; \
+	fi
 
 install:	install-subdir lib${LIB}.a lib${LIB}.la
-	@if [ "${STATIC}" = "Yes" ]; then \
-	    echo "===> installing lib${LIB}.a"; \
+	@if [ "${LIB}" != "" ]; then \
+	    echo "${INSTALL} ${INSTALL_COPY} ${INSTALL_STRIP} \
+		${BINOWN} ${BINGRP} -m ${BINMODE} lib${LIB}.a ${PREFIX}/lib"; \
 	    ${INSTALL} ${INSTALL_COPY} ${INSTALL_STRIP} \
 		${BINOWN} ${BINGRP} -m ${BINMODE} lib${LIB}.a ${PREFIX}/lib; \
 	fi
-	@if [ "${SHARED}" = "Yes" ]; then \
-	    echo "===> installing lib${LIB}.la"; \
+	@if [ "${LIB}" != "" -a "${SHARED}" = "Yes" ]; then \
+	    echo "${LIBTOOL} --mode=install \
+	    ${INSTALL} ${INSTALL_COPY} ${INSTALL_STRIP} \
+		${BINOWN} ${BINGRP} -m ${BINMODE} lib${LIB}.la ${PREFIX}/lib"; \
 	    ${LIBTOOL} --mode=install \
 	    ${INSTALL} ${INSTALL_COPY} ${INSTALL_STRIP} \
 		${BINOWN} ${BINGRP} -m ${BINMODE} lib${LIB}.la ${PREFIX}/lib; \
 	fi
 	
 uninstall:	uninstall-subdir
-	@if [ "${STATIC}" = "Yes" ]; then \
-	    echo "===> uninstalling lib${LIB}.a"; \
+	@if [ "${LIB}" != "" ]; then \
+		echo "rm -f ${PREFIX}/lib/lib${LIB}.a"; \
 		rm -f ${PREFIX}/lib/lib${LIB}.a; \
 	fi
-	@if [ "${SHARED}" = "Yes" ]; then \
-	    echo "===> uninstalling lib${LIB}.la"; \
+	@if [ "${LIB}" != "" -a "${SHARED}" = "Yes" ]; then \
+	    echo "${LIBTOOL} --mode=uninstall \
+		rm -f ${PREFIX}/lib/lib${LIB}.la"; \
 	    ${LIBTOOL} --mode=uninstall \
-		rm -f ${PREFIX}/lib/lib${LIB}.la; \
+	        rm -f ${PREFIX}/lib/lib${LIB}.la; \
 	fi
 
 ${LIBTOOL}:	${LTCONFIG} ${LTMAIN_SH} ${LTCONFIG_GUESS} ${LTCONFIG_SUB}
-	@if [ "${SHARED}" = "Yes" ]; then \
+	@if [ "${LIB}" != "" -a "${SHARED}" = "Yes" ]; then \
+	    echo "${SH} ${LTCONFIG} ${LTMAIN_SH}"; \
 	    ${SH} ${LTCONFIG} ${LTMAIN_SH}; \
 	fi
+
+${LTCONFIG} ${LTCONFIG_GUESS} ${LTCONFIG_SUB} ${LTMAIN_SH}:
 
 regress:	regress-subdir
 

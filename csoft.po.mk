@@ -1,4 +1,4 @@
-# $Csoft: csoft.po.mk,v 1.9 2003/08/13 01:48:17 vedge Exp $
+# $Csoft: csoft.po.mk,v 1.8 2003/08/13 03:57:04 vedge Exp $
 
 # Copyright (c) 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -25,7 +25,9 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 XGETTEXT?=	xgettext
+XGETTEXT_FLAGS?=--no-location
 MSGMERGE?=	msgmerge
+MSGMERGE_FLAGS?=--no-location
 MSGFMT?=	msgfmt
 DOMAIN?=	untitled
 POTFILES?=	POTFILES
@@ -41,8 +43,8 @@ all: ${DOMAIN}.pot ${MOS}
 	@if [ "${ENABLE_NLS}" = "yes" -a "${HAVE_GETTEXT}" = "yes" ]; then \
 		echo "${MAKE} ${DOMAIN}.pot"; \
 		${MAKE} ${DOMAIN}.pot; \
-		echo "${MSGMERGE} $< ${DOMAIN}.pot -o $@"; \
-		${MSGMERGE} $< ${DOMAIN}.pot -o $@; \
+		echo "${MSGMERGE} ${MSGMERGE_FLAGS} $< ${DOMAIN}.pot -o $@"; \
+		${MSGMERGE} ${MSGMERGE_FLAGS} $< ${DOMAIN}.pot -o $@; \
 	else \
 		echo "skipping $@ (no gettext)"; \
 	fi
@@ -69,11 +71,11 @@ ${DOMAIN}.pot: ${POTFILES}
 		echo "${XGETTEXT} --default-domain=${DOMAIN} \
 		    --directory=${SRC} --add-comments \
 		    --keyword=_ --keyword=N_ \
-		    --files-from=${POTFILES} -o $@"; \
+		    --files-from=${POTFILES} ${XGETTEXT_FLAGS} -o $@"; \
 		${XGETTEXT} --default-domain=${DOMAIN} \
 		    --directory=${SRC} --add-comments \
 		    --keyword=_ --keyword=N_ \
-		    --files-from=${POTFILES} -o $@; \
+		    --files-from=${POTFILES} ${XGETTEXT_FLAGS} -o $@; \
 	else \
 		echo "skipping $@ (no gettext)"; \
 	fi

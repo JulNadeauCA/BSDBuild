@@ -2,25 +2,32 @@
 # $Id$
 
 type=$1
-if [ "$type" = "" ]; then
-    echo "Usage: $0 [type]"
+if [ "$type" = "" ];
+then
+    echo "Usage: $0 [default-type]"
     exit
 fi
 
-here=`pwd`
-me=vedge.$type.mk
-
-for D in `find . -type d`; do
-    if [ ! -e "$D/Repository" ]; then
-	echo "===> $D"
+for D in `find . -type d`;
+do
+    if [ ! -e "$D/Repository" ];
+    then
+	echo "==> $D"
 	fun=`echo $D |perl -e 'while(<STDIN>) {$_=~s/\b\w+\b/\.\./g; print;}'`
-	sed -e "s|%TOP%|$fun|" mk/$me > $D/.$me
-	if [ ! -e "$D/Makefile" ]; then
+
+	if [ ! -e "$D/Makefile" ];
+	then
 	    cat > $D/Makefile << EOF
 # \$Id\$
 
-include .vedge.$type.mk
+
+
+top=%TOP%
+include \$(top)/mk/vedge.$type.mk
 EOF
+	    sed -e "s|%TOP%|$fun|" -e "s|%MK%|$fun/mk|" \
+		$D/Makefile > $D/.Makefile
+	    mv -f $D/.Makefile $D/Makefile
 	fi
     fi
 done

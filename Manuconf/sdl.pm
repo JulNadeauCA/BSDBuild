@@ -1,4 +1,4 @@
-# $Csoft: sdl.pm,v 1.16 2004/01/03 04:13:29 vedge Exp $
+# $Csoft: sdl.pm,v 1.17 2004/03/10 16:33:36 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
@@ -32,6 +32,14 @@ sub Test
 	print ReadOut('sdl-config', '--version', 'sdl_version');
 	print ReadOut('sdl-config', '--cflags', 'SDL_CFLAGS');
 	print ReadOut('sdl-config', '--static-libs', 'SDL_LIBS');
+	
+	# Mac OS X port
+	print ReadOut('sdl-config', '--libs', 'SDL_LIBS_SHORT');
+	print << 'EOF';
+if [ "$SYSTEM" = "Darwin" ]; then
+	SDL_LIBS=$SDL_LIBS_SHORT
+fi
+EOF
 
 	# FreeBSD port
 	print ReadOut('sdl11-config', '--version', 'sdl11_version');

@@ -1,4 +1,4 @@
-# $Csoft: csoft.www.mk,v 1.24 2003/09/29 00:55:15 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.25 2003/09/29 00:56:08 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -181,14 +181,7 @@ install-www:
 			${SUDO} ${INSTALL_DATA} $$F.var ${HTMLDIR}; \
 		fi; \
 		for LANG in ${LANGUAGES}; do \
-			if [ -e "${HTMLDIR}/$$F.$$LANG" \
-			     -a "${OVERWRITE}" = "" ]; then \
-				echo "$$F.$$LANG exists; preserving"; \
-			else \
-				echo "${INSTALL_DATA} $$F.$$LANG ${HTMLDIR}"; \
-				${SUDO} ${INSTALL_DATA} $$F.$$LANG ${HTMLDIR}; \
-			fi; \
-			for ENC in `ls -1 $$F.$$LANG.*`; do \
+			for ENC in `ls -1 $$F.$$LANG*`; do \
 			    if [ -e "${HTMLDIR}/$$ENC" \
 			         -a "${OVERWRITE}" = "" ]; then \
 				    echo "$$ENC exists; preserving"; \

@@ -6,7 +6,6 @@ PREFIX?=    /usr/local
 CFLAGS?=    -Wall -g
 SH?=	    sh
 CC?=	    cc
-AR?=	    ar
 MAKE?=	    make
 INSTALL?=   install
 BINMODE?=   755
@@ -26,10 +25,7 @@ $(PROG): $(OBJS)
 	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS) $(LIBS)
 
 clean: clean-subdir
-	rm -f $(PROG) $(OBJS) a.out
-
-tree:
-	(cd $(TOP)/mk && $(SH) maptree.sh none)
+	rm -f $(PROG) $(OBJS)
 
 install: install-subdir
 	@if [ "$(PROG)" != "" ]; then \
@@ -42,29 +38,8 @@ uninstall: uninstall-subdir
 	    rm -f $(PROG) $(PREFIX)/bin; \
 	fi
 
-all-subdir:
-	@for DIR in $(SUBDIR); do \
-	    echo "===> $(REL)$$DIR"; \
-	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/); \
-	done
-clean-subdir:
-	@for DIR in $(SUBDIR); do \
-	    echo "===> $(REL)$$DIR"; \
-	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/ clean); \
-	done
-depend-subdir:
-	@for DIR in $(SUBDIR); do \
-	    echo "===> $(REL)$$DIR"; \
-	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/ depend); \
-	done
-install-subdir:
-	@for DIR in $(SUBDIR); do \
-	    echo "===> $(REL)$$DIR"; \
-	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/ install); \
-	done
-uninstall-subdir:
-	@for DIR in $(SUBDIR); do \
-	    echo "===> $(REL)$$DIR"; \
-	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/ uninstall); \
-	done
+tree:
+	(cd $(TOP)/mk && $(SH) maptree.sh none)
 
+include $(TOP)/mk/vedge.common.mk
+include $(TOP)/mk/vedge.subdir.mk

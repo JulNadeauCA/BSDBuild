@@ -8,9 +8,11 @@ M4?=	    m4
 MAKE?=	    make
 INSTALL?=   install
 HTMLMODE?=  644
+
 BASEDIR?=   $(TOP)/base
 TEMPLATE?=  fancy sober
 DEFTMPL?=   sober
+
 
 .SUFFIXES:  .html .htm .jpg .jpeg .png .gif .m4
 
@@ -30,8 +32,7 @@ ALL: $(HTML) all-subdir
 clean: clean-subdir
 	rm -f $(HTML) *.html
 
-tree:
-	(cd $(TOP)/mk && $(SH) maptree.sh none)
+depend: depend-subdir
 
 install: install-subdir
 	@if [ "$(HTML)" != "" ]; then \
@@ -46,29 +47,5 @@ uninstall: uninstall-subdir
 	    done; \
 	fi
 
-all-subdir:
-	@for DIR in $(SUBDIR); do \
-	    echo "===> $(REL)$$DIR"; \
-	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/); \
-	done
-clean-subdir:
-	@for DIR in $(SUBDIR); do \
-	    echo "===> $(REL)$$DIR"; \
-	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/ clean); \
-	done
-depend-subdir:
-	@for DIR in $(SUBDIR); do \
-	    echo "===> $(REL)$$DIR"; \
-	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/ depend); \
-	done
-install-subdir:
-	@for DIR in $(SUBDIR); do \
-	    echo "===> $(REL)$$DIR"; \
-	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/ install); \
-	done
-uninstall-subdir:
-	@for DIR in $(SUBDIR); do \
-	    echo "===> $(REL)$$DIR"; \
-	    (cd $$DIR && $(MAKE) REL=$(REL)$$DIR/ uninstall); \
-	done
-
+include $(TOP)/mk/vedge.common.mk
+include $(TOP)/mk/vedge.subdir.mk

@@ -40,4 +40,5 @@ tree:
 	(cd $(TOP)/mk && $(SH) maptree.sh none)
 
 
+include $(TOP)/mk/vedge.common.mk
 include $(TOP)/vedge.subdir.mk

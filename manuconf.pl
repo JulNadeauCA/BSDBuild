@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I/home/vedge/src/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.12 2002/05/05 22:10:20 vedge Exp $
+# $Csoft: manuconf.pl,v 1.13 2002/05/05 23:42:14 vedge Exp $
 #
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -167,6 +167,23 @@ for mc_arg; do
 	    mc_option=`echo $mc_option | sed 's/-/_/g'`
 	    eval "enable_${mc_option}=no"
 	    ;;
+	--with-*)
+	    mc_option=`echo $mc_arg | sed -e 's/--with-//' -e 's/=.*//'`
+	    mc_option=`echo $mc_option | sed 's/-/_/g'`
+	    case "$mc_option" in
+	        *=*)
+	            eval "with_${mc_option}='$mc_optarg'"
+		    ;;
+		*)
+	            eval "with_${mc_option}=yes"
+		    ;;
+	    esac
+	    ;;
+	--without-*)
+	    mc_option=`echo $mc_arg | sed -e 's/--without-//'`;
+	    mc_option=`echo $mc_option | sed 's/-/_/g'`
+	    eval "with_${mc_option}=no"
+	    ;;
 	--help)
 	    help=yes
 	    ;;
@@ -180,16 +197,11 @@ for mc_arg; do
 	    ;;
 	esac
 done
-
-if [ "$mc_prefix" != "" ]; then
+if [ "${mc_prefix}" != "" ]; then
     PREFIX=$mc_prefix
 else
     PREFIX=/usr/local
 fi
-
-trap 'if [ -e config.log ]; then ls -l config.log; fi; exit 1' 1 2 15
-exec 3>config.log
-
 EOF
 	print SHObtain('pwd', '', 'S');
 	while (<STDIN>) {

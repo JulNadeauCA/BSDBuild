@@ -1,4 +1,4 @@
-# $Csoft: agar.pm,v 1.4 2004/04/26 03:45:28 vedge Exp $
+# $Csoft: agar.pm,v 1.5 2004/04/26 03:45:58 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2004 CubeSoft Communications, Inc.
@@ -50,15 +50,12 @@ sub Test
 	TryLibCompile 'HAVE_AGAR',
 	    '${AGAR_CFLAGS}', '${AGAR_LIBS}', << 'EOF';
 #include <engine/engine.h>
-#include <stdio.h>
-
-static struct engine_proginfo info = { "test", "Test", "", "1.0" };
 
 int
 main(int argc, char *argv[])
 {
-	engine_preinit(argc, argv, &info, 0);
-	engine_init(GFX_ENGINE_GUI, TEXT_ENGINE_TTF);
+	engine_preinit("conftest");
+	engine_init();
 	event_loop();
 	engine_destroy();
 	return (0);

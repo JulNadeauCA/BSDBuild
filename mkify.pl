@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Csoft: mkify.pl,v 1.14 2003/03/05 16:13:09 vedge Exp $
+# $Csoft: mkify.pl,v 1.15 2003/06/25 02:48:27 vedge Exp $
 #
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -35,25 +35,19 @@ sub MKCopy
 	my $srcmk = join('/', $dir, $src);
 	my @deps = ();
 
-	print "copying $src\n";
-
 	unless (-f $srcmk) {
-		print STDERR "$srcmk: $!\n";
+		print STDERR "src $srcmk: $!\n";
 		return 0;
 	}
-	unless (-f $destmk) {
-		print STDERR "$destmk: $!\n";
-	}
-
 	unless (open(SRC, $srcmk)) {
-		print STDERR "$srcmk: $!\n";
+		print STDERR "src $srcmk: $!\n";
 		return 0;
 	}
 	chop(@src = <SRC>);
 	close(SRC);
 
 	unless (open(DEST, ">$destmk")) {
-		print STDERR "$destmk: $!\n";
+		print STDERR "dst $destmk: $!\n";
 		close(SRC);
 		return 0;
 	}
@@ -76,11 +70,11 @@ sub MKCopy
 
 BEGIN
 {
-	my $dir = '%INSTALLDIR%';
+	my $dir = '%PREFIX%/share/csoft-mk';
 	my $mk = './mk';
 
 	if (! -d $mk && !mkdir($mk)) {
-		print STDERR "$mk: $!\n";
+		print STDERR "mkdir $mk: $!\n";
 		exit (1);
 	}
 
@@ -91,7 +85,7 @@ BEGIN
 		}
 		closedir(MKDIR);
 	} else {
-		print "$mk: $!\n";
+		print "opendir $mk: $!\n";
 		exit (1);
 	}
 
@@ -100,6 +94,9 @@ BEGIN
 		my $dest = join('/', $mk, $f);
 
 		MKCopy($f, $dir);
+		if ($f eq 'www') {
+			MKCopy('hstrip.pl', $dir);
+		}
 	}
 	MKCopy('mkdep', $dir);
 	MKCopy('mkconcurrent.pl', $dir);

@@ -1,4 +1,4 @@
-# $Csoft: Makefile,v 1.4 2002/07/30 23:54:00 vedge Exp $
+# $Csoft: Makefile,v 1.5 2002/08/23 09:48:15 vedge Exp $
 
 TOP=..
 
@@ -12,6 +12,9 @@ SHARE=	Core.pm \
 	make.pm \
 	freetype.pm \
 	setenv.pm \
+	strlcat.pm \
+	strlcpy.pm \
+	strsep.pm \
 	getenv.pm \
 	vasprintf.pm
 

@@ -1,4 +1,4 @@
-# $Csoft: Makefile,v 1.22 2004/01/19 10:30:30 vedge Exp $
+# $Csoft: Makefile,v 1.23 2004/03/10 13:43:34 vedge Exp $
 
 TOP=.
 
@@ -18,11 +18,12 @@ LTFILES=config.guess config.sub configure configure.in ltconfig ltmain.sh
 
 SUBDIR=	Manuconf
 
-all:	manuconf mkify all-subdir
+all:	.tmp/manuconf mkify all-subdir
 
-manuconf: manuconf.pl
+.tmp/manuconf: manuconf.pl
+	mkdir .tmp
 	sed -e s,%PREFIX%,${PREFIX}, -e s,%VERSION%,${VERSION}, \
-	    manuconf.pl > manuconf
+	    manuconf.pl > .tmp/manuconf
 
 mkify: mkify.pl
 	sed s,%PREFIX%,${PREFIX}, mkify.pl > mkify
@@ -44,7 +45,7 @@ install: install-subdir
 	    echo "${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool"; \
 	    ${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool; \
 	done
-	${INSTALL_PROG} manuconf ${BINDIR}
+	${INSTALL_PROG} .tmp/manuconf ${BINDIR}
 	${INSTALL_PROG} mkify ${BINDIR}
 
 cleandir:

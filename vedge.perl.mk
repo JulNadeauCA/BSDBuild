@@ -1,6 +1,6 @@
 # $Id$
 
-TYPE=	    perl
+type=	    perl
 
 PREFIX?=    /usr/local
 SH?=	    sh

@@ -1,4 +1,4 @@
-# $Csoft: csoft.po.mk,v 1.4 2003/07/27 20:27:43 vedge Exp $
+# $Csoft: csoft.po.mk,v 1.5 2003/07/27 22:14:18 vedge Exp $
 
 # Copyright (c) 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -41,8 +41,8 @@ all: ${DOMAIN}.pot ${MOS}
 	@if [ "${HAVE_GETTEXT}" = "yes" ]; then \
 		echo "${MAKE} ${DOMAIN}.pot"; \
 		${MAKE} ${DOMAIN}.pot; \
-		echo "${MSGMERGE} $< ${DOMAIN}.pot -o $@.pox"; \
-		${MSGMERGE} $< ${DOMAIN}.pot -o $@.pox; \
+		echo "${MSGMERGE} $< ${DOMAIN}.pot -o $@"; \
+		${MSGMERGE} $< ${DOMAIN}.pot -o $@; \
 	fi
 
 .po.mo:
@@ -53,14 +53,20 @@ all: ${DOMAIN}.pot ${MOS}
 
 ${POTFILES}:
 	@if [ "${HAVE_GETTEXT}" = "yes" ]; then \
+		echo "(cd ${SRC} && find . -name \*.c > ${POTFILES})"; \
 		(cwd=`pwd`; cd ${SRC} && find . -name \*.c > \
 		    $$cwd/${POTFILES}); \
 	fi
 
 ${DOMAIN}.pot: ${POTFILES}
 	@if [ "${HAVE_GETTEXT}" = "yes" ]; then \
-		${XGETTEXT} --default-domain=${DOMAIN} --directory=${SRC} \
-		    --add-comments --keyword=_ --keyword=N_ \
+		echo "${XGETTEXT} --default-domain=${DOMAIN} \
+		    --directory=${SRC} --add-comments \
+		    --keyword=_ --keyword=N_ \
+		    --files-from=${POTFILES} -o $@"; \
+		${XGETTEXT} --default-domain=${DOMAIN} \
+		    --directory=${SRC} --add-comments \
+		    --keyword=_ --keyword=N_ \
 		    --files-from=${POTFILES} -o $@; \
 	fi
 

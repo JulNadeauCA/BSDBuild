@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Csoft: manuconf.pl,v 1.8 2002/02/25 08:45:02 vedge Exp $
+# $Csoft: manuconf.pl,v 1.9 2002/02/25 08:51:20 vedge Exp $
 #
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -28,6 +28,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+sub cc;
 sub x11;
 sub SDL;
 sub smpeg;
@@ -48,6 +49,36 @@ sub SHHSaveS;
 sub SHDefine;
 sub SHObtain;
 sub SHTest;
+
+sub cc
+{
+	print SHNEcho("checking for gcc...");
+	print << 'EOF';
+if [ "$CC" = "" ]; then
+    CC=cc
+fi
+cat << 'EOT' > .gcctest.c
+int
+main(int argc, char *argv[])
+{
+#ifdef __GNUC__
+	return (0);
+#else
+	return (1);
+#endif
+}
+EOT
+$CC -o .gcctest .gcctest.c
+if ./.test; then
+    GCC=Yes
+    echo "yes"
+else
+    echo "no"
+fi
+rm -f .gcctest .gcctest.c
+EOF
+	return (0);
+}
 
 sub x11
 {
@@ -382,6 +413,7 @@ BEGIN
 {
     	$VERSION = '1.1';
 
+	$CHECK{'cc'} = \&cc;
 	$CHECK{'x11'} = \&x11;
 	$CHECK{'SDL'} = \&SDL;
 	$CHECK{'glib'} = \&glib;

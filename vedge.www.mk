@@ -9,6 +9,7 @@ INSTALL?=   install
 HTMLMODE?=  644
 BASEDIR?=   %TOP%/base
 TEMPLATE?=  fancy sober
+DEFTMPL=    sober
 
 .SUFFIXES:  .html .htm .jpg .jpeg .png .gif .m4
 
@@ -19,6 +20,7 @@ TEMPLATE?=  fancy sober
 	    $(M4) -D_TMPL_=$$TMPL -D_TOP_=%TOP% -D_BASE_=$(BASEDIR) \
 		$(BASEDIR)/$$TMPL.m4 > $$TMPL-$@; \
 	done
+	@cp -f $(DEFTMPL)-$@ $@
 
 ALL: $(HTML) all-subdir
 

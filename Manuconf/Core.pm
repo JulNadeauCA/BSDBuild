@@ -1,4 +1,4 @@
-# $Csoft: Core.pm,v 1.16 2003/08/07 22:41:11 vedge Exp $
+# $Csoft: Core.pm,v 1.17 2003/10/01 09:24:19 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002, 2003 CubeSoft Communications, Inc.
@@ -199,6 +199,43 @@ EOF
 	}
 }
 
+sub TryCompileFlags
+{
+	my $def = shift;
+	my $flags = shift;
+
+	while (my $code = shift) {
+		print << "EOF";
+cat << EOT > conftest.c
+$code
+EOT
+EOF
+		print << "EOF";
+compile="ok"
+\$CC $flags -o conftest conftest.c 2>>config.log
+if [ \$? != 0 ]; then
+	echo "-> failed: non-zero exit status" >> config.log
+	compile="failed"
+fi
+rm -f conftest conftest.c
+EOF
+
+		my $define = HDefine($def);
+		my $undef = HUndef($def);
+
+		print << "EOF";
+if [ "\${compile}" = "ok" ]; then
+	echo "ok" >> config.log
+	$define
+	echo "yes"
+else
+    $undef
+	echo "no"
+fi
+EOF
+	}
+}
+
 sub TryLibCompile
 {
 	my $def = shift;
@@ -249,7 +286,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(%TESTS %DESCR ReadOut Which Cond Define Echo Necho Fail MKSave HDefine HDefineString HUndef Nothing TryCompile Log);
+    @EXPORT = qw(%TESTS %DESCR ReadOut Which Cond Define Echo Necho Fail MKSave HDefine HDefineString HUndef Nothing TryCompile TryLibCompile TryCompileFlags Log);
 }
 
 ;1

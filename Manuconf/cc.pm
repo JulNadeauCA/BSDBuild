@@ -1,4 +1,4 @@
-# $Csoft: cc.pm,v 1.17 2003/10/01 09:40:49 vedge Exp $
+# $Csoft: cc.pm,v 1.18 2003/10/26 00:02:18 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002, 2003 CubeSoft Communications
@@ -96,7 +96,7 @@ EOF
 	
 	# Check for the gcc __bounded__ attribute.
 	print NEcho('checking __bounded__ attribute...');
-	TryCompile 'HAVE_BOUNDED_ATTRIBUTE', << 'EOF';
+	TryCompileFlags 'HAVE_BOUNDED_ATTRIBUTE', '-Werror', << 'EOF';
 void foo(char *, int)
 	 __attribute__ ((__bounded__(__string__,1,2)));
 
@@ -117,7 +117,7 @@ EOF
 	
 	# Check for the gcc __format__ attribute.
 	print NEcho('checking __format__ attribute...');
-	TryCompile 'HAVE_FORMAT_ATTRIBUTE', << 'EOF';
+	TryCompileFlags 'HAVE_FORMAT_ATTRIBUTE', '-Werror', << 'EOF';
 #include <stdarg.h>
 
 void foo1(char *, ...)
@@ -139,7 +139,7 @@ EOF
 
 	# Check for the gcc __nonnull__ attribute.
 	print NEcho('checking __nonnull__ attribute...');
-	TryCompile 'HAVE_NONNULL_ATTRIBUTE', << 'EOF';
+	TryCompileFlags 'HAVE_NONNULL_ATTRIBUTE', '-Werror', << 'EOF';
 void foo(char *)
      __attribute__((__nonnull__ (1)));
 

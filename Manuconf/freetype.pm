@@ -1,4 +1,4 @@
-# $Csoft: freetype.pm,v 1.6 2002/11/28 10:19:21 vedge Exp $
+# $Csoft: freetype.pm,v 1.7 2002/12/23 05:45:04 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -47,7 +47,7 @@ sub Test
 	        MKSave('FREETYPE_CFLAGS') .
 	        MKSave('FREETYPE_LIBS') .
 			Echo('yes'),
-	    Fail('Could not find the FreeType library'));
+	    Fail('Cannot find FreeType. Make sure freetype-config is in your $PATH.'));
 
 	# Try a test FreeType program.
 	print NEcho('checking whether FreeType works...');

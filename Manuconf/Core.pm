@@ -1,4 +1,4 @@
-# $Csoft: Core.pm,v 1.6 2002/08/23 09:47:39 vedge Exp $
+# $Csoft: Core.pm,v 1.7 2002/09/06 00:56:51 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -172,6 +172,52 @@ EOF
 		print << "EOF";
 if [ "\${compile}" = "ok" ]; then
 	echo "-> success" >> config.log
+	$define
+	echo "yes"
+else
+	echo "no"
+fi
+EOF
+	}
+}
+
+sub TryLibCompile
+{
+	my $def = shift;
+	my $cflags = shift;
+	my $libs = shift;
+
+	while (my $code = shift) {
+		print << "EOF";
+cat << EOT > conftest.c
+$code
+EOT
+EOF
+		print << "EOF";
+compile=\"ok\"
+echo cc $cflags -o conftest conftest.c $libs >> config.log
+cc $cflags -o conftest conftest.c $libs 2>>config.log
+EOF
+
+		print << 'EOF';
+if [ $? != 0 ]; then
+	echo "-> failed: compiler had non-zero exit status" >> config.log
+	compile="failed"
+fi
+if [ ! -e "conftest" ]; then
+	echo "-> failed: compiler did not produce an executable" >> config.log
+	compile="failed"
+fi
+rm -f conftest conftest.c
+EOF
+
+		my $hdefine = HSave($def);
+		my $define = Define($def, 'yes');
+
+		print << "EOF";
+if [ "\${compile}" = "ok" ]; then
+	echo "-> success" >> config.log
+	$hdefine
 	$define
 	echo "yes"
 else

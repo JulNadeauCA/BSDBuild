@@ -10,7 +10,7 @@ HTMLMODE?=  644
 BASEDIR?=   base
 TEMPLATE?=  $(BASEDIR)/html.m4
 
-.SUFFIXES=  .htm .html .jpg .jpeg .png .gif .m4
+.SUFFIXES:  .html .htm .jpg .jpeg .png .gif .m4
 
 .htm.html: $(TEMPLATE)
 	@echo "===> $@"
@@ -23,6 +23,8 @@ clean: clean-subdir
 	rm -f $(HTML) a.out
 distclean:
 	rm -f `find %TOP% -name \.vedge\.\*\.mk`
+tree:
+	sh %TOP%/mk/maptree.sh $(TYPE)
 
 install: install-subdir
 	@if [ "$(HTML)" != "" ]; then \

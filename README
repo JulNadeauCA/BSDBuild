@@ -18,5 +18,5 @@ It takes the type of package an an argument, one of:
     www	    HTML pages, requires M4.
 
 The vedge-mk library should be installed as ./mk in the top-level
-build directory, it is required by the makefiles.
+build directory, you don't need to bundle ./mk with your package.
 

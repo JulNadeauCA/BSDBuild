@@ -20,7 +20,7 @@ TEMPLATE?=  %TOP%/$(BASEDIR)/html.m4
 ALL: $(HTML) all-subdir
 
 clean: clean-subdir
-	rm -f $(HTML) a.out
+	rm -f $(HTML)
 distclean:
 	rm -f `find %TOP% -name \.vedge\.\*\.mk`
 tree:

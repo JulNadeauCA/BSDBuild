@@ -1,4 +1,4 @@
-# $Csoft: libqnet.pm,v 1.1 2004/10/24 12:16:31 vedge Exp $
+# $Csoft: libqnet.pm,v 1.2 2004/10/24 23:43:06 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2004 CubeSoft Communications, Inc.
@@ -62,11 +62,6 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	print
-	    Cond('"${HAVE_LIBQNET}" = "yes"',
-	    Nothing(),
-	    Fail('The libqnet test application failed to compile.'));
-
 	return (0);
 }
 

@@ -7,11 +7,13 @@ SH?=	    sh
 INSTALL?=   install -c
 PERLMODE?=   755
 
-.SUFFIXES:  .pl .pm .perl
+.SUFFIXES:  .PL .pl .pm .perl
 
-.pl.pl:
-	echo "===> $<"
-	perl $<
+.pl.PL:
+	@echo "===> $<"
+	@if perl $<; then \
+	    touch $@; \
+	fi
 
 ALL: $(OBJS) all-subdir
 

@@ -1,4 +1,4 @@
-# $Csoft: csoft.www.mk,v 1.1 2002/12/02 07:07:31 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.13 2003/06/21 21:17:09 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -29,7 +29,7 @@ XSLTPROC?=	xsltproc
 PERL?=		perl
 
 BASEDIR?=	${TOP}/base
-TEMPLATE?=	black
+TEMPLATE?=	csoft
 LANGUAGES?=	en fr
 MLXSL?=		${TOP}/xsl/ml.xsl
 

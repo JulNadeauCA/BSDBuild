@@ -1,4 +1,4 @@
-# $Csoft: Makefile,v 1.10 2002/10/19 06:53:52 vedge Exp $
+# $Csoft: Makefile,v 1.11 2002/12/24 06:01:00 vedge Exp $
 
 TOP=..
 
@@ -19,7 +19,8 @@ SHARE=	Core.pm \
 	mmap.pm \
 	setproctitle.pm \
 	asprintf.pm \
-	flock.pm
+	flock.pm \
+	progname.pm
 
 all:
 

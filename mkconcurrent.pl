@@ -59,6 +59,16 @@ sub ConvertMakefile
 					$objsrc =~ s/\.cat(\d)$/.\1/;
 				}
 				push @deps, "$obj: $SRC/$ndir/$objsrc";
+				if ($type eq 'OBJS') {			# C
+					push @deps, << 'EOF';
+	${CC} ${CFLAGS} -I`pwd` ${CPPFLAGS} -c $<
+EOF
+				} elsif ($type =~ /CATMAN\d/) {		# Nroff
+					push @deps, << 'EOF';
+	@echo "${NROFF} ${NROFF_FLAGS} $< > $@"
+	@${NROFF} ${NROFF_FLAGS} $< > $@ || exit 0
+EOF
+				}
 			}
 		}
 		if (/^\s*(SRCS|MAN\d|XCF|TTF|MAP)\s*=\s*(.+)$/) {

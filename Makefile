@@ -1,4 +1,4 @@
-# $Csoft: Makefile,v 1.2 2002/05/10 23:17:19 vedge Exp $
+# $Csoft: Makefile,v 1.3 2002/05/29 21:33:04 vedge Exp $
 
 TOP=.
 
@@ -19,8 +19,10 @@ install:
 	    echo "${INSTALL_DATA} $$F ${SHAREDIR}"; \
 	    ${INSTALL_DATA} $$F ${SHAREDIR}; \
 	done
-	${INSTALL_PROG} manuconf.pl ${INST_BINDIR}/manuconf
+	sed s,%PREFIX%,${PREFIX}, manuconf.pl > ${INST_BINDIR}/manuconf
+	chmod 555 ${INST_BINDIR}/manuconf
 	sed s,%INSTALLDIR%,${SHAREDIR}, mkify.pl > ${INST_BINDIR}/mkify
+	chmod 555 ${INST_BINDIR}/mkify
 
 cleandir:
 	rm -f Makefile.config configure *~

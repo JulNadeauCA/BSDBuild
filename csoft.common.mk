@@ -1,4 +1,4 @@
-# $Csoft: csoft.common.mk,v 1.22 2004/03/10 13:46:17 vedge Exp $
+# $Csoft: csoft.common.mk,v 1.23 2004/03/17 03:41:58 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -35,11 +35,14 @@ MANDIR?=	${PREFIX}/man
 PSDIR?=		${PREFIX}/man
 
 SUDO?=
+SH?=		sh
+FIND?=		find
+AWK?=		awk
 
-INSTALL_PROG=		install -c -m 555
-INSTALL_LIB=		install -c -m 444
-INSTALL_DATA=		install -c -m 444
-INSTALL_INCL=		install -c -m 444
+INSTALL_PROG=	install -c -m 555
+INSTALL_LIB=	install -c -m 444
+INSTALL_DATA=	install -c -m 444
+INSTALL_INCL=	install -c -m 444
 
 INSTALL_PROG_DIR=	mkdir -p
 INSTALL_LIB_DIR=	mkdir -p

@@ -1,4 +1,4 @@
-# $Csoft: sdl.pm,v 1.9 2002/11/28 08:09:46 vedge Exp $
+# $Csoft: sdl.pm,v 1.10 2002/12/23 05:45:04 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -80,7 +80,6 @@ main(int argc, char *argv[])
 	Sint32 s32;
 
 	if (SDL_Init(SDL_INIT_TIMER|SDL_INIT_NOPARACHUTE) != 0) {
-		fprintf("SDL_Init: %s\n", SDL_GetError());
 		return (1);
 	}
 	SDL_Quit();

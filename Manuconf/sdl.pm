@@ -1,4 +1,4 @@
-# $Csoft: sdl.pm,v 1.12 2002/12/27 02:27:16 vedge Exp $
+# $Csoft: sdl.pm,v 1.13 2003/03/13 04:20:52 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -28,14 +28,14 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	print Obtain('sdl-config', '--version', 'sdl_version');
-	print Obtain('sdl-config', '--cflags', 'SDL_CFLAGS');
-	print Obtain('sdl-config', '--static-libs', 'SDL_LIBS');
+	print ReadOut('sdl-config', '--version', 'sdl_version');
+	print ReadOut('sdl-config', '--cflags', 'SDL_CFLAGS');
+	print ReadOut('sdl-config', '--static-libs', 'SDL_LIBS');
 
 	# FreeBSD port
-	print Obtain('sdl11-config', '--version', 'sdl11_version');
-	print Obtain('sdl11-config', '--cflags', 'sdl11_cflags');
-	print Obtain('sdl11-config', '--static-libs', 'sdl11_libs');
+	print ReadOut('sdl11-config', '--version', 'sdl11_version');
+	print ReadOut('sdl11-config', '--cflags', 'sdl11_cflags');
+	print ReadOut('sdl11-config', '--static-libs', 'sdl11_libs');
 
 	print
 	    Cond('"${sdl_version}" != ""',

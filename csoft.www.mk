@@ -1,4 +1,4 @@
-# $Csoft: csoft.www.mk,v 1.15 2003/06/25 02:49:40 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.16 2003/09/24 07:49:38 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -26,17 +26,28 @@
 M4?=		m4
 XSLTPROC?=	xsltproc
 PERL?=		perl
+ICONV?=		iconv
 BASEDIR?=	m4
+XSLDIR?=	xsl
 TEMPLATE?=	csoft
 LANGUAGES?=	en fr
-XSL?=		xsl/ml.xsl
+XSL?=		${XSLDIR}/ml.xsl
 MKDEPS=		csoft.www.mk csoft.subdir.mk csoft.common.mk hstrip.pl
 HTMLDIR?=	none
+
+all: ${HTML} all-subdir
+clean: clean-www clean-subdir
+cleandir: cleandir-subdir
+install: install-www install-subdir
+deinstall: deinstall-subdir
+regress: regress-subdir
+depend: depend-subdir
 
 .SUFFIXES: .html .htm .jpg .jpeg .png .gif .m4
 
 .htm.html:
 	@cp -f $< ${BASEDIR}/base.htm
+	@echo > $@.var
 	@echo -n "$@:"
 	@for LANG in ${LANGUAGES}; do \
 	    echo -n " $$LANG"; \
@@ -46,31 +57,116 @@ HTMLDIR?=	none
             ${XSLTPROC} --html --nonet --stringparam lang $$LANG ${XSL} \
 	        $@.$$LANG.prep > $@.$$LANG 2>/dev/null; \
 	    rm -f $@.$$LANG.prep; \
+	    echo "URI: $@.$$LANG.utf8" >> $@.var; \
+	    echo "Content-language: $$LANG" >> $@.var; \
+	    echo "Content-type: text/html;encoding=UTF-8" >> $@.var; \
+	    echo "" >> $@.var; \
+	    case "$$LANG" in \
+	    ab|af|eu|ca|da|nl|en|fo|fr|fi|de|is|ga|it|no|nb|nn|pt|rm|gd|es|sv|sw) \
+	        echo "URI: $@.$$LANG.iso8859-1" >> $@.var; \
+	        echo "Content-language: $$LANG" >> $@.var; \
+	        echo "Content-type: text/html;charset=ISO-8859-1" >> $@.var; \
+	        echo "" >> $@.var; \
+	        ${ICONV} -f UTF-8 -t ISO-8859-1 $@.$$LANG > \
+		    $@.$$LANG.iso8859-1; \
+		;; \
+	    cs) \
+	        echo "URI: $@.$$LANG.iso8859-2" >> $@.var; \
+	        echo "Content-language: $$LANG" >> $@.var; \
+	        echo "Content-type: text/html;charset=ISO-8859-2" >> $@.var; \
+	        echo "" >> $@.var; \
+	        ${ICONV} -f UTF-8 -t ISO-8859-2 $@.cz > $@.cz.iso8859-2; \
+		;; \
+	    he) \
+	        echo "URI: $@.$$LANG.iso8859-8" >> $@.var; \
+	        echo "Content-language: $$LANG" >> $@.var; \
+	        echo "Content-type: text/html;charset=ISO-8859-8" >> $@.var; \
+	        echo "" >> $@.var; \
+	        ${ICONV} -f UTF-8 -t ISO-8859-8 $@.he > $@.he.iso8859-8; \
+		;; \
+	    hr) \
+	        echo "URI: $@.$$LANG.iso8859-2" >> $@.var; \
+	        echo "Content-language: $$LANG" >> $@.var; \
+	        echo "Content-type: text/html;charset=ISO-8859-2" >> $@.var; \
+	        echo "" >> $@.var; \
+	        ${ICONV} -f UTF-8 -t ISO-8859-2 $@.hr > $@.hr.iso8859-2; \
+		;; \
+	    ja) \
+	        echo "URI: $@.$$LANG.iso2022-jp" >> $@.var; \
+	        echo "Content-language: $$LANG" >> $@.var; \
+	        echo "Content-type: text/html;charset=ISO-2022-JP" >> $@.var; \
+	        echo "" >> $@.var; \
+	        ${ICONV} -f UTF-8 -t ISO-2022-JP $@ > $@.iso2022-jp; \
+		;; \
+	    ko) \
+	        echo "URI: $@.$$LANG.euc-kr" >> $@.var; \
+	        echo "Content-language: $$LANG" >> $@.var; \
+	        echo "Content-type: text/html;charset=EUC-KR" >> $@.var; \
+	        echo "" >> $@.var; \
+	        ${ICONV} -f UTF-8 -t EUC-KR $@ > $@.euc-kr ; \
+		;; \
+	    po) \
+	        echo "URI: $@.$$LANG.iso8859-2" >> $@.var; \
+	        echo "Content-language: $$LANG" >> $@.var; \
+	        echo "Content-type: text/html;charset=ISO-8859-2" >> $@.var; \
+	        echo "" >> $@.var; \
+	        ${ICONV} -f UTF-8 -t ISO-8859-2 $@ > $@.iso8859-2; \
+		;; \
+	    ru) \
+	        echo "URI: $@.ru.cp1251" >> $@.var; \
+	        echo "Content-language: ru" >> $@.var; \
+	        echo "Content-type: text/html;charset=WINDOWS-1251" >> $@.var;\
+		echo "" >> $@.var; \
+		${ICONV} -f UTF-8 -t CP1251 $@ > $@.ru.cp1251; \
+	        echo "URI: $@.ru.cp866" >> $@.var; \
+	        echo "Content-language: ru" >> $@.var; \
+	        echo "Content-type: text/html;charset=CP866" >> $@.var; \
+	        echo "" >> $@.var; \
+	        ${ICONV} -f UTF-8 -t CP866 $@ > $@.ru.cp866; \
+	        echo "URI: $@.ru.iso-ru" >> $@.var; \
+	        echo "Content-language: ru" >> $@.var; \
+	        echo "Content-type: text/html;charset=ISO-8859-5" >> $@.var; \
+		echo "" >> $@.var; \
+	        ${ICONV} -f UTF-8 -t ISO-8859-5 $@ > $@.ru.iso-ru; \
+	        echo "URI: $@.ru.koi8-r" >> $@.var; \
+	        echo "Content-language: ru" >> $@.var; \
+	        echo "Content-type: text/html;charset=KOI8-r" >> $@.var; \
+		echo "" >> $@.var; \
+	        ${ICONV} -f UTF-8 -t KOI8-R $@ > $@.ru.koi8-r; \
+	        ;; \
+	    zh-CN) \
+	        echo "URI: $@.$$LANG.gb2312" >> $@.var; \
+	        echo "Content-language: $$LANG" >> $@.var; \
+	        echo "Content-type: text/html;charset=GB2312" >> $@.var; \
+	        echo "" >> $@.var; \
+	        ${ICONV} -f UTF-8 -t GB2312 $@ > $@.gb2312; \
+		;; \
+	    tw|zh-TW) \
+	        echo "URI: $@.$$LANG.big5" >> $@.var; \
+	        echo "Content-language: $$LANG" >> $@.var; \
+	        echo "Content-type: text/html;charset=Big5" >> $@.var; \
+	        echo "" >> $@.var; \
+	        ${ICONV} -f UTF-8 -t BIG-5 $@ > $@.big5; \
+		;; \
+	    *) \
+		;; \
+	    esac; \
+	    echo >> $@.var; \
 	done; \
 	rm -f ${BASEDIR}/base.htm; \
 	echo "."
-
-all: ${HTML} all-subdir
-
-clean: clean-www clean-subdir
-
-install: install-www install-subdir
-
-deinstall: deinstall-www deinstall-subdir
-
-depend: depend-subdir
 
 clean-www:
 	@for F in ${HTML}; do \
 		echo "rm -f $$F"; \
 		rm -f $$F; \
 		for LANG in ${LANGUAGES}; do \
-			echo "rm -f $$F.$$LANG"; \
-			rm -f $$F.$$LANG; \
+			echo "rm -f $$F.$$LANG.* $$F.$$LANG $$F.$$LANG.var"; \
+			rm -f $$F.$$LANG.* $$F.$$LANG $$F.$$LANG.var; \
 		done; \
 	done
 
-install-www: ${HTML}
+install-www:
 	@if [ "${HTMLDIR}" = "none" ]; then \
 		exit 0; \
 	fi
@@ -144,37 +240,8 @@ install-www: ${HTML}
 		done; \
 	done
 
-deinstall-www:
-	@if [ "${HTMLDIR}" = "none" ]; then \
-		exit 0; \
-	fi
-	for F in ${HTML}; do \
-		echo "${DEINSTALL_DATA} ${HTMLDIR}/Makefile"; \
-		${DEINSTALL_DATA} ${HTMLDIR}/Makefile; \
-		echo "${DEINSTALL_DATA} ${HTMLDIR}/$$F"; \
-		${DEINSTALL_DATA} ${HTMLDIR}/$$F; \
-		export SF=`echo $$F |sed s,.html$$,.htm,`; \
-		echo "${DEINSTALL_DATA} ${HTMLDIR}/$$SF"; \
-		${DEINSTALL_DATA} ${HTMLDIR}/$$SF; \
-		for LANG in ${LANGUAGES}; do \
-			echo "${DEINSTALL_DATA} ${HTMLDIR}/$$F.$$LANG";\
-			${DEINSTALL_DATA} ${HTMLDIR}/$$F.$$LANG; \
-		done; \
-		for MK in ${MKDEPS}; do \
-			echo "${INSTALL_DATA} ${HTMLDIR}/mk/$$MK"; \
-			${DEINSTALL_DATA} ${HTMLDIR}/mk/$$MK; \
-		done; \
-		for XSL in ${XSL}; do \
-			echo "${DEINSTALL_DATA} ${HTMLDIR}/xsl/$$XSL"; \
-			${DEINSTALL_DATA} ${HTMLDIR}/xsl/$$XSL; \
-		done; \
-		${DEINSTALL_DATA_DIR} ${HTMLDIR}/mk; \
-		${DEINSTALL_DATA_DIR} ${HTMLDIR}/xsl; \
-	done
-
-regress: regress-subdir
+.PHONY: install deinstall clean cleandir regress depend
+.PHONY: install-www clean-www
 
 include ${TOP}/mk/csoft.common.mk
 include ${TOP}/mk/csoft.subdir.mk
-
-.PHONY: clean depend install deinstall clean-www install-www deinstall-www

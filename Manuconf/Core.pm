@@ -1,4 +1,4 @@
-# $Csoft: Core.pm,v 1.4 2002/07/31 00:28:03 vedge Exp $
+# $Csoft: Core.pm,v 1.5 2002/08/23 09:37:06 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
@@ -167,6 +167,7 @@ if [ ! -e "conftest" ]; then
 	echo "-> failed: compiler did not produce an executable" >> config.log
 	compile="failed"
 fi
+rm -f conftest conftest.c
 EOF
 
 		my $define = HSave($def);

@@ -1,4 +1,4 @@
-# $Csoft: inc.pth.mk,v 1.1 2001/12/01 03:57:42 vedge Exp $
+# $Csoft: inc.pth.mk,v 1.1 2001/12/03 04:48:30 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -34,8 +34,6 @@ PTHVER!=	pth-config --version 2>/dev/null
 
 CFLAGS+=	${PTHCFLAGS}
 LIBS+=		${PTHLIBS}
-
-.BEGIN: inc-pth-begin
 
 inc-pth-begin:
 	@if [ "${PTHVER}" == "" ]; then \

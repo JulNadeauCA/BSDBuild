@@ -1,4 +1,4 @@
-# $Csoft: inc.smpeg.mk,v 1.1 2002/01/26 03:33:42 vedge Exp $
+# $Csoft: inc.x11.mk,v 1.1 2002/01/26 05:06:31 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -26,9 +26,19 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-XCFLAGS=	-I/usr/X11R6/include
-XLIBS=		-L/usr/X11R6/lib
+X11BASE?=	/usr/X11R6
+XCFLAGS=	-I${X11BASE}/include
+XLIBS=		-L${X11BASE}/lib
 
 CFLAGS+=	${XCFLAGS}
 LIBS+=		${XLIBS}
+
+inc-x11-begin:
+	@if [ ! -e "${X11BASE}/lib" -o ! -e "${X11BASE}/include" ]; then \
+		echo "-"; \
+		echo "* Cannot find X11."; \
+		echo "* Must set \$$X11BASE"; \
+		echo "-"; \
+		exit 1; \
+	fi
 

@@ -1,4 +1,4 @@
-# $Csoft$
+# $Csoft: inc.smpeg.mk,v 1.1 2002/01/26 02:47:27 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -34,8 +34,6 @@ SMPEGVER!=	smpeg-config --version
 
 CFLAGS+=	${SMPEGCFLAGS}
 LIBS+=		${SMPEGLIBS}
-
-.BEGIN: inc-smpeg-begin
 
 inc-smpeg-begin:
 	@if [ "${SMPEGVER}" == "" ]; then \

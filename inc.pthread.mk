@@ -1,4 +1,4 @@
-# $Csoft$
+# $Csoft: inc.pthread.mk,v 1.1 2002/01/24 18:42:46 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -25,8 +25,6 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-.BEGIN: inc-pthread-begin
 
 LIBS+=	-pthread
 

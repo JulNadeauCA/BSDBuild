@@ -1,4 +1,4 @@
-# $Csoft: inc.sdl.mk,v 1.3 2001/12/01 04:09:37 vedge Exp $
+# $Csoft: inc.sdl.mk,v 1.4 2001/12/03 04:47:00 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -34,8 +34,6 @@ SDLVER!=	sdl-config --version
 
 CFLAGS+=	${SDLCFLAGS}
 LIBS+=		${SDLLIBS}
-
-.BEGIN: inc-sdl-begin
 
 inc-sdl-begin:
 	@if [ "${SDLVER}" == "" ]; then \

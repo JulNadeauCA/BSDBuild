@@ -1,4 +1,4 @@
-# $Csoft: csoft.man.mk,v 1.30 2003/11/09 10:12:14 vedge Exp $
+# $Csoft: csoft.man.mk,v 1.31 2003/11/28 01:48:19 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -40,7 +40,7 @@ all: all-subdir preformat-man
 install: install-man-dirs install-man install-subdir
 deinstall: deinstall-subdir
 clean: clean-man clean-subdir
-cleandir: cleandir-subdir
+cleandir: clean-man clean-subdir cleandir-subdir
 regress: regress-subdir
 depend: depend-subdir
 

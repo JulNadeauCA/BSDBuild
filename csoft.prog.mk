@@ -1,4 +1,4 @@
-# $Csoft: csoft.prog.mk,v 1.32 2003/09/28 17:34:24 vedge Exp $
+# $Csoft: csoft.prog.mk,v 1.33 2003/11/28 01:48:29 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -43,7 +43,7 @@ all: all-subdir ${PROG}
 install: install-prog install-subdir
 deinstall: deinstall-prog deinstall-subdir
 clean: clean-prog clean-subdir
-cleandir: cleandir-prog cleandir-subdir
+cleandir: clean-prog clean-subdir cleandir-prog cleandir-subdir
 regress: regress-subdir
 depend: depend-subdir
 
@@ -202,7 +202,7 @@ clean-prog:
 	fi
 
 cleandir-prog:
-	rm -f *.core *~
+	rm -f core *.core
 
 install-prog:
 	@if [ "${PROG}" != "" -a "${PROG_INSTALL}" != "No" ]; then \

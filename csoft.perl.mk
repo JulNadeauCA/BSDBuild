@@ -1,4 +1,4 @@
-# $Csoft: csoft.perl.mk,v 1.13 2003/03/05 16:13:09 vedge Exp $
+# $Csoft: csoft.perl.mk,v 1.14 2003/09/28 17:34:24 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -37,7 +37,7 @@ all: all-subdir
 install: install-perl install-subdir
 deinstall: deinstall-perl deinstall-subdir
 clean: clean-perl clean-subdir
-cleandir: clean-subdir
+cleandir: clean-perl clean-subdir cleandir-subdir
 regress: regress-subdir
 depend: depend-subdir
 

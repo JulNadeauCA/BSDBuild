@@ -1,4 +1,4 @@
-# $Csoft: csoft.www.mk,v 1.28 2003/10/05 12:13:02 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.29 2003/10/21 09:40:33 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -39,7 +39,7 @@ HTMLDIR?=	none
 
 all: ${HTML} all-subdir
 clean: clean-www clean-subdir
-cleandir: cleandir-subdir
+cleandir: clean-www clean-subdir cleandir-subdir
 install: install-www install-subdir
 deinstall: deinstall-subdir
 regress: regress-subdir

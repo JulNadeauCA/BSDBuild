@@ -1,4 +1,4 @@
-# $Csoft: cc.pm,v 1.11 2002/12/22 09:54:05 vedge Exp $
+# $Csoft: cc.pm,v 1.12 2003/03/13 22:50:37 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
@@ -31,6 +31,9 @@ sub Test
 {
 	# Look for a compiler.
 	print << 'EOF';
+cc_is_gcc=no
+cc_is_gcc3=no
+
 if [ "$CC" = "" ]; then
 	for i in `echo $PATH |sed 's/:/ /g'`; do
 		if [ -x "${i}/cc" ]; then
@@ -41,6 +44,7 @@ if [ "$CC" = "" ]; then
 	done
 	if [ "$CC" = "" ]; then
 		echo "Could not find a C compiler, try setting CC."
+		echo "CC is unset and cc/gcc is not in PATH." >> config.log
 		exit 1
 	fi
 fi
@@ -49,7 +53,7 @@ cat << 'EOT' > .cctest.c
 int
 main(int argc, char *argv[])
 {
-	#ifdef __GNUC__
+#ifdef __GNUC__
 	return (0);
 #else
 	return (1);
@@ -59,25 +63,30 @@ EOT
 
 $CC -o .cctest .cctest.c 2>>config.log
 if [ $? != 0 -o ! -e .cctest ]; then
-    echo "-> failure" >> config.log
     echo "no"
+	echo "The test C program failed to compile or run."
     exit 1
 fi
 
-cc_is_gcc=no
 if ./.cctest; then
     cc_is_gcc=yes
-    echo "ok (gcc)" >> config.log
-    echo "yes"
+	$CC -Wno-system-headers -o .cctest .cctest.c 2>>config.log
+	if [ $? = 0 ]; then
+		cc_is_gcc3=yes
+    	echo "gcc3" >> config.log
+	else
+    	echo "gcc" >> config.log
+	fi
 else
-    echo "yes"
     echo "ok" >> config.log
 fi
+echo "yes"
 
 rm -f .cctest .cctest.c
 EOF
 
 	# Check for IEEE floating point support.
+	# XXX incomplete
 	print NEcho('checking for IEEE 754 floating point...');
 	TryCompile 'HAVE_IEEE754', << 'EOF';
 #include <stdio.h>

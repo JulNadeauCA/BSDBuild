@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Csoft: mkify.pl,v 1.18 2003/12/07 05:41:08 vedge Exp $
+# $Csoft: mkify.pl,v 1.19 2004/01/03 04:13:27 vedge Exp $
 #
 # Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -34,6 +34,8 @@ sub MKCopy
 	my $destmk = join('/', 'mk', $src);
 	my $srcmk = join('/', $dir, $src);
 	my @deps = ();
+
+	print "copy: $src\n";
 
 	unless (-f $srcmk) {
 		print STDERR "src $srcmk: $!\n";
@@ -105,7 +107,9 @@ BEGIN
 		exit (1);
 	}
 
+	my $type = '';
 	foreach my $f (@ARGV) {
+		$type = $f;
 		$f = join('.', 'csoft', $f, 'mk');
 		my $dest = join('/', $mk, $f);
 
@@ -113,4 +117,71 @@ BEGIN
 	}
 	MKCopy('mkdep', $dir);
 	MKCopy('mkconcurrent.pl', $dir);
+
+	if (!-e 'configure.in' &&
+	    open(CONFIN, '>configure.in')) {
+		print CONFIN << 'EOF';
+# $Csoft$
+# Public domain
+
+# Name and version of the application, written to config/progname.h
+# and config/version.h.
+HDEFINE(PROGNAME, "\"foo\"")
+HDEFINE(VERSION, "\"1.0-beta\"")
+
+# Register the ${enable_warnings} option.
+REGISTER("--enable-warnings",   "Enable compiler warnings [default: no]")
+
+# Check for a suitable C compiler
+CHECK(cc)
+
+# Output these CFLAGS to Makefile.config.
+MDEFINE(CFLAGS, "$CFLAGS -I$SRC")
+
+# Set the recommended -Wall switches.
+if [ "${enable_warnings}" = "yes" ]; then
+        MDEFINE(CFLAGS, "$CFLAGS -Wall -Werror -Wmissing-prototypes")
+        MDEFINE(CFLAGS, "$CFLAGS -Wno-unused")
+fi
+EOF
+		system('manuconf < configure.in > configure');
+		chmod(0755, 'configure');
+		close(CONFIN);
+	}
+
+	if (!-e 'Makefile' &&
+	    open(MAKE, '>Makefile')) {
+		if ($type eq 'prog') {
+			print MAKE << 'EOF';
+# $Csoft$
+TOP=.
+
+PROG=foo
+SRCS=foo.c bar.cc baz.m
+
+include ${TOP}/Makefile.config
+include ${TOP}/mk/csoft.prog.mk
+EOF
+		} elsif ($type eq 'lib') {
+			print MAKE << 'EOF';
+# $Csoft$
+TOP=.
+
+LIB=	foo
+SRCS=	foo.c bar.cc baz.m
+
+include ${TOP}/Makefile.config
+include ${TOP}/mk/csoft.lib.mk
+EOF
+		} elsif ($type eq 'www') {
+			print MAKE << 'EOF';
+# $Csoft$
+
+HTML=	foo.html bar.html
+
+include ${TOP}/mk/csoft.www.mk
+EOF
+		}
+		close(MAKE);
+	}
 }

@@ -1,0 +1,13 @@
+# $Csoft$
+
+makeout(Makefile.config);
+
+if ("${version}" == "yes") {
+	version();
+};
+if ("${help}" == "yes") {
+	help();
+};
+
+mdefine(SHAREDIR, "$PREFIX/share/csoft-mk");
+

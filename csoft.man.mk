@@ -1,4 +1,4 @@
-# $Csoft: csoft.man.mk,v 1.7 2002/01/26 01:20:27 vedge Exp $
+# $Csoft: csoft.man.mk,v 1.8 2002/01/26 01:31:28 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -26,97 +26,161 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-CENTER?=	documentation
-RELEASE?=	1.0
+NROFF?=	nroff -Tascii
 
-NROFF?=		nroff -Tascii
-TBL?=		tbl
+MANS=${MAN1} ${MAN2} ${MAN3} ${MAN4} ${MAN5} ${MAN6} ${MAN7} ${MAN8}
+CATMANS=${CATMAN1} ${CATMAN2} ${CATMAN3} ${CATMAN4} ${CATMAN5} ${CATMAN6} ${CATMAN7} ${CATMAN8}
 
-MANMODE?=	644
-POD2MAN?=	pod2man
+.SUFFIXES: .1 .2 .3 .4 .5 .6 .7 .8 .cat1 .cat2 .cat3 .cat4 .cat5 .cat6 .cat7 .cat8
 
-MANS=		${MAN1} ${MAN2} ${MAN3} ${MAN4} ${MAN5} ${MAN6} ${MAN7} ${MAN8}
+.1.cat1 .2.cat2 .3.cat3 .4.cat4 .5.cat5 .6.cat6 .7.cat7 .8.cat8:
+	${NROFF} -mandoc $< > $@
 
-.SUFFIXES:  .1 .2 .3 .4 .5 .6 .7 .8 .pod
+all: ${MANS} ${CATMANS}
 
-.pod.1 .pod.2 .pod.3 .pod.4 .pod.5 .pod.6 .pod.7 .pod.8:
-	${POD2MAN} '--center=${CENTER}' '--release=${RELEASE}' $< > $@
+clean: clean-man
 
-all: all-subdirs ${MANS}
+install: install-man
 
-clean: clean-subdir
+deinstall: deinstall-man
 
-depend: depend-subdir
-
-install: install-subdir ${MANS}
-	@if [ "${MAN1}" != "" ]; then \
-	    echo "${INSTALL_DATA} ${MAN1} ${INST_MANDIR}/man1"; \
-	    ${INSTALL_DATA} ${MAN1} ${INST_MANDIR}/man1; \
+clean-man:
+	@if [ "${CATMANS}" != "       " ]; then \
+	    echo "rm -f ${CATMANS}"; \
+	    rm -f ${CATMANS}; \
 	fi
-	@if [ "${MAN2}" != "" ]; then \
-	    echo "${INSTALL_DATA} ${MAN2} ${INST_MANDIR}/man2"; \
-	    ${INSTALL_DATA} ${MAN2} ${INST_MANDIR}/man1; \
+
+install-man: ${MANS} ${CATMANS}
+	@if [ "${MANS}" != "       " ]; then \
+	    for F in ${MAN1}; do \
+	        echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man1"; \
+	        ${INSTALL_DATA} $$F ${INST_MANDIR}/man1; \
+	    done; \
+	    for F in ${MAN2}; do \
+	        echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man2"; \
+	        ${INSTALL_DATA} $$F ${INST_MANDIR}/man2; \
+	    done; \
+	    for F in ${MAN3}; do \
+	        echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man3"; \
+	        ${INSTALL_DATA} $$F ${INST_MANDIR}/man3; \
+	    done; \
+	    for F in ${MAN4}; do \
+	        echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man4"; \
+	        ${INSTALL_DATA} $$F ${INST_MANDIR}/man4; \
+	    done; \
+	    for F in ${MAN5}; do \
+	        echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man5"; \
+	        ${INSTALL_DATA} $$F ${INST_MANDIR}/man5; \
+	    done; \
+	    for F in ${MAN6}; do \
+	        echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man6"; \
+	        ${INSTALL_DATA} $$F ${INST_MANDIR}/man6; \
+	    done; \
+	    for F in ${MAN7}; do \
+	        echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man7"; \
+	        ${INSTALL_DATA} $$F ${INST_MANDIR}/man7; \
+	    done; \
+	    for F in ${MAN8}; do \
+	        echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man8"; \
+	        ${INSTALL_DATA} $$F ${INST_MANDIR}/man8; \
+	    done; \
 	fi
-	@if [ "${MAN3}" != "" ]; then \
-	    echo "${INSTALL_DATA} ${MAN3} ${INST_MANDIR}/man3"; \
-	    ${INSTALL_DATA} ${MAN3} ${INST_MANDIR}/man1; \
-	fi
-	@if [ "${MAN4}" != "" ]; then \
-	    echo "${INSTALL_DATA} ${MAN4} ${INST_MANDIR}/man4"; \
-	    ${INSTALL_DATA} ${MAN4} ${INST_MANDIR}/man1; \
-	fi
-	@if [ "${MAN5}" != "" ]; then \
-	    echo "${INSTALL_DATA} ${MAN5} ${INST_MANDIR}/man5"; \
-	    ${INSTALL_DATA} ${MAN5} ${INST_MANDIR}/man1; \
-	fi
-	@if [ "${MAN6}" != "" ]; then \
-	    echo "${INSTALL_DATA} ${MAN6} ${INST_MANDIR}/man6"; \
-	    ${INSTALL_DATA} ${MAN6} ${INST_MANDIR}/man1; \
-	fi
-	@if [ "${MAN7}" != "" ]; then \
-	    echo "${INSTALL_DATA} ${MAN7} ${INST_MANDIR}/man7"; \
-	    ${INSTALL_DATA} ${MAN7} ${INST_MANDIR}/man1; \
-	fi
-	@if [ "${MAN8}" != "" ]; then \
-	    echo "${INSTALL_DATA} ${MAN8} ${INST_MANDIR}/man8"; \
-	    ${INSTALL_DATA} ${MAN8} ${INST_MANDIR}/man1; \
+	@if [ "${CATMANS}" != "       " ]; then \
+	    if [ -d "${INST_MANDIR}/cat1" ]; then \
+	        for F in ${CATMAN1}; do \
+	             echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat1"; \
+	             ${INSTALL_DATA} $$F ${INST_MANDIR}/cat1; \
+	        done; \
+	    fi; \
+	    if [ -d "${INST_MANDIR}/cat2" ]; then \
+	        for F in ${CATMAN2}; do \
+	             echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat2"; \
+	             ${INSTALL_DATA} $$F ${INST_MANDIR}/cat2; \
+	        done; \
+	    fi; \
+	    if [ -d "${INST_MANDIR}/cat3" ]; then \
+	        for F in ${CATMAN3}; do \
+	             echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat3"; \
+	             ${INSTALL_DATA} $$F ${INST_MANDIR}/cat3; \
+	        done; \
+	    fi; \
+	    if [ -d "${INST_MANDIR}/cat4" ]; then \
+	        for F in ${CATMAN4}; do \
+	             echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat4"; \
+	             ${INSTALL_DATA} $$F ${INST_MANDIR}/cat4; \
+	        done; \
+	    fi; \
 	fi
 	
-deinstall: deinstall-subdir
-	@if [ "${MAN1}" != "" ]; then \
-	    (cd ${PREFIX}/man/man1 && echo "${DEINSTALL_DATA} ${MAN1}"; \
-	        ${DEINSTALL_DATA} ${MAN1}); \
+deinstall-man:
+	@if [ "${MANS}" != "       " ]; then \
+	    for F in ${MAN1}; do \
+	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/man1/$$F"; \
+	        ${DEINSTALL_DATA} ${INST_MANDIR}/man1/$$F; \
+	    done; \
+	    for F in ${MAN2}; do \
+	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/man2/$$F"; \
+	        ${DEINSTALL_DATA} ${INST_MANDIR}/man2/$$F; \
+	    done; \
+	    for F in ${MAN3}; do \
+	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/man3/$$F"; \
+	        ${DEINSTALL_DATA} ${INST_MANDIR}/man3/$$F; \
+	    done; \
+	    for F in ${MAN4}; do \
+	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/man4/$$F"; \
+	        ${DEINSTALL_DATA} ${INST_MANDIR}/man4/$$F; \
+	    done; \
+	    for F in ${MAN5}; do \
+	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/man5/$$F"; \
+	        ${DEINSTALL_DATA} ${INST_MANDIR}/man5/$$F; \
+	    done; \
+	    for F in ${MAN6}; do \
+	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/man6/$$F"; \
+	        ${DEINSTALL_DATA} ${INST_MANDIR}/man6/$$F; \
+	    done; \
+	    for F in ${MAN7}; do \
+	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/man7/$$F"; \
+	        ${DEINSTALL_DATA} ${INST_MANDIR}/man7/$$F; \
+	    done; \
+	    for F in ${MAN8}; do \
+	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/man8/$$F"; \
+	        ${DEINSTALL_DATA} ${INST_MANDIR}/man8/$$F; \
+	    done; \
 	fi
-	@if [ "${MAN2}" != "" ]; then \
-	    (cd ${PREFIX}/man/man2 && echo "${DEINSTALL_DATA} ${MAN2}"; \
-	        ${DEINSTALL_DATA} ${MAN2}); \
+	@if [ "${CATMANS}" != "       " ]; then \
+	    for F in ${CATMAN1}; do \
+	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/cat1/$$F"; \
+	        ${DEINSTALL_DATA} ${INST_MANDIR}/cat1/$$F; \
+	    done; \
+	    for F in ${CATMAN2}; do \
+	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/cat2/$$F"; \
+	        ${DEINSTALL_DATA} ${INST_MANDIR}/cat2/$$F; \
+	    done; \
+	    for F in ${CATMAN3}; do \
+	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/cat3/$$F"; \
+	        ${DEINSTALL_DATA} ${INST_MANDIR}/cat3/$$F; \
+	    done; \
+	    for F in ${CATMAN4}; do \
+	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/cat4/$$F"; \
+	        ${DEINSTALL_DATA} ${INST_MANDIR}/cat4/$$F; \
+	    done; \
+	    for F in ${CATMAN5}; do \
+	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/cat5/$$F"; \
+	        ${DEINSTALL_DATA} ${INST_MANDIR}/cat5/$$F; \
+	    done; \
+	    for F in ${CATMAN6}; do \
+	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/cat6/$$F"; \
+	        ${DEINSTALL_DATA} ${INST_MANDIR}/cat6/$$F; \
+	    done; \
+	    for F in ${CATMAN7}; do \
+	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/cat7/$$F"; \
+	        ${DEINSTALL_DATA} ${INST_MANDIR}/cat7/$$F; \
+	    done; \
+	    for F in ${CATMAN8}; do \
+	        echo "${DEINSTALL_DATA} ${INST_MANDIR}/cat8/$$F"; \
+	        ${DEINSTALL_DATA} ${INST_MANDIR}/cat8/$$F; \
+	    done; \
 	fi
-	@if [ "${MAN3}" != "" ]; then \
-	    (cd ${PREFIX}/man/man3 && echo "${DEINSTALL_DATA} ${MAN3}"; \
-	        ${DEINSTALL_DATA} ${MAN3}); \
-	fi
-	@if [ "${MAN4}" != "" ]; then \
-	    (cd ${PREFIX}/man/man4 && echo "${DEINSTALL_DATA} ${MAN4}"; \
-	        ${DEINSTALL_DATA} ${MAN4}); \
-	fi
-	@if [ "${MAN5}" != "" ]; then \
-	    (cd ${PREFIX}/man/man5 && echo "${DEINSTALL_DATA} ${MAN5}"; \
-	        ${DEINSTALL_DATA} ${MAN5}); \
-	fi
-	@if [ "${MAN6}" != "" ]; then \
-	    (cd ${PREFIX}/man/man6 && echo "${DEINSTALL_DATA} ${MAN6}"; \
-	        ${DEINSTALL_DATA} ${MAN6}); \
-	fi
-	@if [ "${MAN7}" != "" ]; then \
-	    (cd ${PREFIX}/man/man7 && echo "${DEINSTALL_DATA} ${MAN7}"; \
-	        ${DEINSTALL_DATA} ${MAN7}); \
-	fi
-	@if [ "${MAN8}" != "" ]; then \
-	    (cd ${PREFIX}/man/man8 && echo "${DEINSTALL_DATA} ${MAN8}"; \
-	        ${DEINSTALL_DATA} ${MAN8}); \
-	fi
-
-regress: regress-subdir
 
 include ${TOP}/mk/csoft.common.mk
 include ${TOP}/mk/csoft.subdir.mk

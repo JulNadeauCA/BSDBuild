@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.34 2003/08/08 00:18:02 vedge Exp $
+# $Csoft: manuconf.pl,v 1.35 2003/08/26 03:07:49 vedge Exp $
 #
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -58,6 +58,9 @@ sub Register
 sub Help
 {
     my $prefix_opt = pack('A' x 30, split('', '--prefix'));
+    my $sysconfdir_opt = pack('A' x 30, split('', '--sysconfdir'));
+    my $sharedir_opt = pack('A' x 30, split('', '--sharedir'));
+    my $localedir_opt = pack('A' x 30, split('', '--localedir'));
     my $srcdir_opt = pack('A' x 30, split('', '--srcdir'));
     my $help_opt = pack('A' x 30, split('', '--help'));
     my $nls_opt = pack('A' x 30, split('', '--enable-nls'));
@@ -66,6 +69,9 @@ sub Help
 
     my $regs = join("\n",
         "echo \"    $prefix_opt Installation prefix [/usr/local]\"",
+        "echo \"    $sysconfdir_opt System-wide configuration prefix [/etc]\"",
+        "echo \"    $sharedir_opt Share prefix [\$PREFIX/share]\"",
+        "echo \"    $localedir_opt Locale prefix [\$PREFIX/locale]\"",
         "echo \"    $srcdir_opt Source tree for concurrent build [.]\"",
         "echo \"    $help_opt Display this message\"",
         "echo \"    $nls_opt Native Language Support [yes]\"",
@@ -142,6 +148,15 @@ do
 	--prefix=*)
 	    prefix=$optarg
 	    ;;
+	--sysconfdir=*)
+	    sysconfdir=$optarg
+	    ;;
+	--sharedir=*)
+	    sharedir=$optarg
+	    ;;
+	--localedir=*)
+	    localedir=$optarg
+	    ;;
 	--enable-*)
 	    option=`echo $arg | sed -e 's/--enable-//' -e 's/=.*//'`
 	    option=`echo $option | sed 's/-/_/g'`
@@ -189,10 +204,26 @@ do
 	    ;;
 	esac
 done
+
 if [ "${prefix}" != "" ]; then
     PREFIX=$prefix
 else
     PREFIX=/usr/local
+fi
+if [ "${sysconfdir}" != "" ]; then
+    SYSCONFDIR=$sysconfdir
+else
+    SYSCONFDIR=/etc
+fi
+if [ "${sharedir}" != "" ]; then
+    SHAREDIR=$sharedir
+else
+    SHAREDIR=${PREFIX}/share
+fi
+if [ "${localedir}" != "" ]; then
+    LOCALEDIR=$localedir
+else
+    LOCALEDIR=${SHAREDIR}/locale
 fi
 
 if [ "${srcdir}" != "" ]; then
@@ -279,9 +310,9 @@ if [ "${enable_nls}" != "no" ]; then
 	done
 	if [ "${msgfmt}" != "" ]; then
 		HAVE_GETTEXT="yes"
-		echo "LOCALEDIR=${PREFIX}/share/locale" >> Makefile.config
+		echo "LOCALEDIR=${LOCALEDIR}" >> Makefile.config
 		echo "#ifndef LOCALEDIR" > config/localedir.h
-		echo "#define LOCALEDIR \"${PREFIX}/share/locale\"" >> config/localedir.h
+		echo "#define LOCALEDIR \"${LOCALEDIR}\"" >> config/localedir.h
 		echo "#endif /* LOCALEDIR */" >> config/localedir.h
 	else
 		HAVE_GETTEXT="no"
@@ -296,11 +327,25 @@ fi
 echo "ENABLE_NLS=${ENABLE_NLS}" >> Makefile.config
 echo "HAVE_GETTEXT=${HAVE_GETTEXT}" >> Makefile.config
 
-echo "SHAREDIR=${PREFIX}/share" >> Makefile.config
+echo "PREFIX=${PREFIX}" >> Makefile.config
+echo "#ifndef PREFIX" > config/prefix.h
+echo "#define PREFIX \"${PREFIX}\"" >> config/prefix.h
+echo "#endif /* PREFIX */" >> config/prefix.h
+
+echo "SHAREDIR=${SHAREDIR}" >> Makefile.config
 echo "#ifndef SHAREDIR" > config/sharedir.h
-echo "#define SHAREDIR \"${PREFIX}/share\"" >> config/sharedir.h
+echo "#define SHAREDIR \"${SHAREDIR}\"" >> config/sharedir.h
 echo "#endif /* SHAREDIR */" >> config/sharedir.h
-echo "SHAREDIR=${PREFIX}/share" >> Makefile.config
+
+echo "SYSCONFDIR=${SYSCONFDIR}" >> Makefile.config
+echo "#ifndef SYSCONFDIR" > config/sysconfdir.h
+echo "#define SYSCONFDIR \"${SYSCONFDIR}\"" >> config/sysconfdir.h
+echo "#endif /* SYSCONFDIR */" >> config/sysconfdir.h
+
+echo "LOCALEDIR=${LOCALEDIR}" >> Makefile.config
+echo "#ifndef LOCALEDIR" > config/localedir.h
+echo "#define LOCALEDIR \"${LOCALEDIR}\"" >> config/localedir.h
+echo "#endif /* LOCALEDIR */" >> config/localedir.h
 EOF
 						$registers = 0;
 					}
@@ -343,7 +388,6 @@ EOF
 			}
 		}
 	}
-	print MKSave('PREFIX'), HDefineString('PREFIX');
 	print Echo("Don't forget to run \\\"make depend\\\".");
 }
 

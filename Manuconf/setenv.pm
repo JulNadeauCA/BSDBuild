@@ -1,4 +1,4 @@
-# $Csoft: x11.pm,v 1.9 2002/07/31 00:28:03 vedge Exp $
+# $Csoft: setenv.pm,v 1.1 2002/08/23 09:41:32 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -28,7 +28,7 @@
 
 sub Test
 {
-	TryCompile 'HAVE_GETENV', << 'EOF';
+	TryCompile 'HAVE_SETENV', << 'EOF';
 #include <stdlib.h>
 int
 main(int argc, char *argv[])

@@ -1,4 +1,4 @@
-# $Csoft: csoft.prog.mk,v 1.33 2003/11/28 01:48:29 vedge Exp $
+# $Csoft: csoft.prog.mk,v 1.34 2003/12/10 02:29:30 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -38,6 +38,8 @@ LFLAGS?=
 YACC?=		yacc
 YFLAGS?=	-d
 SHARE?=
+CONF?=
+CONFDIR?=
 
 all: all-subdir ${PROG}
 install: install-prog install-subdir
@@ -220,6 +222,25 @@ install-prog:
                 ${SUDO} ${INSTALL_DATA} $$F ${SHAREDIR}; \
             done; \
 	fi
+	@export _conf="${CONF}"; \
+        if [ "$$_conf" != "" ]; then \
+            if [ ! -d "${CONFDIR}" ]; then \
+                echo "${INSTALL_DATA_DIR} ${CONFDIR}"; \
+                ${SUDO} ${INSTALL_DATA_DIR} ${CONFDIR}; \
+            fi; \
+	    echo "+----------------"; \
+	    echo "| The following configuration files have been preserved."; \
+	    echo "| You may want to compare them to the current sample files.";\
+	    echo "|"; \
+            for F in $$_conf; do \
+	        if [ -e "${CONFDIR}/$$F" ]; then \
+          	      echo "| - $$F"; \
+		else \
+         	       ${SUDO} ${INSTALL_DATA} $$F ${CONFDIR}; \
+		fi; \
+            done; \
+	    echo "+----------------"; \
+	fi
 
 deinstall-prog:
 	@if [ "${PROG}" != "" -a "${PROG_INSTALL}" != "No" ]; then \
@@ -231,6 +252,17 @@ deinstall-prog:
 	        echo "${DEINSTALL_DATA} ${SHAREDIR}/$$F"; \
 	        ${SUDO} ${DEINSTALL_DATA} ${SHAREDIR}/$$F; \
 	    done; \
+	fi
+	@if [ "${CONF}" != "" ]; then \
+	    echo "+----------------"; \
+	    echo "| To completely deinstall ${PROG} you need to perform."; \
+	    echo "| this step as root:"; \
+	    echo "|"; \
+	    echo "|           rm -fR ${CONFDIR}"; \
+	    echo "|"; \
+	    echo "| Do not do this if you plan on re-installing ${PROG}"; \
+	    echo "| at some future time."; \
+	    echo "+----------------"; \
 	fi
 
 .PHONY: install deinstall clean cleandir regress depend

@@ -1,4 +1,4 @@
-# $Csoft: csoft.perl.mk,v 1.4 2001/12/04 16:53:19 vedge Exp $
+# $Csoft: csoft.perl.mk,v 1.5 2001/12/04 16:56:02 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -45,7 +45,7 @@ install: install-subdir
 	    for OBJ in ${OBJS}; do \
 		echo "===> $$OBJ"; \
 		${INSTALL} ${BINOWN} ${BINGRP} -m ${PERLMODE} \
-		    $$OBJ ${PREFIX}; \
+		    $$OBJ ${PREFIX}/bin; \
 	    done; \
 	fi
 	
@@ -53,7 +53,7 @@ uninstall: uninstall-subdir
 	@if [ "${OBJS}" != "" ]; then \
 	    for OBJ in ${OBJS}; do \
 		echo "===> $$OBJ"; \
-		rm -f ${PREFIX}/$$OBJ; \
+		rm -f ${PREFIX}/bin/$$OBJ; \
 	    done; \
 	fi
 

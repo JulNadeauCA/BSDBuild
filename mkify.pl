@@ -1,4 +1,4 @@
-# $Csoft: mkify.pl,v 1.4 2001/12/01 03:50:44 vedge Exp $
+# $Csoft: mkify.pl,v 1.5 2001/12/03 04:47:00 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -83,6 +83,17 @@ BEGIN
 
 	if (! -d $mk && !mkdir($mk)) {
 		print STDERR "$mk: $!\n";
+		exit (1);
+	}
+
+	if (opendir(MKDIR, $mk)) {
+		foreach my $f (readdir(MKDIR)) {
+			next unless -f "$mk/$f";
+			MKCopy($f, $dir);
+		}
+		closedir(MKDIR);
+	} else {
+		print "$mk: $!\n";
 		exit (1);
 	}
 

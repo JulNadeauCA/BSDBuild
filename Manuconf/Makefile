@@ -1,4 +1,4 @@
-# $Csoft: Makefile,v 1.18 2003/07/26 20:09:44 vedge Exp $
+# $Csoft: Makefile,v 1.19 2003/10/25 23:46:11 vedge Exp $
 
 TOP=..
 
@@ -29,7 +29,8 @@ SHARE=	Core.pm \
 	vsnprintf.pm \
 	setlocale.pm \
 	gettext.pm \
-	fastcgi.pm
+	fastcgi.pm \
+	csoftadm.pm
 
 all:
 

@@ -13,7 +13,7 @@ BINMODE?=   755
 .nos.nop:
 	echo "$< -> $@"
 
-ALL: $(NONE) all-subdir
+all: $(NONE) all-subdir
 
 $(NONE): $(OBJS)
 	echo "($(OBJS)) -> $(NONE)"

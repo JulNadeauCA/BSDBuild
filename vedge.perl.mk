@@ -9,7 +9,7 @@ PERLMODE?=   755
 
 .SUFFIXES:  .PL .pl .pm .perl
 
-ALL: all-subdir
+all: all-subdir
 
 clean: clean-subdir
 	@rm -f *~

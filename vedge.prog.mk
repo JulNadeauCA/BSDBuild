@@ -29,7 +29,7 @@ CFLAGS+=    $(COPTS)
 .asm.o:
 	$(ASM) $(ASMFLAGS) -o $@ $< 
 
-ALL: $(PROG) all-subdir
+all: $(PROG) all-subdir
 
 $(PROG): $(OBJS)
 	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS) $(LIBS)

@@ -27,7 +27,7 @@ DEFTMPL?=   sober
 	done
 	@cp -f $(DEFTMPL)-$@ $@
 
-ALL: $(HTML) all-subdir
+all: $(HTML) all-subdir
 
 clean: clean-subdir
 	@rm -f $(HTML) *.html

@@ -35,7 +35,7 @@ CFLAGS+=    $(COPTS)
 	$(ASM) $(ASMFLAGS) -o $@ $< 
 
 
-ALL: all-subdir $(LIB)
+all: all-subdir $(LIB)
 
 $(LIB): $(OBJS)
 	@if [ "$(STATIC)" = "Yes" ]; then \

@@ -1,14 +1,48 @@
 # $Id$
 
+TYPE=	    man
+
+CENTER?=    documentation
+RELEASE?=   vedge.com.ar
+
 NROFF?=	    nroff -Tascii
 TBL?=	    tbl
 
+PREFIX?=    /usr/local
+INSTALL?=   install
+MANMODE?=   644
+POD2MAN?=   pod2man
 
-.SUFFIXES:  .1 .2 .3 .4 .5 .6 .7 .8 .9 .cat1 .cat2 .cat3 .cat4 .cat5 .cat6 .cat7 .cat8 .cat9
-#	    .1tbl .2tbl .3tbl .4tbl .5tbl .6tbl .7tbl .8tbl .9tbl \
-#	   
+.SUFFIXES:  .1 .2 .3 .4 .5 .6 .7 .8 .9 .pod
 
-.9.cat9 .8.cat8 .7.cat7 .6.cat6 .5.cat5 .4.cat4 .3.cat3 .2.cat2 .cat1.1:
-	$(NROFF) -mandoc $< > $@ || (rm -f $@; false)
+.pod.7:
+	@echo "===> $<"
+	$(POD2MAN) '--center=$(CENTER)' '--release=$(RELEASE)' $< > $@
+.pod.9:
+	@echo "===> $<"
+	$(POD2MAN) '--center=$(CENTER)' '--release=$(RELEASE)' $< > $@
+
+all: $(MAN7) $(MAN9) all-subdir
+
+clean: clean-subdir
+	@rm -f $(MAN7) $(MAN9)
+
+depend: depend-subdir
+
+install: install-subdir $(MAN7) $(MAN9)
+	@if [ "$(MAN7)" != "" ]; then \
+	    echo "installing $(MAN7) into $(PREFIX)"; \
+	    $(INSTALL) $(INSTALL_COPY) $(INSTALL_STRIP) \
+	    $(BINOWN) $(BINGRP) -m $(MANMODE) $(MAN7) $(PREFIX)/man/man7; \
+	fi
+	@if [ "$(MAN9)" != "" ]; then \
+	    echo "installing $(MAN9) into $(PREFIX)"; \
+	    $(INSTALL) $(INSTALL_COPY) $(INSTALL_STRIP) \
+	    $(BINOWN) $(BINGRP) -m $(MANMODE) $(MAN9) $(PREFIX)/man/man9; \
+	fi
+	
+uninstall: uninstall-subdir
+	# TODO
 
 include $(TOP)/mk/vedge.common.mk
+include $(TOP)/mk/vedge.subdir.mk

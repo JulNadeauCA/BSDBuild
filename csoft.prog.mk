@@ -1,4 +1,4 @@
-# $Csoft: csoft.prog.mk,v 1.36 2004/01/03 04:13:27 vedge Exp $
+# $Csoft: csoft.prog.mk,v 1.37 2004/03/10 13:46:17 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -25,6 +25,8 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 CFLAGS?=	-Wall -g
+CXXFLAGS?=
+MFLAGS?=
 PROG_INSTALL?=	Yes
 CC?=		cc
 CFLAGS?=	-O2
@@ -62,6 +64,12 @@ depend: depend-subdir
 	${CXX} ${CXXFLAGS} ${CPPFLAGS} -c $<
 .cc.po:
 	${CXX} -pg -DPROF ${CXXFLAGS} ${CPPFLAGS} -o $@ -c $<
+
+# Compile Objective-C code into an object file
+.m.o:
+	${CC} ${MFLAGS} ${CPPFLAGS} -c $<
+.m.po:
+	${CC} -pg -DPROF ${MFLAGS} ${CPPFLAGS} -o $@ -c $<
 
 # Compile assembly code into an object file
 .asm.o:
@@ -103,7 +111,7 @@ depend: depend-subdir
 _prog_objs:
 	@if [ "${PROG}" != "" -a "${OBJS}" = "" ]; then \
 	    for F in ${SRCS}; do \
-	        F=`echo $$F | sed 's/.[cly]$$/.o/'`; \
+	        F=`echo $$F | sed 's/.[clym]$$/.o/'`; \
 	        F=`echo $$F | sed 's/.cc$$/.o/'`; \
 	        F=`echo $$F | sed 's/.asm$$/.o/'`; \
 	        ${MAKE} $$F; \
@@ -118,7 +126,7 @@ _prog_objs:
 _prog_pobjs:
 	@if [ "${GMONOUT}" != "" -a "${POBJS}" = "" ]; then \
 	    for F in ${SRCS}; do \
-	        F=`echo $$F | sed 's/.[cly]$$/.po/'`; \
+	        F=`echo $$F | sed 's/.[clym]$$/.po/'`; \
 	        F=`echo $$F | sed 's/.cc$$/.po/'`; \
 	        F=`echo $$F | sed 's/.asm$$/.po/'`; \
 	        ${MAKE} $$F; \
@@ -135,7 +143,7 @@ ${PROG}: _prog_objs ${OBJS}
 	    if [ "${OBJS}" = "" ]; then \
 	        export _objs=""; \
                 for F in ${SRCS}; do \
-	            F=`echo $$F | sed 's/.[cly]$$/.o/'`; \
+	            F=`echo $$F | sed 's/.[clym]$$/.o/'`; \
 	    	    F=`echo $$F | sed 's/.cc$$/.o/'`; \
 	    	    F=`echo $$F | sed 's/.asm$$/.o/'`; \
 	    	    _objs="$$_objs $$F"; \
@@ -154,7 +162,7 @@ ${GMONOUT}: _prog_pobjs ${POBJS}
 	    if [ "${OBJS}" = "" ]; then \
 	        export _pobjs=""; \
                 for F in ${SRCS}; do \
-	    	    F=`echo $$F | sed 's/.[cly]$$/.po/'`; \
+	    	    F=`echo $$F | sed 's/.[clym]$$/.po/'`; \
 	    	    F=`echo $$F | sed 's/.cc$$/.po/'`; \
 	    	    F=`echo $$F | sed 's/.asm$$/.po/'`; \
 	    	    _pobjs="$$_pobjs $$F"; \
@@ -173,7 +181,7 @@ clean-prog:
 	@if [ "${PROG}" != "" ]; then \
 	    if [ "${OBJS}" = "" ]; then \
                 for F in ${SRCS}; do \
-	    	    F=`echo $$F | sed 's/.[cly]$$/.o/'`; \
+	    	    F=`echo $$F | sed 's/.[clym]$$/.o/'`; \
 	    	    F=`echo $$F | sed 's/.cc$$/.o/'`; \
 	    	    F=`echo $$F | sed 's/.asm$$/.o/'`; \
 	    	    echo "rm -f $$F"; \
@@ -185,7 +193,7 @@ clean-prog:
 	    fi; \
 	    if [ "${POBJS}" = "" ]; then \
                 for F in ${SRCS}; do \
-	    	    F=`echo $$F | sed 's/.[cly]$$/.po/'`; \
+	    	    F=`echo $$F | sed 's/.[clym]$$/.po/'`; \
 	    	    F=`echo $$F | sed 's/.cc$$/.po/'`; \
 	    	    F=`echo $$F | sed 's/.asm$$/.po/'`; \
 	    	    echo "rm -f $$F"; \

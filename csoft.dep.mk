@@ -1,4 +1,4 @@
-# $Csoft: csoft.dep.mk,v 1.2 2002/02/01 03:52:50 vedge Exp $
+# $Csoft: csoft.dep.mk,v 1.3 2002/02/16 02:29:56 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -33,6 +33,10 @@ depend:	${DPADD} depend-subdir
 	@files="${SRCS}"; \
 	 if [ "$$files" != "" ]; then \
 	  echo ${MKDEP} -a ${MKDEP} ${CFLAGS:M-[ID]*} $$files; \
-	  ${MKDEP} -a ${MKDEP} ${CFLAGS:M-[ID]*} $$files; \
+	  if ${MKDEP} -a ${MKDEP} ${CFLAGS:M-[ID]*} $$files; then \
+	   echo `cat .depend | awk '{i++} END {print i}'` dependencies; \
+	  else \
+	   exit 1; \
+	  fi \
 	 fi
 

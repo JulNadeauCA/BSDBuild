@@ -1,4 +1,4 @@
-# $Csoft: csoft.lib.mk,v 1.33 2003/12/07 05:41:08 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.34 2003/12/07 05:56:24 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -208,7 +208,7 @@ clean-lib:
 	    echo "rm -f lib${LIB}.a"; \
 	    rm -f lib${LIB}.a; \
 	    if [ "${LIB_SHARED}" = "Yes" ]; then \
-	        if [ "${OBJS}" != "" ]; then \
+	        if [ "${OBJS}" = "" ]; then \
                     for F in ${SRCS}; do \
 	    	        F=`echo $$F | sed 's/.[cly]$$/.lo/'`; \
 	    	        F=`echo $$F | sed 's/.cc$$/.lo/'`; \

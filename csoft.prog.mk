@@ -1,4 +1,4 @@
-# $Csoft: csoft.prog.mk,v 1.6 2001/12/04 16:56:02 vedge Exp $
+# $Csoft: csoft.prog.mk,v 1.7 2002/01/24 18:42:40 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -118,7 +118,7 @@ YFLAGS?=	-d
 	@mv -f $@.tab.o $@
 	@rm -f $@.tab.c
 
-all: ${PROG} all-subdir
+all:	all-subdir ${PROG}
 
 ${PROG}: ${OBJS}
 	${CC} ${LDFLAGS} -o ${PROG} ${OBJS} ${LIBS}
@@ -127,7 +127,7 @@ ${GMONOUT}: ${OBJS}
 	${CC} -pg -DPROF ${LDFLAGS} -o ${GMONOUT} ${OBJS} ${LIBS}
 
 clean: clean-subdir
-	@rm -f ${PROG} ${GMONOUT} ${OBJS}
+	rm -f ${PROG} ${GMONOUT} ${OBJS}
 
 install: install-subdir ${PROG}
 	@if [ "${PROG}" != "" ]; then \

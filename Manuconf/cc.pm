@@ -1,4 +1,4 @@
-# $Csoft: cc.pm,v 1.14 2003/03/23 14:11:31 vedge Exp $
+# $Csoft: cc.pm,v 1.15 2003/10/01 09:24:19 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002, 2003 CubeSoft Communications
@@ -90,6 +90,27 @@ main(int argc, char *argv[])
 	long double ld = 0.1;
 	
 	printf("%Lf\n", ld);
+	return (0);
+}
+EOF
+	
+	# Check for the gcc __bounded__ attribute.
+	print NEcho('checking __bounded__ attribute...');
+	TryCompile 'HAVE_BOUNDED_ATTRIBUTE', << 'EOF';
+void foo(char *, int)
+	 __attribute__ ((__bounded__(__string__,1,2)));
+
+void
+foo(char *a, int c)
+{
+}
+
+int
+main(int argc, char *argv[])
+{
+	char buf[32];
+
+	foo(buf, sizeof(buf));
 	return (0);
 }
 EOF

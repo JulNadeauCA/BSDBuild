@@ -1,4 +1,4 @@
-# $Csoft: cc.pm,v 1.12 2003/03/13 22:50:37 vedge Exp $
+# $Csoft: cc.pm,v 1.13 2003/03/14 22:39:54 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
@@ -31,9 +31,6 @@ sub Test
 {
 	# Look for a compiler.
 	print << 'EOF';
-cc_is_gcc=no
-cc_is_gcc3=no
-
 if [ "$CC" = "" ]; then
 	for i in `echo $PATH |sed 's/:/ /g'`; do
 		if [ -x "${i}/cc" ]; then
@@ -49,40 +46,24 @@ if [ "$CC" = "" ]; then
 	fi
 fi
 
-cat << 'EOT' > .cctest.c
+cat << 'EOT' > cc-test.c
 int
 main(int argc, char *argv[])
 {
-#ifdef __GNUC__
 	return (0);
-#else
-	return (1);
-#endif
 }
 EOT
 
-$CC -o .cctest .cctest.c 2>>config.log
-if [ $? != 0 -o ! -e .cctest ]; then
+$CC -o cc-test cc-test.c 2>>config.log
+if [ $? != 0 ]; then
     echo "no"
-	echo "The test C program failed to compile or run."
+	echo "The test C program failed to compile."
+	rm -f cc-test cc-test.c
     exit 1
-fi
-
-if ./.cctest; then
-    cc_is_gcc=yes
-	$CC -Wno-system-headers -o .cctest .cctest.c 2>>config.log
-	if [ $? = 0 ]; then
-		cc_is_gcc3=yes
-    	echo "gcc3" >> config.log
-	else
-    	echo "gcc" >> config.log
-	fi
-else
-    echo "ok" >> config.log
 fi
 echo "yes"
 
-rm -f .cctest .cctest.c
+rm -f cc-test cc-test.c
 EOF
 
 	# Check for IEEE floating point support.

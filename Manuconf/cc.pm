@@ -1,4 +1,4 @@
-# $Csoft: cc.pm,v 1.19 2003/11/22 03:57:33 vedge Exp $
+# $Csoft: cc.pm,v 1.20 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002, 2003, 2004 CubeSoft Communications
@@ -64,19 +64,18 @@ echo "yes"
 rm -f cc-test cc-test.c
 EOF
 
-	# Check for IEEE floating point support.
-	# XXX incomplete
-	print NEcho('checking for IEEE 754 floating point...');
+	# Check for floating point support.
+	# XXX make sure it's in IEEE 754 format.
+	print NEcho('checking for floating point types...');
 	TryCompile 'HAVE_IEEE754', << 'EOF';
-#include <stdio.h>
-
 int
 main(int argc, char *argv[])
 {
 	float f = 1.5;
 	double d = 2.5;
 
-	printf("%f %d\n", f, d);
+	f = 0;
+	d = 0;
 	return (0);
 }
 EOF
@@ -88,8 +87,8 @@ int
 main(int argc, char *argv[])
 {
 	long double ld = 0.1;
-	
-	printf("%Lf\n", ld);
+
+	ld = 0;
 	return (0);
 }
 EOF
@@ -123,7 +122,8 @@ EOF
 void foo1(char *, ...)
      __attribute__((__format__ (printf, 1, 2)));
 void foo2(char *, ...)
-     __attribute__((__format__ (__printf__, 1, 2)));
+     __attribute__((__format__ (__printf__, 1, 2)))
+     __attribute__((__nonnull__ (1)));
 
 void foo1(char *a, ...) {}
 void foo2(char *a, ...) {}

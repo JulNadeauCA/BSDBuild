@@ -1,18 +1,18 @@
-# $Csoft: vedge.lib.mk,v 1.9 2001/08/16 05:52:32 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.1 2001/10/09 04:50:30 vedge Exp $
 
 TYPE=	    lib
 
-PREFIX?=	    /usr/local
-CFLAGS?=	    -Wall -g
-SH?=		    sh
-CC?=		    cc
-AR?=		    ar
-RANLIB?=	    ranlib
-MAKE?=		    make
-INSTALL?=	    install
-ASM?=		    nasm
-ASMOUT?=	    aoutb
-ASMFLAGS?=	    -f $(ASMOUT) -g -w-orphan-labels
+PREFIX?=    /usr/local
+CFLAGS?=    -Wall -g
+SH?=	    sh
+CC?=	    cc
+AR?=	    ar
+RANLIB?=    ranlib
+MAKE?=	    make
+INSTALL?	    install
+ASM?=	    nasm
+ASMOUT?=    aoutb
+ASMFLAGS=    -f $(ASMOUT) -g -w-orphan-labels
 
 LIBTOOL?=	    libtool
 LTCONFIG?=	    ./ltconfig

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
-
-# $Csoft: manuconf.pl,v 1.1 2002/01/28 02:41:38 vedge Exp $
+#
+# $Csoft: manuconf.pl,v 1.2 2002/01/28 03:32:06 vedge Exp $
 #
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -52,7 +52,7 @@ sub x11
 	    print
 	        SHTest("-d $dir",
 		SHDefine('X11BASE', $dir) .
-		    SHDefine('CONF_X11FOUND', 1) .
+		    SHDefine('CONF_X11', 1) .
 		    SHDefine('X11_CFLAGS', "-I$dir/include") .
 		    SHDefine('X11_LIBS', "-L$dir/lib"),
 		SHNothing());
@@ -60,7 +60,7 @@ sub x11
 	print
 	    SHTest('"$X11BASE" != ""',
 	    SHEcho('$X11BASE') .
-		SHHSave('CONF_X11FOUND') .
+		SHHSave('CONF_X11') .
 	        SHMKSave('X11BASE') .
 	        SHMKSave('X11_CFLAGS') .
 	        SHMKSave('X11_LIBS'),
@@ -117,6 +117,7 @@ sub smpeg
 	print
 	    SHTest('"$SMPEG_VERSION" != ""',
 	    SHEcho("ok") . 
+	    	SHHSave('CONF_SMPEG') .
 	        SHMKSave('SMPEG_CFLAGS') .
 	        SHMKSave('SMPEG_LIBS'),
 	    SHRequire('smpeg', $ver, 'http://www.icculus.org/'));
@@ -177,8 +178,11 @@ sub Register
 	$descr = $1;
 	my $hopt = $arg;
 
-	$hopt =~ s/^\-\-(with|without|enable|disable)\-//;
-	$hopt = "$1_$hopt";
+	$hopt =~ s/^\-\-//;
+	if ($hopt =~ /^(with|without|enable|disable)/) {
+		$hopt =~ s/^(with|without|enable|disable)\-//;
+		$hopt = "$1_$hopt";
+	}
 	$hopt = uc($hopt);
 
 	my $darg = pack('A' x 20, split('', $arg));
@@ -195,7 +199,9 @@ sub Register
 
 sub Help
 {
-    my $regs = join("\n", @HELP);
+    my $darg = pack('A' x 20, split('', '--prefix'));
+    my $descr = 'Installation prefix [/usr/local]';
+    my $regs = join("\n", "echo \"    $darg $descr\"", @HELP);
 
     print << "EOF";
 echo "Usage: ./configure [args]"
@@ -367,6 +373,16 @@ BEGIN
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+for D in \$@; do
+LPREFIX="`echo \$D | awk -F= '{ print \$1 }'`"
+RPREFIX="`echo \$D | awk -F= '{ print \$2 }'`"
+if [ "\$LPREFIX" = "--prefix" ]; then
+PREFIX=\$RPREFIX
+fi
+done
+if [ "\$PREFIX" = "" ]; then
+PREFIX=/usr/local
+fi
 EOF
 	while (<STDIN>) {
 		chop;
@@ -421,5 +437,7 @@ EOF
 			}
 		}
 	}
+	print SHMKSave('PREFIX'), SHHSaveS('PREFIX');
+
 }
 

@@ -1,4 +1,4 @@
-# $Csoft: csoft.www.mk,v 1.25 2003/09/29 00:56:08 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.26 2003/09/29 00:58:21 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -56,7 +56,7 @@ depend: depend-subdir
 	        ${BASEDIR}/${TEMPLATE}.m4 \
 		| ${PERL} ${TOP}/mk/hstrip.pl > $@.$$LANG.prep; \
             ${XSLTPROC} --html --nonet --stringparam lang $$LANG ${XSL} \
-	        $@.$$LANG.prep > $@.$$LANG.utf8 2>/dev/null; \
+	        $@.$$LANG.prep > $@.$$LANG.utf-8 2>/dev/null; \
 	    rm -f $@.$$LANG.prep; \
 	    case "$$LANG" in \
 	    en) \
@@ -64,26 +64,26 @@ depend: depend-subdir
 	        echo "Content-language: $$LANG" >> $@.var; \
 	        echo "Content-type: text/html" >> $@.var; \
 	        echo "" >> $@.var; \
-	        cat $@.$$LANG.utf8 | \
+	        cat $@.$$LANG.utf-8 | \
 		    sed s/charset=UTF-8/charset=ISO-8859-1/ | \
 		    ${ICONV} -f UTF-8 -t ISO-8859-1 > \
 		    $@.$$LANG; \
-		rm -f $@.$$LANG.utf8; \
+		rm -f $@.$$LANG.utf-8; \
 	        ;; \
 	    ab|af|eu|ca|da|nl|fo|fr|fi|de|is|ga|it|no|nb|nn|pt|rm|gd|es|sv|sw) \
-	        echo "URI: $@.$$LANG.utf8" >> $@.var; \
+	        echo "URI: $@.$$LANG.utf-8" >> $@.var; \
 	        echo "Content-language: $$LANG" >> $@.var; \
 	        echo "Content-type: text/html;encoding=UTF-8" >> $@.var; \
 	        echo "" >> $@.var; \
-	        echo "URI: $@.$$LANG.iso8859-1" >> $@.var; \
+	        echo "URI: $@.$$LANG.iso-8859-1" >> $@.var; \
 	        echo "Content-language: $$LANG" >> $@.var; \
 	        echo "Content-type: text/html;charset=ISO-8859-1" >> $@.var; \
 	        echo "" >> $@.var; \
-	        cat $@.$$LANG.utf8 | \
+	        cat $@.$$LANG.utf-8 | \
 		    sed s/charset=UTF-8/charset=ISO-8859-1/ | \
 		    ${ICONV} -f UTF-8 -t ISO-8859-1 > \
-		    $@.$$LANG.iso8859-1; \
-		cp -f $@.$$LANG.iso8859-1 $@.$$LANG \
+		    $@.$$LANG.iso-8859-1; \
+		cp -f $@.$$LANG.iso-8859-1 $@.$$LANG \
 	        ;; \
 	    *) \
 	        ;; \

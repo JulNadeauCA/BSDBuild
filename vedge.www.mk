@@ -8,7 +8,7 @@ MAKE?=	    make
 INSTALL?=   install
 HTMLMODE?=  644
 BASEDIR?=   base
-TEMPLATE?=  $(BASEDIR)/html.m4
+TEMPLATE?=  %TOP%/$(BASEDIR)/html.m4
 
 .SUFFIXES:  .html .htm .jpg .jpeg .png .gif .m4
 

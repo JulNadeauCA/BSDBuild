@@ -1,4 +1,4 @@
-# $Csoft: csoft.www.mk,v 1.26 2003/09/29 00:58:21 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.27 2003/10/02 04:48:40 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -24,6 +24,7 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 M4?=		m4
+M4FLAGS?=
 XSLTPROC?=	xsltproc
 PERL?=		perl
 ICONV?=		iconv
@@ -52,7 +53,8 @@ depend: depend-subdir
 	@echo > $@.var
 	@for LANG in ${LANGUAGES}; do \
 	    echo -n " $$LANG"; \
-	    ${M4} -D__BASE_DIR=${BASEDIR} -D__FILE=$@ -D__LANG=$$LANG \
+	    ${M4} ${M4FLAGS} -D__BASE_DIR=${BASEDIR} -D__FILE=$@ \
+	        -D__LANG=$$LANG \
 	        ${BASEDIR}/${TEMPLATE}.m4 \
 		| ${PERL} ${TOP}/mk/hstrip.pl > $@.$$LANG.prep; \
             ${XSLTPROC} --html --nonet --stringparam lang $$LANG ${XSL} \

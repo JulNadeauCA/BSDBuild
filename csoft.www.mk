@@ -1,4 +1,4 @@
-# $Csoft: csoft.www.mk,v 1.20 2003/09/27 04:13:38 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.21 2003/09/27 04:39:09 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -165,6 +165,14 @@ install-www:
 			else \
 				echo "${INSTALL_DATA} $$F.$$LANG ${HTMLDIR}"; \
 				${INSTALL_DATA} $$F.$$LANG ${HTMLDIR}; \
+			fi; \
+			if [ -e "${HTMLDIR}/$$F.$$LANG.utf8" \
+			     -a "${OVERWRITE}" = "" ]; then \
+				echo "$$F.$$LANG.utf8 exists; preserving"; \
+			else \
+				echo "${INSTALL_DATA} $$F.$$LANG.utf8 \
+				    ${HTMLDIR}"; \
+				${INSTALL_DATA} $$F.$$LANG.utf8 ${HTMLDIR}; \
 			fi; \
 		done; \
 	done

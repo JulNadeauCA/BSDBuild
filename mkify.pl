@@ -1,4 +1,4 @@
-# $Csoft: mkify.pl,v 1.5 2001/12/03 04:47:00 vedge Exp $
+# $Csoft: mkify.pl,v 1.6 2002/01/26 01:15:44 vedge Exp $
 
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -103,4 +103,5 @@ BEGIN
 
 		MKCopy($f, $dir);
 	}
+	system("cd $mk && cvs update && cvs commit -m \"sync (nonotice)\"");
 }

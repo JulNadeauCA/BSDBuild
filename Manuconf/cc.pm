@@ -30,8 +30,6 @@ sub Test
 	my $require = shift;
 
 	print << 'EOF';
-# $Csoft: cc.pm,v 1.1 2002/05/05 22:10:22 vedge Exp $
-
 if [ "$CC" = "" ]; then
     if [ -x "`which cc`" ]; then
         CC=cc

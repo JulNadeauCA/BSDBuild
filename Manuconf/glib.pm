@@ -1,4 +1,4 @@
-# $Csoft: glib.pm,v 1.1 2002/05/05 22:10:22 vedge Exp $
+# $Csoft: glib.pm,v 1.2 2002/05/05 23:27:03 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -28,8 +28,6 @@
 
 sub Test
 {
-	print '# $Csoft$', "\n";
-
 	my ($require, $ver) = @_;
 	my $onfail = '';
 	

@@ -1,4 +1,4 @@
-# $Csoft: Makefile,v 1.9 2002/12/24 07:16:36 vedge Exp $
+# $Csoft: Makefile,v 1.10 2002/12/25 07:09:48 vedge Exp $
 
 TOP=.
 
@@ -9,7 +9,7 @@ DISTFILE=	${DIST}.tar.gz
 
 SHARE=	csoft.common.mk csoft.dep.mk csoft.lib.mk csoft.man.mk \
 	csoft.perl.mk csoft.prog.mk csoft.subdir.mk csoft.www.mk \
-	hstrip.pl manuconf.pl maptree.sh mkdep mkify.pl mkconcurrent.pl
+	hstrip.pl manuconf.pl mkdep mkify.pl mkconcurrent.pl
 
 SUBDIR=	Manuconf
 
@@ -53,6 +53,8 @@ release: cleandir
 	 sha1 ${DISTFILE} >> ${DISTFILE}.md5 && \
 	 scp ${DISTFILE} \
 	     ${DISTFILE}.md5 vedge@resin:www/stable.csoft.org/${PROJECT})
+
+.PHONY: install cleandir clean depend release
 
 include ${TOP}/csoft.common.mk
 include ${TOP}/csoft.subdir.mk

@@ -1,4 +1,4 @@
-# $Csoft: csoft.po.mk,v 1.9 2003/08/26 06:10:29 vedge Exp $
+# $Csoft: csoft.po.mk,v 1.10 2003/09/26 09:56:00 vedge Exp $
 
 # Copyright (c) 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -37,7 +37,13 @@ MOS?=
 
 .SUFFIXES: .c .po .pox .mo
 
-all: ${DOMAIN}.pot ${MOS}
+all: all-subdir ${DOMAIN}.pot ${MOS}
+install: install-po install-subdir
+deinstall: deinstall-po deinstall-subdir
+clean: clean-po clean-subdir
+cleandir: cleandir-subdir
+regress: regress-subdir
+depend: depend-subdir
 
 .po.pox:
 	@if [ "${ENABLE_NLS}" = "yes" -a "${HAVE_GETTEXT}" = "yes" ]; then \
@@ -80,39 +86,30 @@ ${DOMAIN}.pot: ${POTFILES}
 		echo "skipping $@ (no gettext)"; \
 	fi
 
-depend:
-	# nothing
-
-regress:
-	# nothing
-
-clean:
+clean-po:
 	if [ "${POTFILES}" != "" -o "${MOS}" != "" ]; then \
 		echo "rm -f ${POTFILES} ${MOS}"; \
 		rm -f ${POTFILES} ${MOS}; \
 	fi
 
-cleandir:
-	# nothing
-
-install: ${MOS}
+install-po:
 	@export _mos="${MOS}"; \
 	if [ "${ENABLE_NLS}" = "yes" -a "${HAVE_GETTEXT}" = "yes" \
 	     -a "$$_mos" != "" ]; then \
             if [ ! -d "${LOCALEDIR}" ]; then \
                 echo "${INSTALL_DATA_DIR} ${LOCALEDIR}"; \
-                ${INSTALL_DATA_DIR} ${LOCALEDIR}; \
+                ${SUDO} ${INSTALL_DATA_DIR} ${LOCALEDIR}; \
             fi; \
             for F in $$_mos; do \
 	        _lang=`echo $$F | sed 's,\.mo,,'`; \
                 echo "${INSTALL_DATA_DIR} ${LOCALEDIR}/$$_lang"; \
-                ${INSTALL_DATA_DIR} ${LOCALEDIR}/$$_lang; \
+                ${SUDO} ${INSTALL_DATA_DIR} ${LOCALEDIR}/$$_lang; \
                 echo "${INSTALL_DATA_DIR} ${LOCALEDIR}/$$_lang/LC_MESSAGES"; \
-                ${INSTALL_DATA_DIR} ${LOCALEDIR}/$$_lang/LC_MESSAGES; \
+                ${SUDO} ${INSTALL_DATA_DIR} ${LOCALEDIR}/$$_lang/LC_MESSAGES; \
 		cp -f $$F ${DOMAIN}.mo; \
                 echo "${INSTALL_DATA} ${DOMAIN}.mo \
 		    ${LOCALEDIR}/$$_lang/LC_MESSAGES"; \
-                ${INSTALL_DATA} ${DOMAIN}.mo \
+                ${SUDO} ${INSTALL_DATA} ${DOMAIN}.mo \
 		    ${LOCALEDIR}/$$_lang/LC_MESSAGES; \
 		rm -f ${DOMAIN}.mo; \
             done; \
@@ -120,14 +117,14 @@ install: ${MOS}
 		echo "skipping $@ (no gettext)"; \
 	fi
 
-deinstall:
+deinstall-po:
 	@export _mos="${MOS}"; \
         if [ "${HAVE_GETTEXT}" = "yes" -a "$$_mos" != "" ]; then \
             for F in $$_mos; do \
 	        _lang=`echo $$F | sed 's,\.mo,,'`; \
                 echo "${DEINSTALL_DATA} \
 		    ${LOCALEDIR}/$$_lang/LC_MESSAGES/${DOMAIN}.mo"; \
-                ${DEINSTALL_DATA} \
+                ${SUDO} ${DEINSTALL_DATA} \
 		    ${LOCALEDIR}/$$_lang/LC_MESSAGES/${DOMAIN}.mo; \
             done; \
 	fi
@@ -145,6 +142,9 @@ count:
 		    wc -w; \
 	done
 
+.PHONY: install deinstall clean cleandir regress depend
+.PHONY: install-po deinstall-po clean-po
 .PHONY: ${POTFILES} count
 
 include ${TOP}/mk/csoft.common.mk
+include ${TOP}/mk/csoft.subdir.mk

@@ -1,4 +1,4 @@
-# $Csoft: csoft.www.mk,v 1.21 2003/09/27 04:39:09 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.22 2003/09/27 23:21:20 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -99,19 +99,19 @@ install-www:
 		rm -f $$F; \
         	if [ ! -d "${HTMLDIR}" ]; then \
 			echo "${INSTALL_DATA_DIR} ${HTMLDIR}"; \
-			${INSTALL_DATA_DIR} ${HTMLDIR}; \
+			${SUDO} ${INSTALL_DATA_DIR} ${HTMLDIR}; \
 		fi; \
         	if [ ! -d "${HTMLDIR}/mk" ]; then \
 			echo "${INSTALL_DATA_DIR} ${HTMLDIR}/mk"; \
-			${INSTALL_DATA_DIR} ${HTMLDIR}/mk; \
+			${SUDO} ${INSTALL_DATA_DIR} ${HTMLDIR}/mk; \
 		fi; \
 		for MK in ${MKDEPS}; do \
 			echo "${INSTALL_DATA} ${TOP}/mk/$$MK ${HTMLDIR}/mk"; \
-			${INSTALL_DATA} ${TOP}/mk/$$MK ${HTMLDIR}/mk; \
+			${SUDO} ${INSTALL_DATA} ${TOP}/mk/$$MK ${HTMLDIR}/mk; \
 		done; \
         	if [ ! -d "${HTMLDIR}/xsl" ]; then \
 			echo "${INSTALL_DATA_DIR} ${HTMLDIR}/xsl"; \
-			${INSTALL_DATA_DIR} ${HTMLDIR}/xsl; \
+			${SUDO} ${INSTALL_DATA_DIR} ${HTMLDIR}/xsl; \
 		fi; \
 		for XSL in ${XSL}; do \
 			if [ -e "${HTMLDIR}/xsl/$$XSL" \
@@ -119,12 +119,12 @@ install-www:
 				echo "xsl/$$XSL: exists; preserving"; \
 			else \
 				echo "${INSTALL_DATA} $$XSL ${HTMLDIR}/xsl"; \
-				${INSTALL_DATA} $$XSL ${HTMLDIR}/xsl; \
+				${SUDO} ${INSTALL_DATA} $$XSL ${HTMLDIR}/xsl; \
 			fi; \
 		done; \
         	if [ ! -d "${HTMLDIR}/m4" ]; then \
 			echo "${INSTALL_DATA_DIR} ${HTMLDIR}/m4"; \
-			${INSTALL_DATA_DIR} ${HTMLDIR}/m4; \
+			${SUDO} ${INSTALL_DATA_DIR} ${HTMLDIR}/m4; \
 		fi; \
 		(cd m4; for M4IN in `ls -1 *.m4`; do \
 			if [ -e "${HTMLDIR}/m4/$$M4IN" \
@@ -132,23 +132,25 @@ install-www:
 				echo "m4/$$M4IN: exists; preserving"; \
 			else \
 				echo "${INSTALL_DATA} $$M4IN ${HTMLDIR}/m4"; \
-				${INSTALL_DATA} $$M4IN ${HTMLDIR}/m4; \
+				${SUDO} ${INSTALL_DATA} $$M4IN ${HTMLDIR}/m4; \
 			fi; \
 		done); \
 		if [ ! -e "${HTMLDIR}/Makefile" ]; then \
-			echo "${INSTALL_DATA} /dev/null ${HTMLDIR}/Makefile"; \
-			${INSTALL_DATA} /dev/null ${HTMLDIR}/Makefile; \
-			echo "TOP=." > ${HTMLDIR}/Makefile; \
-			echo "HTML=${HTML}" >> ${HTMLDIR}/Makefile; \
-			echo "HTMLDIR=none" >> ${HTMLDIR}/Makefile; \
-			echo "M4=${M4}" >> ${HTMLDIR}/Makefile; \
-			echo "XSLTPROC=${XSLTPROC}" >> ${HTMLDIR}/Makefile; \
-			echo "PERL=${PERL}" >> ${HTMLDIR}/Makefile; \
-			echo "BASEDIR=${BASEDIR}" >> ${HTMLDIR}/Makefile; \
-			echo "TEMPLATE=${TEMPLATE}" >> ${HTMLDIR}/Makefile; \
-			echo "LANGUAGES=${LANGUAGES}" >> ${HTMLDIR}/Makefile; \
-			echo "XSL=${XSL}" >> ${HTMLDIR}/Makefile; \
-			echo "include mk/csoft.www.mk" >> ${HTMLDIR}/Makefile; \
+			echo "TOP=." > Makefile.prep; \
+			echo "HTML=${HTML}" >> Makefile.prep; \
+			echo "HTMLDIR=none" >> Makefile.prep; \
+			echo "M4=${M4}" >> Makefile.prep; \
+			echo "XSLTPROC=${XSLTPROC}" >> Makefile.prep; \
+			echo "PERL=${PERL}" >> Makefile.prep; \
+			echo "BASEDIR=${BASEDIR}" >> Makefile.prep; \
+			echo "TEMPLATE=${TEMPLATE}" >> Makefile.prep; \
+			echo "LANGUAGES=${LANGUAGES}" >> Makefile.prep; \
+			echo "XSL=${XSL}" >> Makefile.prep; \
+			echo "include mk/csoft.www.mk" >> Makefile.prep; \
+			echo "${INSTALL_DATA} Makefile.prep \
+			    ${HTMLDIR}/Makefile"; \
+			${SUDO} ${INSTALL_DATA} Makefile.prep \
+			    ${HTMLDIR}/Makefile; \
 		fi; \
 		export SF=`echo $$F |sed s,.html$$,.htm,`; \
 		if [ -e "${HTMLDIR}/$$SF" \
@@ -156,7 +158,7 @@ install-www:
 			echo "$$SF exists; preserving"; \
 		else \
 			echo "${INSTALL_DATA} $$SF ${HTMLDIR}"; \
-			${INSTALL_DATA} $$SF ${HTMLDIR}; \
+			${SUDO} ${INSTALL_DATA} $$SF ${HTMLDIR}; \
 		fi; \
 		for LANG in ${LANGUAGES}; do \
 			if [ -e "${HTMLDIR}/$$F.$$LANG" \
@@ -164,7 +166,7 @@ install-www:
 				echo "$$F.$$LANG exists; preserving"; \
 			else \
 				echo "${INSTALL_DATA} $$F.$$LANG ${HTMLDIR}"; \
-				${INSTALL_DATA} $$F.$$LANG ${HTMLDIR}; \
+				${SUDO} ${INSTALL_DATA} $$F.$$LANG ${HTMLDIR}; \
 			fi; \
 			if [ -e "${HTMLDIR}/$$F.$$LANG.utf8" \
 			     -a "${OVERWRITE}" = "" ]; then \
@@ -172,7 +174,8 @@ install-www:
 			else \
 				echo "${INSTALL_DATA} $$F.$$LANG.utf8 \
 				    ${HTMLDIR}"; \
-				${INSTALL_DATA} $$F.$$LANG.utf8 ${HTMLDIR}; \
+				${SUDO} ${INSTALL_DATA} $$F.$$LANG.utf8 \
+				    ${HTMLDIR}; \
 			fi; \
 		done; \
 	done

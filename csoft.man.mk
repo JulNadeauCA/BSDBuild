@@ -1,4 +1,4 @@
-# $Csoft: csoft.man.mk,v 1.25 2003/09/26 11:28:00 vedge Exp $
+# $Csoft: csoft.man.mk,v 1.26 2003/09/27 02:44:45 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -259,119 +259,119 @@ install-man-dirs:
 	@if [ "${MANS}" != "       " ]; then \
 	    if [ ! -d "${INST_MANDIR}" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}"; \
-	        ${INSTALL_MAN_DIR} ${INST_MANDIR}; \
+	        ${SUDO} ${INSTALL_MAN_DIR} ${INST_MANDIR}; \
 	    fi; \
 	    if [ ! -d "${INST_MANDIR}/man1" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/man1"; \
-	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/man1; \
+	        ${SUDO} ${INSTALL_MAN_DIR} ${INST_MANDIR}/man1; \
 	    fi; \
 	    if [ ! -d "${INST_MANDIR}/man2" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/man2"; \
-	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/man2; \
+	        ${SUDO} ${INSTALL_MAN_DIR} ${INST_MANDIR}/man2; \
 	    fi; \
 	    if [ ! -d "${INST_MANDIR}/man3" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/man3"; \
-	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/man3; \
+	        ${SUDO} ${INSTALL_MAN_DIR} ${INST_MANDIR}/man3; \
 	    fi; \
 	    if [ ! -d "${INST_MANDIR}/man4" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/man4"; \
-	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/man4; \
+	        ${SUDO} ${INSTALL_MAN_DIR} ${INST_MANDIR}/man4; \
 	    fi; \
 	    if [ ! -d "${INST_MANDIR}/man5" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/man5"; \
-	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/man5; \
+	        ${SUDO} ${INSTALL_MAN_DIR} ${INST_MANDIR}/man5; \
 	    fi; \
 	    if [ ! -d "${INST_MANDIR}/man6" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/man6"; \
-	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/man6; \
+	        ${SUDO} ${INSTALL_MAN_DIR} ${INST_MANDIR}/man6; \
 	    fi; \
 	    if [ ! -d "${INST_MANDIR}/man7" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/man7"; \
-	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/man7; \
+	        ${SUDO} ${INSTALL_MAN_DIR} ${INST_MANDIR}/man7; \
 	    fi; \
 	    if [ ! -d "${INST_MANDIR}/man8" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/man8"; \
-	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/man8; \
+	        ${SUDO} ${INSTALL_MAN_DIR} ${INST_MANDIR}/man8; \
 	    fi; \
 	    if [ ! -d "${INST_MANDIR}/man9" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/man9"; \
-	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/man9; \
+	        ${SUDO} ${INSTALL_MAN_DIR} ${INST_MANDIR}/man9; \
 	    fi; \
 	    if [ ! -d "${INST_MANDIR}/cat1" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/cat1"; \
-	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/cat1; \
+	        ${SUDO} ${INSTALL_MAN_DIR} ${INST_MANDIR}/cat1; \
 	    fi; \
 	    if [ ! -d "${INST_MANDIR}/cat2" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/cat2"; \
-	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/cat2; \
+	        ${SUDO} ${INSTALL_MAN_DIR} ${INST_MANDIR}/cat2; \
 	    fi; \
 	    if [ ! -d "${INST_MANDIR}/cat3" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/cat3"; \
-	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/cat3; \
+	        ${SUDO} ${INSTALL_MAN_DIR} ${INST_MANDIR}/cat3; \
 	    fi; \
 	    if [ ! -d "${INST_MANDIR}/cat4" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/cat4"; \
-	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/cat4; \
+	        ${SUDO} ${INSTALL_MAN_DIR} ${INST_MANDIR}/cat4; \
 	    fi; \
 	    if [ ! -d "${INST_MANDIR}/cat5" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/cat5"; \
-	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/cat5; \
+	        ${SUDO} ${INSTALL_MAN_DIR} ${INST_MANDIR}/cat5; \
 	    fi; \
 	    if [ ! -d "${INST_MANDIR}/cat6" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/cat6"; \
-	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/cat6; \
+	        ${SUDO} ${INSTALL_MAN_DIR} ${INST_MANDIR}/cat6; \
 	    fi; \
 	    if [ ! -d "${INST_MANDIR}/cat7" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/cat7"; \
-	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/cat7; \
+	        ${SUDO} ${INSTALL_MAN_DIR} ${INST_MANDIR}/cat7; \
 	    fi; \
 	    if [ ! -d "${INST_MANDIR}/cat8" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/cat8"; \
-	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/cat8; \
+	        ${SUDO} ${INSTALL_MAN_DIR} ${INST_MANDIR}/cat8; \
 	    fi; \
 	    if [ ! -d "${INST_MANDIR}/cat9" ]; then \
 	        echo "${INSTALL_MAN_DIR} ${INST_MANDIR}/cat9"; \
-	        ${INSTALL_MAN_DIR} ${INST_MANDIR}/cat9; \
+	        ${SUDO} ${INSTALL_MAN_DIR} ${INST_MANDIR}/cat9; \
 	    fi; \
 	    if [ ! -d "${INST_PSDIR}" ]; then \
 	        echo "${INSTALL_PS_DIR} ${INST_PSDIR}"; \
-	        ${INSTALL_PS_DIR} ${INST_PSDIR}; \
+	        ${SUDO} ${INSTALL_PS_DIR} ${INST_PSDIR}; \
 	    fi; \
 	    if [ ! -d "${INST_PSDIR}/ps1" ]; then \
 	        echo "${INSTALL_PS_DIR} ${INST_PSDIR}/ps1"; \
-	        ${INSTALL_PS_DIR} ${INST_PSDIR}/ps1; \
+	        ${SUDO} ${INSTALL_PS_DIR} ${INST_PSDIR}/ps1; \
 	    fi; \
 	    if [ ! -d "${INST_PSDIR}/ps2" ]; then \
 	        echo "${INSTALL_PS_DIR} ${INST_PSDIR}/ps2"; \
-	        ${INSTALL_PS_DIR} ${INST_PSDIR}/ps2; \
+	        ${SUDO} ${INSTALL_PS_DIR} ${INST_PSDIR}/ps2; \
 	    fi; \
 	    if [ ! -d "${INST_PSDIR}/ps3" ]; then \
 	        echo "${INSTALL_PS_DIR} ${INST_PSDIR}/ps3"; \
-	        ${INSTALL_PS_DIR} ${INST_PSDIR}/ps3; \
+	        ${SUDO} ${INSTALL_PS_DIR} ${INST_PSDIR}/ps3; \
 	    fi; \
 	    if [ ! -d "${INST_PSDIR}/ps4" ]; then \
 	        echo "${INSTALL_PS_DIR} ${INST_PSDIR}/ps4"; \
-	        ${INSTALL_PS_DIR} ${INST_PSDIR}/ps4; \
+	        ${SUDO} ${INSTALL_PS_DIR} ${INST_PSDIR}/ps4; \
 	    fi; \
 	    if [ ! -d "${INST_PSDIR}/ps5" ]; then \
 	        echo "${INSTALL_PS_DIR} ${INST_PSDIR}/ps5"; \
-	        ${INSTALL_PS_DIR} ${INST_PSDIR}/ps5; \
+	        ${SUDO} ${INSTALL_PS_DIR} ${INST_PSDIR}/ps5; \
 	    fi; \
 	    if [ ! -d "${INST_PSDIR}/ps6" ]; then \
 	        echo "${INSTALL_PS_DIR} ${INST_PSDIR}/ps6"; \
-	        ${INSTALL_PS_DIR} ${INST_PSDIR}/ps6; \
+	        ${SUDO} ${INSTALL_PS_DIR} ${INST_PSDIR}/ps6; \
 	    fi; \
 	    if [ ! -d "${INST_PSDIR}/ps7" ]; then \
 	        echo "${INSTALL_PS_DIR} ${INST_PSDIR}/ps7"; \
-	        ${INSTALL_PS_DIR} ${INST_PSDIR}/ps7; \
+	        ${SUDO} ${INSTALL_PS_DIR} ${INST_PSDIR}/ps7; \
 	    fi; \
 	    if [ ! -d "${INST_PSDIR}/ps8" ]; then \
 	        echo "${INSTALL_PS_DIR} ${INST_PSDIR}/ps8"; \
-	        ${INSTALL_PS_DIR} ${INST_PSDIR}/ps8; \
+	        ${SUDO} ${INSTALL_PS_DIR} ${INST_PSDIR}/ps8; \
 	    fi; \
 	    if [ ! -d "${INST_PSDIR}/ps9" ]; then \
 	        echo "${INSTALL_PS_DIR} ${INST_PSDIR}/ps9"; \
-	        ${INSTALL_PS_DIR} ${INST_PSDIR}/ps9; \
+	        ${SUDO} ${INSTALL_PS_DIR} ${INST_PSDIR}/ps9; \
 	    fi; \
 	fi
 
@@ -382,24 +382,24 @@ install-man:
 	            CAT=`echo $$F | sed 's/.1$$/.cat1/'`; \
 	            PS=`echo $$F | sed 's/.1$$/.ps1/'`; \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man1"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man1; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/man1; \
 	            echo "${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat1"; \
-	            ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat1; \
+	            ${SUDO} ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat1; \
 	            echo "${INSTALL_DATA} $$PS ${INST_PSDIR}/ps1"; \
-	            ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps1; \
+	            ${SUDO} ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps1; \
 	        done; \
 	    else \
 	        for F in ${MAN1}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man1"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man1; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/man1; \
 		done; \
 	        for F in ${CATMAN1}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat1"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/cat1; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/cat1; \
 		done; \
 	        for F in ${PSMAN1}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps1"; \
-	            ${INSTALL_DATA} $$F ${INST_PSDIR}/ps1; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_PSDIR}/ps1; \
 		done; \
 	    fi; \
 	fi
@@ -409,24 +409,24 @@ install-man:
 	            CAT=`echo $$F | sed 's/.2$$/.cat2/'`; \
 	            PS=`echo $$F | sed 's/.2$$/.ps2/'`; \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man2"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man2; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/man2; \
 	            echo "${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat2"; \
-	            ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat2; \
+	            ${SUDO} ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat2; \
 	            echo "${INSTALL_DATA} $$PS ${INST_PSDIR}/ps2"; \
-	            ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps2; \
+	            ${SUDO} ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps2; \
 	        done; \
 	    else \
 	        for F in ${MAN2}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man2"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man2; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/man2; \
 		done; \
 	        for F in ${CATMAN2}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat2"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/cat2; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/cat2; \
 		done; \
 	        for F in ${PSMAN2}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps2"; \
-	            ${INSTALL_DATA} $$F ${INST_PSDIR}/ps2; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_PSDIR}/ps2; \
 		done; \
 	    fi; \
 	fi
@@ -436,24 +436,24 @@ install-man:
 	            CAT=`echo $$F | sed 's/.3$$/.cat3/'`; \
 	            PS=`echo $$F | sed 's/.3$$/.ps3/'`; \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man3"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man3; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/man3; \
 	            echo "${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat3"; \
-	            ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat3; \
+	            ${SUDO} ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat3; \
 	            echo "${INSTALL_DATA} $$PS ${INST_PSDIR}/ps3"; \
-	            ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps3; \
+	            ${SUDO} ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps3; \
 	        done; \
 	    else \
 	        for F in ${MAN3}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man3"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man3; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/man3; \
 		done; \
 	        for F in ${CATMAN3}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat3"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/cat3; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/cat3; \
 		done; \
 	        for F in ${PSMAN3}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps3"; \
-	            ${INSTALL_DATA} $$F ${INST_PSDIR}/ps3; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_PSDIR}/ps3; \
 		done; \
 	    fi; \
 	fi
@@ -463,24 +463,24 @@ install-man:
 	            CAT=`echo $$F | sed 's/.4$$/.cat4/'`; \
 	            PS=`echo $$F | sed 's/.4$$/.ps4/'`; \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man4"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man4; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/man4; \
 	            echo "${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat4"; \
-	            ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat4; \
+	            ${SUDO} ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat4; \
 	            echo "${INSTALL_DATA} $$PS ${INST_PSDIR}/ps4"; \
-	            ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps4; \
+	            ${SUDO} ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps4; \
 	        done; \
 	    else \
 	        for F in ${MAN4}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man4"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man4; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/man4; \
 		done; \
 	        for F in ${CATMAN4}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat4"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/cat4; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/cat4; \
 		done; \
 	        for F in ${PSMAN4}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps4"; \
-	            ${INSTALL_DATA} $$F ${INST_PSDIR}/ps4; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_PSDIR}/ps4; \
 		done; \
 	    fi; \
 	fi
@@ -490,24 +490,24 @@ install-man:
 	            CAT=`echo $$F | sed 's/.5$$/.cat5/'`; \
 	            PS=`echo $$F | sed 's/.5$$/.ps5/'`; \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man5"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man5; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/man5; \
 	            echo "${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat5"; \
-	            ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat5; \
+	            ${SUDO} ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat5; \
 	            echo "${INSTALL_DATA} $$PS ${INST_PSDIR}/ps5"; \
-	            ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps5; \
+	            ${SUDO} ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps5; \
 	        done; \
 	    else \
 	        for F in ${MAN5}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man5"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man5; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/man5; \
 		done; \
 	        for F in ${CATMAN5}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat5"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/cat5; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/cat5; \
 		done; \
 	        for F in ${PSMAN5}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps5"; \
-	            ${INSTALL_DATA} $$F ${INST_PSDIR}/ps5; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_PSDIR}/ps5; \
 		done; \
 	    fi; \
 	fi
@@ -517,24 +517,24 @@ install-man:
 	            CAT=`echo $$F | sed 's/.6$$/.cat6/'`; \
 	            PS=`echo $$F | sed 's/.6$$/.ps6/'`; \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man6"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man6; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/man6; \
 	            echo "${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat6"; \
-	            ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat6; \
+	            ${SUDO} ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat6; \
 	            echo "${INSTALL_DATA} $$PS ${INST_PSDIR}/ps6"; \
-	            ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps6; \
+	            ${SUDO} ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps6; \
 	        done; \
 	    else \
 	        for F in ${MAN6}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man6"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man6; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/man6; \
 		done; \
 	        for F in ${CATMAN6}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat6"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/cat6; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/cat6; \
 		done; \
 	        for F in ${PSMAN6}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps6"; \
-	            ${INSTALL_DATA} $$F ${INST_PSDIR}/ps6; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_PSDIR}/ps6; \
 		done; \
 	    fi; \
 	fi
@@ -544,24 +544,24 @@ install-man:
 	            CAT=`echo $$F | sed 's/.7$$/.cat7/'`; \
 	            PS=`echo $$F | sed 's/.7$$/.ps7/'`; \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man7"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man7; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/man7; \
 	            echo "${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat7"; \
-	            ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat7; \
+	            ${SUDO} ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat7; \
 	            echo "${INSTALL_DATA} $$PS ${INST_PSDIR}/ps7"; \
-	            ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps7; \
+	            ${SUDO} ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps7; \
 	        done; \
 	    else \
 	        for F in ${MAN7}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man7"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man7; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/man7; \
 		done; \
 	        for F in ${CATMAN7}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat7"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/cat7; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/cat7; \
 		done; \
 	        for F in ${PSMAN7}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps7"; \
-	            ${INSTALL_DATA} $$F ${INST_PSDIR}/ps7; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_PSDIR}/ps7; \
 		done; \
 	    fi; \
 	fi
@@ -571,24 +571,24 @@ install-man:
 	            CAT=`echo $$F | sed 's/.8$$/.cat8/'`; \
 	            PS=`echo $$F | sed 's/.8$$/.ps8/'`; \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man8"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man8; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/man8; \
 	            echo "${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat8"; \
-	            ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat8; \
+	            ${SUDO} ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat8; \
 	            echo "${INSTALL_DATA} $$PS ${INST_PSDIR}/ps8"; \
-	            ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps8; \
+	            ${SUDO} ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps8; \
 	        done; \
 	    else \
 	        for F in ${MAN8}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man8"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man8; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/man8; \
 		done; \
 	        for F in ${CATMAN8}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat8"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/cat8; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/cat8; \
 		done; \
 	        for F in ${PSMAN8}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps8"; \
-	            ${INSTALL_DATA} $$F ${INST_PSDIR}/ps8; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_PSDIR}/ps8; \
 		done; \
 	    fi; \
 	fi
@@ -598,24 +598,24 @@ install-man:
 	            CAT=`echo $$F | sed 's/.9$$/.cat9/'`; \
 	            PS=`echo $$F | sed 's/.9$$/.ps9/'`; \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man9"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man9; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/man9; \
 	            echo "${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat9"; \
-	            ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat9; \
+	            ${SUDO} ${INSTALL_DATA} $$CAT ${INST_MANDIR}/cat9; \
 	            echo "${INSTALL_DATA} $$PS ${INST_PSDIR}/ps9"; \
-	            ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps9; \
+	            ${SUDO} ${INSTALL_DATA} $$PS ${INST_PSDIR}/ps9; \
 	        done; \
 	    else \
 	        for F in ${MAN9}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/man9"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/man9; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/man9; \
 		done; \
 	        for F in ${CATMAN9}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_MANDIR}/cat9"; \
-	            ${INSTALL_DATA} $$F ${INST_MANDIR}/cat9; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_MANDIR}/cat9; \
 		done; \
 	        for F in ${PSMAN9}; do \
 	            echo "${INSTALL_DATA} $$F ${INST_PSDIR}/ps9"; \
-	            ${INSTALL_DATA} $$F ${INST_PSDIR}/ps9; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${INST_PSDIR}/ps9; \
 		done; \
 	    fi; \
 	fi

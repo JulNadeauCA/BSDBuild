@@ -1,4 +1,4 @@
-# $Csoft: csoft.lib.mk,v 1.28 2003/08/13 03:57:04 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.29 2003/09/26 11:28:00 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -220,11 +220,11 @@ cleandir-lib:
 install-lib:
 	@if [ "${LIB}" != "" -a "${LIB_INSTALL}" != "No" ]; then \
 	    echo "${INSTALL_LIB} lib${LIB}.a ${INST_LIBDIR}"; \
-	    ${INSTALL_LIB} lib${LIB}.a ${INST_LIBDIR}; \
+	    ${SUDO} ${INSTALL_LIB} lib${LIB}.a ${INST_LIBDIR}; \
 	    if [ "${SHARED}" = "Yes" ]; then \
 	        echo "${LIBTOOL} --mode=install \
 	            ${INSTALL_LIB} lib${LIB}.la ${INST_LIBDIR}"; \
-	        ${LIBTOOL} --mode=install \
+	        ${SUDO} ${LIBTOOL} --mode=install \
 	            ${INSTALL_LIB} lib${LIB}.la ${INST_LIBDIR}; \
 	    fi; \
 	fi
@@ -232,29 +232,29 @@ install-lib:
         if [ "$$_share" != "" ]; then \
             if [ ! -d "${SHAREDIR}" ]; then \
                 echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
-                ${INSTALL_DATA_DIR} ${SHAREDIR}; \
+                ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}; \
             fi; \
             for F in $$_share; do \
                 echo "${INSTALL_DATA} $$F ${SHAREDIR}"; \
-                ${INSTALL_DATA} $$F ${SHAREDIR}; \
+                ${SUDO} ${INSTALL_DATA} $$F ${SHAREDIR}; \
             done; \
 	fi
 
 deinstall-lib:
 	@if [ "${LIB}" != "" -a "${LIB_INSTALL}" != "No" ]; then \
 	    echo "${DEINSTALL_LIB} ${PREFIX}/lib/lib${LIB}.a"; \
-	    ${DEINSTALL_LIB} ${PREFIX}/lib/lib${LIB}.a; \
+	    ${SUDO} ${DEINSTALL_LIB} ${PREFIX}/lib/lib${LIB}.a; \
 	    if [ "${SHARED}" == "Yes" ]; then \
 	        echo "${LIBTOOL} --mode=uninstall \
 		    rm -f ${PREFIX}/lib/lib${LIB}.la"; \
-	        ${LIBTOOL} --mode=uninstall \
+	        ${SUDO} ${LIBTOOL} --mode=uninstall \
 		    rm -f ${PREFIX}/lib/lib${LIB}.la; \
 	    fi; \
 	fi
 	@if [ "${SHARE}" != "" ]; then \
 	    for F in ${SHARE}; do \
 	        echo "${DEINSTALL_DATA} ${SHAREDIR}/$$F"; \
-	        ${DEINSTALL_DATA} ${SHAREDIR}/$$F; \
+	        ${SUDO} ${DEINSTALL_DATA} ${SHAREDIR}/$$F; \
 	    done; \
 	fi
 

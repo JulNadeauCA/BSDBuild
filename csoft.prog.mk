@@ -1,4 +1,4 @@
-# $Csoft: csoft.prog.mk,v 1.30 2003/08/13 03:57:04 vedge Exp $
+# $Csoft: csoft.prog.mk,v 1.31 2003/09/26 11:28:00 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -43,7 +43,7 @@ all: all-subdir ${PROG}
 install: install-prog install-subdir
 deinstall: deinstall-prog deinstall-subdir
 clean: clean-prog clean-subdir
-cleandir: cleandir-prog clean-subdir
+cleandir: cleandir-prog cleandir-subdir
 regress: regress-subdir
 depend: depend-subdir
 
@@ -199,29 +199,29 @@ cleandir-prog:
 install-prog:
 	@if [ "${PROG}" != "" -a "${PROG_INSTALL}" != "No" ]; then \
 	    echo "${INSTALL_PROG} ${PROG} ${INST_BINDIR}"; \
-	    ${INSTALL_PROG} ${PROG} ${INST_BINDIR}; \
+	    ${SUDO} ${INSTALL_PROG} ${PROG} ${INST_BINDIR}; \
 	fi
 	@export _share="${SHARE}"; \
         if [ "$$_share" != "" ]; then \
             if [ ! -d "${SHAREDIR}" ]; then \
                 echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
-                ${INSTALL_DATA_DIR} ${SHAREDIR}; \
+                ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}; \
             fi; \
             for F in $$_share; do \
                 echo "${INSTALL_DATA} $$F ${SHAREDIR}"; \
-                ${INSTALL_DATA} $$F ${SHAREDIR}; \
+                ${SUDO} ${INSTALL_DATA} $$F ${SHAREDIR}; \
             done; \
 	fi
 
 deinstall-prog:
 	@if [ "${PROG}" != "" -a "${PROG_INSTALL}" != "No" ]; then \
 	    echo "${DEINSTALL_PROG} ${INST_BINDIR}/${PROG}"; \
-	    ${DEINSTALL_PROG} ${INST_BINDIR}/${PROG}; \
+	    ${SUDO} ${DEINSTALL_PROG} ${INST_BINDIR}/${PROG}; \
 	fi
 	@if [ "${SHARE}" != "" ]; then \
 	    for F in ${SHARE}; do \
 	        echo "${DEINSTALL_DATA} ${SHAREDIR}/$$F"; \
-	        ${DEINSTALL_DATA} ${SHAREDIR}/$$F; \
+	        ${SUDO} ${DEINSTALL_DATA} ${SHAREDIR}/$$F; \
 	    done; \
 	fi
 

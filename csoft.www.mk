@@ -1,4 +1,4 @@
-# $Csoft: csoft.www.mk,v 1.13 2003/06/21 21:17:09 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.14 2003/06/21 23:25:01 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -46,8 +46,9 @@ MLXSL?=		${TOP}/xsl/ml.xsl
             ${XSLTPROC} --html --nonet --stringparam lang $$LANG ${MLXSL} \
 	        $@.$$LANG.prep > $@.$$LANG 2>/dev/null; \
 	    rm -f $@.$$LANG.prep; \
-	done
-	@echo "."
+	done; \
+	rm -f ${BASEDIR}/base.htm; \
+	echo "."
 
 all: ${HTML} all-subdir
 

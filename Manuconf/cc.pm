@@ -1,4 +1,4 @@
-# $Csoft: cc.pm,v 1.9 2002/11/28 09:50:42 vedge Exp $
+# $Csoft: cc.pm,v 1.10 2002/12/22 04:57:38 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
@@ -78,34 +78,22 @@ fi
 rm -f .cctest .cctest.c
 EOF
 
-	# Check for float type.
-	print NEcho('checking for float...');
-	TryCompile 'HAVE_FLOAT', << 'EOF';
+	# Check for IEEE floating point support.
+	print NEcho('checking for IEEE 754 floating point...');
+	TryCompile 'HAVE_IEEE754', << 'EOF';
 #include <stdio.h>
 
 int
 main(int argc, char *argv[])
 {
-	float f = 0.1;
+	float f = 1.5;
+	double d = 2.5;
 
-	printf("%f\n", f);
+	printf("%f %d\n", f, d);
 	return (0);
 }
 EOF
 	
-	# Check for double type.
-	print NEcho('checking for double...');
-	TryCompile 'HAVE_DOUBLE', << 'EOF';
-int
-main(int argc, char *argv[])
-{
-	double d = 0.1;
-	
-	printf("%f\n", d);
-	return (0);
-}
-EOF
-
 	# Check for long double type.
 	print NEcho('checking for long double...');
 	TryCompile 'HAVE_LONG_DOUBLE', << 'EOF';

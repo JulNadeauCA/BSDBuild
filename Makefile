@@ -1,8 +1,8 @@
-# $Csoft: Makefile,v 1.10 2002/12/25 07:09:48 vedge Exp $
+# $Csoft: Makefile,v 1.11 2003/03/05 15:51:37 vedge Exp $
 
 TOP=.
 
-VERSION=	1.5
+VERSION=	1.6
 PROJECT=	csoft-mk
 DIST=		${PROJECT}-${VERSION}
 DISTFILE=	${DIST}.tar.gz
@@ -51,8 +51,9 @@ release: cleandir
 	 md5 ${DISTFILE} > ${DISTFILE}.md5 && \
 	 rmd160 ${DISTFILE} >> ${DISTFILE}.md5 && \
 	 sha1 ${DISTFILE} >> ${DISTFILE}.md5 && \
-	 scp ${DISTFILE} \
-	     ${DISTFILE}.md5 vedge@resin:www/stable.csoft.org/${PROJECT})
+	 gpg -ab ${DISTFILE} && \
+	 scp ${DISTFILE} ${DISTFILE}.md5 ${DISTFILE}.asc \
+	 vedge@resin:www/stable.csoft.org/${PROJECT})
 
 .PHONY: install cleandir clean depend release
 

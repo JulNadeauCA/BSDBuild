@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I/home/vedge/src/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.14 2002/05/05 23:58:49 vedge Exp $
+# $Csoft: manuconf.pl,v 1.15 2002/05/10 22:24:01 vedge Exp $
 #
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -210,15 +210,6 @@ EOF
 		    next;
 		}
 		foreach my $s (split(';')) {
-			if ($s =~ /if\s*\((.+)\)\s*\{/) {
-			    print "if [ $1 ]; then\n";
-			} elsif ($s =~ /^\}\s*else\s*\{$/) {
-			    print "else\n";
-			} elsif ($s =~ /^\}\s*else if\s*\((.+)\)\s*\{$/) {
-			    print "elif [ $1 ]\n";
-			} elsif ($s =~ /^\}$/) {
-			    print "fi\n";
-			}
 			if ($s =~ /(\w+)\((.*)\)/) {
 				my @args = ();
 				foreach my $arg (split(',', $2)) {
@@ -271,6 +262,8 @@ EOF
 				} elsif ($1 eq 'exit') {
 				    print "exit $args[0]\n";
 				}
+			} else {
+				print $s, "\n";
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-# $Csoft: x11.pm,v 1.13 2002/12/31 05:37:08 vedge Exp $
+# $Csoft: x11.pm,v 1.14 2002/12/31 05:40:36 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
@@ -25,8 +25,6 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 my @include_dirs = (
-	'/usr/include',
-	'/usr/local/include',
 	'/usr/include/X11',
 	'/usr/include/X11R6',
 	'/usr/local/X11/include',
@@ -38,9 +36,6 @@ my @include_dirs = (
 );
 
 my @lib_dirs = (
-	'/usr/local/lib',
-	'/usr/lib',
-	'/usr/lib32',
 	'/usr/local/X11/lib',
 	'/usr/local/X11R6/lib',
 	'/usr/X11/lib',
@@ -64,14 +59,27 @@ sub Test
 				   Define('x11_found_libs', "yes"),
 				   Nothing());
 	}
-	print Cond('"${x11_found_includes}" != "" -a ${x11_found_libs} != ""',
-	        Echo('yes') .
-			    Define('x11_found', "yes") .
+
+	TryLibCompile 'HAVE_X11', '${X11_CFLAGS}', '${X11_LIBS} -lX11', << 'EOF';
+#include <X11/Xlib.h>
+
+int
+main(int argc, char *argv[])
+{
+	Display *disp;
+
+	disp = XOpenDisplay(NULL);
+	XCloseDisplay(disp);
+	return (0);
+}
+EOF
+	
+	print Cond('"${HAVE_X11}" != ""',
+			Define('x11_found', "yes") .
 			    HDefine('HAVE_X11') .
 			    MKSave('X11_CFLAGS') .
 				MKSave('X11_LIBS'),
-	        Echo('no') .
-			    Define('x11_found', "no") .
+			Define('x11_found', "no") .
 				HUndef('HAVE_X11'));
 }
 

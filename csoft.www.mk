@@ -1,4 +1,4 @@
-# $Csoft: csoft.www.mk,v 1.23 2003/09/28 17:34:24 vedge Exp $
+# $Csoft: csoft.www.mk,v 1.24 2003/09/29 00:55:15 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -163,6 +163,7 @@ install-www:
 			    ${HTMLDIR}/Makefile"; \
 			${SUDO} ${INSTALL_DATA} Makefile.prep \
 			    ${HTMLDIR}/Makefile; \
+			rm -f Makefile.prep; \
 		fi; \
 		export SF=`echo $$F |sed s,.html$$,.htm,`; \
 		if [ -e "${HTMLDIR}/$$SF" \

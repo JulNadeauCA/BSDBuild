@@ -31,11 +31,13 @@ sub Test
 
 	print << 'EOF';
 if [ "$CC" = "" ]; then
-    if [ -x "`which cc`" ]; then
-        CC=cc
-    elif [ -x "`which gcc`" ]; then
-        CC=gcc
-    fi
+	for i in `echo $PATH |sed 's/:/ /g'`; do
+		if [ -x "${i}/cc" ]; then
+			CC="${i}/cc"
+		elif [ -x "${i}/gcc" ]; then
+			CC="${i}/gcc"
+		fi
+	done
 fi
 
 cat << 'EOT' > .cctest.c

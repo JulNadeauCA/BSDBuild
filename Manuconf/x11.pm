@@ -1,4 +1,4 @@
-# $Csoft: x11.pm,v 1.3 2002/05/05 23:28:11 vedge Exp $
+# $Csoft: x11.pm,v 1.4 2002/05/06 00:00:20 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -34,15 +34,14 @@ sub Test
 	    print
 	        SHTest("-d $dir",
 		SHDefine('X11BASE', $dir) .
-		    SHDefine('CONF_X11', 1) .
 		    SHDefine('X11_CFLAGS', "-I$dir/include") .
 		    SHDefine('X11_LIBS', "-L$dir/lib"),
 		SHNothing());
 	}
 	print
 	    SHTest('"${X11BASE}" != ""',
-	    SHNEcho('ok') . SHEcho('$X11BASE') .
-		SHHSave('CONF_X11') .
+	    SHNEcho('ok') . SHEcho(', $X11BASE') .
+		SHDefine('x11_found', "yes") .
 	        SHMKSave('X11BASE') .
 	        SHMKSave('X11_CFLAGS') .
 	        SHMKSave('X11_LIBS'),

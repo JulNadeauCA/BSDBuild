@@ -1,4 +1,4 @@
-# $Csoft$
+# $Csoft: Core.pm,v 1.1 2002/05/05 22:10:22 vedge Exp $
 #
 # Copyright (c) 2002 CubeSoft Communications <http://www.csoft.org>
 # All rights reserved.
@@ -31,11 +31,12 @@ sub SHObtain
     my ($bin, $args, $define) = @_;
 
 	return << "EOF"
-if [ -x "`which $bin`" ]; then
-$define=`$bin $args`
-else
 $define=""
-fi
+for i in `echo \$PATH |sed 's/:/ /g'`; do
+	if [ -x "\${i}/$bin" ]; then
+		$define=`\${i}/$bin $args`
+	fi
+done
 EOF
 }
 

@@ -103,21 +103,22 @@ if [ "${mc_prefix}" != "" ]; then
 else
     PREFIX=/usr/local
 fi
-if [ -x "`which pwd`" ]; then
-S=`pwd `
-else
 S=""
-fi
+for i in `echo $PATH |sed 's/:/ /g'`; do
+	if [ -x "${i}/pwd" ]; then
+		S=`${i}/pwd `
+	fi
+done
 echo >Makefile.config
-if [ "${version}" == "yes" ]; then
+if ("${version}" == "yes") {
 echo "Manuconf v1.2"
 exit 1
-fi
-if [ "${help}" == "yes" ]; then
+}
+if ("${help}" == "yes") {
 echo "Usage: ./configure [args]"
 echo "    --prefix             Installation prefix [/usr/local]"
 exit 1
-fi
+}
 SHAREDIR="$PREFIX/share/csoft-mk"
 echo SHAREDIR=$SHAREDIR >> Makefile.config
 echo PREFIX=$PREFIX >> Makefile.config

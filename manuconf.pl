@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Csoft: manuconf.pl,v 1.4 2002/01/29 19:24:29 vedge Exp $
+# $Csoft: manuconf.pl,v 1.5 2002/02/18 02:51:08 vedge Exp $
 #
 # Copyright (c) 2001 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -451,6 +451,6 @@ EOF
 		}
 	}
 	print SHMKSave('PREFIX'), SHHSaveS('PREFIX');
-
+	print SHEcho("Don't forget to run \\\"make depend\\\".");
 }
 

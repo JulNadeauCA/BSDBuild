@@ -1,16 +1,18 @@
-# $Csoft: Makefile,v 1.21 2003/12/07 05:41:08 vedge Exp $
+# $Csoft: Makefile,v 1.22 2004/01/19 10:30:30 vedge Exp $
 
 TOP=.
 
-VERSION=	1.9
+VERSION=	2.0
 PROJECT=	csoft-mk
 DIST=		${PROJECT}-${VERSION}
 DISTFILE=	${DIST}.tar.gz
 
+MAN5=	csoft.common.mk.5
+
 SHARE=	csoft.common.mk csoft.dep.mk csoft.lib.mk csoft.man.mk \
 	csoft.perl.mk csoft.prog.mk csoft.subdir.mk csoft.www.mk \
 	hstrip.pl manuconf.pl mkdep mkify.pl mkconcurrent.pl csoft.po.mk \
-	csoft.doc.mk
+	csoft.doc.mk csoft.den.mk
 
 LTFILES=config.guess config.sub configure configure.in ltconfig ltmain.sh
 
@@ -42,8 +44,8 @@ install: install-subdir
 	    echo "${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool"; \
 	    ${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool; \
 	done
-	${INSTALL_PROG} manuconf ${INST_BINDIR}
-	${INSTALL_PROG} mkify ${INST_BINDIR}
+	${INSTALL_PROG} manuconf ${BINDIR}
+	${INSTALL_PROG} mkify ${BINDIR}
 
 cleandir:
 	rm -f Makefile.config config.log *~

@@ -1,4 +1,4 @@
-# $Csoft: csoft.prog.mk,v 1.20 2002/04/24 06:55:51 vedge Exp $
+# $Csoft: csoft.prog.mk,v 1.21 2002/05/10 22:41:48 vedge Exp $
 
 # Copyright (c) 2001, 2002 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -151,6 +151,10 @@ clean: clean-subdir
 	    echo "rm -f ${PROG} ${GMONOUT} ${OBJS}"; \
 	    rm -f ${PROG} ${GMONOUT} ${OBJS}; \
 	fi
+	@if [ "${CLEANFILES}" != "" ]; then \
+	    echo "rm -f ${CLEANFILES}"; \
+	    rm -f ${CLEANFILES}; \
+	fi
 
 cleandir:	clean cleandir-subdir clean-depend
 	rm -f *.core *~
@@ -160,16 +164,17 @@ install: install-subdir ${PROG}
 	    echo "${INSTALL_PROG} ${PROG} ${INST_BINDIR}"; \
 	    ${INSTALL_PROG} ${PROG} ${INST_BINDIR}; \
 	fi
-	@if [ "${SHARE}" != "" ]; then \
-	    if [ ! -d "${SHAREDIR}" ]; then \
-	        echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
-	        ${INSTALL_DATA_DIR} ${SHAREDIR}; \
-	    fi; \
-	    for F in ${SHARE}; do \
-	        echo "${INSTALL_DATA} $$F ${SHAREDIR}"; \
-	        ${INSTALL_DATA} $$F ${SHAREDIR}; \
-	    done; \
-	fi
+        @export _share="${SHARE}"; \
+        if [ "$$_share" != "" ]; then \
+            if [ ! -d "${SHAREDIR}" ]; then \
+                echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
+                ${INSTALL_DATA_DIR} ${SHAREDIR}; \
+            fi; \
+            for F in $$_share; do \
+                echo "${INSTALL_DATA} $$F ${SHAREDIR}"; \
+                ${INSTALL_DATA} $$F ${SHAREDIR}; \
+            done; \
+        fi
 
 deinstall: deinstall-subdir
 	@if [ "${PROG}" != "" -a "${PROG_INSTALL}" != "No" ]; then \

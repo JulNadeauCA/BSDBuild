@@ -1,4 +1,4 @@
-# $Csoft: csoft.lib.mk,v 1.16 2002/04/24 06:55:51 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.17 2002/05/10 22:41:48 vedge Exp $
 
 # Copyright (c) 2001, 2002 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -152,6 +152,10 @@ clean:		clean-subdir
 		rm -f lib${LIB}.la ${SHOBJS} ${LIBTOOL} ${LTCONFIG_LOG}; \
 	    fi; \
 	fi
+	@if [ "${CLEANFILES}" != "" ]; then \
+	    echo "rm -f ${CLEANFILES}"; \
+	    rm -f ${CLEANFILES}; \
+	fi
 
 cleandir:	clean cleandir-subdir clean-depend
 	rm -fR .libs
@@ -167,17 +171,18 @@ install:	install-subdir lib${LIB}.a lib${LIB}.la
 	            ${INSTALL_LIB} lib${LIB}.la ${INST_LIBDIR}; \
 	    fi; \
 	fi
-	@if [ "${SHARE}" != "" ]; then \
-	    if [ ! -d "${SHAREDIR}" ]; then \
-	        echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
-	        ${INSTALL_DATA_DIR} ${SHAREDIR}; \
-	    fi; \
-	    for F in ${SHARE}; do \
-	        echo "${INSTALL_DATA} $$F ${SHAREDIR}"; \
-	        ${INSTALL_DATA} $$F ${SHAREDIR}; \
-	    done; \
-	fi
-	
+        @export _share="${SHARE}"; \
+        if [ "$$_share" != "" ]; then \
+            if [ ! -d "${SHAREDIR}" ]; then \
+                echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
+                ${INSTALL_DATA_DIR} ${SHAREDIR}; \
+            fi; \
+            for F in $$_share; do \
+                echo "${INSTALL_DATA} $$F ${SHAREDIR}"; \
+                ${INSTALL_DATA} $$F ${SHAREDIR}; \
+            done; \
+        fi
+
 deinstall:	deinstall-subdir
 	@if [ "${LIB}" != "" -a "${LIB_INSTALL}" != "No" ]; then \
 	    echo "${DEINSTALL_LIB} ${PREFIX}/lib/lib${LIB}.a"; \

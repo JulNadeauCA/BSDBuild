@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.24 2002/11/28 03:58:54 vedge Exp $
+# $Csoft: manuconf.pl,v 1.25 2002/12/24 08:59:38 vedge Exp $
 #
 # Copyright (c) 2001, 2002 CubeSoft Communications, Inc. <http://www.csoft.org>
 # All rights reserved.
@@ -197,6 +197,10 @@ if [ "${srcdir}" != "" ]; then
 		echo "Invalid source directory: ${srcdir}"
 		exit 1
 	fi
+	if [ -e "${srcdir}/config" ]; then
+		echo "Source directory is already configured: ${srcdir}"
+		exit 1
+	fi
 	SRC=${srcdir}
 
 	perl ${SRC}/mk/mkconcurrent.pl ${SRC}
@@ -208,8 +212,13 @@ else
 	SRC=`pwd`
 fi
 
-echo > config.log
+MACHINE=`uname -m 2>/dev/null` || MACHINE=unknown
+RELEASE=`uname -r 2>/dev/null` || RELEASE=unknown
+SYSTEM=`uname -s 2>/dev/null` || SYSTEM=unknown
+HOST="$SYSTEM-$RELEASE-$MACHINE"
 
+echo "Host: $HOST" > config.log
+echo "configuring for $HOST"
 EOF
 	while (<STDIN>) {
 		chop;

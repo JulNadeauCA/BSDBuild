@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.39 2004/03/10 13:44:51 vedge Exp $
+# $Csoft: manuconf.pl,v 1.40 2004/03/22 01:23:04 vedge Exp $
 #
 # Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -63,7 +63,7 @@ sub Help
     my $localedir_opt = pack('A' x 30, split('', '--localedir'));
     my $srcdir_opt = pack('A' x 30, split('', '--srcdir'));
     my $help_opt = pack('A' x 30, split('', '--help'));
-    my $nls_opt = pack('A' x 30, split('', '--enable-nls'));
+    my $nls_opt = pack('A' x 30, split('', '--disable-nls'));
     my $gettext_opt = pack('A' x 30, split('', '--with-gettext'));
     my $manpages_opt = pack('A' x 30, split('', '--with-manpages'));
     my $docs_opt = pack('A' x 30, split('', '--with-docs'));
@@ -76,7 +76,7 @@ sub Help
         "echo \"    $localedir_opt Locale prefix [\$PREFIX/share/locale]\"",
         "echo \"    $srcdir_opt Source tree for concurrent build [.]\"",
         "echo \"    $help_opt Display this message\"",
-        "echo \"    $nls_opt Native Language Support [yes]\"",
+        "echo \"    $nls_opt Native Language Support [no]\"",
         "echo \"    $gettext_opt Use gettext tools (msgmerge, ...) [check]\"",
         "echo \"    $manpages_opt Manual pages (-mdoc) [yes]\"",
         "echo \"    $docs_opt Printable docs (-me/tbl/eqn/pic/refer) [no]\"",
@@ -311,7 +311,7 @@ if [ "${enable_debug}" = "yes" ]; then
 else
 	echo "#undef DEBUG" > config/debug.h
 fi
-if [ "${enable_nls}" != "no" ]; then
+if [ "${enable_nls}" = "yes" ]; then
 	ENABLE_NLS="yes"
 	echo "#ifndef ENABLE_NLS" > config/enable_nls.h
 	echo "#define ENABLE_NLS 1" >> config/enable_nls.h

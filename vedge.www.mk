@@ -9,7 +9,7 @@ INSTALL?=   install
 HTMLMODE?=  644
 BASEDIR?=   %TOP%/base
 TEMPLATE?=  fancy sober
-DEFTMPL=    sober
+DEFTMPL?=   sober
 
 .SUFFIXES:  .html .htm .jpg .jpeg .png .gif .m4
 
@@ -30,7 +30,7 @@ clean: clean-subdir
 distclean:
 	rm -f `find %TOP% -name \.vedge\.\*\.mk`
 tree:
-	sh %TOP%/mk/maptree.sh $(TYPE)
+	(cd %TOP% && sh ./mk/maptree.sh $(TYPE))
 
 install: install-subdir
 	@if [ "$(HTML)" != "" ]; then \

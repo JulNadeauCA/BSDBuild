@@ -1,4 +1,4 @@
-# $Csoft: csoft.lib.mk,v 1.32 2003/11/28 01:48:29 vedge Exp $
+# $Csoft: csoft.lib.mk,v 1.33 2003/12/07 05:41:08 vedge Exp $
 
 # Copyright (c) 2001, 2002, 2003 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -49,6 +49,8 @@ CFLAGS+=    ${COPTS}
 SHARE?=
 LFLAGS?=
 YFLAGS?=
+INCL?=
+INCLDIR?=.
 
 all: all-subdir lib${LIB}.a lib${LIB}.la
 install: install-lib install-subdir
@@ -231,6 +233,16 @@ cleandir-lib:
 	rm -fR .libs
 
 install-lib:
+	@if [ "${INCL}" != "" ]; then \
+	    if [ ! -d ${PREFIX}/include/${INCLDIR} ]; then \
+	    	echo "mkdir ${PREFIX}/include/${INCLDIR}"; \
+	    	mkdir ${PREFIX}/include/${INCLDIR}; \
+	    fi; \
+	    for F in ${INCL}; do \
+	        echo "${INSTALL_DATA} $$F ${PREFIX}/include/${INCLDIR}"; \
+	        ${SUDO} ${INSTALL_DATA} $$F ${PREFIX}/include/${INCLDIR}; \
+	    done; \
+	fi
 	@if [ "${LIB}" != "" -a "${LIB_INSTALL}" != "No" ]; then \
 	    echo "${INSTALL_LIB} lib${LIB}.a ${INST_LIBDIR}"; \
 	    ${SUDO} ${INSTALL_LIB} lib${LIB}.a ${INST_LIBDIR}; \

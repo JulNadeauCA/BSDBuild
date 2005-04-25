@@ -1,4 +1,4 @@
-# $Csoft: Makefile,v 1.25 2004/10/24 12:16:31 vedge Exp $
+# $Csoft: Makefile,v 1.26 2005/01/28 11:51:20 vedge Exp $
 
 TOP=..
 
@@ -37,7 +37,8 @@ SHARE=	Core.pm \
 	getuid.pm \
 	agar.pm \
 	csoft-cgi.pm \
-	libqnet.pm
+	libqnet.pm \
+	md5.pm
 
 all:
 

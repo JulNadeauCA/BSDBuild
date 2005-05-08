@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/csoft-mk
 #
-# $Csoft: manuconf.pl,v 1.42 2005/01/06 03:23:42 vedge Exp $
+# $Csoft: manuconf.pl,v 1.43 2005/02/07 13:23:57 vedge Exp $
 #
 # Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
@@ -257,23 +257,6 @@ else
 #	fi
 	SRC=`pwd`
 fi
-
-MACHINE=`uname -m 2>/dev/null` || MACHINE=unknown
-RELEASE=`uname -r 2>/dev/null` || RELEASE=unknown
-SYSTEM=`uname -s 2>/dev/null` || SYSTEM=unknown
-HOST="$SYSTEM-$RELEASE-$MACHINE"
-echo "Host: $HOST"
-
-echo > Makefile.config
-echo "Host: $HOST" > config.log
-mkdir config 1>/dev/null 2>&1
-
-if [ "${with_manpages}" = "no" ]; then
-    echo "NOMAN=yes" >> Makefile.config
-fi
-if [ "${with_docs}" = "no" ]; then
-    echo "NODOC=yes" >> Makefile.config
-fi
 EOF
 
 	my $registers = 1;
@@ -304,6 +287,25 @@ EOF
 						Help();
 						print << 'EOF';
 fi
+
+MACHINE=`uname -m 2>/dev/null` || MACHINE=unknown
+RELEASE=`uname -r 2>/dev/null` || RELEASE=unknown
+SYSTEM=`uname -s 2>/dev/null` || SYSTEM=unknown
+HOST="$SYSTEM-$RELEASE-$MACHINE"
+echo "Host: $HOST"
+
+echo > Makefile.config
+echo "Machine: $MACHINE" > config.log
+echo "Release: $RELEASE" >> config.log
+echo "System: $SYSTEM" >> config.log
+mkdir config 1>/dev/null 2>&1
+
+if [ "${with_manpages}" = "no" ]; then
+    echo "NOMAN=yes" >> Makefile.config
+fi
+if [ "${with_docs}" = "no" ]; then
+    echo "NODOC=yes" >> Makefile.config
+fi
 if [ "${enable_debug}" = "yes" ]; then
 	echo "LDFLAGS=-g" >> Makefile.config
 	echo "#ifndef DEBUG" > config/debug.h
@@ -312,6 +314,7 @@ if [ "${enable_debug}" = "yes" ]; then
 else
 	echo "#undef DEBUG" > config/debug.h
 fi
+
 if [ "${enable_nls}" = "yes" ]; then
 	ENABLE_NLS="yes"
 	echo "#ifndef ENABLE_NLS" > config/enable_nls.h

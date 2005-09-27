@@ -1,4 +1,4 @@
-# $Csoft: agar.pm,v 1.5 2004/04/26 03:45:58 vedge Exp $
+# $Csoft: agar.pm,v 1.6 2004/08/30 04:54:06 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2004 CubeSoft Communications, Inc.
@@ -54,10 +54,10 @@ sub Test
 int
 main(int argc, char *argv[])
 {
-	engine_preinit("conftest");
-	engine_init();
-	event_loop();
-	engine_destroy();
+	AG_InitCore("conf-test");
+	AG_InitVideo(320, 240, 32, 0);
+	AG_EventLoop();
+	AG_Quit();
 	return (0);
 }
 EOF

@@ -295,23 +295,24 @@ sub Scan
 		if ($ent eq '.' || $ent eq '..' || $ent eq 'CVS') {
 			next ENTRY;
 		}
-
+		my $dent = join('/',$dir,$ent);
 		my $ndir = $dir;
 		$ndir =~ s/^\.\///;
+		my $ndent = join('/', $BUILD,$ndir,$ent);
 
-		if (-d "$dir/$ent" && ! -e "$dir/$ent/$COOKIE") {
-			mkdir("$BUILD/$ndir/$ent", 0755);
-			Scan("$dir/$ent");
+		if ((! -l $dent) && (-d $dent && ! -e "$dent/$COOKIE")) {
+			mkdir($ndent, 0755);
+			Scan($dent);
 		} else {
 			if ($ent eq 'Makefile') {
 				ConvertMakefile($dir, $ndir, $ent);
 			} else {
 				foreach my $pat (@MKFILES) {
 					if ($ent =~ $pat) {
-						open(OLDMK, "$dir/$ent") ||
-						    die "$dir/$ent: $!";
-						open(NEWMK, ">$BUILD/$ndir/$ent") ||
-						    die "$BUILD/$ndir/$ent: $!";
+						open(OLDMK, $dent) ||
+						    die "$dent: $!";
+						open(NEWMK, ">$ndent") ||
+						    die "$ndent: $!";
 						print NEWMK <OLDMK>;
 						close(NEWMK);
 						close(OLDMK);

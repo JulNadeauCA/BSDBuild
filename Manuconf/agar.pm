@@ -49,7 +49,7 @@ sub Test
 	print NEcho('checking whether Agar works...');
 	TryLibCompile 'HAVE_AGAR',
 	    '${AGAR_CFLAGS}', '${AGAR_LIBS}', << 'EOF';
-#include <engine/engine.h>
+#include <agar/core/core.h>
 
 int
 main(int argc, char *argv[])

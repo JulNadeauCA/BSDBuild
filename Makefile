@@ -18,11 +18,11 @@ LTFILES=config.guess config.sub configure configure.in ltconfig ltmain.sh
 
 SUBDIR=	Manuconf
 
-all:	manuconf mkify all-subdir
+all:	manuconf.out mkify all-subdir
 
-manuconf: manuconf.pl
+manuconf.out: manuconf.pl
 	sed -e s,%PREFIX%,${PREFIX}, -e s,%VERSION%,${VERSION}, \
-	    manuconf.pl > manuconf
+	    manuconf.pl > manuconf.out
 
 mkify: mkify.pl
 	sed s,%PREFIX%,${PREFIX}, mkify.pl > mkify
@@ -44,14 +44,14 @@ install: install-subdir
 	    echo "${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool"; \
 	    ${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool; \
 	done
-	${INSTALL_PROG} manuconf ${BINDIR}
 	${INSTALL_PROG} mkify ${BINDIR}
+	cp -f manuconf.out ${BINDIR}/manuconf
 
 cleandir:
 	rm -f Makefile.config config.log *~
 
 clean:
-	rm -f manuconf mkify
+	rm -f manuconf.out mkify
 
 configure: configure.in
 	cat configure.in | ./manuconf.pl > configure

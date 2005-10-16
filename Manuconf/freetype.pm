@@ -48,7 +48,7 @@ sub Test
 	    MKSave('FREETYPE_CFLAGS') .
 	    MKSave('FREETYPE_LIBS') .
 		Echo('yes') ,
-	    Fail('Cannot find FreeType. Is freetype-config in your $PATH?'));
+		Echo('no'));
 
 	# Try a test FreeType program.
 	print NEcho('checking whether FreeType works...');
@@ -76,7 +76,7 @@ EOF
 		HDefineStr('FREETYPE_CFLAGS') ,
 		HUndef('FREETYPE_LIBS') .
 		HUndef('FREETYPE_CFLAGS') .
-	    Fail('The FreeType test would not compile.'));
+	    Nothing());
 
 	return (0);
 }

@@ -25,17 +25,51 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+my @include_dirs = (
+	'/usr/include/X11',
+	'/usr/include/X11R6',
+	'/usr/local/X11/include',
+	'/usr/local/X11R6/include',
+	'/usr/local/include/X11',
+	'/usr/local/include/X11R6',
+	'/usr/X11/include',
+	'/usr/X11R6/include',
+);
+
+my @lib_dirs = (
+	'/usr/local/X11/lib',
+	'/usr/local/X11R6/lib',
+	'/usr/X11/lib',
+	'/usr/X11R6/lib',
+);
+
 sub Test
 {
 	my ($ver) = @_;
+	
+	print Define('GL_CFLAGS', '');
+	print Define('GL_LIBS', '');
+	
+	foreach my $dir (@include_dirs) {
+	    print
+			Cond("-d $dir/GL",
+		    Define('GL_CFLAGS', "\"-I$dir\""),
+			Nothing());
+	}
+	foreach my $dir (@lib_dirs) {
+	    print
+			Cond("-d $dir",
+		    Define('GL_LIBS', "\"-L$dir\""),
+			Nothing());
+	}
 
 	print << 'EOF';
 if [ "$SYSTEM" = "Darwin" ]; then
 	OPENGL_CFLAGS=""
 	OPENGL_LIBS="-framework OpenGL"
 else
-	OPENGL_CFLAGS="${X11_CFLAGS}"
-	OPENGL_LIBS="${X11_LIBS} -lGL"
+	OPENGL_CFLAGS="${GL_CFLAGS}"
+	OPENGL_LIBS="${GL_LIBS} -lGL"
 fi
 EOF
 	TryLibCompile 'HAVE_OPENGL',
@@ -71,7 +105,7 @@ EOF
 BEGIN
 {
 	$TESTS{'opengl'} = \&Test;
-	$DESCR{'opengl'} = 'OpenGL (http://www.sgi.com/software/opengl)';
+	$DESCR{'opengl'} = 'OpenGL (http://www.opengl.org)';
 }
 
 ;1

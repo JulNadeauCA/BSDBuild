@@ -155,6 +155,30 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
+	
+	print NEcho('checking for cygwin environment...');
+	TryCompileFlags 'HAVE_CYGWIN', '-mcygwin', << 'EOF';
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <windows.h>
+
+int
+main(int argc, char *argv[]) {
+	struct stat sb;
+	DWORD rv;
+	rv = GetFileAttributes("foo");
+	stat("foo", &sb);
+	return (0);
+}
+EOF
+
+	# Disable cygwin.
+	print << 'EOF';
+if [ "${compile}" = "ok" ]; then
+	CFLAGS="$CFLAGS -mno-cygwin"
+	echo "CFLAGS=$CFLAGS" >> Makefile.config
+fi
+EOF
 }
 
 BEGIN

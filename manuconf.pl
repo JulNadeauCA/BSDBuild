@@ -251,10 +251,6 @@ if [ "${srcdir}" != "" ]; then
 		exit 1;
 	fi
 else
-#	if [ ! -e "configure.in" ]; then
-#		echo "Missing --srcdir argument"
-#		exit 1
-#	fi
 	SRC=`pwd`
 fi
 EOF

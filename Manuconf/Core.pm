@@ -175,7 +175,7 @@ EOT
 EOF
 		print << 'EOF';
 compile="ok"
-$CC -o conftest conftest.c 2>>config.log
+$CC $CFLAGS -o conftest conftest.c 2>>config.log
 if [ $? != 0 ]; then
 	echo "-> failed: non-zero exit status" >> config.log
 	compile="failed"
@@ -212,7 +212,7 @@ EOT
 EOF
 		print << "EOF";
 compile="ok"
-\$CC $flags -o conftest conftest.c 2>>config.log
+\$CC \$CFLAGS $flags -o conftest conftest.c 2>>config.log
 if [ \$? != 0 ]; then
 	echo "-> failed: non-zero exit status" >> config.log
 	compile="failed"
@@ -250,7 +250,7 @@ EOT
 EOF
 		print << "EOF";
 compile=\"ok\"
-\$CC $cflags -o conftest conftest.c $libs 2>>config.log
+\$CC \$CFLAGS $cflags -o conftest conftest.c $libs 2>>config.log
 EOF
 
 		print << 'EOF';

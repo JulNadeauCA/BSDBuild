@@ -53,6 +53,7 @@ cleandir:
 
 clean:
 	rm -f manuconf mkify
+	rm -fr .tmp
 
 configure: configure.in
 	cat configure.in | ./manuconf.pl > configure

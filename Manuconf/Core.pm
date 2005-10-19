@@ -133,7 +133,19 @@ sub HDefine
 	return << "EOF"
 echo "#ifndef $var" > $include
 echo "#define $var" \$$var >> $include
-echo "#endif /* $var */" >> $include
+echo "#endif" >> $include
+EOF
+}
+
+sub HDefineBool
+{
+    my $var = shift;
+	my $include = 'config/'.lc($var).'.h';
+
+	return << "EOF"
+echo "#ifndef $var" > $include
+echo "#define $var 1" >> $include
+echo "#endif" >> $include
 EOF
 }
 
@@ -154,7 +166,7 @@ sub HDefineStr
 	return << "EOF"
 echo "#ifndef $var" > $include
 echo "#define $var \\\"\$$var\\\"" >> $include
-echo "#endif /* $var */" >> $include
+echo "#endif" >> $include
 EOF
 }
 
@@ -286,7 +298,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(%TESTS %DESCR ReadOut Which Cond Define Echo Necho Fail MKSave HDefine HDefineStr HUndef Nothing TryCompile TryLibCompile TryCompileFlags Log);
+    @EXPORT = qw(%TESTS %DESCR ReadOut Which Cond Define Echo Necho Fail MKSave HDefine HDefineStr HDefineBool HUndef Nothing TryCompile TryLibCompile TryCompileFlags Log);
 }
 
 ;1

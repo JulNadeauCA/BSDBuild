@@ -83,8 +83,8 @@ main(int argc, char *argv[])
 EOF
 	print
 		Cond('"${HAVE_PTHREAD_MUTEX_RECURSIVE}" = "yes"',
-		HDefine('HAVE_PTHREAD_MUTEX_RECURSIVE') .
-		HDefine('HAVE_PTHREAD_MUTEX_RECURSIVE') ,
+		HDefineBool('HAVE_PTHREAD_MUTEX_RECURSIVE') .
+		HDefineBool('HAVE_PTHREAD_MUTEX_RECURSIVE') ,
 		HUndef('HAVE_PTHREAD_MUTEX_RECURSIVE') .
 		HUndef('HAVE_PTHREAD_MUTEX_RECURSIVE'));
 	
@@ -107,8 +107,8 @@ main(int argc, char *argv[])
 EOF
 	print
 		Cond('"${HAVE_PTHREAD_MUTEX_RECURSIVE_NP}" = "yes"',
-		HDefine('HAVE_PTHREAD_MUTEX_RECURSIVE_NP') .
-		HDefine('HAVE_PTHREAD_MUTEX_RECURSIVE_NP') ,
+		HDefineBool('HAVE_PTHREAD_MUTEX_RECURSIVE_NP') .
+		HDefineBool('HAVE_PTHREAD_MUTEX_RECURSIVE_NP') ,
 		HUndef('HAVE_PTHREAD_MUTEX_RECURSIVE_NP') .
 		HUndef('HAVE_PTHREAD_MUTEX_RECURSIVE_NP'));
 	return (0);
@@ -117,7 +117,7 @@ EOF
 sub TestPthreadsXOpenExt
 {
 	print NEcho 'checking for the X/Open Threads Extension...';
-	TryLibCompile 'HAVE_PTHREAD_XOPEN500',
+	TryLibCompile 'HAVE_PTHREADS_XOPEN',
 	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', << 'EOF';
 #define _XOPEN_SOURCE 500
 #include <pthread.h>
@@ -136,11 +136,11 @@ main(int argc, char *argv[])
 }
 EOF
 	print
-		Cond('"${HAVE_PTHREAD_XOPEN500}" = "yes"',
-		HDefine('HAVE_PTHREAD_XOPEN500') .
-		HDefine('HAVE_PTHREAD_XOPEN500') ,
-		HUndef('HAVE_PTHREAD_XOPEN500') .
-		HUndef('HAVE_PTHREAD_XOPEN500'));
+		Cond('"${HAVE_PTHREADS_XOPEN}" = "yes"',
+		HDefineBool('HAVE_PTHREADS_XOPEN') .
+		HDefineBool('HAVE_PTHREADS_XOPEN') ,
+		HUndef('HAVE_PTHREADS_XOPEN') .
+		HUndef('HAVE_PTHREADS_XOPEN'));
 	return (0);
 }
 
@@ -148,9 +148,7 @@ sub TestPthreads
 {
 	TestPthreadsStd();
 	TestPthreadsXOpenExt();
-	print 'if [ "${HAVE_PTHREAD_XOPEN500}" != "yes" ]; then',"\n";
 	TestPthreadMutexRecursive();
-	print 'fi',"\n";
 	return (0);
 }
 

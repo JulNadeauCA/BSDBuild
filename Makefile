@@ -46,7 +46,7 @@ install: install-subdir
 	done
 	${INSTALL_PROG} mkify ${BINDIR}
 	cp -f manuconf.out ${BINDIR}/manuconf
-	chmod 700 ${BINDIR}/manuconf
+	chmod 755 ${BINDIR}/manuconf
 
 cleandir:
 	rm -f Makefile.config config.log *~

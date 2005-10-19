@@ -40,7 +40,8 @@ SHARE=	Core.pm \
 	libqnet.pm \
 	md5.pm \
 	sha1.pm \
-	rmd160.pm
+	rmd160.pm \
+	pthreads.pm
 
 all:
 
@@ -54,8 +55,20 @@ install:
 	    ${INSTALL_DATA} $$F ${SHAREDIR}/Manuconf; \
 	done
 
+install-links:
+	@if [ ! -d "${SHAREDIR}/Manuconf" ]; then \
+	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/Manuconf"; \
+	    ${INSTALL_DATA_DIR} ${SHAREDIR}/Manuconf; \
+	fi; \
+	for F in ${SHARE}; do \
+	    echo "ln -sf `pwd`/$$F ${SHAREDIR}/Manuconf/$$F"; \
+	    ln -sf `pwd`/$$F ${SHAREDIR}/Manuconf/$$F; \
+	done
+
 cleandir:
 	rm -f *~
+
+.PHONY: install install-links cleandir
 
 include ${TOP}/csoft.common.mk
 include ${TOP}/csoft.subdir.mk

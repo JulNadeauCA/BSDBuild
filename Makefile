@@ -48,6 +48,43 @@ install: install-subdir
 	cp -f manuconf.out ${BINDIR}/manuconf
 	chmod 755 ${BINDIR}/manuconf
 
+install-links-subdir:
+	@(if [ "${SUBDIR}" = "" ]; then \
+	    SUBDIR="NONE"; \
+	else \
+	    SUBDIR="${SUBDIR}"; \
+	fi; \
+	if [ "$$SUBDIR" != "" -a "$$SUBDIR" != "NONE" ]; then \
+		for F in $$SUBDIR; do \
+		    echo "==> ${REL}$$F"; \
+		    (cd $$F && ${MAKE} REL=${REL}$$F/ install-links); \
+		    if [ $$? != 0 ]; then \
+		    	exit 1; \
+		    fi; \
+		done; \
+	fi)
+
+install-links: install-links-subdir
+	@if [ ! -d "${SHAREDIR}" ]; then \
+	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
+	    ${INSTALL_DATA_DIR} ${SHAREDIR}; \
+	fi
+	@if [ ! -d "${SHAREDIR}/libtool" ]; then \
+	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/libtool"; \
+	    ${INSTALL_DATA_DIR} ${SHAREDIR}/libtool; \
+	fi
+	@for F in ${SHARE}; do \
+	    echo "ln -sf `pwd`/$$F ${SHAREDIR}/$$F"; \
+	    ln -sf `pwd`/$$F ${SHAREDIR}/$$F; \
+	done
+	@for F in ${LTFILES}; do \
+	    echo "${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool"; \
+	    ${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool; \
+	done
+	${INSTALL_PROG} mkify ${BINDIR}
+	cp -f manuconf.out ${BINDIR}/manuconf
+	chmod 755 ${BINDIR}/manuconf
+
 cleandir:
 	rm -f Makefile.config config.log *~
 
@@ -74,7 +111,7 @@ release: cleandir
 	 scp ${DISTFILE} ${DISTFILE}.md5 ${DISTFILE}.asc \
 	 vedge@resin:www/stable.csoft.org/${PROJECT})
 
-.PHONY: install cleandir clean depend release
+.PHONY: install install-links install-links-subdir cleandir clean depend release
 
 include ${TOP}/csoft.common.mk
 include ${TOP}/csoft.subdir.mk

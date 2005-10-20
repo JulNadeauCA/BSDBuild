@@ -29,46 +29,39 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	print ReadOut('qnet-config', '--version', 'libqnet_version');
-	print ReadOut('qnet-config', '--cflags', 'LIBQNET_CFLAGS');
-	print ReadOut('qnet-config', '--libs', 'LIBQNET_LIBS');
-	
-	print
-	    Cond('"${libqnet_version}" != ""',
-	    Echo("yes") . 
-        MKSave('LIBQNET_CFLAGS') .
-        MKSave('LIBQNET_LIBS') .
-    	HDefine('HAVE_LIBQNET') .
-		HDefineStr('LIBQNET_CFLAGS') .
-		HDefineStr('LIBQNET_LIBS') ,
-	    Echo("no") .
-	    HUndef('HAVE_LIBQNET') .
-	    HUndef('LIBQNET_CFLAGS') .
-	    HUndef('LIBQNET_LIBS'));
-
-	print NEcho('checking whether libqnet works...');
-	TryLibCompile 'HAVE_LIBQNET',
-	    '${LIBQNET_CFLAGS}', '${LIBQNET_LIBS}', << 'EOF';
+	MkExecOutput('qnet-config', '--version', 'libqnet_version');
+	MkIf(q/"${libqnet_version}" != ""/);
+		MkPrint('yes');
+		MkExecOutput('qnet-config', '--cflags', 'LIBQNET_CFLAGS');
+		MkExecOutput('qnet-config', '--libs', 'LIBQNET_LIBS');
+		MkPrint('checking whether libqnet works...');
+		MkCompileC('HAVE_LIBQNET', '${LIBQNET_CFLAGS}', '${LIBQNET_LIBS}',
+			       << 'EOF');
 #include <sys/param.h>
-
 #include <qnet/qnet.h>
 #include <qnet/server.h>
-
-int
-main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 	server_regcmd("foo", NULL, NULL);
 	server_listen("foo", "1.0", NULL, NULL);
 	return (0);
 }
 EOF
+		MkIf('${HAVE_LIBQNET} = "yes"');
+			MkSaveMK('LIBQNET_CFLAGS', 'LIBQNET_LIBS');
+			MkSaveDefine('LIBQNET_CFLAGS', 'LIBQNET_LIBS');
+		MkElse;
+			MkSaveUndef('LIBQNET_CFLAGS', 'LIBQNET_LIBS');
+		MkEndif;
+	MkElse;
+		MkPrint('no');
+	MkEndif;
 	return (0);
 }
 
 BEGIN
 {
 	$TESTS{'libqnet'} = \&Test;
-	$DESCR{'libqnet'} = 'Libqnet (http://libqnet.csoft.org/)';
+	$DESCR{'libqnet'} = 'libqnet (http://libqnet.csoft.org/)';
 }
 
 ;1

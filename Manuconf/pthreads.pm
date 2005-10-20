@@ -25,13 +25,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub TestPthreadsStd
-{
-	print Define('PTHREADS_CFLAGS', '');
-	print Define('PTHREADS_LIBS', '-pthread');
-	
-	TryLibCompile 'HAVE_PTHREADS',
-	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', << 'EOF';
+my $pthreads_test = << 'EOF';
 #include <pthread.h>
 #include <signal.h>
 
@@ -51,22 +45,33 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	print
-		Cond('"${HAVE_PTHREADS}" = "yes"',
-		MKSave('PTHREADS_CFLAGS') .
-		MKSave('PTHREADS_LIBS') .
-		HDefineStr('PTHREADS_CFLAGS') .
-		HDefineStr('PTHREADS_LIBS') ,
-		HUndef('PTHREADS_CFLAGS') .
-		HUndef('PTHREADS_LIBS'));
+
+sub TestPthreadsStd
+{
+	MkDefine('PTHREADS_CFLAGS', '');
+	MkDefine('PTHREADS_LIBS', '-pthread');
+	MkCompileC('HAVE_PTHREADS', '', '${PTHREADS_LIBS}', $pthreads_test);
+	MkIf('${HAVE_PTHREADS} = "yes"');
+		MkSaveMK('PTHREADS_CFLAGS', 'PTHREADS_LIBS');
+		MkSaveDefine('PTHREADS_CFLAGS', 'PTHREADS_LIBS');
+	MkElse();
+		MkDefine('PTHREADS_LIBS', '-lpthread');
+		MkCompileC('HAVE_PTHREADS', '', '${PTHREADS_LIBS}', $pthreads_test);
+		MkIf('${HAVE_PTHREADS} = "yes"');
+			MkSaveMK('PTHREADS_CFLAGS','PTHREADS_LIBS');
+			MkSaveDefine('PTHREADS_CFLAGS','PTHREADS_LIBS');
+		MkElse();
+			MkSaveUndef('PTHREADS_CFLAGS','PTHREADS_LIBS');
+		MkEndif();
+	MkEndif();
 	return (0);
 }
 
 sub TestPthreadMutexRecursive
 {
 	print NEcho 'checking for PTHREAD_MUTEX_RECURSIVE...';
-	TryLibCompile 'HAVE_PTHREAD_MUTEX_RECURSIVE',
-	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', << 'EOF';
+	MkCompileC('HAVE_PTHREAD_MUTEX_RECURSIVE',
+	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', << 'EOF');
 #include <pthread.h>
 #include <signal.h>
 
@@ -89,8 +94,8 @@ EOF
 		HUndef('HAVE_PTHREAD_MUTEX_RECURSIVE'));
 	
 	print NEcho 'checking for PTHREAD_MUTEX_RECURSIVE_NP...';
-	TryLibCompile 'HAVE_PTHREAD_MUTEX_RECURSIVE_NP',
-	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', << 'EOF';
+	MkCompileC('HAVE_PTHREAD_MUTEX_RECURSIVE_NP',
+	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', << 'EOF');
 #include <pthread.h>
 #include <signal.h>
 
@@ -117,8 +122,8 @@ EOF
 sub TestPthreadsXOpenExt
 {
 	print NEcho 'checking for the X/Open Threads Extension...';
-	TryLibCompile 'HAVE_PTHREADS_XOPEN',
-	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', << 'EOF';
+	MkCompileC('HAVE_PTHREADS_XOPEN',
+	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', << 'EOF');
 #define _XOPEN_SOURCE 500
 #include <pthread.h>
 #include <signal.h>

@@ -46,58 +46,44 @@ my @lib_dirs = (
 sub Test
 {
 	my ($ver) = @_;
-	
-	print Define('GL_CFLAGS', '');
-	print Define('GL_LIBS', '');
-	
+
+	MkDefine('GL_CFLAGS', '');
+	MkDefine('GL_LIBS', '');
+
 	foreach my $dir (@include_dirs) {
-	    print
-			Cond("-d $dir/GL",
-		    Define('GL_CFLAGS', "\"-I$dir\""),
-			Nothing());
+		MkIf qq{-d "$dir/GL"}; MkDefine('GL_CFLAGS', "-I$dir"); MkEndif;
 	}
 	foreach my $dir (@lib_dirs) {
-	    print
-			Cond("-d $dir",
-		    Define('GL_LIBS', "\"-L$dir\""),
-			Nothing());
+		MkIf qq{-d "$dir"}; MkDefine('GL_LIBS', "-L$dir"); MkEndif;
 	}
 
-	print << 'EOF';
-if [ "$SYSTEM" = "Darwin" ]; then
-	OPENGL_CFLAGS=""
-	OPENGL_LIBS="-framework OpenGL"
-else
-	OPENGL_CFLAGS="${GL_CFLAGS}"
-	OPENGL_LIBS="${GL_LIBS} -lGL"
-fi
-EOF
+	MkIf q{"$SYSTEM" = "Darwin"};
+		MkDefine('OPENGL_CFLAGS', '');
+		MkDefine('OPENGL_LIBS', '-framework OpenGL');
+	MkElse;
+		MkDefine('OPENGL_CFLAGS', '${GL_CFLAGS}');
+		MkDefine('OPENGL_LIBS', '${GL_LIBS} -lGL');
+	MkEndif;
+
 	MkCompileC('HAVE_OPENGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', << 'EOF');
 #ifdef __APPLE__
-# include <OpenGL/gl.h>
+#include <OpenGL/gl.h>
 #else
-# include <GL/gl.h>
+#include <GL/gl.h>
 #endif
-
-int
-main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 	GLdouble d;
-
 	glFlush();
 	return (0);
 }
 EOF
 
-	print
-		Cond('"${HAVE_OPENGL}" = "yes"',
-		MKSave('OPENGL_CFLAGS') .
-		MKSave('OPENGL_LIBS') .
-		HDefineStr('OPENGL_CFLAGS') .
-		HDefineStr('OPENGL_LIBS') ,
-		HUndef('OPENGL_CFLAGS') .
-		HUndef('OPENGL_LIBS'));
-
+	MkIf '"${HAVE_OPENGL}" = "yes"';
+		MkSaveMK('OPENGL_CFLAGS', 'OPENGL_LIBS');
+		MkSaveDefine('OPENGL_CFLAGS', 'OPENGL_LIBS');
+	MkElse;
+		MkSaveUndef('OPENGL_CFLAGS', 'OPENGL_LIBS');
+	MkEndif;
 	return (0);
 }
 

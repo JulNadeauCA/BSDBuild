@@ -29,90 +29,55 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	print ReadOut('sdl-config', '--version', 'sdl_version');
-	print ReadOut('sdl-config', '--cflags', 'SDL_CFLAGS');
-	print ReadOut('sdl-config', '--static-libs', 'SDL_LIBS');
+	MkIf('"${SYSTEM}" = "Darwin"');
+		# Use --libs with the OSX port.
+		MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
+		MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
+		MkExecOutput('sdl-config', '--libs', 'SDL_LIBS');
+	MkElif('"${SYSTEM}" = "FreeBSD"');
+		# The FreeBSD packages installs `sdl11-config'.
+		MkExecOutput('sdl11-config', '--version', 'SDL_VERSION');
+		MkIf('"${SDL_VERSION}" != ""');
+			MkExecOutput('sdl11-config', '--cflags', 'SDL_CFLAGS');
+			MkExecOutput('sdl11-config', '--static-libs', 'SDL_LIBS');
+		MkElse;
+			MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
+			MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
+			MkExecOutput('sdl-config', '--static-libs', 'SDL_LIBS');
+		MkEndif;
+	MkElse;
+		MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
+		MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
+		MkExecOutput('sdl-config', '--static-libs', 'SDL_LIBS');
+	MkEndif;
 	
-	# Mac OS X port
-	print ReadOut('sdl-config', '--libs', 'SDL_LIBS_SHORT');
-	print << 'EOF';
-if [ "$SYSTEM" = "Darwin" ]; then
-	SDL_LIBS=$SDL_LIBS_SHORT
-fi
-EOF
-
-	# FreeBSD port
-	print ReadOut('sdl11-config', '--version', 'sdl11_version');
-	print ReadOut('sdl11-config', '--cflags', 'sdl11_cflags');
-	print ReadOut('sdl11-config', '--static-libs', 'sdl11_libs');
-
-	print
-	    Cond('"${sdl_version}" != ""',
-	    Define('sdl_found', 'yes') .
-	    MKSave('SDL_CFLAGS') .
-	    MKSave('SDL_LIBS') ,
-	    Nothing());
-	print
-	    Cond('"${sdl11_version}" != ""',
-	    Define('sdl_found', 'yes') .
-	    Define('SDL_CFLAGS', '$sdl11_cflags') .
-	    Define('SDL_LIBS', '$sdl11_libs') .
-	    MKSave('SDL_CFLAGS') .
-	    MKSave('SDL_LIBS') ,
-	    Nothing());
-	print
-	    Cond('"${sdl_found}" = "yes"',
-	    Echo('ok')
-		,
-	    Fail('Could not find the SDL library. Is sdl-config in $PATH?'));
-	
-	print NEcho('checking whether SDL works...');
-	MkCompileC('HAVE_SDL', '${SDL_CFLAGS}', '${SDL_LIBS}', << 'EOF');
-
+	MkIf('"${SDL_VERSION}" != ""');
+		MkPrint('yes');
+		MkPrintN('checking whether SDL works...');
+		MkCompileC('HAVE_SDL', '${SDL_CFLAGS}', '${SDL_LIBS}', << 'EOF');
 #include <stdio.h>
-
 #include <SDL.h>
-
-int
-main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 	SDL_Surface su;
 	SDL_TimerID tid;
 	SDL_Color color;
 	SDL_Event event;
-	Uint8 u8;
-	Uint16 u16;
 	Uint32 u32;
-	Sint8 s8;
-	Sint16 s16;
-	Sint32 s32;
-
 	if (SDL_Init(SDL_INIT_TIMER|SDL_INIT_NOPARACHUTE) != 0) {
 		return (1);
 	}
 	SDL_Quit();
 	return (0);
 }
-
 EOF
-	print
-	    Cond('"${HAVE_SDL}" = "yes"',
-	    HDefineStr('SDL_LIBS') .
-	    HDefineStr('SDL_CFLAGS'),
-		HUndef('SDL_LIBS') .
-		HUndef('SDL_CFLAGS') .
-	    Fail('The SDL test would not compile.'));
-
-	print << 'EOF';
-echo "#ifndef SDL_LIBS" > config/sdl_libs.h
-echo "#define SDL_LIBS \"${SDL_LIBS}\"" >> config/sdl_libs.h
-echo "#endif /* SDL_LIBS */" >> config/sdl_libs.h
-EOF
-	print << 'EOF';
-echo "#ifndef SDL_CFLAGS" > config/sdl_cflags.h
-echo "#define SDL_CFLAGS \"${SDL_CFLAGS}\"" >> config/sdl_cflags.h
-echo "#endif /* SDL_CFLAGS */" >> config/sdl_cflags.h
-EOF
+		MkIf('"${HAVE_SDL}" != ""');
+			MkSaveMK('SDL_CFLAGS', 'SDL_LIBS');
+			MkSaveDefine('SDL_CFLAGS', 'SDL_LIBS');
+		MkEndif;
+	MkElse;
+		MkPrint('no');
+		MkSaveUndef('HAVE_SDL');
+	MkEndif;
 	return (0);
 }
 

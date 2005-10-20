@@ -79,6 +79,7 @@ EOF
 			MkSaveUndef('JPEG_CFLAGS', 'JPEG_LIBS');
 		MkEndif;
 	MkElse;
+		MkSaveUndef('HAVE_JPEG');
 		MkPrint('no');
 	MkEndif;
 	return (0);

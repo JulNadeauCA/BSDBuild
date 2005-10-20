@@ -53,6 +53,7 @@ EOF
 			MkSaveUndef('LIBQNET_CFLAGS', 'LIBQNET_LIBS');
 		MkEndif;
 	MkElse;
+		MkSaveUndef('HAVE_LIBQNET');
 		MkPrint('no');
 	MkEndif;
 	return (0);

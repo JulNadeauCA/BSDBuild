@@ -31,7 +31,7 @@ sub ReadOut
 {
 	my ($bin, $args, $define) = @_;
 
-	return << "EOF"
+	return << "EOF";
 $define=""
 for path in `echo \$PATH | sed 's/:/ /g'`; do
 	if [ -x "\${path}/$bin" ]; then
@@ -40,6 +40,7 @@ for path in `echo \$PATH | sed 's/:/ /g'`; do
 done
 EOF
 }
+sub MkExecOutput { print ReadOut(@_); }
 
 # Return the absolute path name of a binary into a variable.
 # Set an empty string if the binary is not found.
@@ -47,7 +48,7 @@ sub Which
 {
 	my ($bin, $args, $define) = @_;
 
-	return << "EOF"
+	return << "EOF";
 $define=""
 for path in `echo \$PATH | sed 's/:/ /g'`; do
 	if [ -x "\${path}/$bin" ]; then
@@ -75,12 +76,30 @@ sub Define
 	return "$arg=$val\n";
 }
 
+sub MkDefine
+{
+	my ($arg, $val) = @_;
+
+	print "$arg=\"$val\"\n";
+}
+
 sub Echo
 {
 	my $msg = shift;
 
-	$msg =~ s/["]/\"/g;			# Escape quotes
+	$msg =~ s/["]/\"/g;
 	return << "EOF";
+echo "$msg"
+echo "$msg" >> config.log
+EOF
+}
+
+sub MkPrint
+{
+	my $msg = shift;
+
+	$msg =~ s/["]/\"/g;
+	print << "EOF";
 echo "$msg"
 echo "$msg" >> config.log
 EOF
@@ -92,6 +111,17 @@ sub NEcho
 
 	$msg =~ s/["]/\"/g;			# Escape quotes
 	return << "EOF";
+echo -n "$msg"
+echo -n "$msg" >> config.log
+EOF
+}
+
+sub MkPrintN
+{
+	my $msg = shift;
+
+	$msg =~ s/["]/\"/g;
+	print << "EOF";
 echo -n "$msg"
 echo -n "$msg" >> config.log
 EOF
@@ -125,12 +155,19 @@ sub MKSave
     return ($s);
 }
 
+sub MkSaveMK
+{
+	foreach my $var (@_) {
+		print "echo \"$var=\$$var\" >> Makefile.config\n";
+	}
+}
+
 sub HDefine
 {
     my $var = shift;
 	my $include = 'config/'.lc($var).'.h';
 
-	return << "EOF"
+	return << "EOF";
 echo "#ifndef $var" > $include
 echo "#define $var" \$$var >> $include
 echo "#endif" >> $include
@@ -142,7 +179,7 @@ sub HDefineBool
     my $var = shift;
 	my $include = 'config/'.lc($var).'.h';
 
-	return << "EOF"
+	return << "EOF";
 echo "#ifndef $var" > $include
 echo "#define $var 1" >> $include
 echo "#endif" >> $include
@@ -154,20 +191,42 @@ sub HUndef
     my $var = shift;
 	my $include = 'config/'.lc($var).'.h';
 
-	return << "EOF"
+	return << "EOF";
 echo "#undef $var" > $include
 EOF
+}
+
+sub MkSaveUndef
+{
+	foreach my $var (@_) {
+		my $include = 'config/'.lc($var).'.h';
+		print << "EOF";
+echo "#undef $var" > $include
+EOF
+	}
 }
 
 sub HDefineStr
 {
     my $var = shift;
 	my $include = 'config/'.lc($var).'.h';
-	return << "EOF"
+	return << "EOF";
 echo "#ifndef $var" > $include
 echo "#define $var \\\"\$$var\\\"" >> $include
 echo "#endif" >> $include
 EOF
+}
+
+sub MkSaveDefine
+{
+	foreach my $var (@_) {
+		my $include = 'config/'.lc($var).'.h';
+		print << "EOF";
+echo "#ifndef $var" > $include
+echo "#define $var \\\"\$$var\\\"" >> $include
+echo "#endif" >> $include
+EOF
+	}
 }
 
 sub Nothing
@@ -248,7 +307,11 @@ EOF
 	}
 }
 
-sub TryLibCompile
+sub MkIf { print 'if [ ',shift,' ]; then',"\n"; }
+sub MkElse { print 'else',"\n"; }
+sub MkEndif { print 'fi;',"\n"; }
+
+sub MkCompileC
 {
 	my $def = shift;
 	my $cflags = shift;
@@ -298,7 +361,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(%TESTS %DESCR ReadOut Which Cond Define Echo Necho Fail MKSave HDefine HDefineStr HDefineBool HUndef Nothing TryCompile TryLibCompile TryCompileFlags Log);
+    @EXPORT = qw(%TESTS %DESCR ReadOut MkExecOutput Which Cond Define Echo Necho Fail MKSave HDefine HDefineStr HDefineBool HUndef Nothing TryCompile MkCompileC TryCompileFlags Log MkDefine MkIf MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN);
 }
 
 ;1

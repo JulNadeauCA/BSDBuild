@@ -25,18 +25,29 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+my @dirs = (
+	'/usr/local',
+	'/usr/X11R6',
+	'/usr',
+	'/opt/local',
+	'/opt'
+);
+
 sub Test
 {
 	my ($ver) = @_;
 
-	# XXX
-	print Define('JPEG_CFLAGS', '-I/usr/local/include');
-	print Define('JPEG_LIBS', '"-L/usr/local/lib -ljpeg"');
-	print Echo("ok");
-	
-	print NEcho('checking whether libjpeg works...');
-	TryLibCompile 'HAVE_JPEG',
-	    '${JPEG_CFLAGS}', '${JPEG_LIBS}', << 'EOF';
+	MkDefine('JPEG_CFLAGS', '');
+	foreach my $dir (@dirs) {
+		MkIf("-d \"$dir/include/jpeglib.h\"");
+			MkDefine('JPEG_CFLAGS', "-I$dir/include");
+			MkDefine('JPEG_LIBS', "-L$dir/lib -ljpeg");
+		MkEndif;
+	}
+	MkIf('"${JPEG_CFLAGS}" != ""');
+		MkPrint('ok');
+		MkPrint('checking whether libjpeg works...');
+		MkCompileC('HAVE_JPEG', '${JPEG_CFLAGS}', '${JPEG_LIBS}', << 'EOF');
 #include <stdio.h>
 #include <jpeglib.h>
 
@@ -61,16 +72,15 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-
-	print
-		Cond('"${HAVE_JPEG}" != ""',
-		MKSave('JPEG_CFLAGS') .
-		MKSave('JPEG_LIBS') .
-		HDefineStr('JPEG_CFLAGS') .
-		HDefineStr('JPEG_LIBS') ,
-		HUndef('JPEG_CFLAGS') .
-		HUndef('JPEG_LIBS'));
-
+		MkIf('"${HAVE_JPEG}" != ""');
+			MkSaveMK('JPEG_CFLAGS', 'JPEG_LIBS');
+			MkSaveDefine('JPEG_CFLAGS', 'JPEG_LIBS');
+		MkElse;
+			MkSaveUndef('JPEG_CFLAGS', 'JPEG_LIBS');
+		MkEndif;
+	MkElse;
+		MkPrint('no');
+	MkEndif;
 	return (0);
 }
 

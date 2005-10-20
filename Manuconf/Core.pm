@@ -270,6 +270,37 @@ EOF
 	}
 }
 
+sub MkCompileAndRunC
+{
+	my $define = shift;
+	my $cflags = shift;
+	my $libs = shift;
+	my $code = shift;
+
+	print << "EOF";
+cat << EOT > conftest.c
+$code
+EOT
+EOF
+	print << "EOF";
+\$CC \$CFLAGS $cflags -o conftest conftest.c $libs 2>>config.log
+if [ \$? != 0 ]; then
+	echo "-> compile failed (\$?)" >> config.log
+	compile="failed"
+else
+	compile="ok"
+	./conftest >> config.log
+	if [ \$? != 0 ]; then
+		echo "-> execution failed (\$?)" >> config.log
+		$define="no"
+	else
+		$define="yes"
+	fi
+fi
+rm -f conftest conftest.c
+EOF
+}
+
 sub TryCompileFlags
 {
 	my $def = shift;
@@ -362,7 +393,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(%TESTS %DESCR ReadOut MkExecOutput Which Cond Define Echo Necho Fail MKSave HDefine HDefineStr HDefineBool HUndef Nothing TryCompile MkCompileC TryCompileFlags Log MkDefine MkIf MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN);
+    @EXPORT = qw(%TESTS %DESCR ReadOut MkExecOutput Which Cond Define Echo Necho Fail MKSave HDefine HDefineStr HDefineBool HUndef Nothing TryCompile MkCompileC MkCompileAndRunC TryCompileFlags Log MkDefine MkIf MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN);
 }
 
 ;1

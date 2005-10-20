@@ -47,8 +47,7 @@ sub Test
 	    HUndef('AGAR_LIBS'));
 
 	print NEcho('checking whether Agar works...');
-	TryLibCompile 'HAVE_AGAR',
-	    '${AGAR_CFLAGS}', '${AGAR_LIBS}', << 'EOF';
+	MkCompileC('HAVE_AGAR', '${AGAR_CFLAGS}', '${AGAR_LIBS}', << 'EOF');
 #include <agar/core/core.h>
 
 int

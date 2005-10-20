@@ -48,8 +48,8 @@ sub Test
 		HUndef('CSOFTADM_LIBS'));
 	
 	print NEcho('checking whether csoftadm works...');
-	TryLibCompile 'HAVE_CSOFTADM',
-	    '${CSOFTADM_CFLAGS}', '${CSOFTADM_LIBS}', << 'EOF';
+	MkCompileC('HAVE_CSOFTADM', '${CSOFTADM_CFLAGS}', '${CSOFTADM_LIBS}',
+	           << 'EOF');
 #include <libcsoftadm/csoftadm.h>
 
 int

@@ -33,8 +33,8 @@ sub Test
 	print Echo("ok");
 
 	print NEcho('checking whether gettext works...');
-	TryLibCompile 'HAVE_GETTEXT', '${GETTEXT_CFLAGS}',
-	    '${GETTEXT_LIBS}', << 'EOF';
+	MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}',
+	           << 'EOF');
 #include <libintl.h>
 
 int

@@ -58,9 +58,8 @@ EOF
 	    Fail('Could not find the SDL library. Is sdl-config in $PATH?'));
 	
 	print NEcho('checking whether SDL_image works...');
-	TryLibCompile 'HAVE_SDL_IMAGE',
-	    '${SDL_IMAGE_CFLAGS}', '${SDL_IMAGE_LIBS}', << 'EOF';
-
+	MkCompileC('HAVE_SDL_IMAGE', '${SDL_IMAGE_CFLAGS}', '${SDL_IMAGE_LIBS}',
+	           << 'EOF');
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

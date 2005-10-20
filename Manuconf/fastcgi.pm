@@ -43,8 +43,8 @@ sub Test
 			Nothing());
 	}
 
-	TryLibCompile 'HAVE_FASTCGI', '${FASTCGI_CFLAGS}', '${FASTCGI_LIBS}',
-	    << 'EOF';
+	MkCompileC('HAVE_FASTCGI', '${FASTCGI_CFLAGS}', '${FASTCGI_LIBS}',
+	           << 'EOF');
 #include <fcgi_stdio.h>
 
 int

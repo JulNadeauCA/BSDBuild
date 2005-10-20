@@ -67,8 +67,7 @@ EOF
 	    Fail('Could not find the SDL library. Is sdl-config in $PATH?'));
 	
 	print NEcho('checking whether SDL works...');
-	TryLibCompile 'HAVE_SDL',
-	    '${SDL_CFLAGS}', '${SDL_LIBS}', << 'EOF';
+	MkCompileC('HAVE_SDL', '${SDL_CFLAGS}', '${SDL_LIBS}', << 'EOF');
 
 #include <stdio.h>
 

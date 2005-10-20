@@ -63,7 +63,7 @@ sub Test
 			Nothing());
 	}
 
-	TryLibCompile 'HAVE_X11', '${X11_CFLAGS}', '${X11_LIBS} -lX11', << 'EOF';
+	MkCompileC('HAVE_X11', '${X11_CFLAGS}', '${X11_LIBS} -lX11', << 'EOF');
 #include <X11/Xlib.h>
 
 int

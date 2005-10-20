@@ -52,8 +52,8 @@ sub Test
 
 	# Try a test FreeType program.
 	print NEcho('checking whether FreeType works...');
-	TryLibCompile 'HAVE_FREETYPE',
-	    '${FREETYPE_CFLAGS}', '${FREETYPE_LIBS}', << 'EOF';
+	MkCompileC('HAVE_FREETYPE', '${FREETYPE_CFLAGS}', '${FREETYPE_LIBS}',
+	           << 'EOF');
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_OUTLINE_H

@@ -30,7 +30,7 @@ sub Test
 	my ($ver) = @_;
 
 	print Define('MATH_LIBS', '-lm');
-	TryLibCompile 'HAVE_MATH', '${CFLAGS}', '${MATH_LIBS}', << 'EOF';
+	MkCompileC('HAVE_MATH', '${CFLAGS}', '${MATH_LIBS}', << 'EOF');
 #include <math.h>
 
 int

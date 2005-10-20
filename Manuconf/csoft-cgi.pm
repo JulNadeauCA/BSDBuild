@@ -47,8 +47,7 @@ sub Test
 	    HUndef('CGI_LIBS'));
 
 	print NEcho('checking whether csoft-cgi works...');
-	TryLibCompile 'HAVE_CGI',
-	    '${CGI_CFLAGS}', '${CGI_LIBS}', << 'EOF';
+	MkCompileC('HAVE_CGI', '${CGI_CFLAGS}', '${CGI_LIBS}', << 'EOF');
 #include <libcgi/cgi.h>
 
 int

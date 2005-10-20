@@ -72,8 +72,7 @@ else
 	OPENGL_LIBS="${GL_LIBS} -lGL"
 fi
 EOF
-	TryLibCompile 'HAVE_OPENGL',
-	    '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', << 'EOF';
+	MkCompileC('HAVE_OPENGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', << 'EOF');
 #ifdef __APPLE__
 # include <OpenGL/gl.h>
 #else

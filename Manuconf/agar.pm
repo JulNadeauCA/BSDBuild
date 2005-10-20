@@ -48,11 +48,14 @@ sub Test
 
 	print NEcho('checking whether Agar works...');
 	MkCompileC('HAVE_AGAR', '${AGAR_CFLAGS}', '${AGAR_LIBS}', << 'EOF');
-#include <agar/core/core.h>
+#include <agar/core.h>
 
 int
 main(int argc, char *argv[])
 {
+	AG_Object obj;
+	AG_Event evnt;
+
 	AG_InitCore("conf-test", 0);
 	AG_InitVideo(320, 240, 32, 0);
 	AG_EventLoop();

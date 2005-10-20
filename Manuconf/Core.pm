@@ -308,6 +308,7 @@ EOF
 }
 
 sub MkIf { print 'if [ ',shift,' ]; then',"\n"; }
+sub MkElif { print 'elif [ ',shift,' ]; then',"\n"; }
 sub MkElse { print 'else',"\n"; }
 sub MkEndif { print 'fi;',"\n"; }
 
@@ -361,7 +362,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(%TESTS %DESCR ReadOut MkExecOutput Which Cond Define Echo Necho Fail MKSave HDefine HDefineStr HDefineBool HUndef Nothing TryCompile MkCompileC TryCompileFlags Log MkDefine MkIf MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN);
+    @EXPORT = qw(%TESTS %DESCR ReadOut MkExecOutput Which Cond Define Echo Necho Fail MKSave HDefine HDefineStr HDefineBool HUndef Nothing TryCompile MkCompileC TryCompileFlags Log MkDefine MkIf MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN);
 }
 
 ;1

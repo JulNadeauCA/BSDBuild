@@ -41,7 +41,10 @@ SHARE=	Core.pm \
 	md5.pm \
 	sha1.pm \
 	rmd160.pm \
-	pthreads.pm
+	pthreads.pm \
+	sys_types.pm \
+	bsd_types.pm \
+	free_null.pm
 
 all:
 

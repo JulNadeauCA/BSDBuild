@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-		MkIf('${BSD_SOURCE_NEEDED} != "yes"');
+		MkIf('"${BSD_SOURCE_NEEDED}" != "yes"');
 			MkSaveUndef('BSD_SOURCE_NEEDED');
 			MkSaveDefine('BSD_TYPES_NEEDED');
 		MkElse;

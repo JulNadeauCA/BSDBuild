@@ -28,7 +28,6 @@
 sub Test
 {
 	MkCompileC('HAVE_BSD_TYPES', '', '', << 'EOF');
-#include <sys/types.h>
 #include <stdio.h>
 int main(int argc, char *argv[]) {
 	u_int foo = 0;
@@ -39,12 +38,8 @@ int main(int argc, char *argv[]) {
 EOF
 	MkIf('"${HAVE_BSD_TYPES}" != "yes"');
 		MkPrintN('checking whether _BSD_SOURCE is needed...');
-		MkCompileC('BSD_SOURCE_NEEDED', '', '', << 'EOF');
-#ifndef _BSD_SOURCE
-#define _BSD_SOURCE
-#endif
+		MkCompileC('BSD_SOURCE_NEEDED', '-D_BSD_SOURCE', '', << 'EOF');
 #include <sys/types.h>
-#include <stdio.h>
 int main(int argc, char *argv[]) {
 	u_int foo = 0;
 	u_long bar = 0;
@@ -56,6 +51,8 @@ EOF
 			MkSaveUndef('BSD_SOURCE_NEEDED');
 			MkSaveDefine('BSD_TYPES_NEEDED');
 		MkElse;
+			MkDefine('CFLAGS', '${CFLAGS} -D_BSD_SOURCE');
+			MkSaveMK('CFLAGS');
 			MkSaveUndef('BSD_TYPES_NEEDED');
 		MkEndif;
 	MkElse;

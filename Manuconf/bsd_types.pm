@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
 	u_int foo = 0;
 	u_long bar = 0;
 	u_char baz = 0;
-	return (0);
+	return (foo>0?bar:baz);
 }
 EOF
 		MkIf('"${BSD_SOURCE_NEEDED}" != "yes"');

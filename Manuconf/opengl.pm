@@ -72,8 +72,8 @@ sub Test
 #include <GL/gl.h>
 #endif
 int main(int argc, char *argv[]) {
-	GLdouble d;
 	glFlush();
+	glLoadIdentity();
 	return (0);
 }
 EOF

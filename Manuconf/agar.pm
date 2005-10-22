@@ -53,9 +53,6 @@ sub Test
 int
 main(int argc, char *argv[])
 {
-	AG_Object obj;
-	AG_Event evnt;
-
 	AG_InitCore("conf-test", 0);
 	AG_InitVideo(320, 240, 32, 0);
 	AG_EventLoop();

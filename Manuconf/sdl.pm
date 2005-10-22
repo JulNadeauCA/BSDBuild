@@ -72,6 +72,25 @@ EOF
 			MkSaveMK('SDL_CFLAGS', 'SDL_LIBS');
 			MkSaveDefine('SDL_CFLAGS', 'SDL_LIBS');
 		MkEndif;
+
+		MkPrintN('checking for SDL cpuinfo functions...');
+		MkCompileC('HAVE_SDL_CPUINFO', '${SDL_CFLAGS}', '${SDL_LIBS}',
+		           << 'EOF');
+#include <SDL.h>
+#include <SDL_cpuinfo.h>
+int main(int argc, char *argv[]) {
+	SDL_HasRDTSC();
+	SDL_HasMMX();
+	SDL_HasMMXExt();
+	SDL_Has3DNow();
+	SDL_Has3DNowExt();
+	SDL_HasSSE();
+	SDL_HasSSE2();
+	SDL_HasAltiVec();
+	return (0);
+}
+EOF
+
 	MkElse;
 		MkPrint('no');
 		MkSaveUndef('HAVE_SDL');

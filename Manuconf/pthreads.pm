@@ -51,7 +51,8 @@ sub TestPthreadsStd
 	MkDefine('PTHREADS_LIBS', '-pthread');
 	MkCompileC('HAVE_PTHREADS', '', '${PTHREADS_LIBS}', $pthreads_test);
 	MkIf('"${HAVE_PTHREADS}" = "yes"');
-		MkSaveMK('PTHREADS_CFLAGS', 'PTHREADS_LIBS');
+		MkDefine('CFLAGS', '${CFLAGS} ${PTHREADS_CFLAGS}');
+		MkSaveMK('CFLAGS', 'PTHREADS_CFLAGS', 'PTHREADS_LIBS');
 		MkSaveDefine('PTHREADS_CFLAGS', 'PTHREADS_LIBS');
 	MkElse();
 		#
@@ -60,10 +61,9 @@ sub TestPthreadsStd
 		MkDefine('PTHREADS_LIBS', '-lpthread');
 		MkCompileC('HAVE_PTHREADS', '', '${PTHREADS_LIBS}', $pthreads_test);
 		MkIf('"${HAVE_PTHREADS}" = "yes"');
-			MkSaveMK('PTHREADS_CFLAGS','PTHREADS_LIBS');
+			MkDefine('CFLAGS', '${CFLAGS} ${PTHREADS_CFLAGS}');
+			MkSaveMK('CFLAGS', 'PTHREADS_CFLAGS','PTHREADS_LIBS');
 			MkSaveDefine('PTHREADS_CFLAGS','PTHREADS_LIBS');
-		MkElse();
-			MkSaveUndef('PTHREADS_CFLAGS','PTHREADS_LIBS');
 		MkEndif();
 	MkEndif();
 	return (0);
@@ -141,8 +141,9 @@ EOF
 	MkIf('"${HAVE_PTHREADS_XOPEN}" = "yes"');
 		MkDefine('PTHREADS_CFLAGS', '${PTHREADS_CFLAGS} -U_XOPEN_SOURCE '.
 		                            '-D_XOPEN_SOURCE=500');
-		MkSaveMK('PTHREADS_CFLAGS','PTHREADS_LIBS');
-		MkSaveDefine('HAVE_PTHREADS_XOPEN', 'PTHREADS_CFLAGS', 'PTHREADS_LIBS');
+		MkDefine('CFLAGS', '${CFLAGS} ${PTHREADS_CFLAGS}');
+		MkSaveMK('CFLAGS', 'PTHREADS_CFLAGS');
+		MkSaveDefine('PTHREADS_CFLAGS', 'HAVE_PTHREADS_XOPEN');
 	MkElse;
 		MkSaveUndef('HAVE_PTHREADS_XOPEN');
 	MkEndif;

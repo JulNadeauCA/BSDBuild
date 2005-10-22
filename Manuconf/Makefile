@@ -43,7 +43,6 @@ SHARE=	Core.pm \
 	rmd160.pm \
 	pthreads.pm \
 	sys_types.pm \
-	bsd_types.pm \
 	free_null.pm
 
 all:

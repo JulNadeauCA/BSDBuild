@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
 }
 EOF
 	MkIf('"${HAVE_SYS_TYPES_H}" = "yes"');
+		MkPrintN('checking for BSD types...');
 		MkCompileC('HAVE_BSD_TYPES', '', '', << 'EOF');
 #include <sys/types.h>
 int main(int argc, char *argv[]) {
@@ -69,6 +70,7 @@ EOF
 			MkSaveUndef('BSD_TYPES_NEEDED');
 		MkEndif;
 	MkElse;
+		MkPrintN('checking for BSD types...');
 		MkCompileC('HAVE_BSD_TYPES', '', '', << 'EOF');
 int main(int argc, char *argv[]) {
 	u_int foo = 0;

@@ -121,7 +121,7 @@ sub TestPthreadsXOpenExt
 {
 	print NEcho 'checking for the X/Open Threads Extension...';
 	MkCompileC('HAVE_PTHREADS_XOPEN',
-	    '${PTHREADS_CFLAGS} -D_XOPEN_SOURCE=500', '${PTHREADS_LIBS}', << 'EOF');
+	    '${PTHREADS_CFLAGS} -U_XOPEN_SOURCE -D_XOPEN_SOURCE=500', '${PTHREADS_LIBS}', << 'EOF');
 #include <pthread.h>
 #include <signal.h>
 

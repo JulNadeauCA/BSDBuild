@@ -58,14 +58,12 @@ sub Test
 #include <stdio.h>
 #include <SDL.h>
 int main(int argc, char *argv[]) {
-	SDL_Surface su;
-	SDL_TimerID tid;
-	SDL_Color color;
-	SDL_Event event;
-	Uint32 u32;
+	SDL_Surface *su;
 	if (SDL_Init(SDL_INIT_TIMER|SDL_INIT_NOPARACHUTE) != 0) {
 		return (1);
 	}
+	su = SDL_CreateRGBSurface(0, 16, 16, 32, 0, 0, 0, 0);
+	SDL_FreeSurface(su);
 	SDL_Quit();
 	return (0);
 }

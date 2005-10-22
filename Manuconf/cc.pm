@@ -60,14 +60,22 @@ if [ $? != 0 ]; then
     exit 1
 fi
 echo "yes"
-
 rm -f cc-test cc-test.c
+TEST_CFLAGS=""
 EOF
+	
+	print NEcho('checking for compiler warnings...');
+	MkCompileC('HAVE_CC_WARNINGS', '-Wall -Werror', '', << 'EOF');
+int main(int argc, char *argv[]) { return (0); }
+EOF
+	MkIf('"${HAVE_CC_WARNINGS}" = "yes"');
+		MkDefine('TEST_CFLAGS', '-Wall -Werror');
+	MkEndif;
 
 	# Check for floating point support.
 	# XXX make sure it's in IEEE 754 format.
 	print NEcho('checking for floating point types...');
-	TryCompile 'HAVE_IEEE754', << 'EOF';
+	MkCompileC('HAVE_IEEE754', '', '', << 'EOF');
 int
 main(int argc, char *argv[])
 {
@@ -80,35 +88,14 @@ main(int argc, char *argv[])
 }
 EOF
 	
-	# Check for long double type.
-	print NEcho('checking for long double...');
-	TryCompile 'HAVE_LONG_DOUBLE', << 'EOF';
-int
-main(int argc, char *argv[])
-{
-	long double ld = 0.1;
-
-	ld = 0;
-	return (0);
-}
-EOF
-	
 	# Check for the gcc __bounded__ attribute.
 	print NEcho('checking __bounded__ attribute...');
-	TryCompileFlags 'HAVE_BOUNDED_ATTRIBUTE', '-Wall -Werror', << 'EOF';
-void foo(char *, int)
-	 __attribute__ ((__bounded__(__string__,1,2)));
-
-void
-foo(char *a, int c)
-{
-}
-
-int
-main(int argc, char *argv[])
+	MkCompileC('HAVE_BOUNDED_ATTRIBUTE', '', '', << 'EOF');
+void foo(char *, int) __attribute__ ((__bounded__(__string__,1,2)));
+void foo(char *a, int c) { }
+int main(int argc, char *argv[])
 {
 	char buf[32];
-
 	foo(buf, sizeof(buf));
 	return (0);
 }
@@ -116,20 +103,16 @@ EOF
 	
 	# Check for the gcc __format__ attribute.
 	print NEcho('checking __format__ attribute...');
-	TryCompileFlags 'HAVE_FORMAT_ATTRIBUTE', '-Wall -Werror', << 'EOF';
+	MkCompileC('HAVE_FORMAT_ATTRIBUTE', '', '', << 'EOF');
 #include <stdarg.h>
-
 void foo1(char *, ...)
      __attribute__((__format__ (printf, 1, 2)));
 void foo2(char *, ...)
      __attribute__((__format__ (__printf__, 1, 2)))
      __attribute__((__nonnull__ (1)));
-
 void foo1(char *a, ...) {}
 void foo2(char *a, ...) {}
-
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	foo1("foo %s", "bar");
 	foo2("foo %d", 1);
@@ -139,25 +122,47 @@ EOF
 
 	# Check for the gcc __nonnull__ attribute.
 	print NEcho('checking __nonnull__ attribute...');
-	TryCompileFlags 'HAVE_NONNULL_ATTRIBUTE', '-Wall -Werror', << 'EOF';
-void foo(char *)
-     __attribute__((__nonnull__ (1)));
-
-void
-foo(char *a)
-{
-}
-
-int
-main(int argc, char *argv[])
+	TryCompileFlags('HAVE_NONNULL_ATTRIBUTE', '-Wall -Werror', << 'EOF');
+void foo(char *) __attribute__((__nonnull__ (1)));
+void foo(char *a) { }
+int main(int argc, char *argv[])
 {
 	foo("foo");
 	return (0);
 }
 EOF
 	
+	# Check for long double type.
+	print NEcho('checking for long double...');
+	TryCompile('HAVE_LONG_DOUBLE', << 'EOF');
+int
+main(int argc, char *argv[])
+{
+	long double ld = 0.1;
+
+	ld = 0;
+	return (0);
+}
+EOF
+
 	print NEcho('checking for cygwin environment...');
-	TryCompileFlags 'HAVE_CYGWIN', '-mcygwin', << 'EOF';
+	TryCompileFlags('HAVE_CYGWIN', '-mcygwin', << 'EOF');
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <windows.h>
+
+int
+main(int argc, char *argv[]) {
+	struct stat sb;
+	DWORD rv;
+	rv = GetFileAttributes("foo");
+	stat("foo", &sb);
+	return (0);
+}
+EOF
+
+	print NEcho('checking for mingw environment...');
+	TryCompileFlags('HAVE_MINGW', '', << 'EOF');
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <windows.h>

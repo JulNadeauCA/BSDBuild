@@ -29,19 +29,17 @@ my $pthreads_test = << 'EOF';
 #include <pthread.h>
 #include <signal.h>
 
-int
-main(int argc, char *argv[])
+void *start_routine(void *arg) { return (NULL); }
+int main(int argc, char *argv[])
 {
 	pthread_mutex_t mutex;
-	pthread_mutexattr_t mutexattr;
 	pthread_t thread;
-	pthread_cond_t cond;
-	pthread_key_t key;
 
 	pthread_mutex_init(&mutex, NULL);
 	pthread_mutex_lock(&mutex);
 	pthread_mutex_unlock(&mutex);
 	pthread_mutex_destroy(&mutex);
+	pthread_create(&thread, NULL, start_routine, NULL);
 	return (0);
 }
 EOF
@@ -51,13 +49,13 @@ sub TestPthreadsStd
 	MkDefine('PTHREADS_CFLAGS', '');
 	MkDefine('PTHREADS_LIBS', '-pthread');
 	MkCompileC('HAVE_PTHREADS', '', '${PTHREADS_LIBS}', $pthreads_test);
-	MkIf('${HAVE_PTHREADS} = "yes"');
+	MkIf('"${HAVE_PTHREADS}" = "yes"');
 		MkSaveMK('PTHREADS_CFLAGS', 'PTHREADS_LIBS');
 		MkSaveDefine('PTHREADS_CFLAGS', 'PTHREADS_LIBS');
 	MkElse();
 		MkDefine('PTHREADS_LIBS', '-lpthread');
 		MkCompileC('HAVE_PTHREADS', '', '${PTHREADS_LIBS}', $pthreads_test);
-		MkIf('${HAVE_PTHREADS} = "yes"');
+		MkIf('"${HAVE_PTHREADS}" = "yes"');
 			MkSaveMK('PTHREADS_CFLAGS','PTHREADS_LIBS');
 			MkSaveDefine('PTHREADS_CFLAGS','PTHREADS_LIBS');
 		MkElse();

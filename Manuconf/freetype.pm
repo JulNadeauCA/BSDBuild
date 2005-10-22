@@ -61,11 +61,7 @@ sub Test
 int
 main(int argc, char *argv[])
 {
-	FT_UInt uint;
-	FT_Bitmap bitmap;
-	FT_Face face;
 	FT_Library library;
-
 	FT_Init_FreeType(&library);
 	return (0);
 }

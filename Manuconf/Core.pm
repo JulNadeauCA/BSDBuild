@@ -246,9 +246,9 @@ EOT
 EOF
 		print << 'EOF';
 compile="ok"
-$CC $CFLAGS -o conftest conftest.c 2>>config.log
+$CC $CFLAGS $TEST_CFLAGS -o conftest conftest.c 2>>config.log
 if [ $? != 0 ]; then
-	echo "-> failed: non-zero exit status" >> config.log
+	echo "-> failed ($?)" >> config.log
 	compile="failed"
 fi
 rm -f conftest conftest.c
@@ -283,15 +283,15 @@ $code
 EOT
 EOF
 	print << "EOF";
-\$CC \$CFLAGS $cflags -o conftest conftest.c $libs 2>>config.log
+\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o conftest conftest.c $libs 2>>config.log
 if [ \$? != 0 ]; then
-	echo "-> compile failed (\$?)" >> config.log
+	echo "-> failed (\$?)" >> config.log
 	compile="failed"
 else
 	compile="ok"
 	./conftest >> config.log
 	if [ \$? != 0 ]; then
-		echo "-> execution failed (\$?)" >> config.log
+		echo "-> exec failed (\$?)" >> config.log
 		$define="no"
 	else
 		$define="yes"
@@ -314,9 +314,9 @@ EOT
 EOF
 		print << "EOF";
 compile="ok"
-\$CC \$CFLAGS $flags -o conftest conftest.c 2>>config.log
+\$CC \$CFLAGS \$TEST_CFLAGS $flags -o conftest conftest.c 2>>config.log
 if [ \$? != 0 ]; then
-	echo "-> failed: non-zero exit status" >> config.log
+	echo "-> failed (\$?)" >> config.log
 	compile="failed"
 fi
 rm -f conftest conftest.c
@@ -357,12 +357,12 @@ EOT
 EOF
 		print << "EOF";
 compile=\"ok\"
-\$CC \$CFLAGS $cflags -o conftest conftest.c $libs 2>>config.log
+\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o conftest conftest.c $libs 2>>config.log
 EOF
 
 		print << 'EOF';
 if [ $? != 0 ]; then
-	echo "failed" >> config.log
+	echo "failed ($?)" >> config.log
 	compile="failed"
 fi
 rm -f conftest conftest.c

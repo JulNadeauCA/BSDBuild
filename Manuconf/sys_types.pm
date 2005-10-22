@@ -36,71 +36,28 @@ int main(int argc, char *argv[]) {
 }
 EOF
 	MkIf('"${HAVE_SYS_TYPES_H}" = "yes"');
-		MkPrintN('checking for BSD types...');
-		MkCompileC('HAVE_BSD_TYPES', '', '', << 'EOF');
+		MkPrintN('checking for unsigned typedefs...');
+		MkCompileC('HAVE_UNSIGNED_TYPEDEFS', '', '', << 'EOF');
 #include <sys/types.h>
 int main(int argc, char *argv[]) {
-	u_int foo = 0;
-	u_long bar = 0;
-	u_char baz = 0;
-	return (foo>0?bar:baz);
+	Uchar foo = 0;
+	Uint bar = 0;
+	Ulong baz = 0;
+	foo = 1; bar = 2; baz = 3;
+	return (0);
 }
 EOF
-		MkIf('"${HAVE_BSD_TYPES}" != "yes"');
-			MkPrintN('checking whether _BSD_SOURCE is needed...');
-			MkCompileC('BSD_SOURCE_NEEDED', '-D_BSD_SOURCE', '', << 'EOF');
-#include <sys/types.h>
-int main(int argc, char *argv[]) {
-	u_int foo = 0;
-	u_long bar = 0;
-	u_char baz = 0;
-	return (foo>0?bar:baz);
-}
-EOF
-			MkIf('"${BSD_SOURCE_NEEDED}" != "yes"');
-				MkSaveUndef('BSD_SOURCE_NEEDED');
-				MkSaveDefine('BSD_TYPES_NEEDED');
-			MkElse;
-				MkDefine('CFLAGS', '${CFLAGS} -D_BSD_SOURCE');
-				MkSaveMK('CFLAGS');
-				MkSaveUndef('BSD_TYPES_NEEDED');
-			MkEndif;
-		MkElse;
-			MkSaveUndef('BSD_SOURCE_NEEDED');
-			MkSaveUndef('BSD_TYPES_NEEDED');
-		MkEndif;
 	MkElse;
-		MkPrintN('checking for BSD types...');
-		MkCompileC('HAVE_BSD_TYPES', '', '', << 'EOF');
+		MkPrintN('checking for unsigned typedefs...');
+		MkCompileC('HAVE_UNSIGNED_TYPEDEFS', '', '', << 'EOF');
 int main(int argc, char *argv[]) {
-	u_int foo = 0;
-	u_long bar = 0;
-	u_char baz = 0;
-	return (foo>0?bar:baz);
+	Uchar foo = 0;
+	Uint bar = 0;
+	Ulong baz = 0;
+	foo = 1; bar = 2; baz = 3;
+	return (0);
 }
 EOF
-		MkIf('"${HAVE_BSD_TYPES}" != "yes"');
-			MkPrintN('checking whether _BSD_SOURCE is needed...');
-			MkCompileC('BSD_SOURCE_NEEDED', '-D_BSD_SOURCE', '', << 'EOF');
-int main(int argc, char *argv[]) {
-	u_int foo = 0;
-	u_long bar = 0;
-	u_char baz = 0;
-	return (foo>0?bar:baz);
-}
-EOF
-			MkIf('"${BSD_SOURCE_NEEDED}" != "yes"');
-				MkSaveUndef('BSD_SOURCE_NEEDED');
-				MkSaveDefine('BSD_TYPES_NEEDED');
-			MkElse;
-				MkDefine('CFLAGS', '${CFLAGS} -D_BSD_SOURCE');
-				MkSaveMK('CFLAGS');
-				MkSaveUndef('BSD_TYPES_NEEDED');
-			MkEndif;
-		MkElse;
-			MkSaveUndef('BSD_SOURCE_NEEDED');
-			MkSaveUndef('BSD_TYPES_NEEDED');
-		MkEndif;
 	MkEndif;
 	return (0);
 }

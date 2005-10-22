@@ -32,7 +32,7 @@ sub Test
 int main(int argc, char *argv[]) {
 	size_t len = 1;
 	ssize_t slen = 1;
-	return (0);
+	return (len>1?len:slen);
 }
 EOF
 	return (0);

@@ -28,13 +28,11 @@
 my $pthreads_test = << 'EOF';
 #include <pthread.h>
 #include <signal.h>
-
 void *start_routine(void *arg) { return (NULL); }
 int main(int argc, char *argv[])
 {
 	pthread_mutex_t mutex;
 	pthread_t thread;
-
 	pthread_mutex_init(&mutex, NULL);
 	pthread_mutex_lock(&mutex);
 	pthread_mutex_unlock(&mutex);
@@ -46,6 +44,9 @@ EOF
 
 sub TestPthreadsStd
 {
+	#
+	# Look for the special -pthread compiler flag.
+	#
 	MkDefine('PTHREADS_CFLAGS', '');
 	MkDefine('PTHREADS_LIBS', '-pthread');
 	MkCompileC('HAVE_PTHREADS', '', '${PTHREADS_LIBS}', $pthreads_test);
@@ -53,6 +54,9 @@ sub TestPthreadsStd
 		MkSaveMK('PTHREADS_CFLAGS', 'PTHREADS_LIBS');
 		MkSaveDefine('PTHREADS_CFLAGS', 'PTHREADS_LIBS');
 	MkElse();
+		#
+		# Look for the pthread library.
+		#
 		MkDefine('PTHREADS_LIBS', '-lpthread');
 		MkCompileC('HAVE_PTHREADS', '', '${PTHREADS_LIBS}', $pthreads_test);
 		MkIf('"${HAVE_PTHREADS}" = "yes"');
@@ -67,81 +71,81 @@ sub TestPthreadsStd
 
 sub TestPthreadMutexRecursive
 {
-	print NEcho 'checking for PTHREAD_MUTEX_RECURSIVE...';
+	#
+	# Look for the PTHREAD_MUTEX_RECURSIVE flag of the function
+	# pthread_mutexattr_settype().
+	#
+	MkPrintN('checking for PTHREAD_MUTEX_RECURSIVE...');
 	MkCompileC('HAVE_PTHREAD_MUTEX_RECURSIVE',
 	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', << 'EOF');
 #include <pthread.h>
 #include <signal.h>
-
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	pthread_mutex_t mutex;
 	pthread_mutexattr_t mutexattr;
-
 	pthread_mutexattr_settype(&mutexattr, PTHREAD_MUTEX_RECURSIVE);
 	pthread_mutex_init(&mutex, &mutexattr);
 	return (0);
 }
 EOF
-	print
-		Cond('"${HAVE_PTHREAD_MUTEX_RECURSIVE}" = "yes"',
-		HDefineBool('HAVE_PTHREAD_MUTEX_RECURSIVE') .
-		HDefineBool('HAVE_PTHREAD_MUTEX_RECURSIVE') ,
-		HUndef('HAVE_PTHREAD_MUTEX_RECURSIVE') .
-		HUndef('HAVE_PTHREAD_MUTEX_RECURSIVE'));
+	MkIf('"${HAVE_PTHREAD_MUTEX_RECURSIVE}" = "yes"');
+		MkSaveDefine('HAVE_PTHREAD_MUTEX_RECURSIVE');
+	MkElse;
+		MkSaveUndef('HAVE_PTHREAD_MUTEX_RECURSIVE');
+	MkEndif;
 	
-	print NEcho 'checking for PTHREAD_MUTEX_RECURSIVE_NP...';
+	#
+	# Look for the PTHREAD_MUTEX_RECURSIVE_NP flag of the function
+	# pthread_mutexattr_settype().
+	#
+	MkPrintN('checking for PTHREAD_MUTEX_RECURSIVE_NP...');
 	MkCompileC('HAVE_PTHREAD_MUTEX_RECURSIVE_NP',
 	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', << 'EOF');
 #include <pthread.h>
 #include <signal.h>
-
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	pthread_mutex_t mutex;
 	pthread_mutexattr_t mutexattr;
-
 	pthread_mutexattr_settype(&mutexattr, PTHREAD_MUTEX_RECURSIVE_NP);
 	pthread_mutex_init(&mutex, &mutexattr);
 	return (0);
 }
 EOF
-	print
-		Cond('"${HAVE_PTHREAD_MUTEX_RECURSIVE_NP}" = "yes"',
-		HDefineBool('HAVE_PTHREAD_MUTEX_RECURSIVE_NP') .
-		HDefineBool('HAVE_PTHREAD_MUTEX_RECURSIVE_NP') ,
-		HUndef('HAVE_PTHREAD_MUTEX_RECURSIVE_NP') .
-		HUndef('HAVE_PTHREAD_MUTEX_RECURSIVE_NP'));
+	MkIf('"${HAVE_PTHREAD_MUTEX_RECURSIVE_NP}" = "yes"');
+		MkSaveDefine('HAVE_PTHREAD_MUTEX_RECURSIVE_NP');
+	MkElse;
+		MkSaveUndef('HAVE_PTHREAD_MUTEX_RECURSIVE_NP');
+	MkEndif;
 	return (0);
 }
 
 sub TestPthreadsXOpenExt
 {
-	print NEcho 'checking for the X/Open Threads Extension...';
+	MkPrintN('checking for the X/Open Threads Extension...');
 	MkCompileC('HAVE_PTHREADS_XOPEN',
 	    '${PTHREADS_CFLAGS} -U_XOPEN_SOURCE -D_XOPEN_SOURCE=500', '${PTHREADS_LIBS}', << 'EOF');
 #include <pthread.h>
 #include <signal.h>
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	pthread_mutex_t mutex;
 	pthread_mutexattr_t mutexattr;
-
 	pthread_mutexattr_settype(&mutexattr, PTHREAD_MUTEX_RECURSIVE);
 	pthread_mutex_init(&mutex, &mutexattr);
 	return (0);
 }
 EOF
-	print
-		Cond('"${HAVE_PTHREADS_XOPEN}" = "yes"',
-		HDefineBool('HAVE_PTHREADS_XOPEN') .
-		HDefineBool('HAVE_PTHREADS_XOPEN') ,
-		HUndef('HAVE_PTHREADS_XOPEN') .
-		HUndef('HAVE_PTHREADS_XOPEN'));
+	MkIf('"${HAVE_PTHREADS_XOPEN}" = "yes"');
+		MkDefine('PTHREADS_CFLAGS', '${PTHREADS_CFLAGS} -U_XOPEN_SOURCE '.
+		                            '-D_XOPEN_SOURCE=500');
+		MkSaveMK('PTHREADS_CFLAGS','PTHREADS_LIBS');
+		MkSaveDefine('HAVE_PTHREADS_XOPEN', 'PTHREADS_CFLAGS', 'PTHREADS_LIBS');
+	MkElse;
+		MkSaveUndef('HAVE_PTHREADS_XOPEN')
+	MkEndif;
 	return (0);
 }
 

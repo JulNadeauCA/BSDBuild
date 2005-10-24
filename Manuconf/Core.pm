@@ -246,6 +246,7 @@ EOT
 EOF
 		print << 'EOF';
 compile="ok"
+echo "$CC $CFLAGS $TEST_CFLAGS -o conftest conftest.c" >>config.log
 $CC $CFLAGS $TEST_CFLAGS -o conftest conftest.c 2>>config.log
 if [ $? != 0 ]; then
 	echo "-> failed ($?)" >> config.log
@@ -283,6 +284,7 @@ $code
 EOT
 EOF
 	print << "EOF";
+echo "\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o conftest conftest.c $libs" >>config.log
 \$CC \$CFLAGS \$TEST_CFLAGS $cflags -o conftest conftest.c $libs 2>>config.log
 if [ \$? != 0 ]; then
 	echo "-> failed (\$?)" >> config.log
@@ -314,6 +316,7 @@ EOT
 EOF
 		print << "EOF";
 compile="ok"
+echo "\$CC \$CFLAGS \$TEST_CFLAGS $flags -o conftest conftest.c" >>config.log
 \$CC \$CFLAGS \$TEST_CFLAGS $flags -o conftest conftest.c 2>>config.log
 if [ \$? != 0 ]; then
 	echo "-> failed (\$?)" >> config.log
@@ -357,6 +360,7 @@ EOT
 EOF
 		print << "EOF";
 compile=\"ok\"
+echo "\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o conftest conftest.c $libs" >>config.log
 \$CC \$CFLAGS \$TEST_CFLAGS $cflags -o conftest conftest.c $libs 2>>config.log
 EOF
 

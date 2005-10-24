@@ -44,21 +44,15 @@ EOF
 
 sub TestPthreadsStd
 {
-	#
-	# Look for the special -pthread compiler flag.
-	#
 	MkDefine('PTHREADS_CFLAGS', '');
-	MkDefine('PTHREADS_LIBS', '-pthread');
+	MkDefine('PTHREADS_LIBS', '-lpthread');
 	MkCompileC('HAVE_PTHREADS', '', '${PTHREADS_LIBS}', $pthreads_test);
 	MkIf('"${HAVE_PTHREADS}" = "yes"');
 		MkDefine('CFLAGS', '${CFLAGS} ${PTHREADS_CFLAGS}');
 		MkSaveMK('CFLAGS', 'PTHREADS_CFLAGS', 'PTHREADS_LIBS');
 		MkSaveDefine('PTHREADS_CFLAGS', 'PTHREADS_LIBS');
 	MkElse();
-		#
-		# Look for the pthread library.
-		#
-		MkDefine('PTHREADS_LIBS', '-lpthread');
+		MkDefine('PTHREADS_LIBS', '-pthread');
 		MkCompileC('HAVE_PTHREADS', '', '${PTHREADS_LIBS}', $pthreads_test);
 		MkIf('"${HAVE_PTHREADS}" = "yes"');
 			MkDefine('CFLAGS', '${CFLAGS} ${PTHREADS_CFLAGS}');

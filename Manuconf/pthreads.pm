@@ -124,6 +124,8 @@ EOF
 sub TestPthreadsXOpenExt
 {
 	MkPrintN('checking for the X/Open Threads Extension...');
+	MkDefine('PTHREADS_XOPEN_CFLAGS', '-U_XOPEN_SOURCE -D_XOPEN_SOURCE=600');
+	MkDefine('PTHREADS_XOPEN_LIBS', '-lpthread');
 	MkCompileC('HAVE_PTHREADS_XOPEN',
 	    '${PTHREADS_XOPEN_CFLAGS}', '${PTHREADS_XOPEN_LIBS}', << 'EOF');
 #include <pthread.h>
@@ -139,9 +141,6 @@ int main(int argc, char *argv[])
 }
 EOF
 	MkIf('"${HAVE_PTHREADS_XOPEN}" = "yes"');
-		MkDefine('PTHREADS_XOPEN_CFLAGS', '-U_XOPEN_SOURCE '.
-		                                  '-D_XOPEN_SOURCE=600');
-		MkDefine('PTHREADS_XOPEN_LIBS', '');
 		MkSaveMK('PTHREADS_XOPEN_CFLAGS', 'PTHREADS_XOPEN_LIBS');
 		MkSaveDefine('HAVE_PTHREADS_XOPEN', 'PTHREADS_XOPEN_CFLAGS',
 		             'PTHREADS_XOPEN_LIBS');

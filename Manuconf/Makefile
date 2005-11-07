@@ -45,7 +45,8 @@ SHARE=	Core.pm \
 	sys_types.pm \
 	free_null.pm \
 	agar-net.pm \
-	agar-sg.pm
+	agar-sg.pm \
+	cg.pm
 
 all:
 

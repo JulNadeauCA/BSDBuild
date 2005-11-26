@@ -40,7 +40,7 @@ sub Test
 		MkExecOutput('agar-sg-config', '--libs', 'AGAR_SG_LIBS');
 		MkCompileC('HAVE_AGAR_SG',
 		    '${AGAR_CFLAGS} ${AGAR_SG_CFLAGS}',
-		    '${AGAR_LIBS} ${AGAR_SG_LIBS}',
+		    '${AGAR_SG_LIBS} ${AGAR_LIBS}',
 		           << 'EOF');
 #include <agar/core.h>
 #include <agar/sg.h>

@@ -12,7 +12,7 @@ MAN5=	csoft.common.mk.5
 SHARE=	csoft.common.mk csoft.dep.mk csoft.lib.mk csoft.man.mk \
 	csoft.perl.mk csoft.prog.mk csoft.subdir.mk csoft.www.mk \
 	hstrip.pl manuconf.pl mkdep mkify.pl mkconcurrent.pl csoft.po.mk \
-	csoft.doc.mk csoft.den.mk
+	csoft.doc.mk csoft.den.mk version.sh
 
 LTFILES=config.guess config.sub configure configure.in ltconfig ltmain.sh
 

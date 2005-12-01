@@ -38,11 +38,11 @@ sub MKCopy
 	print "copy: $src\n";
 
 	unless (-f $srcmk) {
-		print STDERR "src $srcmk: $!\n";
+		#print STDERR "src $srcmk: $!\n";
 		return 0;
 	}
 	unless (open(SRC, $srcmk)) {
-		print STDERR "src $srcmk: $!\n";
+		#print STDERR "src $srcmk: $!\n";
 		return 0;
 	}
 	chop(@src = <SRC>);

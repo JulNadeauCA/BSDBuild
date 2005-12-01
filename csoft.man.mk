@@ -45,7 +45,7 @@ CATMAN7?=""
 CATMAN8?=""
 CATMAN9?=""
 MANS=${MAN1} ${MAN2} ${MAN3} ${MAN4} ${MAN5} ${MAN6} ${MAN7} ${MAN8} ${MAN9}
-MANLINKS?=""
+MANLINKS?=
 NOMAN?=
 NOMANLINKS?=
 
@@ -521,11 +521,14 @@ install-man:
 	    fi; \
 	fi
 	@if [ "${NOMANLINKS}" != "yes" -a "${MANLINKS}" != "" ]; then \
-		(cd ${MANDIR}/man3 && \
-		 for L in ${MANLINKS}; do \
-		    echo "touch $$L"; \
-		    touch $$L; \
-		done); \
+	    (cd ${MANDIR} && \
+	     for L in ${MANLINKS}; do \
+	        MPG=`echo $$L | sed 's/:.*//'`; \
+	        MLNK=`echo $$L | sed 's/.*://'`; \
+		MS=`echo $$L | sed 's/.*\.//'`; \
+		echo "ln -fs $$MPG man$$MS/$$MLNK"; \
+		${SUDO} ln -fs $$MPG man$$MS/$$MLNK; \
+	    done); \
 	fi
 
 man:

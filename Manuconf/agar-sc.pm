@@ -30,41 +30,43 @@ sub Test
 	my ($ver) = @_;
 	
 	MkExecOutput('agar-config', '--version', 'AGAR_VERSION');
-	MkExecOutput('agar-sg-config', '--version', 'AGAR_SG_VERSION');
-	MkIf('"${AGAR_VERSION}" != "" -a "${AGAR_SG_VERSION}" != ""');
+	MkExecOutput('agar-sc-config', '--version', 'AGAR_SC_VERSION');
+	MkIf('"${AGAR_VERSION}" != "" -a "${AGAR_SC_VERSION}" != ""');
 		MkPrint('yes');
-		MkPrintN('checking whether agar-sg works...');
+		MkPrintN('checking whether agar-sc works...');
 		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');
-		MkExecOutput('agar-sg-config', '--cflags', 'AGAR_SG_CFLAGS');
-		MkExecOutput('agar-sg-config', '--libs', 'AGAR_SG_LIBS');
-		MkCompileC('HAVE_AGAR_SG',
-		    '${AGAR_CFLAGS} ${AGAR_SG_CFLAGS}',
-		    '${AGAR_SG_LIBS} ${AGAR_LIBS}',
+		MkExecOutput('agar-sc-config', '--cflags', 'AGAR_SC_CFLAGS');
+		MkExecOutput('agar-sc-config', '--libs', 'AGAR_SC_LIBS');
+		MkCompileC('HAVE_AGAR_SC',
+		    '${AGAR_CFLAGS} ${AGAR_SC_CFLAGS}',
+		    '${AGAR_SC_LIBS} ${AGAR_LIBS}',
 		           << 'EOF');
 #include <agar/core.h>
-#include <agar/sg.h>
+#include <agar/sc.h>
 int main(int argc, char *argv[]) {
-	SG *sg;
-	sg = SG_New(NULL, "sg");
+	SC_Matrix *m;
+
+	m = SC_MatrixNew(4,4);
+	SC_MatrixFree(m);
 	return (0);
 }
 EOF
-		MkIf('"${HAVE_AGAR_SG}" != ""');
-			MkSaveMK('AGAR_SG_CFLAGS', 'AGAR_SG_LIBS');
-			MkSaveDefine('AGAR_SG_CFLAGS', 'AGAR_SG_LIBS');
+		MkIf('"${HAVE_AGAR_SC}" != ""');
+			MkSaveMK('AGAR_SC_CFLAGS', 'AGAR_SC_LIBS');
+			MkSaveDefine('AGAR_SC_CFLAGS', 'AGAR_SC_LIBS');
 		MkEndif;
 	MkElse;
 		MkPrint('no');
-		MkSaveUndef('HAVE_AGAR_SG');
+		MkSaveUndef('HAVE_AGAR_SC');
 	MkEndif;
 	return (0);
 }
 
 BEGIN
 {
-	$TESTS{'agar-sg'} = \&Test;
-	$DESCR{'agar-sg'} = 'Agar-Sg (http://agar-sg.csoft.org/)';
+	$TESTS{'agar-sc'} = \&Test;
+	$DESCR{'agar-sc'} = 'Agar-Sc (http://agar-sc.csoft.org/)';
 }
 
 ;1

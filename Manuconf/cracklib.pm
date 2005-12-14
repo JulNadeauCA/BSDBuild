@@ -43,7 +43,7 @@ sub Test
 	}
 	MkIf('"${CRACKLIB_CFLAGS}" != ""');
 		MkPrint('ok');
-		MkPrint('checking whether cracklib works...');
+		MkPrintN('checking whether cracklib works...');
 		MkCompileC('HAVE_CRACKLIB', '${CRACKLIB_CFLAGS}', '${CRACKLIB_LIBS}',
 		    << 'EOF');
 #include <stdio.h>
@@ -53,7 +53,7 @@ int
 main(int argc, char *argv[])
 {
 	char *msg = (char *)FascistCheck("foobar", "/path");
-	return (0);
+	return (msg != NULL);
 }
 EOF
 		MkIf('"${HAVE_CRACKLIB}" != ""');

@@ -36,7 +36,7 @@ sub Test
 
 	MkDefine('CRACKLIB_CFLAGS', '');
 	foreach my $dir (@dirs) {
-		MkIf("-d \"$dir/include/packer.h\"");
+		MkIf("-f \"$dir/include/packer.h\"");
 			MkDefine('CRACKLIB_CFLAGS', "-I$dir/include");
 			MkDefine('CRACKLIB_LIBS', "-L$dir/lib -lcrack");
 		MkEndif;

@@ -47,7 +47,8 @@ SHARE=	Core.pm \
 	agar-net.pm \
 	agar-sg.pm \
 	agar-sc.pm \
-	cg.pm
+	cg.pm \
+	cracklib.pm
 
 all:
 

@@ -39,7 +39,7 @@ sub Test
 
 	MkDefine('JPEG_CFLAGS', '');
 	foreach my $dir (@dirs) {
-		MkIf("-d \"$dir/include/jpeglib.h\"");
+		MkIf("-f \"$dir/include/jpeglib.h\"");
 			MkDefine('JPEG_CFLAGS', "-I$dir/include");
 			MkDefine('JPEG_LIBS', "-L$dir/lib -ljpeg");
 		MkEndif;

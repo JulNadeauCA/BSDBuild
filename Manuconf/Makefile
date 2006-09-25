@@ -48,7 +48,9 @@ SHARE=	Core.pm \
 	agar-sg.pm \
 	agar-sc.pm \
 	cg.pm \
-	cracklib.pm
+	cracklib.pm \
+	db4.pm \
+	perl.pm
 
 all:
 

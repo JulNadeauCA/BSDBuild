@@ -14,7 +14,6 @@ unless ($man) {
 
 $man =~ s/([\w\-]+)\.(\d)$/$1/;
 $section = $2;
-print STDERR "Creating links to $man($section)\n";
 
 while (<STDIN>) {
 	if (/^\.nr nS 1/) { $ns = 1; }

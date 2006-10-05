@@ -117,6 +117,7 @@ BEGIN
 	}
 	MKCopy('mkdep', $dir);
 	MKCopy('mkconcurrent.pl', $dir);
+	MKCopy('manlinks.pl', $dir);
 
 	if (!-e 'configure.in' &&
 	    open(CONFIN, '>configure.in')) {

@@ -118,7 +118,12 @@ EOF
 sub TestPthreadsXOpenExt
 {
 	MkPrintN('checking for the X/Open Threads Extension...');
-	MkDefine('PTHREADS_XOPEN_CFLAGS', '-U_XOPEN_SOURCE -D_XOPEN_SOURCE=600');
+	MkIf('"${SYSTEM}" = "FreeBSD"');
+		MkDefine('PTHREADS_XOPEN_CFLAGS', '');				# Not needed
+	MkElse
+		MkDefine('PTHREADS_XOPEN_CFLAGS',
+		         '-U_XOPEN_SOURCE -D_XOPEN_SOURCE=600');
+	MkEndif;
 	MkDefine('PTHREADS_XOPEN_LIBS', '-lpthread');
 	MkCompileC('HAVE_PTHREADS_XOPEN',
 	    '${PTHREADS_XOPEN_CFLAGS}', '${PTHREADS_XOPEN_LIBS}', << 'EOF');

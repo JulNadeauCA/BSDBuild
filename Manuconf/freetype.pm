@@ -62,7 +62,13 @@ int
 main(int argc, char *argv[])
 {
 	FT_Library library;
+	FT_Face face;
+	FT_GlyphSlot glyph;
+
 	FT_Init_FreeType(&library);
+	FT_New_Face(library, "foo", 0, &face);
+	FT_Render_Glyph(glyph, FT_RENDER_MODE_MONO);
+	FT_Render_Glyph(glyph, FT_RENDER_MODE_NORMAL);
 	return (0);
 }
 EOF

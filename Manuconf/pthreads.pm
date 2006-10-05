@@ -120,7 +120,7 @@ sub TestPthreadsXOpenExt
 	MkPrintN('checking for the X/Open Threads Extension...');
 	MkIf('"${SYSTEM}" = "FreeBSD"');
 		MkDefine('PTHREADS_XOPEN_CFLAGS', '');				# Not needed
-	MkElse
+	MkElse;
 		MkDefine('PTHREADS_XOPEN_CFLAGS',
 		         '-U_XOPEN_SOURCE -D_XOPEN_SOURCE=600');
 	MkEndif;

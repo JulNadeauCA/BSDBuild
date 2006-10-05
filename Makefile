@@ -30,23 +30,23 @@ mkify: mkify.pl
 install: install-subdir
 	@if [ ! -d "${SHAREDIR}" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
-	    ${INSTALL_DATA_DIR} ${SHAREDIR}; \
+	    ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}; \
 	fi
 	@if [ ! -d "${SHAREDIR}/libtool" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/libtool"; \
-	    ${INSTALL_DATA_DIR} ${SHAREDIR}/libtool; \
+	    ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}/libtool; \
 	fi
 	@for F in ${SHARE}; do \
 	    echo "${INSTALL_DATA} $$F ${SHAREDIR}"; \
-	    ${INSTALL_DATA} $$F ${SHAREDIR}; \
+	    ${SUDO} ${INSTALL_DATA} $$F ${SHAREDIR}; \
 	done
 	@for F in ${LTFILES}; do \
 	    echo "${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool"; \
-	    ${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool; \
+	    ${SUDO} ${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool; \
 	done
-	${INSTALL_PROG} mkify ${BINDIR}
-	cp -f manuconf.out ${BINDIR}/manuconf
-	chmod 755 ${BINDIR}/manuconf
+	${SUDO} ${INSTALL_PROG} mkify ${BINDIR}
+	${SUDO} cp -f manuconf.out ${BINDIR}/manuconf
+	${SUDO} chmod 755 ${BINDIR}/manuconf
 
 install-links-subdir:
 	@(if [ "${SUBDIR}" = "" ]; then \
@@ -67,23 +67,23 @@ install-links-subdir:
 install-links: install-links-subdir
 	@if [ ! -d "${SHAREDIR}" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
-	    ${INSTALL_DATA_DIR} ${SHAREDIR}; \
+	    ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}; \
 	fi
 	@if [ ! -d "${SHAREDIR}/libtool" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/libtool"; \
-	    ${INSTALL_DATA_DIR} ${SHAREDIR}/libtool; \
+	    ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}/libtool; \
 	fi
 	@for F in ${SHARE}; do \
 	    echo "ln -sf `pwd`/$$F ${SHAREDIR}/$$F"; \
-	    ln -sf `pwd`/$$F ${SHAREDIR}/$$F; \
+	    ${SUDO} ln -sf `pwd`/$$F ${SHAREDIR}/$$F; \
 	done
 	@for F in ${LTFILES}; do \
 	    echo "${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool"; \
-	    ${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool; \
+	    ${SUDO} ${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool; \
 	done
-	${INSTALL_PROG} mkify ${BINDIR}
-	cp -f manuconf.out ${BINDIR}/manuconf
-	chmod 755 ${BINDIR}/manuconf
+	${SUDO} ${INSTALL_PROG} mkify ${BINDIR}
+	${SUDO} cp -f manuconf.out ${BINDIR}/manuconf
+	${SUDO} chmod 755 ${BINDIR}/manuconf
 
 cleandir:
 	rm -f Makefile.config config.log *~

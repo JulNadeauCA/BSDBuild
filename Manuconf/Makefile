@@ -57,21 +57,21 @@ all:
 install:
 	@if [ ! -d "${SHAREDIR}/Manuconf" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/Manuconf"; \
-	    ${INSTALL_DATA_DIR} ${SHAREDIR}/Manuconf; \
+	    ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}/Manuconf; \
 	fi; \
 	for F in ${SHARE}; do \
 	    echo "${INSTALL_DATA} $$F ${SHAREDIR}/Manuconf"; \
-	    ${INSTALL_DATA} $$F ${SHAREDIR}/Manuconf; \
+	    ${SUDO} ${INSTALL_DATA} $$F ${SHAREDIR}/Manuconf; \
 	done
 
 install-links:
 	@if [ ! -d "${SHAREDIR}/Manuconf" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/Manuconf"; \
-	    ${INSTALL_DATA_DIR} ${SHAREDIR}/Manuconf; \
+	    ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}/Manuconf; \
 	fi; \
 	for F in ${SHARE}; do \
 	    echo "ln -sf `pwd`/$$F ${SHAREDIR}/Manuconf/$$F"; \
-	    ln -sf `pwd`/$$F ${SHAREDIR}/Manuconf/$$F; \
+	    ${SUDO} ln -sf `pwd`/$$F ${SHAREDIR}/Manuconf/$$F; \
 	done
 
 cleandir:

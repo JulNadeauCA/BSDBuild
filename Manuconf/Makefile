@@ -50,7 +50,8 @@ SHARE=	Core.pm \
 	cg.pm \
 	cracklib.pm \
 	db4.pm \
-	perl.pm
+	perl.pm \
+	libidn.pm
 
 all:
 

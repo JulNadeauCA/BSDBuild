@@ -39,16 +39,16 @@ sub Test
 		MkExecOutput('sdl11-config', '--version', 'SDL_VERSION');
 		MkIf('"${SDL_VERSION}" != ""');
 			MkExecOutput('sdl11-config', '--cflags', 'SDL_CFLAGS');
-			MkExecOutput('sdl11-config', '--static-libs', 'SDL_LIBS');
+			MkExecOutput('sdl11-config', '--libs', 'SDL_LIBS');
 		MkElse;
 			MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
 			MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
-			MkExecOutput('sdl-config', '--static-libs', 'SDL_LIBS');
+			MkExecOutput('sdl-config', '--libs', 'SDL_LIBS');
 		MkEndif;
 	MkElse;
 		MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
 		MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
-		MkExecOutput('sdl-config', '--static-libs', 'SDL_LIBS');
+		MkExecOutput('sdl-config', '--libs', 'SDL_LIBS');
 	MkEndif;
 	
 	MkIf('"${SDL_VERSION}" != ""');

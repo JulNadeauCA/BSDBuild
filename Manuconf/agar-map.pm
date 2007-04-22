@@ -1,7 +1,7 @@
-# $Csoft: opengl.pm,v 1.5 2004/03/10 16:33:36 vedge Exp $
+# $Csoft: agar.pm,v 1.7 2005/09/27 00:29:42 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2005 CubeSoft Communications, Inc.
+# Copyright (c) 2007 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 # All rights reserved.
 #
@@ -27,45 +27,45 @@
 
 sub Test
 {
-	MkCompileC('_MK_HAVE_SYS_TYPES_H', '', '', << 'EOF');
-#include <sys/types.h>
+	my ($ver) = @_;
+	
+	MkExecOutput('agar-config', '--version', 'AGAR_VERSION');
+	MkExecOutput('agar-map-config', '--version', 'AGAR_MAP_VERSION');
+	MkIf('"${AGAR_VERSION}" != "" -a "${AGAR_MAP_VERSION}" != ""');
+		MkPrint('yes');
+		MkPrintN('checking whether agar-map works...');
+		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
+		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');
+		MkExecOutput('agar-map-config', '--cflags', 'AGAR_MAP_CFLAGS');
+		MkExecOutput('agar-map-config', '--libs', 'AGAR_MAP_LIBS');
+		MkCompileC('HAVE_AGAR_MAP',
+		    '${AGAR_CFLAGS} ${AGAR_MAP_CFLAGS}',
+		    '${AGAR_MAP_LIBS} ${AGAR_LIBS}',
+		           << 'EOF');
+
+#include <agar/core/core.h>
+#include <agar/map/map.h>
 int main(int argc, char *argv[]) {
-	size_t len = 1;
-	ssize_t slen = 1;
-	return (len>1?len:slen);
-}
-EOF
-	MkIf('"${_MK_HAVE_SYS_TYPES_H}" = "yes"');
-		MkPrintN('checking for unsigned typedefs...');
-		MkCompileC('_MK_HAVE_UNSIGNED_TYPEDEFS', '', '', << 'EOF');
-#include <sys/types.h>
-int main(int argc, char *argv[]) {
-	Uchar foo = 0;
-	Uint bar = 0;
-	Ulong baz = 0;
-	foo = 1; bar = 2; baz = 3;
+	AG_Map *m;
+	m = AG_MapNew(NULL, "test");
 	return (0);
 }
 EOF
+		MkIf('"${HAVE_AGAR_MAP}" != ""');
+			MkSaveMK('AGAR_MAP_CFLAGS', 'AGAR_MAP_LIBS');
+			MkSaveDefine('AGAR_MAP_CFLAGS', 'AGAR_MAP_LIBS');
+		MkEndif;
 	MkElse;
-		MkPrintN('checking for unsigned typedefs...');
-		MkCompileC('_MK_HAVE_UNSIGNED_TYPEDEFS', '', '', << 'EOF');
-int main(int argc, char *argv[]) {
-	Uchar foo = 0;
-	Uint bar = 0;
-	Ulong baz = 0;
-	foo = 1; bar = 2; baz = 3;
-	return (0);
-}
-EOF
+		MkPrint('no');
+		MkSaveUndef('HAVE_AGAR_MAP');
 	MkEndif;
 	return (0);
 }
 
 BEGIN
 {
-	$TESTS{'sys_types'} = \&Test;
-	$DESCR{'sys_types'} = '<sys/types.h>';
+	$TESTS{'agar-map'} = \&Test;
+	$DESCR{'agar-map'} = 'agar-map (http://agar.csoft.org/)';
 }
 
 ;1

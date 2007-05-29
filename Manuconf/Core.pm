@@ -262,9 +262,11 @@ EOF
 if [ "\${compile}" = "ok" ]; then
 	echo "ok" >> config.log
 	$define
+	$def="yes"
 	echo "yes"
 else
     $undef
+	$def="no"
 	echo "no"
 fi
 EOF

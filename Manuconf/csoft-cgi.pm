@@ -68,7 +68,7 @@ EOF
 BEGIN
 {
 	$TESTS{'csoft-cgi'} = \&Test;
-	$DESCR{'csoft-cgi'} = 'Csoft-cgi (http://csoft-cgi.csoft.org/)';
+	$DESCR{'csoft-cgi'} = 'csoft-cgi (http://hypertriton.com/csoft-cgi/)';
 }
 
 ;1

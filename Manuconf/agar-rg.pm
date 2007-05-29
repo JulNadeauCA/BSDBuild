@@ -65,7 +65,7 @@ EOF
 BEGIN
 {
 	$TESTS{'agar-rg'} = \&Test;
-	$DESCR{'agar-rg'} = 'agar-rg (http://agar.csoft.org/)';
+	$DESCR{'agar-rg'} = 'agar-rg (http://hypertriton.com/agar-rg/)';
 }
 
 ;1

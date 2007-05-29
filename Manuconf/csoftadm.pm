@@ -67,8 +67,7 @@ EOF
 
 BEGIN
 {
-	$HOMEPAGE = 'http://www.csoftadm.csoft.org/';
-	$DESCR{'csoftadm'} = "csoftadm ($HOMEPAGE)";
+	$DESCR{'csoftadm'} = 'csoftadm (http://hypertriton.com/csoftadm)';
 	$TESTS{'csoftadm'} = \&Test;
 }
 

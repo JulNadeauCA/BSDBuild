@@ -46,7 +46,7 @@ sub Test
 	}
 	MkIf('"${JPEG_CFLAGS}" != ""');
 		MkPrint('ok');
-		MkPrint('checking whether libjpeg works...');
+		MkPrintN('checking whether libjpeg works...');
 		MkCompileC('HAVE_JPEG', '${JPEG_CFLAGS}', '${JPEG_LIBS}', << 'EOF');
 #include <stdio.h>
 #include <jpeglib.h>

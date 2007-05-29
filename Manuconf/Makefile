@@ -37,7 +37,6 @@ SHARE=	Core.pm \
 	getuid.pm \
 	agar.pm \
 	csoft-cgi.pm \
-	libqnet.pm \
 	md5.pm \
 	sha1.pm \
 	rmd160.pm \

@@ -54,8 +54,8 @@ sub Test
 		MkDefine('GLU_LIBS', '${GLU_LIBS} -lGLU');
 	MkEndif;
 
-	MkCompileC('HAVE_GLU', '${GL_CFLAGS} ${GLU_CFLAGS}',
-	                       '${GL_LIBS} ${GLU_LIBS}', << 'EOF');
+	MkCompileC('HAVE_GLU', '${OPENGL_CFLAGS} ${GLU_CFLAGS}',
+	                       '${OPENGL_LIBS} ${GLU_LIBS}', << 'EOF');
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>

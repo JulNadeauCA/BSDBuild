@@ -40,14 +40,12 @@ sub Test
 		MkExecOutput('agar-map-config', '--libs', 'AGAR_MAP_LIBS');
 		MkCompileC('HAVE_AGAR_MAP',
 		    '${AGAR_CFLAGS} ${AGAR_MAP_CFLAGS}',
-		    '${AGAR_MAP_LIBS} ${AGAR_LIBS}',
+		    '${AGAR_LIBS} ${AGAR_MAP_LIBS}',
 		           << 'EOF');
-
-#include <agar/core/core.h>
-#include <agar/map/map.h>
+#include <agar/core.h>
+#include <agar/map.h>
 int main(int argc, char *argv[]) {
-	MAP *m;
-	m = MAP_New(NULL, "test");
+	MAP *m = MAP_New(NULL, "test");
 	return (0);
 }
 EOF
@@ -66,6 +64,7 @@ BEGIN
 {
 	$TESTS{'agar-map'} = \&Test;
 	$DESCR{'agar-map'} = 'agar-map (http://hypertriton.com/agar-map/)';
+	$DEPS{'agar-map'} = 'agar,agar-rg';
 }
 
 ;1

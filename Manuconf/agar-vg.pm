@@ -1,7 +1,7 @@
 # $Csoft: agar.pm,v 1.7 2005/09/27 00:29:42 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2005 CubeSoft Communications, Inc.
+# Copyright (c) 2007 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 # All rights reserved.
 #
@@ -30,41 +30,42 @@ sub Test
 	my ($ver) = @_;
 	
 	MkExecOutput('agar-config', '--version', 'AGAR_VERSION');
-	MkExecOutput('agar-sg-config', '--version', 'AGAR_SG_VERSION');
-	MkIf('"${AGAR_VERSION}" != "" -a "${AGAR_SG_VERSION}" != ""');
+	MkExecOutput('agar-vg-config', '--version', 'AGAR_VG_VERSION');
+	MkIf('"${AGAR_VERSION}" != "" -a "${AGAR_VG_VERSION}" != ""');
 		MkPrint('yes');
-		MkPrintN('checking whether agar-sg works...');
+		MkPrintN('checking whether agar-vg works...');
 		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');
-		MkExecOutput('agar-sg-config', '--cflags', 'AGAR_SG_CFLAGS');
-		MkExecOutput('agar-sg-config', '--libs', 'AGAR_SG_LIBS');
-		MkCompileC('HAVE_AGAR_SG',
-		    '${AGAR_CFLAGS} ${AGAR_SG_CFLAGS}',
-		    '${AGAR_LIBS} ${AGAR_SG_LIBS}',
+		MkExecOutput('agar-vg-config', '--cflags', 'AGAR_VG_CFLAGS');
+		MkExecOutput('agar-vg-config', '--libs', 'AGAR_VG_LIBS');
+		MkCompileC('HAVE_AGAR_VG',
+		    '${AGAR_CFLAGS} ${AGAR_VG_CFLAGS}',
+		    '${AGAR_LIBS} ${AGAR_VG_LIBS}',
 		           << 'EOF');
 #include <agar/core.h>
-#include <agar/sg.h>
+#include <agar/vg.h>
+
 int main(int argc, char *argv[]) {
-	SG *sg = SG_New(NULL, "sg");
+	VG *vg = VG_New(0);
 	return (0);
 }
 EOF
-		MkIf('"${HAVE_AGAR_SG}" != ""');
-			MkSaveMK('AGAR_SG_CFLAGS', 'AGAR_SG_LIBS');
-			MkSaveDefine('AGAR_SG_CFLAGS', 'AGAR_SG_LIBS');
+		MkIf('"${HAVE_AGAR_VG}" != ""');
+			MkSaveMK('AGAR_VG_CFLAGS', 'AGAR_VG_LIBS');
+			MkSaveDefine('AGAR_VG_CFLAGS', 'AGAR_VG_LIBS');
 		MkEndif;
 	MkElse;
 		MkPrint('no');
-		MkSaveUndef('HAVE_AGAR_SG');
+		MkSaveUndef('HAVE_AGAR_VG');
 	MkEndif;
 	return (0);
 }
 
 BEGIN
 {
-	$TESTS{'agar-sg'} = \&Test;
-	$DESCR{'agar-sg'} = 'agar-sg (http://hypertriton.com/agar-sg/)';
-	$DEPS{'agar-sg'} = 'agar';
+	$TESTS{'agar-vg'} = \&Test;
+	$DESCR{'agar-vg'} = 'agar-vg (http://hypertriton.com/agar-vg/)';
+	$DEPS{'agar-vg'} = 'agar';
 }
 
 ;1

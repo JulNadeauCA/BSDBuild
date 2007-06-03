@@ -1,7 +1,7 @@
 # $Csoft: agar.pm,v 1.7 2005/09/27 00:29:42 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2005 CubeSoft Communications, Inc.
+# Copyright (c) 2007 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 # All rights reserved.
 #
@@ -40,10 +40,10 @@ sub Test
 		MkExecOutput('agar-rg-config', '--libs', 'AGAR_RG_LIBS');
 		MkCompileC('HAVE_AGAR_RG',
 		    '${AGAR_CFLAGS} ${AGAR_RG_CFLAGS}',
-		    '${AGAR_RG_LIBS} ${AGAR_LIBS}',
+		    '${AGAR_LIBS} ${AGAR_RG_LIBS}',
 		           << 'EOF');
 #include <agar/core.h>
-#include <agar/rg/tileset.h>
+#include <agar/rg.h>
 
 int main(int argc, char *argv[]) {
 	RG_Tileset ts;
@@ -66,6 +66,7 @@ BEGIN
 {
 	$TESTS{'agar-rg'} = \&Test;
 	$DESCR{'agar-rg'} = 'agar-rg (http://hypertriton.com/agar-rg/)';
+	$DEPS{'agar-rg'} = 'agar,agar-vg';
 }
 
 ;1

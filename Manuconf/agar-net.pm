@@ -35,10 +35,12 @@ sub Test
 		MkExecOutput('agar-net-config', '--cflags', 'AGAR_NET_CFLAGS');
 		MkExecOutput('agar-net-config', '--libs', 'AGAR_NET_LIBS');
 		MkPrintN('checking whether agar-net works...');
-		MkCompileC('HAVE_AGAR_NET', '${AGAR_NET_CFLAGS}', '${AGAR_NET_LIBS}',
-			       << 'EOF');
+		MkCompileC('HAVE_AGAR_NET',
+		    '${AGAR_CFLAGS} ${AGAR_NET_CFLAGS}',
+			'${AGAR_LIBS} ${AGAR_NET_LIBS}', << 'EOF');
+#include <agar/core.h>
 #include <agar/net.h>
-#include <stdio.h>
+#
 int main(int argc, char *argv[]) {
 	AGN_ServerRegCmd("foo", NULL, NULL);
 	AGN_ServerListen("foo", "1.0", NULL, NULL);
@@ -62,6 +64,7 @@ BEGIN
 {
 	$TESTS{'agar-net'} = \&Test;
 	$DESCR{'agar-net'} = 'agar-net (http://hypertriton.com/agar-net/)';
+	$DEPS{'agar-net'} = 'agar';
 }
 
 ;1

@@ -45,9 +45,7 @@ sub Test
 #include <agar/core.h>
 #include <agar/sc.h>
 int main(int argc, char *argv[]) {
-	SC_Matrix *m;
-
-	m = SC_MatrixNew(4,4);
+	SC_Matrix *m = SC_MatrixNew(4,4);
 	SC_MatrixFree(m);
 	return (0);
 }
@@ -66,7 +64,8 @@ EOF
 BEGIN
 {
 	$TESTS{'agar-sc'} = \&Test;
-	$DESCR{'agar-sc'} = 'Agar-Sc (http://hypertriton.com/agar-sc/)';
+	$DESCR{'agar-sc'} = 'Agar-SC (http://hypertriton.com/agar-sc/)';
+	$DEPS{'agar-sc'} = 'agar';
 }
 
 ;1

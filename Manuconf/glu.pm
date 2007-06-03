@@ -55,7 +55,7 @@ sub Test
 	MkEndif;
 
 	MkCompileC('HAVE_GLU', '${OPENGL_CFLAGS} ${GLU_CFLAGS}',
-	                       '${OPENGL_LIBS} ${GLU_LIBS}', << 'EOF');
+	                       '${OPENGL_LIBS} ${GLU_LIBS} ${MATH_LIBS}', << 'EOF');
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
@@ -83,6 +83,7 @@ BEGIN
 {
 	$TESTS{'glu'} = \&Test;
 	$DESCR{'glu'} = 'GLU (http://www.opengl.org)';
+	$DEPS{'glu'} = 'opengl,math';
 }
 
 ;1

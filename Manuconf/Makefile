@@ -53,7 +53,8 @@ SHARE=	Core.pm \
 	db4.pm \
 	perl.pm \
 	libidn.pm \
-	getaddrinfo.pm
+	getaddrinfo.pm \
+	glu.pm
 
 all:
 

@@ -47,7 +47,7 @@ sub Test
 
 int main(int argc, char *argv[]) {
 	RG_Tileset ts;
-	RG_Tileset_Init(&ts, "foo");
+	RG_TilesetInit(&ts, "foo");
 	return (0);
 }
 EOF

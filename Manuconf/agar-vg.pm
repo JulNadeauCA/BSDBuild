@@ -46,7 +46,8 @@ sub Test
 #include <agar/vg.h>
 
 int main(int argc, char *argv[]) {
-	VG *vg = VG_New(0);
+	VG vg;
+	VG_Init(&vg, 0);
 	return (0);
 }
 EOF

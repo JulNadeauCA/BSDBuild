@@ -52,6 +52,7 @@ sub TestPthreadsStd
 		MkSaveMK('CFLAGS', 'PTHREADS_CFLAGS', 'PTHREADS_LIBS');
 		MkSaveDefine('PTHREADS_CFLAGS', 'PTHREADS_LIBS');
 	MkElse();
+		MkPrintN('checking for -pthread...');
 		MkDefine('PTHREADS_LIBS', '-pthread');
 		MkCompileC('HAVE_PTHREADS', '', '${PTHREADS_LIBS}', $pthreads_test);
 		MkIf('"${HAVE_PTHREADS}" = "yes"');

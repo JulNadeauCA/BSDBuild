@@ -42,8 +42,9 @@ sub Test
 #include <agar/net.h>
 #
 int main(int argc, char *argv[]) {
-	AGN_ServerRegCmd("foo", NULL, NULL);
-	AGN_ServerListen("foo", "1.0", NULL, NULL);
+	NC_Session sess;
+	NC_Init(&sess, "foo", "bar");
+	NC_Destroy(&sess);
 	return (0);
 }
 EOF

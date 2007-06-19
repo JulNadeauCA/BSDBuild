@@ -28,10 +28,11 @@ sub Test
 {
 	MkCompileC('_MK_HAVE_SYS_QUEUE_H', '', '', << 'EOF');
 #include <sys/queue.h>
+#include <stdio.h>
 
 struct foo { TAILQ_ENTRY(foo) foos; };
 struct bar { CIRCLEQ_ENTRY(bar) bars; };
-TAILQ_HEAD(,foo) fooq = TAILQ_HEAD_INITIALIZER(fooq);
+TAILQ_HEAD(fooqname,foo) fooq = TAILQ_HEAD_INITIALIZER(fooq);
 CIRCLEQ_HEAD(,bar) barq = CIRCLEQ_HEAD_INITIALIZER(barq);
 
 int main(int argc, char *argv[])
@@ -44,6 +45,7 @@ int main(int argc, char *argv[])
 	TAILQ_INIT(&fooq);
 	TAILQ_INSERT_HEAD(&fooq, &foo1, foos);
 	TAILQ_FOREACH(pfoo, &fooq, foos) { }
+	TAILQ_FOREACH_REVERSE(pfoo, &fooq, fooqname, foos) { }
 	TAILQ_REMOVE(&fooq, &foo1, foos);
 
 	CIRCLEQ_INIT(&barq);

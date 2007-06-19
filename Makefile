@@ -109,6 +109,7 @@ release: cleandir
 
 .PHONY: install install-links install-links-subdir cleandir clean depend release
 
+include ${TOP}/Makefile.config
 include ${TOP}/build.common.mk
 include ${TOP}/build.subdir.mk
-include ${TOP}/Makefile.config
+

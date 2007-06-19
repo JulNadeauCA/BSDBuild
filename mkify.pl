@@ -1,9 +1,6 @@
 #!/usr/bin/perl
 #
-# $Csoft: mkify.pl,v 1.19 2004/01/03 04:13:27 vedge Exp $
-#
-# Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2001-2007 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -66,10 +63,10 @@ sub MKCopy
 	foreach my $dep (@deps) {
 		MKCopy($dep, $dir);
 	}
-	if ($src eq 'csoft.www.mk') {
+	if ($src eq 'build.www.mk') {
 		MKCopy('hstrip.pl', $dir);
 	}
-	if ($src eq 'csoft.lib.mk') {
+	if ($src eq 'build.lib.mk') {
 		mkdir("mk/libtool");
 		for $lf ('config.guess', 'config.sub', 'configure',
 		         'configure.in', 'ltconfig', 'ltmain.sh') {
@@ -88,7 +85,7 @@ sub MKCopy
 
 BEGIN
 {
-	my $dir = '%PREFIX%/share/csoft-mk';
+	my $dir = '%PREFIX%/share/bsdbuild';
 	my $mk = './mk';
 
 	if (! -d $mk && !mkdir($mk)) {
@@ -110,7 +107,7 @@ BEGIN
 	my $type = '';
 	foreach my $f (@ARGV) {
 		$type = $f;
-		$f = join('.', 'csoft', $f, 'mk');
+		$f = join('.', 'build', $f, 'mk');
 		my $dest = join('/', $mk, $f);
 
 		MKCopy($f, $dir);
@@ -122,18 +119,26 @@ BEGIN
 	if (!-e 'configure.in' &&
 	    open(CONFIN, '>configure.in')) {
 		print CONFIN << 'EOF';
-# $Csoft$
 # Public domain
+#
+# Sample BSDbuild configure script source.
+# To generate a configure script, use the command:
+#
+#     $ cat configure.in |mkconfigure > configure
+#
 
 # Name and version of the application, written to config/progname.h
 # and config/version.h.
 HDEFINE(PROGNAME, "\"foo\"")
 HDEFINE(VERSION, "\"1.0-beta\"")
 
+# Codename of the release (optional).
+HDEFINE(RELEASE, "\"Foo\"")
+
 # Register the ${enable_warnings} option.
 REGISTER("--enable-warnings",   "Enable compiler warnings [default: no]")
 
-# Check for a suitable C compiler
+# Check for a suitable C compiler.
 CHECK(cc)
 
 # Output these CFLAGS to Makefile.config.
@@ -145,7 +150,7 @@ if [ "${enable_warnings}" = "yes" ]; then
         MDEFINE(CFLAGS, "$CFLAGS -Wno-unused")
 fi
 EOF
-		system('manuconf < configure.in > configure');
+		system('bldconf < configure.in > configure');
 		chmod(0755, 'configure');
 		close(CONFIN);
 	}
@@ -154,33 +159,58 @@ EOF
 	    open(MAKE, '>Makefile')) {
 		if ($type eq 'prog') {
 			print MAKE << 'EOF';
-# $Csoft$
+# Sample Makefile for a program.
+
+# Path to parent directory of "mk".
 TOP=.
 
+# Executable output name (exact meaning is platform-dependent)
 PROG=foo
+
+#
+# Source files. See the <build.prog.mk> source for a list of all
+# possible source types allowed.
+# 
 SRCS=foo.c bar.cc baz.m
 
 include ${TOP}/Makefile.config
-include ${TOP}/mk/csoft.prog.mk
+include ${TOP}/mk/build.prog.mk
 EOF
 		} elsif ($type eq 'lib') {
 			print MAKE << 'EOF';
-# $Csoft$
+# Sample Makefile for a library.
+
+# Path to parent directory of "mk".
 TOP=.
 
+# Library output name (exact meaning is platform-dependent)
 LIB=	foo
+
+#
+# Source files. See the <build.lib.mk> source for a list of all
+# possible source types allowed.
+# 
 SRCS=	foo.c bar.cc baz.m
 
 include ${TOP}/Makefile.config
-include ${TOP}/mk/csoft.lib.mk
+include ${TOP}/mk/build.lib.mk
 EOF
 		} elsif ($type eq 'www') {
 			print MAKE << 'EOF';
-# $Csoft$
+# Sample Makefile for a webpage or website.
 
+# Path to parent directory of "mk".
+TOP=.
+
+#
+# Target HTML files. The actual source files must be named foo.htm and
+# bar.htm, and will be processed into a number of language and character
+# set variants (ie. foo.html.en). Standard Apache-compatible variant maps
+# will be generated as well.
+# 
 HTML=	foo.html bar.html
 
-include ${TOP}/mk/csoft.www.mk
+include ${TOP}/mk/build.www.mk
 EOF
 		}
 		close(MAKE);

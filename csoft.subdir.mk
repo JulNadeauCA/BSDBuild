@@ -1,7 +1,5 @@
-# $Csoft: csoft.subdir.mk,v 1.20 2003/09/30 02:37:24 vedge Exp $
-
-# Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+#
+# Copyright (c) 2001-2007 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without

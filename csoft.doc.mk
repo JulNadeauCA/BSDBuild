@@ -1,7 +1,5 @@
-# $Csoft: csoft.doc.mk,v 1.2 2004/02/14 05:05:45 vedge Exp $
-
-# Copyright (c) 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+#
+# Copyright (c) 2004-2007 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -79,5 +77,5 @@ clean-doc:
 .PHONY: install deinstall clean cleandir regress depend
 .PHONY: clean-doc
 
-include ${TOP}/mk/csoft.subdir.mk
-include ${TOP}/mk/csoft.common.mk
+include ${TOP}/mk/build.subdir.mk
+include ${TOP}/mk/build.common.mk

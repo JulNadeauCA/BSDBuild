@@ -1,7 +1,5 @@
-# $Csoft: csoft.lib.mk,v 1.50 2005/10/06 10:28:22 vedge Exp $
-
-# Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+#
+# Copyright (c) 2001-2007 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -376,6 +374,6 @@ ${LTCONFIG} ${LTCONFIG_GUESS} ${LTCONFIG_SUB} ${LTMAIN_SH}:
 .PHONY: install-lib deinstall-lib clean-lib cleandir-lib
 .PHONY: _lib_objs _lib_shobjs
 
-include ${TOP}/mk/csoft.common.mk
-include ${TOP}/mk/csoft.dep.mk
-include ${TOP}/mk/csoft.subdir.mk
+include ${TOP}/mk/build.common.mk
+include ${TOP}/mk/build.dep.mk
+include ${TOP}/mk/build.subdir.mk

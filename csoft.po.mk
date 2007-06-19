@@ -1,7 +1,5 @@
-# $Csoft: csoft.po.mk,v 1.9 2004/10/19 16:06:59 vedge Exp $
-
-# Copyright (c) 2003, 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+#
+# Copyright (c) 2003-2007 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -149,5 +147,5 @@ count:
 .PHONY: install-po deinstall-po clean-po
 .PHONY: ${POTFILES} count
 
-include ${TOP}/mk/csoft.common.mk
-include ${TOP}/mk/csoft.subdir.mk
+include ${TOP}/mk/build.common.mk
+include ${TOP}/mk/build.subdir.mk

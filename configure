@@ -138,7 +138,7 @@ echo "    --prefix                       Installation prefix [/usr/local]"
 echo "    --srcdir                       Source tree for concurrent builds [.]"
 exit 1
 fi
-SHAREDIR="$PREFIX/share/csoft-mk"
+SHAREDIR="$PREFIX/share/bsdbuild"
 echo SHAREDIR=$SHAREDIR >> Makefile.config
 echo PREFIX=$PREFIX >> Makefile.config
 echo "#ifndef PREFIX" > config/prefix.h

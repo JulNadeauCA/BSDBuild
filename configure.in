@@ -1,8 +1,5 @@
-# $Csoft: configure.in,v 1.7 2003/05/05 11:21:37 vedge Exp $
+# Public domain
 
-if [ "${help}" = "yes" ]; then
-	help();
-fi
-
-mdefine(SHAREDIR, "$PREFIX/share/csoft-mk");
-
+MDEFINE(SHAREDIR, "$PREFIX/share/bsdbuild");
+MDEFINE(VERSION, "2.1");
+MDEFINE(RELEASE, "Forest of the Horrifying");

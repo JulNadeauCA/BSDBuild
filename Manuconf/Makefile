@@ -1,5 +1,3 @@
-# $Csoft: Makefile,v 1.27 2005/04/25 04:34:14 vedge Exp $
-
 TOP=..
 
 SHARE=	Core.pm \
@@ -61,23 +59,23 @@ SHARE=	Core.pm \
 all:
 
 install:
-	@if [ ! -d "${SHAREDIR}/Manuconf" ]; then \
-	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/Manuconf"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}/Manuconf; \
+	@if [ ! -d "${SHAREDIR}/BSDBuild" ]; then \
+	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/BSDBuild"; \
+	    ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}/BSDBuild; \
 	fi; \
 	for F in ${SHARE}; do \
-	    echo "${INSTALL_DATA} $$F ${SHAREDIR}/Manuconf"; \
-	    ${SUDO} ${INSTALL_DATA} $$F ${SHAREDIR}/Manuconf; \
+	    echo "${INSTALL_DATA} $$F ${SHAREDIR}/BSDBuild"; \
+	    ${SUDO} ${INSTALL_DATA} $$F ${SHAREDIR}/BSDBuild; \
 	done
 
 install-links:
-	@if [ ! -d "${SHAREDIR}/Manuconf" ]; then \
-	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/Manuconf"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}/Manuconf; \
+	@if [ ! -d "${SHAREDIR}/BSDBuild" ]; then \
+	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/BSDBuild"; \
+	    ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}/BSDBuild; \
 	fi; \
 	for F in ${SHARE}; do \
-	    echo "ln -sf `pwd`/$$F ${SHAREDIR}/Manuconf/$$F"; \
-	    ${SUDO} ln -sf `pwd`/$$F ${SHAREDIR}/Manuconf/$$F; \
+	    echo "ln -sf `pwd`/$$F ${SHAREDIR}/BSDBuild/$$F"; \
+	    ${SUDO} ln -sf `pwd`/$$F ${SHAREDIR}/BSDBuild/$$F; \
 	done
 
 cleandir:
@@ -85,6 +83,6 @@ cleandir:
 
 .PHONY: install install-links cleandir
 
-include ${TOP}/csoft.common.mk
-include ${TOP}/csoft.subdir.mk
+include ${TOP}/build.common.mk
+include ${TOP}/build.subdir.mk
 include ${TOP}/Makefile.config

@@ -1,7 +1,5 @@
-# $Csoft: csoft.perl.mk,v 1.16 2004/01/03 04:13:27 vedge Exp $
-
-# Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+#
+# Copyright (c) 2001-2007 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -24,12 +22,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-PERL?=	/usr/bin/perl
+PERL?=/usr/bin/perl
 SCRIPTS?=
 MODULES?=
 SHARE?=
-SCRIPTS_DIR?=	${BINDIR}
-MODULES_DIR?=	${SHAREDIR}/perl
+SCRIPTS_DIR?=${BINDIR}
+MODULES_DIR?=${SHAREDIR}/perl
 SCRIPTS_SUBST?=
 MODULES_SUBST?=
 
@@ -123,5 +121,5 @@ clean-perl:
 .PHONY: install deinstall clean cleandir regress depend
 .PHONY: install-perl deinstall-perl clean-perl
 
-include ${TOP}/mk/csoft.common.mk
-include ${TOP}/mk/csoft.subdir.mk
+include ${TOP}/mk/build.common.mk
+include ${TOP}/mk/build.subdir.mk

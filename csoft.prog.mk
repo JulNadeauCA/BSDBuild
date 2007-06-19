@@ -1,7 +1,5 @@
-# $Csoft: csoft.prog.mk,v 1.41 2005/10/06 10:28:22 vedge Exp $
-
-# Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+#
+# Copyright (c) 2001-2007 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -301,6 +299,6 @@ deinstall-prog:
 .PHONY: install-prog deinstall-prog clean-prog cleandir-prog
 .PHONY: _prog_objs _prog_pobjs
 
-include ${TOP}/mk/csoft.common.mk
-include ${TOP}/mk/csoft.dep.mk
-include ${TOP}/mk/csoft.subdir.mk
+include ${TOP}/mk/build.common.mk
+include ${TOP}/mk/build.dep.mk
+include ${TOP}/mk/build.subdir.mk

@@ -1,4 +1,9 @@
 #!/bin/sh
+#
+# Public domain
+#
+# version.sh: Extract version information from configure.in.
+#
 
 if [ "$1" = "" ]; then
 	echo "Usage: $0 [filename]"

@@ -1,7 +1,5 @@
-# $Csoft: csoft.common.mk,v 1.24 2004/04/25 02:14:04 vedge Exp $
-
-# Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+#
+# Copyright (c) 2001-2007 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -60,4 +58,3 @@ DEINSTALL_PROG_DIR=	rmdir -p
 DEINSTALL_LIB_DIR=	rmdir -p
 DEINSTALL_DATA_DIR=	rmdir -p
 DEINSTALL_INCL_DIR=	rmdir -p
-

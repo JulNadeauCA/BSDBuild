@@ -1,7 +1,5 @@
-# $Csoft: csoft.www.mk,v 1.30 2003/12/10 02:29:30 vedge Exp $
-
-# Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+#
+# Copyright (c) 2001-2007 Hypertriton, Inc. <http://hypertriton.com/>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -34,7 +32,7 @@ TEMPLATE?=	csoft
 LANGUAGES?=	en fr
 DEF_LANGUAGE?=	en
 XSL?=		${XSLDIR}/ml.xsl
-MKDEPS=		csoft.www.mk csoft.subdir.mk csoft.common.mk hstrip.pl
+MKDEPS=		build.www.mk build.subdir.mk build.common.mk hstrip.pl
 HTMLDIR?=	none
 
 all: ${HTML} all-subdir
@@ -163,7 +161,7 @@ install-www:
 			echo "TEMPLATE=${TEMPLATE}" >> Makefile.prep; \
 			echo "LANGUAGES=${LANGUAGES}" >> Makefile.prep; \
 			echo "XSL=${XSL}" >> Makefile.prep; \
-			echo "include mk/csoft.www.mk" >> Makefile.prep; \
+			echo "include mk/build.www.mk" >> Makefile.prep; \
 			echo "${INSTALL_DATA} Makefile.prep \
 			    ${HTMLDIR}/Makefile"; \
 			${SUDO} ${INSTALL_DATA} Makefile.prep \
@@ -201,5 +199,5 @@ install-www:
 .PHONY: install deinstall clean cleandir regress depend
 .PHONY: install-www clean-www
 
-include ${TOP}/mk/csoft.common.mk
-include ${TOP}/mk/csoft.subdir.mk
+include ${TOP}/mk/build.common.mk
+include ${TOP}/mk/build.subdir.mk

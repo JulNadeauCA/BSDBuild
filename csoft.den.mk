@@ -1,8 +1,5 @@
-# $Csoft: csoft.den.mk,v 1.2 2004/03/17 03:49:16 vedge Exp $
-# ex:syn=make
-
-# Copyright (c) 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+#
+# Copyright (c) 2004-2007 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -93,6 +90,6 @@ deinstall-den:
 .PHONY: install deinstall clean cleandir regress depend
 .PHONY: install-prog deinstall-prog clean-prog cleandir-prog
 
-include ${TOP}/mk/csoft.common.mk
-include ${TOP}/mk/csoft.dep.mk
-include ${TOP}/mk/csoft.subdir.mk
+include ${TOP}/mk/build.common.mk
+include ${TOP}/mk/build.dep.mk
+include ${TOP}/mk/build.subdir.mk

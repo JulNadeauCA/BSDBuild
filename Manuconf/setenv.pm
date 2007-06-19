@@ -32,8 +32,8 @@ sub Test
 int
 main(int argc, char *argv[])
 {
-	(void)setenv("MANUCONF_SETENV_TEST", "foo", 1);
-	unsetenv("MANUCONF_SETENV_TEST");
+	(void)setenv("BSDBUILD_SETENV_TEST", "foo", 1);
+	unsetenv("BSDBUILD_SETENV_TEST");
 
 	return (0);
 }

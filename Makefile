@@ -1,28 +1,24 @@
-# $Csoft: Makefile,v 1.23 2004/03/10 13:43:34 vedge Exp $
-
 TOP=.
 
-VERSION=	2.0
-PROJECT=	csoft-mk
+PROJECT=	bsdbuild
 DIST=		${PROJECT}-${VERSION}
 DISTFILE=	${DIST}.tar.gz
 
-MAN5=	csoft.common.mk.5
+#MAN5=	build.common.mk.5
 
-SHARE=	csoft.common.mk csoft.dep.mk csoft.lib.mk csoft.man.mk \
-	csoft.perl.mk csoft.prog.mk csoft.subdir.mk csoft.www.mk \
-	hstrip.pl manuconf.pl mkdep mkify.pl mkconcurrent.pl csoft.po.mk \
-	csoft.doc.mk csoft.den.mk version.sh manlinks.pl
-
+SHARE=	build.common.mk build.dep.mk build.lib.mk build.man.mk \
+	build.perl.mk build.prog.mk build.subdir.mk build.www.mk \
+	hstrip.pl mkconfigure.pl mkdep mkify.pl mkconcurrent.pl build.po.mk \
+	build.doc.mk build.den.mk version.sh manlinks.pl
 LTFILES=config.guess config.sub configure configure.in ltconfig ltmain.sh
 
-SUBDIR=	Manuconf
+SUBDIR=	BSDBuild
 
-all:	manuconf.out mkify all-subdir
+all:	mkconfigure.out mkify all-subdir
 
-manuconf.out: manuconf.pl
+mkconfigure.out: mkconfigure.pl
 	sed -e s,%PREFIX%,${PREFIX}, -e s,%VERSION%,${VERSION}, \
-	    manuconf.pl > manuconf.out
+	    mkconfigure.pl > mkconfigure.out
 
 mkify: mkify.pl
 	sed s,%PREFIX%,${PREFIX}, mkify.pl > mkify
@@ -45,8 +41,8 @@ install: install-subdir
 	    ${SUDO} ${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool; \
 	done
 	${SUDO} ${INSTALL_PROG} mkify ${BINDIR}
-	${SUDO} cp -f manuconf.out ${BINDIR}/manuconf
-	${SUDO} chmod 755 ${BINDIR}/manuconf
+	${SUDO} cp -f mkconfigure.out ${BINDIR}/mkconfigure
+	${SUDO} chmod 755 ${BINDIR}/mkconfigure
 
 install-links-subdir:
 	@(if [ "${SUBDIR}" = "" ]; then \
@@ -82,17 +78,17 @@ install-links: install-links-subdir
 	    ${SUDO} ${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool; \
 	done
 	${SUDO} ${INSTALL_PROG} mkify ${BINDIR}
-	${SUDO} cp -f manuconf.out ${BINDIR}/manuconf
-	${SUDO} chmod 755 ${BINDIR}/manuconf
+	${SUDO} cp -f mkconfigure.out ${BINDIR}/mkconfigure
+	${SUDO} chmod 755 ${BINDIR}/mkconfigure
 
 cleandir:
 	rm -f Makefile.config config.log *~
 
 clean:
-	rm -f manuconf.out mkify
+	rm -f mkconfigure.out mkify
 
 configure: configure.in
-	cat configure.in | ./manuconf.pl > configure
+	cat configure.in | perl mkconfigure.pl > configure
 	chmod 755 configure
 
 depend:
@@ -113,6 +109,6 @@ release: cleandir
 
 .PHONY: install install-links install-links-subdir cleandir clean depend release
 
-include ${TOP}/csoft.common.mk
-include ${TOP}/csoft.subdir.mk
+include ${TOP}/build.common.mk
+include ${TOP}/build.subdir.mk
 include ${TOP}/Makefile.config

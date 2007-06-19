@@ -1,7 +1,5 @@
-# $Csoft: csoft.man.mk,v 1.38 2004/04/24 05:40:31 vedge Exp $
-
-# Copyright (c) 2001, 2002, 2003, 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+#
+# Copyright (c) 2001-2007 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -591,4 +589,4 @@ all-manlinks:
 .PHONY: install-man install-manlinks clean-man
 .PHONY: man preformat-man install-man-dirs manlinks all-manlinks
 
-include ${TOP}/mk/csoft.common.mk
+include ${TOP}/mk/build.common.mk

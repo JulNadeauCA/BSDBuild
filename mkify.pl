@@ -88,11 +88,20 @@ BEGIN
 	my $dir = '%PREFIX%/share/bsdbuild';
 	my $mk = './mk';
 
+	unless (@ARGV) {
+		print STDERR "Usage: $0 [module1 module2 ...]\n\n";
+		print STDERR "Possible modules include: \n";
+		print STDERR "\tprog     Executable\n";
+		print STDERR "\tlib      Library\n";
+		print STDERR "\tman      Manual pages\n";
+		print STDERR "\twww      HTML pages\n\n";
+		print STDERR "See contents of $dir for full list\n";
+		exit(1);
+	}
 	if (! -d $mk && !mkdir($mk)) {
 		print STDERR "mkdir $mk: $!\n";
 		exit (1);
 	}
-
 	if (opendir(MKDIR, $mk)) {
 		foreach my $f (readdir(MKDIR)) {
 			next unless -f "$mk/$f";
@@ -103,7 +112,6 @@ BEGIN
 		print "opendir $mk: $!\n";
 		exit (1);
 	}
-
 	my $type = '';
 	foreach my $f (@ARGV) {
 		$type = $f;
@@ -112,6 +120,7 @@ BEGIN
 
 		MKCopy($f, $dir);
 	}
+
 	MKCopy('mkdep', $dir);
 	MKCopy('mkconcurrent.pl', $dir);
 	MKCopy('manlinks.pl', $dir);
@@ -150,7 +159,7 @@ if [ "${enable_warnings}" = "yes" ]; then
         MDEFINE(CFLAGS, "$CFLAGS -Wno-unused")
 fi
 EOF
-		system('bldconf < configure.in > configure');
+		system('mkconfigure < configure.in > configure');
 		chmod(0755, 'configure');
 		close(CONFIN);
 	}
@@ -213,6 +222,11 @@ HTML=	foo.html bar.html
 include ${TOP}/mk/build.www.mk
 EOF
 		}
+		close(MAKE);
+	}
+	if (!-e 'Makefile.config' &&
+	    open(MAKE, '>Makefile.config')) {
+		print MAKE "# File is auto-generated, do not edit\n";
 		close(MAKE);
 	}
 }

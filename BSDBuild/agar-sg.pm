@@ -56,7 +56,7 @@ EOF
 		MkEndif;
 	MkElse;
 		MkPrint('no');
-		MkSaveUndef('HAVE_AGAR_SG');
+		MkSaveUndef('HAVE_AGAR_SG', 'AGAR_SG_CFLAGS', 'AGAR_SG_LIBS');
 	MkEndif;
 	return (0);
 }

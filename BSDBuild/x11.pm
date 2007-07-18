@@ -45,22 +45,20 @@ my @lib_dirs = (
 
 sub Test
 {
-	print Define('x11_found_includes', 'no');
-	print Define('x11_found_libs', 'no');
+	MkDefine('x11_found_includes', 'no');
+	MkDefine('x11_found_libs', 'no');
 
 	foreach my $dir (@include_dirs) {
-	    print
-			Cond("-d $dir/X11",
-		    Define('X11_CFLAGS', "\"-I$dir\"") .
-			Define('x11_found_includes', "yes") ,
-			Nothing());
+		MkIf("-d $dir/X11");
+		    MkDefine('X11_CFLAGS', "\"-I$dir\"");
+			MkDefine('x11_found_includes', "yes");
+		MkEndif;
 	}
 	foreach my $dir (@lib_dirs) {
-	    print
-			Cond("-d $dir",
-		    Define('X11_LIBS', "\"-L$dir\"") .
-			Define('x11_found_libs', "yes") ,
-			Nothing());
+		MkIf("-d $dir");
+		    MkDefine('X11_LIBS', "\"-L$dir\"");
+			MkDefine('x11_found_libs', "yes");
+		MkEndif;
 	}
 
 	MkCompileC('HAVE_X11', '${X11_CFLAGS}', '${X11_LIBS} -lX11', << 'EOF');
@@ -76,15 +74,13 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	
-	print
-		Cond('"${HAVE_X11}" != ""',
-		MKSave('X11_CFLAGS') .
-		MKSave('X11_LIBS') .
-	    HDefineStr('X11_LIBS') .
-	    HDefineStr('X11_CFLAGS') ,
-		HUndef('X11_CFLAGS') .
-		HUndef('X11_LIBS'));
+
+	MkIf('"${HAVE_X11}" != ""');
+		MkSaveMK('X11_CFLAGS', 'X11_LIBS');
+		MkSaveDefine('X11_CFLAGS', 'X11_LIBS');
+	MkElse;
+		MkSaveUndef('X11_CFLAGS', 'X11_LIBS');
+	MkEndif;
 }
 
 BEGIN

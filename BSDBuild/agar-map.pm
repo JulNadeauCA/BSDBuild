@@ -56,7 +56,7 @@ EOF
 		MkEndif;
 	MkElse;
 		MkPrint('no');
-		MkSaveUndef('HAVE_AGAR_MAP');
+		MkSaveUndef('HAVE_AGAR_MAP', 'AGAR_MAP_CFLAGS', 'AGAR_MAP_LIBS');
 	MkEndif;
 	return (0);
 }

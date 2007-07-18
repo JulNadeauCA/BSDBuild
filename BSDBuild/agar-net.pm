@@ -30,7 +30,7 @@ sub Test
 	my ($ver) = @_;
 	
 	MkExecOutput('agar-net-config', '--version', 'AGAR_NET_VERSION');
-	MkIf(q/"${AGAR_NET_VERSION}" != ""/);
+	MkIf('"${AGAR_NET_VERSION}" != ""');
 		MkPrint('yes');
 		MkExecOutput('agar-net-config', '--cflags', 'AGAR_NET_CFLAGS');
 		MkExecOutput('agar-net-config', '--libs', 'AGAR_NET_LIBS');
@@ -40,7 +40,7 @@ sub Test
 			'${AGAR_LIBS} ${AGAR_NET_LIBS}', << 'EOF');
 #include <agar/core.h>
 #include <agar/net.h>
-#
+
 int main(int argc, char *argv[]) {
 	NC_Session sess;
 	NC_Init(&sess, "foo", "bar");
@@ -55,8 +55,8 @@ EOF
 			MkSaveUndef('AGAR_NET_CFLAGS', 'AGAR_NET_LIBS');
 		MkEndif;
 	MkElse;
-		MkSaveUndef('HAVE_AGAR_NET');
 		MkPrint('no');
+		MkSaveUndef('HAVE_AGAR_NET', 'AGAR_NET_CFLAGS', 'AGAR_NET_LIBS');
 	MkEndif;
 	return (0);
 }

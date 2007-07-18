@@ -100,9 +100,8 @@ release: cleandir
 	 rm -fr ${DIST}/CVS && \
 	 tar -f ${DIST}.tar -c ${DIST} && \
 	 gzip -9f ${DIST}.tar && \
-	 md5 ${DISTFILE} > ${DISTFILE}.md5 && \
-	 rmd160 ${DISTFILE} >> ${DISTFILE}.md5 && \
-	 sha1 ${DISTFILE} >> ${DISTFILE}.md5 && \
+	 md5sum ${DISTFILE} > ${DISTFILE}.md5 && \
+	 sha1sum ${DISTFILE} >> ${DISTFILE}.md5 && \
 	 gpg -ab ${DISTFILE} && \
 	 scp ${DISTFILE} ${DISTFILE}.md5 ${DISTFILE}.asc \
 	 vedge@resin:www/stable.csoft.org/${PROJECT})

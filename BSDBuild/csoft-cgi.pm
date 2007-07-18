@@ -29,25 +29,17 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	print ReadOut('cgi-config', '--version', 'cgi_version');
-	print ReadOut('cgi-config', '--cflags', 'CGI_CFLAGS');
-	print ReadOut('cgi-config', '--libs', 'CGI_LIBS');
-	
-	print
-	    Cond('"${cgi_version}" != ""',
-	    Echo("yes") . 
-        MKSave('CGI_CFLAGS') .
-        MKSave('CGI_LIBS') .
-    	HDefine('HAVE_CGI') .
-		HDefineStr('CGI_CFLAGS') .
-		HDefineStr('CGI_LIBS') ,
-	    Echo("no") .
-	    HUndef('HAVE_CGI') .
-	    HUndef('CGI_CFLAGS') .
-	    HUndef('CGI_LIBS'));
+	MkExecOutput('cgi-config', '--version', 'CGI_VERSION');
 
-	print NEcho('checking whether csoft-cgi works...');
-	MkCompileC('HAVE_CGI', '${CGI_CFLAGS}', '${CGI_LIBS}', << 'EOF');
+	MkIf('"${CGI_VERSION}" != ""');
+		MkPrint('yes');
+		MkExecOutput('cgi-config', '--cflags', 'CGI_CFLAGS');
+		MkExecOutput('cgi-config', '--libs', 'CGI_LIBS');
+        MkSaveMK('CGI_CFLAGS', 'CGI_LIBS');
+        MkSaveDefine('CGI_CFLAGS', 'CGI_LIBS');
+
+		MkPrint('checking whether csoft-cgi works...');
+		MkCompileC('HAVE_CGI', '${CGI_CFLAGS}', '${CGI_LIBS}', << 'EOF');
 #include <libcgi/cgi.h>
 
 int
@@ -57,11 +49,10 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	print
-	    Cond('"${HAVE_CGI}" = "yes"',
-	    Nothing(),
-	    Fail('The csoft-cgi test application failed to compile.'));
-
+	MkElse;
+		MkPrint('no');
+	    MkSaveUndef('HAVE_CGI', 'CGI_CFLAGS', 'CGI_LIBS');
+	MkEndif;
 	return (0);
 }
 

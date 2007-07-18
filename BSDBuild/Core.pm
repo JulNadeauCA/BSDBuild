@@ -23,6 +23,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#
+# Bourne instructions.
+#
+sub MkIf { print 'if [ ',shift,' ]; then',"\n"; }
+sub MkElif { print 'elif [ ',shift,' ]; then',"\n"; }
+sub MkElse { print 'else',"\n"; }
+sub MkEndif { print 'fi;',"\n"; }
+
 # Read the output of a program into a variable.
 # Set an empty string if the binary is not found.
 sub ReadOut
@@ -271,6 +279,31 @@ EOF
 	}
 }
 
+sub MkSaveCompileSuccess ($)
+{
+	my $define = shift;
+		
+	MkDefine($define, 'yes');
+	MkSaveMK($define);
+	MkSaveDefine($define);
+}
+
+sub MkSaveCompileFailed ($)
+{
+	my $define = shift;
+		
+	MkDefine($define, 'no');
+	MkSaveMK($define);
+	MkSaveUndef($define);
+}
+
+#
+# Compile and run a test C program. If the program returns a non-zero
+# exit code, the test fails.
+#
+# Sets $define to "yes" or "no" and saves it to both Makefile.config and
+# ./config/.
+#
 sub MkCompileAndRunC
 {
 	my $define = shift;
@@ -286,26 +319,29 @@ EOF
 	print << "EOF";
 echo "\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o conftest conftest.c $libs" >>config.log
 \$CC \$CFLAGS \$TEST_CFLAGS $cflags -o conftest conftest.c $libs 2>>config.log
-if [ \$? != 0 ]; then
-	echo "-> failed (\$?)" >> config.log
-	compile="failed"
-else
-	compile="ok"
-	./conftest >> config.log
-	if [ \$? != 0 ]; then
-		echo "-> exec failed (\$?)" >> config.log
-		$define="no"
-	else
-		$define="yes"
-	fi
-fi
-rm -f conftest conftest.c
+EOF
+	MkIf('$? != 0');
+		MkPrint('no (compile failed)');
+		MkDefine('compile', 'failed');
+		MkSaveCompileFailed($define);
+	MkElse;
+		MkDefine('compile', 'ok');
+		print './conftest >> config.log', "\n";
+		MkIf('$? == 0');
+			MkPrint('yes');
+			MkSaveCompileSuccess($define);
+		MkElse;
+			MkPrint('no (exec failed)');
+			MkSaveCompileFailed($define);
+		MkEndif;
+	MkEndif;
+	print 'rm -f conftest conftest.c', "\n";
 EOF
 }
 
 sub TryCompileFlags
 {
-	my $def = shift;
+	my $define = shift;
 	my $flags = shift;
 
 	while (my $code = shift) {
@@ -324,31 +360,26 @@ if [ \$? != 0 ]; then
 fi
 rm -f conftest conftest.c
 EOF
-
-		my $define = HDefine($def);
-		my $undef = HUndef($def);
-
-		print << "EOF";
-if [ "\${compile}" = "ok" ]; then
-	echo "ok" >> config.log
-	$define
-	echo "yes"
-else
-    $undef
-	echo "no"
-fi
-EOF
+		MkIf('"${compile}" = "ok"');
+			MkPrint('yes');
+			MkSaveCompileSuccess($define);
+		MkElse;
+			MkPrint('no');
+			MkSaveCompileFailed($define);
+		MkEndif;
 	}
 }
 
-sub MkIf { print 'if [ ',shift,' ]; then',"\n"; }
-sub MkElif { print 'elif [ ',shift,' ]; then',"\n"; }
-sub MkElse { print 'else',"\n"; }
-sub MkEndif { print 'fi;',"\n"; }
-
+#
+# Compile a test C program. If compilation fails, the test fails. The
+# test program is never executed.
+#
+# Sets $define to "yes" or "no" and saves it to both Makefile.config and
+# ./config/.
+#
 sub MkCompileC
 {
-	my $def = shift;
+	my $define = shift;
 	my $cflags = shift;
 	my $libs = shift;
 
@@ -359,34 +390,20 @@ $code
 EOT
 EOF
 		print << "EOF";
-compile=\"ok\"
 echo "\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o conftest conftest.c $libs" >>config.log
 \$CC \$CFLAGS \$TEST_CFLAGS $cflags -o conftest conftest.c $libs 2>>config.log
 EOF
+		MkIf('$? == 0');
+			MkPrint('yes');
+			MkDefine('compile', 'ok');
+			MkSaveCompileSuccess($define);
+		MkElse;
+			MkPrint('no');
+			MkDefine('compile', 'failed');
+			MkSaveCompileFailed($define);
+		MkEndif;
 
-		print << 'EOF';
-if [ $? != 0 ]; then
-	echo "failed ($?)" >> config.log
-	compile="failed"
-fi
-rm -f conftest conftest.c
-EOF
-
-		my $hdefine = HDefine($def);
-		my $hundefine = HUndef($def);
-		my $define = Define($def, 'yes');
-
-		print << "EOF";
-if [ "\${compile}" = "ok" ]; then
-	echo "ok" >> config.log
-	$hdefine
-	$define
-	echo "yes"
-else
-	$hundefine
-	echo "no"
-fi
-EOF
+		print 'rm -f conftest conftest.c', "\n";
 	}
 }
 

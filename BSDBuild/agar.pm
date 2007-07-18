@@ -29,24 +29,19 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	print ReadOut('agar-config', '--version', 'agar_version');
-	print ReadOut('agar-config', '--cflags', 'AGAR_CFLAGS');
-	print ReadOut('agar-config', '--libs', 'AGAR_LIBS');
-	
-	print
-	    Cond('"${agar_version}" != ""',
-	    Echo("yes") . 
-        MKSave('AGAR_CFLAGS') .
-        MKSave('AGAR_LIBS') .
-    	HDefine('HAVE_AGAR') .
-		HDefineStr('AGAR_CFLAGS') .
-		HDefineStr('AGAR_LIBS') ,
-	    Echo("no") .
-	    HUndef('HAVE_AGAR') .
-	    HUndef('AGAR_CFLAGS') .
-	    HUndef('AGAR_LIBS'));
+	MkExecOutput('agar-config', '--version', 'AGAR_VERSION');
+	MkIf('"${AGAR_VERSION}" != ""');
+		MkPrint('yes');
+		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
+		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');
+		MkSaveMK('AGAR_CFLAGS', 'AGAR_LIBS');
+		MkSaveDefine('AGAR_CFLAGS', 'AGAR_LIBS');
+	MkElse;
+	    MkPrint('no');
+		MkSaveUndef('AGAR_CFLAGS', 'AGAR_LIBS');
+	MkEndif;
 
-	print NEcho('checking whether Agar works...');
+	MkPrintN('checking whether Agar works...');
 	MkCompileC('HAVE_AGAR', '${AGAR_CFLAGS}', '${AGAR_LIBS}', << 'EOF');
 #include <agar/core.h>
 
@@ -60,11 +55,6 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	print
-	    Cond('"${HAVE_AGAR}" = "yes"',
-	    Nothing(),
-	    Fail('The Agar test application failed to compile.'));
-
 	return (0);
 }
 

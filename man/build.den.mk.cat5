@@ -1,0 +1,59 @@
+BUILD.DEN.MK(5)           OpenBSD Programmer's Manual          BUILD.DEN.MK(5)
+
+NNAAMMEE
+     bbuuiilldd..ddeenn..mmkk - bsdbuild - agar .den archives
+
+SSYYNNOOPPSSIISS
+     ..iinncclluuddee <<bbssdd..ddeenn..mmkk>>
+
+DDEESSCCRRIIPPTTIIOONN
+     bbuuiilldd..ddeenn..mmkk uses the Agar dencomp(1) utility to generate an Agar `.den'
+     resource file from a specified set of media files.
+
+TTAARRGGEETTSS
+     _$_{_D_E_N_}          Generate archive file from the specified media files.
+
+     _c_l_e_a_n_-_d_e_n       Clean up the archive file.
+
+     _i_n_s_t_a_l_l_-_d_e_n     Install the archive file into ${DEN_DIR}.
+
+     _d_e_i_n_s_t_a_l_l_-_d_e_n   Uninstall archive file from ${DEN_DIR}.
+
+VVAARRIIAABBLLEESS
+     DENCOMP         Path to dencomp(1) utility.  Defaults to `dencomp', usu-
+                     ally overridden by a configure script.
+
+     DENCOMP_FLAGS   Extra flags to pass to dencomp(1).
+
+     DEN             Name of the archive file to generate.
+
+     XCF             List of gimp XCF files to archive.
+
+     WAV             List of WAV files to archive.
+
+     OGG             List of Ogg Vorbis files to archive.
+
+     MPEG            List of MPEG files to archive.
+
+     DEN_LANG        Default ISO 639 language code to assign to the archive.
+                     Defaults to `en'.
+
+     DEN_NAME        Name to encode in the archive.  Defaults to `${DEN}'.
+
+     DEN_AUTHOR      Author string to encode in the archive.
+
+     DEN_COPYRIGHT   Copyright information to encode in the archive.
+
+     DEN_DESCR       Description string to encode in the archive.
+
+     DEN_KEYWORDS    Lookup keywords to encode in the archive.
+
+SSEEEE AALLSSOO
+     build.common.mk(5), build.prog.mk(5), build.lib.mk(5)
+
+HHIISSTTOORRYY
+     bbuuiilldd..ddeenn..mmkk first appeared in BSDBuild 1.0.
+
+     BSDBuild is based on the 4.4BSD build system.
+
+OpenBSD 4.1                      July 18, 2007                               1

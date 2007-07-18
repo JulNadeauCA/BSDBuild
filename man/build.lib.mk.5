@@ -1,0 +1,187 @@
+.\"
+.\" Copyright (c) 2007 Hypertriton, Inc. <http://www.hypertriton.com/>
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY EXPRESS OR
+.\" IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+.\" OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+.\" IN NO EVENT SHALL THE DEVELOPERS BE LIABLE FOR ANY DIRECT, INDIRECT,
+.\" INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+.\" NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+.\" DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+.\" THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+.\" (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+.\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+.\"
+.Dd July 18, 2007
+.Dt BUILD.LIB.MK 5
+.Os
+.Sh NAME
+.Nm build.lib.mk
+.Nd bsdbuild - compilation of libraries
+.Sh SYNOPSIS
+.Fd .include <bsd.lib.mk>
+.Sh DESCRIPTION
+The
+.Nm
+module compiles static and/or shared libraries from a set of source files.
+For shared libraries, it uses a bundled copy of GNU libtool.
+Currently, supported languages include:
+.Bl -bullet -compact
+.It
+C (*.c)
+.It
+C++ (*.cc)
+.It
+Objective C (*.m)
+.It
+Assembler (*.asm)
+.It
+Lex (*.l)
+.It
+Yacc (*.y)
+.El
+.Pp
+.Sh TARGETS
+.Bl -tag -width "deinstall-lib "
+.It Ar lib${LIB}.a
+Compile the source files into a static library.
+.It Ar lib${LIB}.la
+Compile the source files into static and shared libraries using libtool
+(libtool comes bundled with BSDBuild).
+.It Ar clean-lib
+Clean up object and library files.
+.It Ar cleandir-lib
+Clean up for packaging.
+.It Ar install-lib
+Install library files to the target installation directory
+(see
+.Xr csoft.common.mk 5 ) .
+.It Ar deinstall-lib
+Uninstall libraries from the installation directory.
+.El
+.Sh VARIABLES
+.Bl -tag -width "LIB_INSTALL "
+.It Ev LIB
+Name of target library.
+Platform-specific transforms will be applied to the name.
+.It Ev LIB_INSTALL
+If set to
+.Sq Yes ,
+the
+.Ar install
+target will install the library files, otherwise it will be a no-op.
+Defaults to
+.Sq No .
+.It Ev LIB_SHARED
+If set to
+.Sq Yes ,
+a shared library will be built.
+Default is platform-specific.
+.It Ev LIB_STATIC
+If set to
+.Sq Yes ,
+a static library will be built.
+Defaults to
+.Sq Yes .
+.It Ev LIB_MAJOR
+Major version number for shared libraries.
+.It Ev LIB_MINOR
+Minor version number for shared libraries.
+.It Ev LIB_ADD
+Extra object filers to use in generating the library.
+.It Ev LIBTOOL
+Path to GNU
+.Xr libtool 1 .
+Defaults to the bundled libtool,
+.Sq ${TOP}/mk/libtool/libtool .
+.It Ev LTCONFIG_LOG
+When using libtool, the output of the
+.Pa ltconfig
+script will be saved to this file.
+Defaults to
+.Sq ./config.log .
+.It Ev CC
+Compiler for C, C++ and Objective C sources.
+Defaults to
+.Sq cc .
+.It Ev CFLAGS
+Compiler flags for C sources.
+Defaults to
+.Sq -O2 -g .
+.It Ev CXXFLAGS
+Compiler flags for C++ sources.
+Defaults to
+.Sq .
+.It Ev OBJCFLAGS
+Compiler flags for Objective C sources.
+Defaults to
+.Sq ${CFLAGS} .
+.It Ev CPPFLAGS
+Compiler preprocessor flags, for sources in all languages.
+.It Ev ASM
+Compiler for assembler sources.
+Defaults to
+.Sq nasm .
+.It Ev ASMFLAGS
+Compiler flags for assembler.
+Defaults to
+.Sq -g -w-orphan-labels .
+.It Ev LEX
+Path to the
+.Xr lex 1
+lexical analyzer generator.
+.It Ev YACC
+Path to the
+.Xr yacc 1
+parser generator.
+.It Ev LFLAGS
+Options for
+.Xr lex 1 ,
+defaults to
+.Sq .
+.It Ev YFLAGS
+Options for
+.Xr yacc 1 ,
+defaults to
+.Sq -d .
+.It Ev LIBL
+Libraries to use for Lex lexers.
+Defaults to
+.Sq -ll .
+.It Ev WINDRES
+(Specific to the win32 platform)
+Path to the
+.Xr windres 1
+utility, which generates windows resource files.
+.It Ev WINRES
+(Specific to the win32 platform)
+Resource file to use with
+.Xr windres 1 .
+.It Ev SHARE
+List of data files to install into
+.Dv ${SHAREDIR} .
+.It Ev INCLDIR
+Library header files will be installed into this directory.
+See
+.Xr build.common.mk 5 .
+.It Ev INCL
+List of library header files.
+.El
+.Sh SEE ALSO
+.Xr build.common.mk 5 ,
+.Xr build.prog.mk 5
+.Sh HISTORY
+.Nm
+first appeared in BSDBuild 1.0.
+.Pp
+bSDBuild is based on the 4.4BSD build system.

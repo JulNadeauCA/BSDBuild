@@ -1,0 +1,169 @@
+.\"
+.\" Copyright (c) 2007 Hypertriton, Inc. <http://www.hypertriton.com/>
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY EXPRESS OR
+.\" IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+.\" OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+.\" IN NO EVENT SHALL THE DEVELOPERS BE LIABLE FOR ANY DIRECT, INDIRECT,
+.\" INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+.\" NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+.\" DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+.\" THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+.\" (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+.\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+.\"
+.Dd July 18, 2007
+.Dt BUILD.PROG.MK 5
+.Os
+.Sh NAME
+.Nm build.prog.mk
+.Nd bsdbuild - compilation of executables
+.Sh SYNOPSIS
+.Fd .include <bsd.prog.mk>
+.Sh DESCRIPTION
+The
+.Nm
+module is used to compile an executable program from a set of source
+files.
+Currently, supported languages include:
+.Bl -bullet -compact
+.It
+C (*.c)
+.It
+C++ (*.cc)
+.It
+Objective C (*.m)
+.It
+Assembler (*.asm)
+.It
+Lex (*.l)
+.It
+Yacc (*.y)
+.El
+.Pp
+.Sh TARGETS
+.Bl -tag -width "deinstall-prog "
+.It Ar ${PROG}
+Compile/link the ${PROG} executable from the specified source files.
+.It Ar ${GMONOUT}
+Compile/link a profiled version of ${PROG}.
+.It Ar clean-prog
+Clean up object and executable files.
+.It Ar cleandir-prog
+Clean up for packaging.
+.It Ar install-prog
+Install program to the target installation directory
+(see
+.Xr csoft.common.mk 5 ) .
+.It Ar deinstall-prog
+Uninstall program from the installation directory.
+.El
+.Sh VARIABLES
+.Bl -tag -width "PROG_INSTALL "
+.It Ev PROG
+Filename of target executable.
+Platform-specific transforms may be applied to the name.
+.It Ev PROG_INSTALL
+If set to
+.Sq Yes ,
+the
+.Ar install
+target will install the program, otherwise it will be a no-op.
+Defaults to
+.Sq Yes .
+.It Ev GMONOUT
+Output filename for profiled version of the program.
+.It Ev CC
+Compiler for C, C++ and Objective C sources.
+Defaults to
+.Sq cc .
+.It Ev CFLAGS
+Compiler flags for C sources.
+Defaults to
+.Sq -O2 -g .
+.It Ev CXXFLAGS
+Compiler flags for C++ sources.
+Defaults to
+.Sq .
+.It Ev OBJCFLAGS
+Compiler flags for Objective C sources.
+Defaults to
+.Sq ${CFLAGS} .
+.It Ev CPPFLAGS
+Compiler preprocessor flags, for sources in all languages.
+.It Ev ASM
+Compiler for assembler sources.
+Defaults to
+.Sq nasm .
+.It Ev ASMFLAGS
+Compiler flags for assembler.
+Defaults to
+.Sq -g -w-orphan-labels .
+.It Ev LEX
+Path to the
+.Xr lex 1
+lexical analyzer generator.
+.It Ev YACC
+Path to the
+.Xr yacc 1
+parser generator.
+.It Ev LFLAGS
+Options for
+.Xr lex 1 ,
+defaults to
+.Sq .
+.It Ev YFLAGS
+Options for
+.Xr yacc 1 ,
+defaults to
+.Sq -d .
+.It Ev LIBL
+Libraries to use for Lex lexers.
+Defaults to
+.Sq -ll .
+.It Ev WINDRES
+(Specific to the win32 platform)
+Path to the
+.Xr windres 1
+utility, which generates windows resource files.
+.It Ev WINRES
+(Specific to the win32 platform)
+Resource file to use with
+.Xr windres 1 .
+.It Ev SHARE
+List of data files to install into
+.Dv ${SHAREDIR} .
+.It Ev CONFDIR
+System-wide configuration files will be installed into this directory.
+It is usually set relative to
+.Sq ${SYSCONFDIR} ,
+for example
+.Sq ${SYSCONFDIR}/MyApplication .
+.It Ev CONF
+List of configuration files to install into
+.Dv ${CONFDIR}.
+Note that the
+.Ar install
+target will not override existing configuration files, instead it will
+output a
+.Dq The following configuration files have been preserved
+message.
+.El
+.Sh SEE ALSO
+.Xr build.common.mk 5 ,
+.Xr build.lib.mk 5
+.Sh HISTORY
+.Nm
+first appeared in BSDBuild 1.0.
+.Pp
+bSDBuild is based on the 4.4BSD build system.

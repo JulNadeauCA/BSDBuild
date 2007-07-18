@@ -1,0 +1,85 @@
+BUILD.COMMON.MK(5)        OpenBSD Programmer's Manual       BUILD.COMMON.MK(5)
+
+NNAAMMEE
+     bbuuiilldd..ccoommmmoonn..mmkk - bsdbuild - common defines
+
+SSYYNNOOPPSSIISS
+     ..iinncclluuddee <<bbssdd..ccoommmmoonn..mmkk>>
+
+DDEESSCCRRIIPPTTIIOONN
+     bbuuiilldd..ccoommmmoonn..mmkk defines common variables that are used by the different
+     BSDBuild modules.  They can be referenced from Makefiles, but they are
+     almost always treated read-only and overrided by a _M_a_k_e_f_i_l_e_._c_o_n_f_i_g gener-
+     ated by a configure script (see mkconfigure(1) for details).
+
+TTAARRGGEETTSS
+     This module defines no target.
+
+VVAARRIIAABBLLEESS
+     PREFIX               Base target installation directory.  Defaults to
+                          `/usr/local'.
+
+     LOCALSTATEDIR        Installation directory for system-wide data files.
+                          Defaults to `PREFIX/share'.
+
+     SHAREDIR             Alias for LOCALSTATEDIR.
+
+     SYSCONFDIR           System-wide configuration directory.  Defaults to
+                          `PREFIX/etc'.
+
+     BINDIR               Installation directory for executables.  Defaults to
+                          `PREFIX/bin'.
+
+     LIBDIR               Installation directory for library files.  Defaults
+                          to `PREFIX/lib'.
+
+     INCLDIR              Installation directory for library header files.
+                          Defaults to `PREFIX/include'.
+
+     MANDIR               Installation directory for manual pages.  Defaults
+                          to `PREFIX/man'.
+
+     PSDIR                Installation directory for PostScript documentation.
+                          Defaults to `PREFIX/man'.
+
+     SUDO                 Optional path to sudo(8).  If set, all modules will
+                          use it for privileged commands.
+
+     SH                   Path to the Bourne shell.  Defaults to `sh'.
+
+     FIND                 Path to the `find 1' command.  Not used by BSDBuild
+                          itself, but useful for maintainer scripts and such.
+
+     AWK                  Path to `awk' interpreter.  Not used by BSDBuild it-
+                          self, but useful for maintainer scripts and such.
+
+     INSTALL_PROG         Command to execute for installing an executable
+                          file.  Defaults to `install -c -m 755'.
+
+     INSTALL_LIB          Command to execute for installing a library file.
+                          Defaults to `install -c -m 644'.
+
+     INSTALL_DATA         Command to execute for installing a data file.  De-
+                          faults to `install -c -m 644'.
+
+     INSTALL_INCL         Command to execute for installing a library header
+                          file.  Defaults to `install -c -m 644'.
+
+     DEINSTALL_PROG       Command to execute for uninstalling an executable.
+
+     DEINSTALL_LIB        Command to execute for uninstalling a library.
+
+     DEINSTALL_DATA       Command to execute for uninstalling a data file.
+
+     DEINSTALL_INCL       Command to execute for uninstalling a library header
+                          file.
+
+SSEEEE AALLSSOO
+     build.prog.mk(5), build.lib.mk(5)
+
+HHIISSTTOORRYY
+     bbuuiilldd..ccoommmmoonn..mmkk first appeared in BSDBuild 1.0.
+
+     BSDBuild is based on the 4.4BSD build system.
+
+OpenBSD 4.1                      July 18, 2007                               2

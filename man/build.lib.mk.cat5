@@ -1,0 +1,108 @@
+BUILD.LIB.MK(5)           OpenBSD Programmer's Manual          BUILD.LIB.MK(5)
+
+NNAAMMEE
+     bbuuiilldd..lliibb..mmkk - bsdbuild - compilation of libraries
+
+SSYYNNOOPPSSIISS
+     ..iinncclluuddee <<bbssdd..lliibb..mmkk>>
+
+DDEESSCCRRIIPPTTIIOONN
+     The bbuuiilldd..lliibb..mmkk module compiles static and/or shared libraries from a
+     set of source files.  For shared libraries, it uses a bundled copy of GNU
+     libtool.  Currently, supported languages include:
+     ++oo   C (*.c)
+     ++oo   C++ (*.cc)
+     ++oo   Objective C (*.m)
+     ++oo   Assembler (*.asm)
+     ++oo   Lex (*.l)
+     ++oo   Yacc (*.y)
+
+TTAARRGGEETTSS
+     _l_i_b_$_{_L_I_B_}_._a     Compile the source files into a static library.
+
+     _l_i_b_$_{_L_I_B_}_._l_a    Compile the source files into static and shared libraries
+                     using libtool (libtool comes bundled with BSDBuild).
+
+     _c_l_e_a_n_-_l_i_b       Clean up object and library files.
+
+     _c_l_e_a_n_d_i_r_-_l_i_b    Clean up for packaging.
+
+     _i_n_s_t_a_l_l_-_l_i_b     Install library files to the target installation directo-
+                     ry (see csoft.common.mk(5)).
+
+     _d_e_i_n_s_t_a_l_l_-_l_i_b   Uninstall libraries from the installation directory.
+
+VVAARRIIAABBLLEESS
+     LIB           Name of target library.  Platform-specific transforms will
+                   be applied to the name.
+
+     LIB_INSTALL   If set to `Yes', the _i_n_s_t_a_l_l target will install the li-
+                   brary files, otherwise it will be a no-op.  Defaults to `'.
+
+     LIB_SHARED    If set to `Yes', a shared library will be built.  Default
+                   is platform-specific.
+
+     LIB_STATIC    If set to `Yes', a static library will be built.  Defaults
+                   to `Yes'.
+
+     LIB_MAJOR     Major version number for shared libraries.
+
+     LIB_MINOR     Minor version number for shared libraries.
+
+     LIB_ADD       Extra object filers to use in generating the library.
+
+     LIBTOOL       Path to GNU libtool(1).  Defaults to the bundled libtool,
+                   `${TOP}/mk/libtool/libtool'.
+
+     LTCONFIG_LOG  When using libtool, the output of the _l_t_c_o_n_f_i_g script will
+                   be saved to this file.  Defaults to `./config.log'.
+
+     CC            Compiler for C, C++ and Objective C sources.  Defaults to
+                   `cc'.
+
+     CFLAGS        Compiler flags for C sources.  Defaults to `-O2 -g'.
+
+     CXXFLAGS      Compiler flags for C++ sources.  Defaults to `'.
+
+     OBJCFLAGS     Compiler flags for Objective C sources.  Defaults to
+                   `${CFLAGS}'.
+
+     CPPFLAGS      Compiler preprocessor flags, for sources in all languages.
+
+     ASM           Compiler for assembler sources.  Defaults to `nasm'.
+
+     ASMFLAGS      Compiler flags for assembler.  Defaults to `-g -w-orphan-
+                   labels'.
+
+     LEX           Path to the lex(1) lexical analyzer generator.
+
+     YACC          Path to the yacc(1) parser generator.
+
+     LFLAGS        Options for lex(1), defaults to `'.
+
+     YFLAGS        Options for yacc(1), defaults to `-d'.
+
+     LIBL          Libraries to use for Lex lexers.  Defaults to `-ll'.
+
+     WINDRES       (Specific to the win32 platform) Path to the windres(1)
+                   utility, which generates windows resource files.
+
+     WINRES        (Specific to the win32 platform) Resource file to use with
+                   windres(1).
+
+     SHARE         List of data files to install into ${SHAREDIR}.
+
+     INCLDIR       Library header files will be installed into this directory.
+                   See build.common.mk(5).
+
+     INCL          List of library header files.
+
+SSEEEE AALLSSOO
+     build.common.mk(5), build.prog.mk(5)
+
+HHIISSTTOORRYY
+     bbuuiilldd..lliibb..mmkk first appeared in BSDBuild 1.0.
+
+     bSDBuild is based on the 4.4BSD build system.
+
+OpenBSD 4.1                      July 18, 2007                               2

@@ -78,10 +78,11 @@ install-links:
 	    ${SUDO} ln -sf `pwd`/$$F ${SHAREDIR}/BSDBuild/$$F; \
 	done
 
-cleandir:
-	rm -f *~
+clean:
 
-.PHONY: install install-links cleandir
+cleandir:
+
+.PHONY: install install-links
 
 include ${TOP}/build.common.mk
 include ${TOP}/build.subdir.mk

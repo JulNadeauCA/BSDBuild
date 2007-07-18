@@ -4,15 +4,13 @@ PROJECT=	bsdbuild
 DIST=		${PROJECT}-${VERSION}
 DISTFILE=	${DIST}.tar.gz
 
-#MAN5=	build.common.mk.5
-
 SHARE=	build.common.mk build.dep.mk build.lib.mk build.man.mk \
 	build.perl.mk build.prog.mk build.subdir.mk build.www.mk \
 	hstrip.pl mkconfigure.pl mkdep mkify.pl mkconcurrent.pl build.po.mk \
 	build.doc.mk build.den.mk version.sh manlinks.pl
 LTFILES=config.guess config.sub configure configure.in ltconfig ltmain.sh
 
-SUBDIR=	BSDBuild
+SUBDIR=	BSDBuild man
 
 all:	mkconfigure.out mkify all-subdir
 
@@ -81,10 +79,11 @@ install-links: install-links-subdir
 	${SUDO} cp -f mkconfigure.out ${BINDIR}/mkconfigure
 	${SUDO} chmod 755 ${BINDIR}/mkconfigure
 
-cleandir:
-	rm -f Makefile.config config.log *~
+cleandir: cleandir-subdir
+	rm -f Makefile.config config.log
+	touch Makefile.config
 
-clean:
+clean: clean-subdir
 	rm -f mkconfigure.out mkify
 
 configure: configure.in

@@ -165,7 +165,7 @@ do
 	--enable-*)
 	    option=`echo $arg | sed -e 's/--enable-//' -e 's/=.*//'`
 	    option=`echo $option | sed 's/-/_/g'`
-	    case "$option" in
+	    case "$arg" in
 	        *=*)
 	            eval "enable_${option}='$optarg'"
 		    ;;
@@ -182,7 +182,7 @@ do
 	--with-*)
 	    option=`echo $arg | sed -e 's/--with-//' -e 's/=.*//'`
 	    option=`echo $option | sed 's/-/_/g'`
-	    case "$option" in
+	    case "$arg" in
 	        *=*)
 	            eval "with_${option}='$optarg'"
 		    ;;

@@ -53,19 +53,19 @@ depend: depend-subdir
 
 # Compile C code into an object file
 .c.o:
-	${CC} ${CFLAGS} ${CPPFLAGS} -c $<
+	${CC} ${CFLAGS} ${CPPFLAGS} -o $@ -c $<
 .c.po:
 	${CC} -pg -DPROF ${CFLAGS} ${CPPFLAGS} -o $@ -c $<
 
 # Compile C++ code into an object file
 .cc.o:
-	${CXX} ${CXXFLAGS} ${CPPFLAGS} -c $<
+	${CXX} ${CXXFLAGS} ${CPPFLAGS} -o $@ -c $<
 .cc.po:
 	${CXX} -pg -DPROF ${CXXFLAGS} ${CPPFLAGS} -o $@ -c $<
 
 # Compile C+Objective-C code into an object file
 .m.o:
-	${CC} ${OBJCFLAGS} ${CPPFLAGS} -c $<
+	${CC} ${OBJCFLAGS} ${CPPFLAGS} -o $@ -c $<
 .m.po:
 	${CC} -pg -DPROF ${OBJCFLAGS} ${CPPFLAGS} -o $@ -c $<
 
@@ -80,12 +80,12 @@ depend: depend-subdir
 	@rm -f $@.yy.c
 .l.o:
 	${LEX} ${LFLAGS} -o$@.yy.c $<
-	${CC} ${CFLAGS} -c $@.yy.c
+	${CC} ${CFLAGS} -o $@ -c $@.yy.c
 	@mv -f $@.yy.o $@
 	@rm -f $@.yy.c
 .l.po:
 	${LEX} ${LFLAGS} -o$@.yy.c $<
-	${CC} -pg -DPROF ${CFLAGS} -c $@.yy.c
+	${CC} -pg -DPROF ${CFLAGS} -o $@ -c $@.yy.c
 	@mv -f $@.yy.o $@
 	@rm -f $@.yy.c
 
@@ -96,12 +96,12 @@ depend: depend-subdir
 	@rm -f $@.tab.c
 .y.o:
 	${YACC} ${YFLAGS} -b $@ $<
-	${CC} ${CFLAGS} -c $@.tab.c
+	${CC} ${CFLAGS} -o $@ -c $@.tab.c
 	@mv -f $@.tab.o $@
 	@rm -f $@.tab.c
 .y.po:
 	${YACC} ${YFLAGS} -b $@ $<
-	${CC} -pg -DPROF ${CFLAGS} -c $@.tab.c
+	${CC} -pg -DPROF ${CFLAGS} -o $@ -c $@.tab.c
 	@mv -f $@.tab.o $@
 	@rm -f $@.tab.c
 

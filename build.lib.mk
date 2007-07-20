@@ -67,7 +67,7 @@ cleandir: clean-lib clean-subdir cleandir-lib cleandir-subdir
 regress: regress-subdir
 depend: depend-subdir
 
-.SUFFIXES: .o .po .lo .c .cc .asm .l .y .m
+.SUFFIXES: .o .po .lo .c .cc .cpp .asm .l .y .m
 
 # Compile C code into an object file
 .c.o:
@@ -91,6 +91,12 @@ depend: depend-subdir
 .cc.lo: ${LIBTOOL}
 	${LIBTOOL} ${CXX} ${CXXFLAGS} -o $@ -c $<
 .cc.po:
+	${CXX} -pg -DPROF ${CXXFLAGS} ${CPPFLAGS} -o $@ -c $<
+.cpp.o:
+	${CXX} ${CXXFLAGS} -o $@ -c $<
+.cpp.lo: ${LIBTOOL}
+	${LIBTOOL} ${CXX} ${CXXFLAGS} -o $@ -c $<
+.cpp.po:
 	${CXX} -pg -DPROF ${CXXFLAGS} ${CPPFLAGS} -o $@ -c $<
 
 # Compile assembly code into an object file
@@ -136,6 +142,7 @@ _lib_objs:
 	    for F in ${SRCS}; do \
 	        F=`echo $$F | sed 's/.[clym]$$/.o/'`; \
 	        F=`echo $$F | sed 's/.cc$$/.o/'`; \
+	        F=`echo $$F | sed 's/.cpp$$/.o/'`; \
 	        F=`echo $$F | sed 's/.asm$$/.o/'`; \
 	        ${MAKE} $$F; \
 		if [ $$? != 0 ]; then \
@@ -152,6 +159,7 @@ _lib_shobjs:
 	    for F in ${SRCS}; do \
 	        F=`echo $$F | sed 's/.[clym]$$/.lo/'`; \
 	        F=`echo $$F | sed 's/.cc$$/.lo/'`; \
+	        F=`echo $$F | sed 's/.cpp$$/.lo/'`; \
 	        F=`echo $$F | sed 's/.asm$$/.lo/'`; \
 	        ${MAKE} $$F; \
 		if [ $$? != 0 ]; then \
@@ -170,6 +178,7 @@ lib${LIB}.a: _lib_objs ${OBJS}
 	        for F in ${SRCS}; do \
 	    	    F=`echo $$F | sed 's/.[clym]$$/.o/'`; \
 	    	    F=`echo $$F | sed 's/.cc$$/.o/'`; \
+	    	    F=`echo $$F | sed 's/.cpp$$/.o/'`; \
 	    	    F=`echo $$F | sed 's/.asm$$/.o/'`; \
 	    	    _objs="$$_objs $$F"; \
                 done; \
@@ -192,6 +201,7 @@ lib${LIB}.la: ${LIBTOOL_COOKIE} _lib_shobjs ${SHOBJS}
 	        for F in ${SRCS}; do \
 	    	    F=`echo $$F | sed 's/.[clym]$$/.lo/'`; \
 	    	    F=`echo $$F | sed 's/.cc$$/.lo/'`; \
+	    	    F=`echo $$F | sed 's/.cpp$$/.lo/'`; \
 	    	    F=`echo $$F | sed 's/.asm$$/.lo/'`; \
 	    	    _shobjs="$$_shobjs $$F"; \
                 done; \
@@ -222,6 +232,7 @@ clean-lib:
                     for F in ${SRCS}; do \
 	   	        F=`echo $$F | sed 's/.[clym]$$/.o/'`; \
 	    	        F=`echo $$F | sed 's/.cc$$/.o/'`; \
+	    	        F=`echo $$F | sed 's/.cpp$$/.o/'`; \
 	    	    	F=`echo $$F | sed 's/.asm$$/.o/'`; \
 	    	    	echo "rm -f $$F"; \
 	    	    	rm -f $$F; \
@@ -238,6 +249,7 @@ clean-lib:
                     for F in ${SRCS}; do \
 	    	        F=`echo $$F | sed 's/.[clym]$$/.lo/'`; \
 	    	        F=`echo $$F | sed 's/.cc$$/.lo/'`; \
+	    	        F=`echo $$F | sed 's/.cpp$$/.lo/'`; \
 	    	        F=`echo $$F | sed 's/.asm$$/.lo/'`; \
 	    	        echo "rm -f $$F"; \
 	    	        rm -f $$F; \
@@ -245,6 +257,7 @@ clean-lib:
                     for F in ${SRCS}; do \
 	    	        F=`echo $$F | sed 's/.[clym]$$/.o/'`; \
 	    	        F=`echo $$F | sed 's/.cc$$/.o/'`; \
+	    	        F=`echo $$F | sed 's/.cpp$$/.o/'`; \
 	    	        F=`echo $$F | sed 's/.asm$$/.o/'`; \
 	    	        echo "rm -f $$F"; \
 	    	        rm -f $$F; \

@@ -48,6 +48,7 @@ SHARE=	Core.pm \
 	agar-rg.pm \
 	agar-vg.pm \
 	agar-map.pm \
+	agar-dev.pm \
 	cg.pm \
 	cracklib.pm \
 	db4.pm \

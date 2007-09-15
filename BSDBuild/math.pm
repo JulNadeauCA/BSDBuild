@@ -30,7 +30,9 @@ sub Test
 	my ($ver) = @_;
 
 	print Define('MATH_LIBS', '-lm');
-	MkCompileC('HAVE_MATH', '${CFLAGS}', '${MATH_LIBS}', << 'EOF');
+	print Define('MATH_CFLAGS', '');
+	MkCompileC('HAVE_MATH', '${CFLAGS} ${MATH_CFLAGS}', '${MATH_LIBS}',
+	    << 'EOF');
 #include <math.h>
 
 int
@@ -44,11 +46,34 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	print
-	    Cond('"${HAVE_MATH}" = "yes"',
-	    MKSave('MATH_LIBS') .
-		HDefineStr('MATH_LIBS') ,
-		HUndef('MATH_LIBS'));
+	MkIf('"${HAVE_MATH}" = "yes"');
+	    MkSaveMK('MATH_CFLAGS', 'MATH_LIBS');
+		MkSaveDefine('MATH_CFLAGS', 'MATH_LIBS');
+	MkElse;
+		MkSaveUndef('MATH_LIBS');
+	MkEndif;
+	
+	MkPrintN('checking for fast multiply-accumulate...');
+	print Define('MATH_CFLAGS', '-std=c99');
+	MkCompileC('HAVE_MATH_FMA', '${CFLAGS} ${MATH_CFLAGS}', '${MATH_LIBS}',
+	    << 'EOF');
+#include <math.h>
+
+int
+main(int argc, char *argv[])
+{
+	float f = 1.0;
+	double d = 1.0;
+
+	d = fma(d, d, d);
+	f = fmaf(f, f, f);
+	return (0);
+}
+EOF
+	MkIf('"${HAVE_MATH_FMA}" = "yes"');
+		MkSaveDefine('HAVE_MATH_FMA', 'MATH_CFLAGS');
+	    MkSaveMK('MATH_CFLAGS');
+	MkEndif;
 
 	return (0);
 }

@@ -84,7 +84,7 @@ EOF
 BEGIN
 {
 	$TESTS{'cg'} = \&Test;
-	$DESCR{'cg'} = 'NVIDIA Cg Toolkit';
+	$DESCR{'cg'} = 'Cg (http://developer.nvidia.com/object/cg_toolkit.html)';
 }
 
 ;1

@@ -87,8 +87,7 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	
-	# Check for the gcc __bounded__ attribute.
+
 	print NEcho('checking __bounded__ attribute...');
 	MkCompileC('HAVE_BOUNDED_ATTRIBUTE', '', '', << 'EOF');
 void foo(char *, int) __attribute__ ((__bounded__(__string__,1,2)));
@@ -101,7 +100,6 @@ int main(int argc, char *argv[])
 }
 EOF
 	
-	# Check for the gcc __format__ attribute.
 	print NEcho('checking __format__ attribute...');
 	MkCompileC('HAVE_FORMAT_ATTRIBUTE', '', '', << 'EOF');
 #include <stdarg.h>
@@ -120,7 +118,6 @@ int main(int argc, char *argv[])
 }
 EOF
 
-	# Check for the gcc __nonnull__ attribute.
 	print NEcho('checking __nonnull__ attribute...');
 	TryCompileFlags('HAVE_NONNULL_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 void foo(char *) __attribute__((__nonnull__ (1)));
@@ -128,6 +125,24 @@ void foo(char *a) { }
 int main(int argc, char *argv[])
 {
 	foo("foo");
+	return (0);
+}
+EOF
+
+	print NEcho('checking __aligned__ attribute...');
+	TryCompileFlags('HAVE_ALIGNED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
+int main(int argc, char *argv[])
+{
+	struct s1 { int x,y,z; } __attribute__ ((aligned(16)));
+	return (0);
+}
+EOF
+	
+	print NEcho('checking __packed__ attribute...');
+	TryCompileFlags('HAVE_PACKED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
+int main(int argc, char *argv[])
+{
+	struct s1 { char c; int x,y,z; } __attribute__ ((packed));
 	return (0);
 }
 EOF

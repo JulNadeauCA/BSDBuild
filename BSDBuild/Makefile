@@ -56,7 +56,8 @@ SHARE=	Core.pm \
 	libidn.pm \
 	getaddrinfo.pm \
 	glu.pm \
-	ode.pm
+	ode.pm \
+	sse.pm
 
 all:
 

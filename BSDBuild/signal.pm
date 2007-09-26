@@ -25,7 +25,7 @@
 
 sub Test
 {
-	TryCompile 'HAVE_SIGNAL', << 'EOF';
+	TryCompile '_MK_HAVE_SIGNAL', << 'EOF';
 #include <signal.h>
 
 void

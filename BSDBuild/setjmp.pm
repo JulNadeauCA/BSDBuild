@@ -25,7 +25,7 @@
 
 sub Test
 {
-	TryCompile 'HAVE_SETJMP', << 'EOF';
+	TryCompile '_MK_HAVE_SETJMP', << 'EOF';
 #include <setjmp.h>
 
 jmp_buf jmpbuf;

@@ -35,10 +35,8 @@ int main(int argc, char *argv[]) {
 }
 EOF
 	MkIf('"${free_null_noop}" = "yes"');
-		MkPrint('yes');
 		MkSaveDefine('FREE_NULL_IS_A_NOOP');
 	MkElse;
-		MkPrint('no');
 		MkSaveUndef('FREE_NULL_IS_A_NOOP');
 	MkEndif;
 	return (0);

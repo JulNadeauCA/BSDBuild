@@ -57,7 +57,10 @@ SHARE=	Core.pm \
 	getaddrinfo.pm \
 	glu.pm \
 	ode.pm \
-	sse.pm
+	sse.pm \
+	setjmp.pm \
+	signal.pm \
+	altivec.pm
 
 all:
 

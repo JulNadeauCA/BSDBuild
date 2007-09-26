@@ -26,15 +26,15 @@
 sub Test
 {
 	TryCompile 'HAVE_SETJMP', << 'EOF';
-#include <signal.h>
+#include <setjmp.h>
 
-void sighandler(int sig) { }
+jmp_buf jmpbuf;
 
 int
 main(int argc, char *argv[])
 {
-	signal(SIGTERM, sighandler);
-	signal(SIGILL, sighandler);
+	longjmp(jmpbuf, 1);
+	setjmp(jmpbuf);
 	return (0);
 }
 EOF
@@ -45,7 +45,7 @@ EOF
 BEGIN
 {
 	$TESTS{'setjmp'} = \&Test;
-	$DESCR{'setjmp'} = 'the signal() function';
+	$DESCR{'setjmp'} = 'setjmp() and longjmp()';
 }
 
 ;1

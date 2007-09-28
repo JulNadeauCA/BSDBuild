@@ -39,8 +39,8 @@ sub Test
 		MkExecOutput('agar-map-config', '--cflags', 'AGAR_MAP_CFLAGS');
 		MkExecOutput('agar-map-config', '--libs', 'AGAR_MAP_LIBS');
 		MkCompileC('HAVE_AGAR_MAP',
-		    '${AGAR_CFLAGS} ${AGAR_MAP_CFLAGS}',
-		    '${AGAR_LIBS} ${AGAR_MAP_LIBS}',
+		    '${AGAR_MAP_CFLAGS} ${AGAR_CFLAGS}',
+		    '${AGAR_MAP_LIBS} ${AGAR_LIBS}',
 		           << 'EOF');
 #include <agar/core.h>
 #include <agar/map.h>

@@ -54,6 +54,9 @@ EOF
 			MkSaveMK('ODE_CFLAGS', 'ODE_LIBS');
 			MkSaveDefine('ODE_CFLAGS', 'ODE_LIBS');
 		MkEndif;
+	MkElse;
+		MkPrint('no');
+		MkSaveUndef('HAVE_SDL');
 	MkEndif;
 	return (0);
 }

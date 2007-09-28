@@ -39,7 +39,7 @@ sub Test
 		MkExecOutput('agar-sc-config', '--cflags', 'AGAR_SC_CFLAGS');
 		MkExecOutput('agar-sc-config', '--libs', 'AGAR_SC_LIBS');
 		MkCompileC('HAVE_AGAR_SC',
-		    '${AGAR_CFLAGS} ${AGAR_SC_CFLAGS}',
+		    '${AGAR_SC_CFLAGS} ${AGAR_CFLAGS}',
 		    '${AGAR_SC_LIBS} ${AGAR_LIBS}',
 		           << 'EOF');
 #include <agar/core.h>

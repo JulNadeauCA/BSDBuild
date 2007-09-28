@@ -36,8 +36,8 @@ sub Test
 		MkExecOutput('agar-net-config', '--libs', 'AGAR_NET_LIBS');
 		MkPrintN('checking whether agar-net works...');
 		MkCompileC('HAVE_AGAR_NET',
-		    '${AGAR_CFLAGS} ${AGAR_NET_CFLAGS}',
-			'${AGAR_LIBS} ${AGAR_NET_LIBS}', << 'EOF');
+		    '${AGAR_NET_CFLAGS} ${AGAR_CFLAGS}',
+			'${AGAR_NET_LIBS} ${AGAR_LIBS}', << 'EOF');
 #include <agar/core.h>
 #include <agar/net.h>
 

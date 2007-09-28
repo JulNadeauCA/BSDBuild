@@ -39,8 +39,8 @@ sub Test
 		MkExecOutput('agar-vg-config', '--cflags', 'AGAR_VG_CFLAGS');
 		MkExecOutput('agar-vg-config', '--libs', 'AGAR_VG_LIBS');
 		MkCompileC('HAVE_AGAR_VG',
-		    '${AGAR_CFLAGS} ${AGAR_VG_CFLAGS}',
-		    '${AGAR_LIBS} ${AGAR_VG_LIBS}',
+		    '${AGAR_VG_CFLAGS} ${AGAR_CFLAGS}',
+		    '${AGAR_VG_LIBS} ${AGAR_LIBS}',
 		           << 'EOF');
 #include <agar/core.h>
 #include <agar/vg.h>

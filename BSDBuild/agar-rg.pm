@@ -39,8 +39,8 @@ sub Test
 		MkExecOutput('agar-rg-config', '--cflags', 'AGAR_RG_CFLAGS');
 		MkExecOutput('agar-rg-config', '--libs', 'AGAR_RG_LIBS');
 		MkCompileC('HAVE_AGAR_RG',
-		    '${AGAR_CFLAGS} ${AGAR_RG_CFLAGS}',
-		    '${AGAR_LIBS} ${AGAR_RG_LIBS}',
+		    '${AGAR_RG_CFLAGS} ${AGAR_CFLAGS}',
+		    '${AGAR_RG_LIBS} ${AGAR_LIBS}',
 		           << 'EOF');
 #include <agar/core.h>
 #include <agar/rg.h>

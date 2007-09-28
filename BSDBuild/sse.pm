@@ -27,7 +27,7 @@ sub Test
 {
 	my ($ver) = @_;
 
-	print Define('SSE_CFLAGS', '-msse');
+	MkDefine('SSE_CFLAGS', '-msse');
 	MkCompileC('HAVE_SSE', '${CFLAGS} ${SSE_CFLAGS}', '',
 	    << 'EOF');
 #include <xmmintrin.h>
@@ -48,14 +48,15 @@ main(int argc, char *argv[])
 }
 EOF
 	MkIf('"${HAVE_SSE}" = "yes"');
-	    MkSaveMK('SSE_CFLAGS');
 		MkSaveDefine('SSE_CFLAGS');
 	MkElse;
 		MkSaveUndef('SSE_CFLAGS');
+		MkDefine('SSE_CFLAGS', '');
 	MkEndif;
+	MkSaveMK('SSE_CFLAGS');
 
 	MkPrintN('checking for SSE2 extensions...');
-	print Define('SSE2_CFLAGS', '-msse2');
+	MkDefine('SSE2_CFLAGS', '-msse2');
 	MkCompileC('HAVE_SSE2', '${CFLAGS} ${SSE2_CFLAGS}', '',
 	    << 'EOF');
 #include <emmintrin.h>
@@ -76,14 +77,15 @@ main(int argc, char *argv[])
 }
 EOF
 	MkIf('"${HAVE_SSE2}" = "yes"');
-	    MkSaveMK('SSE2_CFLAGS');
 		MkSaveDefine('SSE2_CFLAGS');
 	MkElse;
 		MkSaveUndef('SSE2_CFLAGS');
+		MkDefine('SSE2_CFLAGS', '');
 	MkEndif;
+	MkSaveMK('SSE2_CFLAGS');
 	
 	MkPrintN('checking for SSE3 extensions...');
-	print Define('SSE3_CFLAGS', '-msse3');
+	MkDefine('SSE3_CFLAGS', '-msse3');
 	MkCompileC('HAVE_SSE3', '${CFLAGS} ${SSE3_CFLAGS}', '',
 	    << 'EOF');
 #include <pmmintrin.h>
@@ -106,11 +108,12 @@ main(int argc, char *argv[])
 }
 EOF
 	MkIf('"${HAVE_SSE3}" = "yes"');
-	    MkSaveMK('SSE3_CFLAGS');
 		MkSaveDefine('SSE3_CFLAGS');
 	MkElse;
 		MkSaveUndef('SSE3_CFLAGS');
+		MkDefine('SSE3_CFLAGS', '');
 	MkEndif;
+	MkSaveMK('SSE3_CFLAGS');
 
 	return (0);
 }

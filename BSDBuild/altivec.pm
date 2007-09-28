@@ -65,6 +65,8 @@ EOF
 			MkSaveDefine('ALTIVEC_CFLAGS');
 		MkElse;
 			MkSaveUndef('ALTIVEC_CFLAGS');
+			MkDefine('ALTIVEC_CFLAGS', '');
+			MkSaveMK('ALTIVEC_CFLAGS');
 		MkEndif;
 		MkSaveUndef('HAVE_ALTIVEC_H');
 	MkEndif;

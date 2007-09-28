@@ -27,47 +27,55 @@ sub Test
 {
 	my ($ver) = @_;
 	my $testCode = << 'EOF';
-#include <altivec.h>
+float a[4] = { 1,2,3,4 };
+float b[4] = { 5,6,7,8 };
+float c[4];
 
 int
 main(int argc, char *argv[])
 {
-	vector unsigned int v;
+	vector float *va = (vector float *)a;
+	vector float *vb = (vector float *)b;
+	vector float *vc = (vector float *)c;
 
-	v = vec_splat_u32(0);
+	*vc = vec_add(*va, *vb);
 	return (0);
 }
 EOF
+	
+	MkIf q{"$SYSTEM" = "Darwin"};
+		MkDefine('ALTIVEC_CFLAGS', '-faltivec -maltivec');
+	MkElse;
+		MkDefine('ALTIVEC_CFLAGS', '-mabi=altivec -maltivec');
+	MkEndif;
 
-	print Define('ALTIVEC_CFLAGS', '-maltivec');
-	MkCompileC('HAVE_ALTIVEC', '${CFLAGS} ${ALTIVEC_CFLAGS}', '', $testCode);
+	MkCompileC('HAVE_ALTIVEC', '${CFLAGS} ${ALTIVEC_CFLAGS}', '',
+	    '#include <altivec.h>'."\n".
+		$testCode);
 	MkIf('"${HAVE_ALTIVEC}" = "yes"');
 	    MkSaveMK('ALTIVEC_CFLAGS');
-		MkSaveDefine('ALTIVEC_CFLAGS');
+		MkDefine('HAVE_ALTIVEC_H');
+		MkSaveDefine('ALTIVEC_CFLAGS', 'HAVE_ALTIVEC_H');
 	MkElse;
-		MkSaveUndef('ALTIVEC_CFLAGS');
-
-		MkPrintN('checking for AltiVec (-faltivec)...');
-		print Define('ALTIVEC_CFLAGS', '-faltivec');
+		MkPrintN('checking for AltiVec (without <altivec.h>)...');
 		MkCompileC('HAVE_ALTIVEC', '${CFLAGS} ${ALTIVEC_CFLAGS}', '',
-		           $testCode);
+		    $testCode);
 		MkIf('"${HAVE_ALTIVEC}" = "yes"');
-		    MkSaveMK('ALTIVEC_CFLAGS');
+	   		MkSaveMK('ALTIVEC_CFLAGS');
 			MkSaveDefine('ALTIVEC_CFLAGS');
 		MkElse;
 			MkSaveUndef('ALTIVEC_CFLAGS');
 		MkEndif;
+		MkSaveUndef('HAVE_ALTIVEC_H');
 	MkEndif;
-
 
 	return (0);
 }
 
-
 BEGIN
 {
 	$TESTS{'altivec'} = \&Test;
-	$DESCR{'altivec'} = 'AltiVec (-maltivec)';
+	$DESCR{'altivec'} = 'AltiVec (with <altivec.h>)';
 }
 
 ;1

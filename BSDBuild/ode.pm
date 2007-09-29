@@ -50,13 +50,13 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-		MkIf('"${HAVE_ODE}" != ""');
+		MkIf('"${HAVE_ODE}" != "no"');
 			MkSaveMK('ODE_CFLAGS', 'ODE_LIBS');
 			MkSaveDefine('ODE_CFLAGS', 'ODE_LIBS');
 		MkEndif;
 	MkElse;
 		MkPrint('no');
-		MkSaveUndef('HAVE_SDL');
+		MkSaveUndef('HAVE_ODE');
 	MkEndif;
 	return (0);
 }

@@ -28,7 +28,7 @@ sub Test
 	my ($ver) = @_;
 
 	MkDefine('SSE_CFLAGS', '-msse');
-	MkCompileC('HAVE_SSE', '${CFLAGS} ${SSE_CFLAGS}', '',
+	MkCompileAndRunC('HAVE_SSE', '${CFLAGS} ${SSE_CFLAGS}', '',
 	    << 'EOF');
 #include <xmmintrin.h>
 
@@ -57,7 +57,7 @@ EOF
 
 	MkPrintN('checking for SSE2 extensions...');
 	MkDefine('SSE2_CFLAGS', '-msse2');
-	MkCompileC('HAVE_SSE2', '${CFLAGS} ${SSE2_CFLAGS}', '',
+	MkCompileAndRunC('HAVE_SSE2', '${CFLAGS} ${SSE2_CFLAGS}', '',
 	    << 'EOF');
 #include <emmintrin.h>
 
@@ -86,7 +86,7 @@ EOF
 	
 	MkPrintN('checking for SSE3 extensions...');
 	MkDefine('SSE3_CFLAGS', '-msse3');
-	MkCompileC('HAVE_SSE3', '${CFLAGS} ${SSE3_CFLAGS}', '',
+	MkCompileAndRunC('HAVE_SSE3', '${CFLAGS} ${SSE3_CFLAGS}', '',
 	    << 'EOF');
 #include <pmmintrin.h>
 

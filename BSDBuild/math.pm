@@ -52,29 +52,6 @@ EOF
 	MkElse;
 		MkSaveUndef('MATH_LIBS');
 	MkEndif;
-	
-	MkPrintN('checking for fast multiply-accumulate...');
-	MkDefine('MATH_CFLAGS', '');
-	MkCompileC('HAVE_MATH_FMA', '${CFLAGS} ${MATH_CFLAGS}', '${MATH_LIBS}',
-	    << 'EOF');
-#include <math.h>
-
-int
-main(int argc, char *argv[])
-{
-	float f = 1.0;
-	double d = 1.0;
-
-	d = fma(d, d, d);
-	f = fmaf(f, f, f);
-	return (0);
-}
-EOF
-	MkIf('"${HAVE_MATH_FMA}" = "yes"');
-		MkSaveDefine('HAVE_MATH_FMA', 'MATH_CFLAGS');
-	    MkSaveMK('MATH_CFLAGS');
-	MkEndif;
-
 	return (0);
 }
 

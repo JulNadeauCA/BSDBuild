@@ -1,8 +1,7 @@
 # $Csoft: sdl.pm,v 1.17 2004/03/10 16:33:36 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2002-2007 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,6 +27,20 @@
 sub Test
 {
 	my ($ver) = @_;
+	my $testCode = << 'EOF';
+#include <stdio.h>
+#include <SDL.h>
+int main(int argc, char *argv[]) {
+	SDL_Surface *su;
+	if (SDL_Init(SDL_INIT_TIMER|SDL_INIT_NOPARACHUTE) != 0) {
+		return (1);
+	}
+	su = SDL_CreateRGBSurface(0, 16, 16, 32, 0, 0, 0, 0);
+	SDL_FreeSurface(su);
+	SDL_Quit();
+	return (0);
+}
+EOF
 	
 	MkIf('"${SYSTEM}" = "Darwin"');
 		MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
@@ -53,27 +66,24 @@ sub Test
 	MkIf('"${SDL_VERSION}" != ""');
 		MkPrint('yes');
 		MkPrintN('checking whether SDL works...');
-		MkCompileC('HAVE_SDL', '${SDL_CFLAGS}', '${SDL_LIBS}', << 'EOF');
-#include <stdio.h>
-#include <SDL.h>
-int main(int argc, char *argv[]) {
-	SDL_Surface *su;
-	if (SDL_Init(SDL_INIT_TIMER|SDL_INIT_NOPARACHUTE) != 0) {
-		return (1);
-	}
-	su = SDL_CreateRGBSurface(0, 16, 16, 32, 0, 0, 0, 0);
-	SDL_FreeSurface(su);
-	SDL_Quit();
-	return (0);
-}
-EOF
-		MkIf('"${HAVE_SDL}" != ""');
+		MkCompileC('HAVE_SDL', '${SDL_CFLAGS}', '${SDL_LIBS}', $testCode);
+		MkIf('"${HAVE_SDL}" != "no"');
 			MkSaveMK('SDL_CFLAGS', 'SDL_LIBS');
 			MkSaveDefine('SDL_CFLAGS', 'SDL_LIBS');
+		MkElse;
+			MkPrintN('checking whether SDL works (with X11 libs)...');
+			MkDefine('SDL_LIBS', '${SDL_LIBS} -L/usr/X11R6/lib -lX11 -lXext -lXrandr -lXrender');
+			MkCompileC('HAVE_SDL', '${SDL_CFLAGS}', '${SDL_LIBS}', $testCode);
+			MkIf('"${HAVE_SDL}" != "no"');
+				MkSaveMK('SDL_CFLAGS', 'SDL_LIBS');
+				MkSaveDefine('SDL_CFLAGS', 'SDL_LIBS');
+			MkElse;
+				MkSaveUndef('SDL_CFLAGS', 'SDL_LIBS');
+			MkEndif;
 		MkEndif;
 	MkElse;
 		MkPrint('no');
-		MkSaveUndef('HAVE_SDL');
+		MkSaveUndef('HAVE_SDL', 'SDL_CFLAGS', 'SDL_LIBS');
 	MkEndif;
 	return (0);
 }

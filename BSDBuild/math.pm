@@ -29,8 +29,8 @@ sub Test
 {
 	my ($ver) = @_;
 
-	print Define('MATH_LIBS', '-lm');
-	print Define('MATH_CFLAGS', '');
+	MkDefine('MATH_LIBS', '-lm');
+	MkDefine('MATH_CFLAGS', '');
 	MkCompileC('HAVE_MATH', '${CFLAGS} ${MATH_CFLAGS}', '${MATH_LIBS}',
 	    << 'EOF');
 #include <math.h>
@@ -54,7 +54,7 @@ EOF
 	MkEndif;
 	
 	MkPrintN('checking for fast multiply-accumulate...');
-	print Define('MATH_CFLAGS', '-std=c99');
+	MkDefine('MATH_CFLAGS', '');
 	MkCompileC('HAVE_MATH_FMA', '${CFLAGS} ${MATH_CFLAGS}', '${MATH_LIBS}',
 	    << 'EOF');
 #include <math.h>

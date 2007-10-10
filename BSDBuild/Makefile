@@ -60,7 +60,9 @@ SHARE=	Core.pm \
 	sse.pm \
 	setjmp.pm \
 	signal.pm \
-	altivec.pm
+	altivec.pm \
+	unistd_h.pm \
+	stdlib_h.pm
 
 all:
 

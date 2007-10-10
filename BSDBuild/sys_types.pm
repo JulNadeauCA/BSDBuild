@@ -31,8 +31,8 @@ sub Test
 #include <sys/types.h>
 int main(int argc, char *argv[]) {
 	size_t len = 1;
-	ssize_t slen = 1;
-	return (len>1?len:slen);
+	len++;
+	return (0);
 }
 EOF
 	MkIf('"${_MK_HAVE_SYS_TYPES_H}" = "yes"');

@@ -75,6 +75,18 @@ Uninstall program from the installation directory.
 .It Ev PROG
 Filename of target executable.
 Platform-specific transforms may be applied to the name.
+.It Ev PROG_TYPE
+Type of application (used on some platforms by
+.Xr build.proj.mk 5 ) .
+Set to
+.Sq CLI
+for a command-line utility,
+.Sq GUI
+for a graphical interface and
+.Sq DAEMON
+for a server program.
+Defaults to
+.Sq CLI .
 .It Ev PROG_INSTALL
 If set to
 .Sq Yes ,
@@ -83,6 +95,9 @@ the
 target will install the program, otherwise it will be a no-op.
 Defaults to
 .Sq Yes .
+.It Ev PROG_GUID
+A Global Unique Identifier (GUID) for the program.
+Exact interpretation is platform-specific.
 .It Ev GMONOUT
 Output filename for profiled version of the program.
 .It Ev CC

@@ -153,3 +153,4 @@ count:
 
 include ${TOP}/mk/build.common.mk
 include ${TOP}/mk/build.subdir.mk
+include ${TOP}/mk/build.proj.mk

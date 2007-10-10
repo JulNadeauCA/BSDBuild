@@ -1,7 +1,7 @@
 # $Csoft: freetype.pm,v 1.12 2004/03/10 16:33:36 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
+# Copyright (c) 2002-2007 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 # All rights reserved.
 #
@@ -29,54 +29,43 @@ sub Test
 {
 	my ($ver) = @_;
 
-	# Ask freetype-config for compiler flags and libraries.
-	print ReadOut('freetype-config', '--version', 'FREETYPE_VERSION');
-	print ReadOut('freetype-config', '--cflags', 'FREETYPE_CFLAGS');
-	print ReadOut('freetype-config', '--libs', 'FREETYPE_LIBS');
+	MkExecOutput('freetype-config', '--version', 'FREETYPE_VERSION');
+	MkExecOutput('freetype-config', '--cflags', 'FREETYPE_CFLAGS');
+	MkExecOutput('freetype-config', '--libs', 'FREETYPE_LIBS');
 
 	# XXX IRIX package hack.
-	print
-	    Cond('-d /usr/freeware/include',
-	    Define('FREETYPE_CFLAGS',
-		'"${FREETYPE_CFLAGS} -I/usr/freeware/include"'),
-	    Nothing());
-	
-	# Save the cflags/libs. Fail if FreeType is not installed.
-	print
-	    Cond('"${FREETYPE_VERSION}" != ""',
-	    Define('freetype_found', 'yes') .
-	    MKSave('FREETYPE_CFLAGS') .
-	    MKSave('FREETYPE_LIBS') .
-		Echo('yes') ,
-		Echo('no'));
+	MkIf('-d /usr/freeware/include');
+		MkAppend('FREETYPE_CFLAGS', '-I/usr/freeware/include');
+	MkEndif;
 
-	# Try a test FreeType program.
-	print NEcho('checking whether FreeType works...');
-	MkCompileC('HAVE_FREETYPE', '${FREETYPE_CFLAGS}', '${FREETYPE_LIBS}',
-	           << 'EOF');
+	MkIf('"${FREETYPE_VERSION}" != ""');
+		MkPrint('yes');
+		MkPrintN('checking whether FreeType works...');
+		MkCompileC('HAVE_FREETYPE', '${FREETYPE_CFLAGS}', '${FREETYPE_LIBS}',
+		           << 'EOF');
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_OUTLINE_H
-
 int
 main(int argc, char *argv[])
 {
 	FT_Library library;
 	FT_Face face;
-
 	FT_Init_FreeType(&library);
 	FT_New_Face(library, "foo", 0, &face);
 	return (0);
 }
 EOF
-	print
-	    Cond('"${HAVE_FREETYPE}" = "yes"',
-	    HDefineStr('FREETYPE_LIBS') .
-		HDefineStr('FREETYPE_CFLAGS') ,
-		HUndef('FREETYPE_LIBS') .
-		HUndef('FREETYPE_CFLAGS') .
-	    Nothing());
-
+		MkIf('"${HAVE_FREETYPE}" = "yes"');
+	    	MkSaveDefine('FREETYPE_CFLAGS', 'FREETYPE_LIBS');
+			MkSaveMK	('FREETYPE_CFLAGS', 'FREETYPE_LIBS');
+		MkElse;
+	    	MkSaveUndef	('FREETYPE_CFLAGS', 'FREETYPE_LIBS');
+		MkEndif;
+	MkElse;
+	    MkSaveUndef('HAVE_FREETYPE');
+		MkPrint('no');
+	MkEndif;
 	return (0);
 }
 

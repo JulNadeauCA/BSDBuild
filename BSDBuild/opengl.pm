@@ -51,10 +51,14 @@ sub Test
 	MkDefine('GL_LIBS', '');
 
 	foreach my $dir (@include_dirs) {
-		MkIf qq{-d "$dir/GL"}; MkDefine('GL_CFLAGS', "-I$dir"); MkEndif;
+		MkIf qq{-d "$dir/GL"};
+			MkDefine('GL_CFLAGS', "-I$dir");
+		MkEndif;
 	}
 	foreach my $dir (@lib_dirs) {
-		MkIf qq{-d "$dir"}; MkDefine('GL_LIBS', "-L$dir"); MkEndif;
+		MkIf qq{-d "$dir"};
+			MkDefine('GL_LIBS', "-L$dir");
+		MkEndif;
 	}
 
 	MkIf q{"$SYSTEM" = "Darwin"};
@@ -87,10 +91,30 @@ EOF
 	return (0);
 }
 
+sub Premake
+{
+	my $var = shift;
+
+	if ($var eq 'OPENGL_LIBS') {
+		print << 'EOF';
+if (windows) then
+	tinsert(package.links, { "opengl32", "glu32" })
+else
+	tinsert(package.links, { "GL", "GLU" })
+end
+EOF
+		return (1);
+	} elsif ($var eq 'OPENGL_CFLAGS') {
+		return (1);
+	}
+	return (0);
+}
+
 BEGIN
 {
 	$TESTS{'opengl'} = \&Test;
 	$DESCR{'opengl'} = 'OpenGL (http://www.opengl.org)';
+	$PREMAKE{'opengl'} = \&Premake;
 }
 
 ;1

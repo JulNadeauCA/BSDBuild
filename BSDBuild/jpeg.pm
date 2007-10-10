@@ -85,11 +85,24 @@ EOF
 	return (0);
 }
 
+sub Premake
+{
+	my $var = shift;
+
+	if ($var eq 'JPEG_LIBS') {
+		return (1);
+	} elsif ($var eq 'JPEG_CFLAGS') {
+		return (1);
+	}
+	return (0);
+}
+
 BEGIN
 {
 	$HOMEPAGE = 'ftp://ftp.uu.net/graphics/jpeg/';
 	$DESCR{'jpeg'} = "libjpeg ($HOMEPAGE)";
 	$TESTS{'jpeg'} = \&Test;
+	$PREMAKE{'jpeg'} = \&Premake;
 }
 
 ;1

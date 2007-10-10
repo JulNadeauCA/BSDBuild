@@ -42,7 +42,9 @@ sub Test
 	MkDefine('CG_LIBS', '');
 
 	foreach my $dir (@include_dirs) {
-		MkIf qq{-d "$dir/Cg"}; MkDefine('CG_CFLAGS', "-I$dir"); MkEndif;
+		MkIf qq{-d "$dir/Cg"};
+			MkDefine('CG_CFLAGS', "-I$dir");
+		MkEndif;
 	}
 
 	MkIf q{"$SYSTEM" = "Darwin"};
@@ -53,7 +55,7 @@ sub Test
 		MkElse;
 			MkDefine('CG_LIBS', '-L/usr/X11R6/lib');
 		MkEndif;
-		MkDefine('CG_LIBS', '${CG_LIBS} -lCgGL -lCg -lstdc++');
+		MkAppend('CG_LIBS', '-lCgGL -lCg -lstdc++');
 	MkElse;
 		MkDefine('CG_LIBS', '-lCgGL -lCg -lstdc++');
 	MkEndif;

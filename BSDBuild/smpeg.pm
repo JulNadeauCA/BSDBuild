@@ -29,25 +29,20 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	print ReadOut('smpeg-config', '--version', 'smpeg_version');
-	print ReadOut('smpeg-config', '--cflags', 'SMPEG_CFLAGS');
-	print ReadOut('smpeg-config', '--libs', 'SMPEG_LIBS');
+	MkExecOutput('smpeg-config', '--version', 'SMPEG_VERSION');
+	MkExecOutput('smpeg-config', '--cflags', 'SMPEG_CFLAGS');
+	MkExecOutput('smpeg-config', '--libs', 'SMPEG_LIBS');
 
 	# TODO Test
 
-	print
-	    Cond('"${smpeg_version}" != ""',
-	    Echo("yes") . 
-        MKSave('SMPEG_CFLAGS') .
-        MKSave('SMPEG_LIBS') .
-    	HDefine('HAVE_SMPEG') .
-    	HDefineStr('SMPEG_LIBS') .
-    	HDefineStr('SMPEG_CFLAGS') ,
-	    Echo("no") .
-	    HUndef('HAVE_SMPEG') .
-		HUndef('SMPEG_LIBS') .
-		HUndef('SMPEG_CFLAGS'));
-
+	MkIf('"${SMPEG_VERSION}" != ""');
+		MkPrint('yes');
+		MkSaveDefine('HAVE_SMPEG', 'SMPEG_CFLAGS', 'SMPEG_LIBS');
+		MkSaveMK	('HAVE_SMPEG', 'SMPEG_CFLAGS', 'SMPEG_LIBS');
+	MkElse;
+		MkPrint('no');
+		MkSaveUndef	('HAVE_SMPEG');
+	MkEndif;
 	return (0);
 }
 

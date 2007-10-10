@@ -1,7 +1,7 @@
 # $Csoft: sdl.pm,v 1.18 2004/09/12 14:21:11 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2005 CubeSoft Communications, Inc.
+# Copyright (c) 2005-2007 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 # All rights reserved.
 #
@@ -29,80 +29,51 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	print ReadOut('sdl-config', '--version', 'sdl_version');
-	print ReadOut('sdl-config', '--cflags', 'SDL_CFLAGS');
-	print ReadOut('sdl-config', '--static-libs', 'SDL_LIBS');
+	MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
+	MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
+	MkExecOutput('sdl-config', '--static-libs', 'SDL_LIBS');
 	
 	# Mac OS X port
-	print ReadOut('sdl-config', '--libs', 'SDL_LIBS_SHORT');
-	print << 'EOF';
-if [ "$SYSTEM" = "Darwin" ]; then
-	SDL_LIBS=$SDL_LIBS_SHORT
-fi
-EOF
+	MkExecOutput('sdl-config', '--libs', 'SDL_LIBS_SHORT');
+	MkIf('"$SYSTEM" = "Darwin"');
+		MkDefine('SDL_LIBS', '$SDL_LIBS_SHORT');
+	MkEndif;
 
-print << 'EOF';
-SDL_IMAGE_CFLAGS="$SDL_CFLAGS"
-SDL_IMAGE_LIBS="$SDL_LIBS -lSDL_image"
-EOF
-
-	print
-	    Cond('"${sdl_version}" != ""',
-	    Define('sdl_found', 'yes') .
-	    MKSave('SDL_IMAGE_CFLAGS') .
-	    MKSave('SDL_IMAGE_LIBS') ,
-	    Nothing());
-	print
-	    Cond('"${sdl_found}" = "yes"',
-	    Echo('ok'),
-	    Fail('Could not find the SDL library. Is sdl-config in $PATH?'));
-	
-	print NEcho('checking whether SDL_image works...');
-	MkCompileC('HAVE_SDL_IMAGE', '${SDL_IMAGE_CFLAGS}', '${SDL_IMAGE_LIBS}',
-	           << 'EOF');
+	MkIf('"${SDL_VERSION}" != ""');
+		MkDefine('SDL_IMAGE_CFLAGS', '$SDL_CFLAGS');
+		MkDefine('SDL_IMAGE_LIBS', '-lSDL_image');
+		MkCompileC('HAVE_SDL_IMAGE', '${SDL_IMAGE_CFLAGS}', '${SDL_IMAGE_LIBS}',
+	               << 'EOF');
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
 #include <SDL.h>
 #include <SDL_image.h>
-
 int
 main(int argc, char *argv[])
 {
 	SDL_Surface *image;
-
 	SDL_Init(0);
 	image = IMG_Load(NULL);
 	SDL_Quit();
 	return (0);
 }
 EOF
-	print
-	    Cond('"${HAVE_SDL_IMAGE}" = "yes"',
-	    HDefineStr('SDL_IMAGE_LIBS') .
-	    HDefineStr('SDL_IMAGE_CFLAGS'),
-		HUndef('SDL_IMAGE_LIBS') .
-		HUndef('SDL_IMAGE_CFLAGS') .
-	    Fail('The SDL_image test would not compile.'));
-
-	print << 'EOF';
-echo "#ifndef SDL_IMAGE_LIBS" > config/sdl_image_libs.h
-echo "#define SDL_IMAGE_LIBS \"${SDL_IMAGE_LIBS}\"" >> config/sdl_image_libs.h
-echo "#endif /* SDL_IMAGE_LIBS */" >> config/sdl_image_libs.h
-EOF
-	print << 'EOF';
-echo "#ifndef SDL_IMAGE_CFLAGS" > config/sdl_image_cflags.h
-echo "#define SDL_IMAGE_CFLAGS \"${SDL_IMAGE_CFLAGS}\"" >> config/sdl_image_cflags.h
-echo "#endif /* SDL_IMAGE_CFLAGS */" >> config/sdl_image_cflags.h
-EOF
+		MkIf('"${HAVE_SDL_IMAGE}" != "no"');
+			MkSaveDefine('SDL_IMAGE_CFLAGS', 'SDL_IMAGE_LIBS');
+			MkSaveMK	('SDL_IMAGE_CFLAGS', 'SDL_IMAGE_LIBS');
+		MkEndif;
+	MkElse;
+		MkPrint('no');
+		MkSaveUndef('HAVE_SDL_IMAGE');
+	MkEndif;
 	return (0);
 }
 
 BEGIN
 {
+	$DESCR{'sdl_image'} = 'SDL_image (http://libsdl.org/projects/SDL_image)';
 	$TESTS{'sdl_image'} = \&Test;
-	$DESCR{'sdl_image'} = 'SDL_image (http://www.libsdl.org/projects/SDL_image)';
 }
 
 ;1

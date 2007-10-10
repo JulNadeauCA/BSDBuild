@@ -72,7 +72,8 @@ EOF
 			MkSaveDefine('SDL_CFLAGS', 'SDL_LIBS');
 		MkElse;
 			MkPrintN('checking whether SDL works (with X11 libs)...');
-			MkDefine('SDL_LIBS', '${SDL_LIBS} -L/usr/X11R6/lib -lX11 -lXext -lXrandr -lXrender');
+			MkAppend('SDL_LIBS', '-L/usr/X11R6/lib -lX11 -lXext -lXrandr '.
+			                     '-lXrender');
 			MkCompileC('HAVE_SDL', '${SDL_CFLAGS}', '${SDL_LIBS}', $testCode);
 			MkIf('"${HAVE_SDL}" != "no"');
 				MkSaveMK('SDL_CFLAGS', 'SDL_LIBS');
@@ -88,10 +89,26 @@ EOF
 	return (0);
 }
 
+sub Premake
+{
+	my $var = shift;
+
+	if ($var eq 'SDL_LIBS') {
+		print << 'EOF';
+tinsert(package.links, { "SDL", "SDLmain" })
+EOF
+		return (1);
+	} elsif ($var eq 'SDL_CFLAGS') {
+		return (1);
+	}
+	return (0);
+}
+
 BEGIN
 {
-	$TESTS{'sdl'} = \&Test;
 	$DESCR{'sdl'} = 'SDL (http://www.libsdl.org)';
+	$TESTS{'sdl'} = \&Test;
+	$PREMAKE{'sdl'} = \&Premake;
 }
 
 ;1

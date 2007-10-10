@@ -51,7 +51,7 @@ sub Test
 				MkDefine('GLU_CFLAGS', "-I$dir");
 			MkEndif;
 		}
-		MkDefine('GLU_LIBS', '${GLU_LIBS} -lGLU');
+		MkAppend('GLU_LIBS', '-lGLU');
 	MkEndif;
 
 	MkCompileC('HAVE_GLU', '${OPENGL_CFLAGS} ${GLU_CFLAGS}',
@@ -79,11 +79,37 @@ EOF
 	return (0);
 }
 
+sub Premake
+{
+	my $var = shift;
+
+	if ($var eq 'GLU_LIBS') {
+		print << 'EOF';
+if (windows) then
+	tinsert(package.links, { "glu32" })
+else
+	tinsert(package.links, { "GLU" })
+end
+EOF
+		return (1);
+	} elsif ($var eq 'GLU_CFLAGS') {
+		print << 'EOF';
+if (bsd or linux) then
+	tinsert(package.includepaths, { "/usr/X11R6/include" })
+end
+EOF
+		return (1);
+	}
+	return (0);
+}
+
 BEGIN
 {
-	$TESTS{'glu'} = \&Test;
 	$DESCR{'glu'} = 'GLU (http://www.opengl.org)';
 	$DEPS{'glu'} = 'opengl,math';
+
+	$TESTS{'glu'} = \&Test;
+	$PREMAKE{'glu'} = \&Premake;
 }
 
 ;1

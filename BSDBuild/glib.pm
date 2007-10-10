@@ -1,7 +1,7 @@
 # $Csoft: glib.pm,v 1.9 2003/10/01 09:24:19 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
+# Copyright (c) 2002-2007 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 # All rights reserved.
 #
@@ -29,34 +29,32 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	print ReadOut('glib-config', '--version', 'glib_version');
-	print ReadOut('glib-config', '--cflags', 'GLIB_CFLAGS');
-	print ReadOut('glib-config', '--libs', 'GLIB_LIBS');
+	MkExecOutput('glib-config', '--version', 'GLIB_VERSION');
+	MkExecOutput('glib-config', '--cflags', 'GLIB_CFLAGS');
+	MkExecOutput('glib-config', '--libs', 'GLIB_LIBS');
 
-	# FreeBSD port
-	print ReadOut('glib12-config', '--version', 'glib12_version');
-	print ReadOut('glib12-config', '--cflags', 'glib12_cflags');
-	print ReadOut('glib12-config', '--libs', 'glib12_libs');
-	
-	print
-	    Cond('"${glib_version}" != ""',
-	    Define('glib_found', 'yes') .
-	        MKSave('GLIB_CFLAGS') .
-	        MKSave('GLIB_LIBS'),
-	    Nothing());
-	print
-	    Cond('"${glib12_version}" != ""',
-	    Define('glib_found', 'yes') .
-	        Define('GLIB_CFLAGS', '$glib12_cflags') .
-	        Define('GLIB_LIBS', '$glib12_libs') .
-	        MKSave('GLIB_CFLAGS') .
-	        MKSave('GLIB_LIBS'),
-	    Nothing());
-	print
-	    Cond('"${glib_found}" = "yes"',
-	    Echo('ok'),
-	    Fail("glib missing"));
+	# Hack for FreeBSD port
+	MkExecOutput('glib12-config', '--version', 'glib12_version');
+	MkExecOutput('glib12-config', '--cflags', 'glib12_cflags');
+	MkExecOutput('glib12-config', '--libs', 'glib12_libs');
 
+	MkIf('"${GLIB_VERSION}" != ""');
+		# TODO: Test
+		MkSaveDefine('HAVE_GLIB', 'GLIB_CFLAGS', 'GLIB_LIBS');
+		MkSaveMK	('HAVE_GLIB', 'GLIB_CFLAGS', 'GLIB_LIBS');
+		MkPrint('yes');
+	MkElse;
+		MkIf('"${glib12_version}" != ""');
+			MkDefine	('GLIB_CFLAGS', '${glib12_cflags}');
+			MkDefine	('GLIB_LIBS', '${glib12_libs}');
+			MkSaveDefine('HAVE_GLIB', 'GLIB_CFLAGS', 'GLIB_LIBS');
+			MkSaveMK	('HAVE_GLIB', 'GLIB_CFLAGS', 'GLIB_LIBS');
+			MkPrint('yes');
+		MkElse;
+			MkSaveUndef	('HAVE_GLIB');
+			MkPrint('no');
+		MkEndif;
+	MkEndif;
 	return (0);
 }
 
@@ -65,5 +63,4 @@ BEGIN
 	$TESTS{'glib'} = \&Test;
 	$DESCR{'glib'} = 'Glib (http://www.gtk.org/)';
 }
-
 ;1

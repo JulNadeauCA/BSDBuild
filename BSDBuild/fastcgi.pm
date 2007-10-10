@@ -32,18 +32,19 @@ my @dirs = (
 
 sub Test
 {
-	print Define('fastcgi_found', 'no');
+	MkDefine('FASTCGI_CFLAGS', '');
+	MkDefine('FASTCGI_LIBS', '');
 
 	foreach my $dir (@dirs) {
-	    print
-			Cond("-e $dir/include/fcgi_stdio.h",
-		    Define('FASTCGI_CFLAGS', "\"-I$dir/include\"") .
-		    Define('FASTCGI_LIBS', "\"-L$dir/lib -lfcgi\"") .
-			Define('fastcgi_found', "yes") ,
-			Nothing());
+		MkIf("-e $dir/include/fcgi_stdio.h");
+			MkDefine('FASTCGI_CFLAGS', "\"-I$dir/include\"");
+		    MkDefine('FASTCGI_LIBS', "\"-L$dir/lib -lfcgi\"");
+		MkEndif;
 	}
-
-	MkCompileC('HAVE_FASTCGI', '${FASTCGI_CFLAGS}', '${FASTCGI_LIBS}',
+	MkIf('${FASTCGI_LIBS} != ""');
+		MkPrint('yes');
+		MkPrintN('checking whether fastcgi works...');
+		MkCompileC('HAVE_FASTCGI', '${FASTCGI_CFLAGS}', '${FASTCGI_LIBS}',
 	           << 'EOF');
 #include <fcgi_stdio.h>
 
@@ -54,15 +55,17 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	
-	print
-		Cond('"${HAVE_FASTCGI}" != ""',
-		Define('fastcgi_found', "yes") .
-		HDefine('HAVE_FASTCGI') .
-		MKSave('FASTCGI_CFLAGS') .
-		MKSave('FASTCGI_LIBS') ,
-		Define('fastcgi_found', "no") .
-		HUndef('HAVE_FASTCGI'));
+	MkElse;
+		MkPrint('no');
+	MkEndif;
+
+	MkIf('"${HAVE_FASTCGI}" != "no"');
+		MkSaveDefine('HAVE_FASTCGI');
+		MkSaveMK('FASTCGI_CFLAGS');
+		MkSaveMK('FASTCGI_LIBS');
+	MkElse;
+		MkSaveUndef('HAVE_FASTCGI');
+	MkEndif;
 }
 
 BEGIN
@@ -70,5 +73,4 @@ BEGIN
 	$TESTS{'fastcgi'} = \&Test;
 	$DESCR{'fastcgi'} = 'FastCGI libraries (http://www.fastcgi.com)';
 }
-
 ;1

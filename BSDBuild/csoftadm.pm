@@ -1,7 +1,7 @@
 # $Csoft: csoftadm.pm,v 1.2 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2003, 2004 CubeSoft Communications, Inc.
+# Copyright (c) 2003-2007 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 # All rights reserved.
 #
@@ -29,46 +29,37 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	print ReadOut('csoftadm-config', '--version', 'csoftadm_version');
-	print ReadOut('csoftadm-config', '--cflags', 'CSOFTADM_CFLAGS');
-	print ReadOut('csoftadm-config', '--libs', 'CSOFTADM_LIBS');
+	MkExecOutput('csoftadm-config', '--version', 'CSOFTADM_VERSION');
+	MkExecOutput('csoftadm-config', '--cflags', 'CSOFTADM_CFLAGS');
+	MkExecOutput('csoftadm-config', '--libs', 'CSOFTADM_LIBS');
 
-	print
-	    Cond('"${csoftadm_version}" != ""'
-		,
-	    Echo('ok') .
-	    Define('csoftadm_found', 'yes') .
-	    MKSave('CSOFTADM_CFLAGS') .
-	    MKSave('CSOFTADM_LIBS') .
-		HDefine('HAVE_CSOFTADM') .
-		HDefineStr('CSOFTADM_CFLAGS') .
-		HDefineStr('CSOFTADM_LIBS') ,
-		HUndef('HAVE_CSOFTADM') .
-	    HUndef('CSOFTADM_CFLAGS') .
-		HUndef('CSOFTADM_LIBS'));
-	
-	print NEcho('checking whether csoftadm works...');
-	MkCompileC('HAVE_CSOFTADM', '${CSOFTADM_CFLAGS}', '${CSOFTADM_LIBS}',
-	           << 'EOF');
+	MkIf('"${CSOFTADM_VERSION}" != ""');
+		MkPrint('yes');
+		MkPrintN('checking whether csoftadm works...');
+		MkCompileC('HAVE_CSOFTADM', '${CSOFTADM_CFLAGS}', '${CSOFTADM_LIBS}',
+	               << 'EOF');
 #include <libcsoftadm/csoftadm.h>
-
-int
-main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 	int rv;
-
 	rv = csoftadm_init();
 	csoftadm_destroy();
 	return (0);
 }
 EOF
+		MkIf('"${HAVE_CSOFTADM}" != "no"');
+			MkSaveDefine('CSOFTADM_CFLAGS', 'CSOFTADM_LIBS');
+			MkSaveMK	('CSOFTADM_CFLAGS', 'CSOFTADM_LIBS');
+		MkEndif;
+	MkElse;
+		MkPrint('no');
+		MkSaveUndef('HAVE_CSOFTADM');
+	MkEndif;
 	return (0);
 }
 
 BEGIN
 {
-	$DESCR{'csoftadm'} = 'csoftadm (http://hypertriton.com/csoftadm)';
+	$DESCR{'csoftadm'} = 'libcsoftadm (http://hypertriton.com/csoftadm)';
 	$TESTS{'csoftadm'} = \&Test;
 }
-
 ;1

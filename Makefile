@@ -4,19 +4,24 @@ PROJECT=	bsdbuild
 DIST=		${PROJECT}-${VERSION}
 DISTFILE=	${DIST}.tar.gz
 
-SHARE=	build.common.mk build.dep.mk build.lib.mk build.man.mk \
+SHARE=	hstrip.pl mkdep mkify.pl mkconfigure.pl mkprojfiles.pl \
+	mkconcurrent.pl version.sh manlinks.pl cmpfiles.pl \
+	build.common.mk build.dep.mk build.lib.mk build.man.mk \
 	build.perl.mk build.prog.mk build.subdir.mk build.www.mk \
-	hstrip.pl mkconfigure.pl mkdep mkify.pl mkconcurrent.pl build.po.mk \
-	build.doc.mk build.den.mk version.sh manlinks.pl
+	build.po.mk build.doc.mk build.den.mk build.proj.mk
 LTFILES=config.guess config.sub configure configure.in ltconfig ltmain.sh
 
 SUBDIR=	BSDBuild man
 
-all:	mkconfigure.out mkify all-subdir
+all:	mkconfigure.out mkprojfiles.out mkify all-subdir
 
 mkconfigure.out: mkconfigure.pl
 	sed -e s,%PREFIX%,${PREFIX}, -e s,%VERSION%,${VERSION}, \
 	    mkconfigure.pl > mkconfigure.out
+
+mkprojfiles.out: mkprojfiles.pl
+	sed -e s,%PREFIX%,${PREFIX}, -e s,%VERSION%,${VERSION}, \
+	    mkprojfiles.pl > mkprojfiles.out
 
 mkify: mkify.pl
 	sed s,%PREFIX%,${PREFIX}, mkify.pl > mkify
@@ -41,6 +46,8 @@ install: install-subdir
 	${SUDO} ${INSTALL_PROG} mkify ${BINDIR}
 	${SUDO} cp -f mkconfigure.out ${BINDIR}/mkconfigure
 	${SUDO} chmod 755 ${BINDIR}/mkconfigure
+	${SUDO} cp -f mkprojfiles.out ${BINDIR}/mkprojfiles
+	${SUDO} chmod 755 ${BINDIR}/mkprojfiles
 
 install-links-subdir:
 	@(if [ "${SUBDIR}" = "" ]; then \
@@ -78,13 +85,15 @@ install-links: install-links-subdir
 	${SUDO} ${INSTALL_PROG} mkify ${BINDIR}
 	${SUDO} cp -f mkconfigure.out ${BINDIR}/mkconfigure
 	${SUDO} chmod 755 ${BINDIR}/mkconfigure
+	${SUDO} cp -f mkprojfiles.out ${BINDIR}/mkprojfiles
+	${SUDO} chmod 755 ${BINDIR}/mkprojfiles
 
 cleandir: cleandir-subdir
 	rm -f Makefile.config config.log
 	touch Makefile.config
 
 clean: clean-subdir
-	rm -f mkconfigure.out mkify
+	rm -f mkconfigure.out mkprojfiles.out mkify
 
 configure: configure.in
 	cat configure.in | perl mkconfigure.pl > configure

@@ -64,7 +64,7 @@ rm -f cc-test cc-test.c
 TEST_CFLAGS=""
 EOF
 	
-	print NEcho('checking for compiler warnings...');
+	MkPrintN('checking for compiler warnings...');
 	MkCompileC('HAVE_CC_WARNINGS', '-Wall -Werror', '', << 'EOF');
 int main(int argc, char *argv[]) { return (0); }
 EOF
@@ -73,8 +73,7 @@ EOF
 	MkEndif;
 
 	# Check for floating point support.
-	# XXX make sure it's in IEEE 754 format.
-	print NEcho('checking for floating point types...');
+	MkPrintN('checking for floating point types...');
 	MkCompileC('HAVE_IEEE754', '', '', << 'EOF');
 int
 main(int argc, char *argv[])
@@ -88,7 +87,7 @@ main(int argc, char *argv[])
 }
 EOF
 
-	print NEcho('checking __bounded__ attribute...');
+	MkPrintN('checking __bounded__ attribute...');
 	MkCompileC('HAVE_BOUNDED_ATTRIBUTE', '', '', << 'EOF');
 void foo(char *, int) __attribute__ ((__bounded__(__string__,1,2)));
 void foo(char *a, int c) { }
@@ -100,7 +99,7 @@ int main(int argc, char *argv[])
 }
 EOF
 	
-	print NEcho('checking __format__ attribute...');
+	MkPrintN('checking __format__ attribute...');
 	MkCompileC('HAVE_FORMAT_ATTRIBUTE', '', '', << 'EOF');
 #include <stdarg.h>
 void foo1(char *, ...)
@@ -118,7 +117,7 @@ int main(int argc, char *argv[])
 }
 EOF
 
-	print NEcho('checking __nonnull__ attribute...');
+	MkPrintN('checking __nonnull__ attribute...');
 	TryCompileFlags('HAVE_NONNULL_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 void foo(char *) __attribute__((__nonnull__ (1)));
 void foo(char *a) { }
@@ -129,7 +128,7 @@ int main(int argc, char *argv[])
 }
 EOF
 
-	print NEcho('checking __aligned__ attribute...');
+	MkPrintN('checking __aligned__ attribute...');
 	TryCompileFlags('HAVE_ALIGNED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 int main(int argc, char *argv[])
 {
@@ -138,7 +137,7 @@ int main(int argc, char *argv[])
 }
 EOF
 	
-	print NEcho('checking __packed__ attribute...');
+	MkPrintN('checking __packed__ attribute...');
 	TryCompileFlags('HAVE_PACKED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 int main(int argc, char *argv[])
 {
@@ -148,7 +147,7 @@ int main(int argc, char *argv[])
 EOF
 	
 	# Check for long double type.
-	print NEcho('checking for long double...');
+	MkPrintN('checking for long double...');
 	TryCompile('HAVE_LONG_DOUBLE', << 'EOF');
 int
 main(int argc, char *argv[])
@@ -160,7 +159,7 @@ main(int argc, char *argv[])
 }
 EOF
 
-	print NEcho('checking for cygwin environment...');
+	MkPrintN('checking for cygwin environment...');
 	TryCompileFlags('HAVE_CYGWIN', '-mcygwin', << 'EOF');
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -176,7 +175,7 @@ main(int argc, char *argv[]) {
 }
 EOF
 
-	print NEcho('checking for mingw environment...');
+	MkPrintN('checking for mingw environment...');
 	TryCompileFlags('HAVE_MINGW', '', << 'EOF');
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -192,7 +191,7 @@ main(int argc, char *argv[]) {
 }
 EOF
 
-	# Disable cygwin.
+	# Disable cygwin. XXX option
 	print << 'EOF';
 if [ "${compile}" = "ok" ]; then
 	CFLAGS="$CFLAGS -mno-cygwin"

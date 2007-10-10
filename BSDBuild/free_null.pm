@@ -27,18 +27,13 @@
 
 sub Test
 {
-	MkCompileAndRunC('free_null_noop', '', '', << 'EOF');
+	MkCompileAndRunC('FREE_NULL_IS_A_NOOP', '', '', << 'EOF');
 #include <stdlib.h>
 int main(int argc, char *argv[]) {
 	free(NULL);
 	return (0);
 }
 EOF
-	MkIf('"${free_null_noop}" = "yes"');
-		MkSaveDefine('FREE_NULL_IS_A_NOOP');
-	MkElse;
-		MkSaveUndef('FREE_NULL_IS_A_NOOP');
-	MkEndif;
 	return (0);
 }
 

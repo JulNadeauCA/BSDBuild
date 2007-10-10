@@ -29,11 +29,11 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	print ReadOut('pkg-config', 'libidn --version', 'libidn_version');
-	print ReadOut('pkg-config', 'libidn --cflags', 'LIBIDN_CFLAGS');
-	print ReadOut('pkg-config', 'libidn --libs', 'LIBIDN_LIBS');
+	MkExecOutput('pkg-config', 'libidn --version', 'LIBIDN_VERSION');
+	MkExecOutput('pkg-config', 'libidn --cflags', 'LIBIDN_CFLAGS');
+	MkExecOutput('pkg-config', 'libidn --libs', 'LIBIDN_LIBS');
 
-	MkIf('"${libidn_version}" != ""');
+	MkIf('"${LIBIDN_VERSION}" != ""');
 		MkPrint('yes');
 		MkPrintN('checking whether libidn works...');
 		MkCompileC('HAVE_LIBIDN', '${LIBIDN_CFLAGS}', '${LIBIDN_LIBS}',

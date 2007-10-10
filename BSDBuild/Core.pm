@@ -23,6 +23,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+our $LUA = undef;
+
 #
 # Bourne instructions.
 #
@@ -31,13 +33,41 @@ sub MkElif { print 'elif [ ',shift,' ]; then',"\n"; }
 sub MkElse { print 'else',"\n"; }
 sub MkEndif { print 'fi;',"\n"; }
 
+#
+# Premake instructions
+#
+sub PmComment {
+	my $com = shift;
+	print {$LUA} "-- $com\n";
+}
+sub PmDefineBool {
+	my $def = shift;
+	print {$LUA} "tinsert(package.defines,{\"$def\"})\n";
+}
+sub PmDefineString {
+	my ($def, $val) = @_;
+	print {$LUA} "tinsert(package.defines,{\"$def=$val\"})\n";
+}
+sub PmIncludePath {
+	my $path = shift;
+	print {$LUA} "tinsert(package.includepaths,{\"$path\"})\n";
+}
+sub PmLibPath {
+	my $path = shift;
+	print {$LUA} "tinsert(package.libpaths,{\"$path\"})\n";
+}
+sub PmBuildFlag {
+	my $flag = shift;
+	print {$LUA} "tinsert(package.buildflags,{\"$flag\"})\n";
+}
+
 # Read the output of a program into a variable.
 # Set an empty string if the binary is not found.
-sub ReadOut
+sub MkExecOutput
 {
 	my ($bin, $args, $define) = @_;
 
-	return << "EOF";
+	print << "EOF";
 $define=""
 for path in `echo \$PATH | sed 's/:/ /g'`; do
 	if [ -x "\${path}/$bin" ]; then
@@ -46,7 +76,6 @@ for path in `echo \$PATH | sed 's/:/ /g'`; do
 done
 EOF
 }
-sub MkExecOutput { print ReadOut(@_); }
 
 # Return the absolute path name of a binary into a variable.
 # Set an empty string if the binary is not found.
@@ -64,40 +93,16 @@ done
 EOF
 }
 
-sub Cond
-{
-	my ($cond, $yese, $noe) = @_;
-
-	return << "EOF";
-if [ $cond ]; then
-${yese}else
-${noe}fi
-EOF
-}
-
-sub Define
-{
-	my ($arg, $val) = @_;
-
-	return "$arg=$val\n";
-}
-
 sub MkDefine
 {
 	my ($arg, $val) = @_;
-
 	print "$arg=\"$val\"\n";
 }
 
-sub Echo
+sub MkAppend
 {
-	my $msg = shift;
-
-	$msg =~ s/["]/\"/g;
-	return << "EOF";
-echo "$msg"
-echo "$msg" >> config.log
-EOF
+	my ($arg, $val) = @_;
+	print "$arg=\"\${$arg} $val\"\n";
 }
 
 sub MkPrint
@@ -108,17 +113,6 @@ sub MkPrint
 	print << "EOF";
 echo "$msg"
 echo "$msg" >> config.log
-EOF
-}
-
-sub NEcho
-{
-	my $msg = shift;
-
-	$msg =~ s/["]/\"/g;			# Escape quotes
-	return << "EOF";
-echo -n "$msg"
-echo -n "$msg" >> config.log
 EOF
 }
 
@@ -168,40 +162,6 @@ sub MkSaveMK
 	}
 }
 
-sub HDefine
-{
-    my $var = shift;
-	my $include = 'config/'.lc($var).'.h';
-
-	return << "EOF";
-echo "#ifndef $var" > $include
-echo "#define $var" \$$var >> $include
-echo "#endif" >> $include
-EOF
-}
-
-sub HDefineBool
-{
-    my $var = shift;
-	my $include = 'config/'.lc($var).'.h';
-
-	return << "EOF";
-echo "#ifndef $var" > $include
-echo "#define $var 1" >> $include
-echo "#endif" >> $include
-EOF
-}
-
-sub HUndef
-{
-    my $var = shift;
-	my $include = 'config/'.lc($var).'.h';
-
-	return << "EOF";
-echo "#undef $var" > $include
-EOF
-}
-
 sub MkSaveUndef
 {
 	foreach my $var (@_) {
@@ -210,17 +170,6 @@ sub MkSaveUndef
 echo "#undef $var" > $include
 EOF
 	}
-}
-
-sub HDefineStr
-{
-    my $var = shift;
-	my $include = 'config/'.lc($var).'.h';
-	return << "EOF";
-echo "#ifndef $var" > $include
-echo "#define $var \\\"\$$var\\\"" >> $include
-echo "#endif" >> $include
-EOF
 }
 
 sub MkSaveDefine
@@ -233,11 +182,6 @@ echo "#define $var \\\"\$$var\\\"" >> $include
 echo "#endif" >> $include
 EOF
 	}
-}
-
-sub Nothing
-{
-    return "NONE=1\n";
 }
 
 sub TryCompile
@@ -261,21 +205,15 @@ fi
 rm -f conftest conftest.c
 EOF
 
-		my $define = HDefine($def);
-		my $undef = HUndef($def);
-
-		print << "EOF";
-if [ "\${compile}" = "ok" ]; then
-	echo "ok" >> config.log
-	$define
-	$def="yes"
-	echo "yes"
-else
-    $undef
-	$def="no"
-	echo "no"
-fi
-EOF
+		MkIf('"${compile}" = "ok"');
+			MkPrint('yes');
+			MkDefine($def, 'yes');
+			MkSaveDefine($def);
+		MkElse;
+			MkPrint('no');
+			MkDefine($def, 'no');
+			MkSaveUndef($def);
+		MkEndif;
 	}
 }
 
@@ -414,7 +352,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(%TESTS %DESCR ReadOut MkExecOutput Which Cond Define Echo Necho Fail MKSave HDefine HDefineStr HDefineBool HUndef Nothing TryCompile MkCompileC MkCompileAndRunC TryCompileFlags Log MkDefine MkIf MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN);
+    @EXPORT = qw($LUA %TESTS %DESCR MkExecOutput Which Fail MKSave TryCompile MkCompileC MkCompileAndRunC TryCompileFlags Log MkDefine MkAppend MkIf MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN PmComment PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag);
 }
 
 ;1

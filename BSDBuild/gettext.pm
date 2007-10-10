@@ -1,7 +1,7 @@
 # $Csoft: gettext.pm,v 1.6 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2003, 2004 CubeSoft Communications, Inc.
+# Copyright (c) 2003-2007 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 # All rights reserved.
 #
@@ -27,31 +27,25 @@
 
 sub Test
 {
-	# XXX
-	print Define('GETTEXT_CFLAGS', '-I/usr/local/include');
-	print Define('GETTEXT_LIBS', '"-L/usr/local/lib -lintl"');
-	print Echo("ok");
+	# XXX TODO
+	MkDefine('GETTEXT_CFLAGS', '-I/usr/local/include');
+	MkDefine('GETTEXT_LIBS', '"-L/usr/local/lib -lintl"');
+	MkPrint('ok');
 
-	print NEcho('checking whether gettext works...');
+	MkPrintN('checking whether gettext works...');
 	MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}',
 	           << 'EOF');
 #include <libintl.h>
-
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	gettext("");
 	return (0);
 }
 EOF
-	
-	print
-		Cond('"${HAVE_GETTEXT}" != ""',
-		MKSave('GETTEXT_CFLAGS') .
-		MKSave('GETTEXT_LIBS') .
-		MKSave('HAVE_GETTEXT')
-		,
-		Nothing());
+	MkIf('"${HAVE_GETTEXT}" != ""');
+		MkSaveDefine('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
+		MkSaveMK	('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
+	MkEndif;
 }
 
 BEGIN

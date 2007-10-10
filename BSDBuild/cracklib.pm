@@ -48,10 +48,7 @@ sub Test
 		    << 'EOF');
 #include <stdio.h>
 #include <packer.h>
-
-int
-main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 	char *msg = (char *)FascistCheck("foobar", "/path");
 	return (msg != NULL);
 }

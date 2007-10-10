@@ -32,6 +32,8 @@ CXXFLAGS?=
 OBJCFLAGS?=	${CFLAGS}
 CPPFLAGS?=
 PROG_INSTALL?=	Yes
+PROG_TYPE?=	"CLI"
+PROG_GUID?=
 GMONOUT?=	gmon.out
 ASM?=		nasm
 ASMFLAGS?=	-g -w-orphan-labels
@@ -315,4 +317,5 @@ deinstall-prog:
 
 include ${TOP}/mk/build.common.mk
 include ${TOP}/mk/build.dep.mk
+include ${TOP}/mk/build.proj.mk
 include ${TOP}/mk/build.subdir.mk

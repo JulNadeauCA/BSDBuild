@@ -42,6 +42,7 @@ LIB_STATIC?=	Yes
 LIB_MAJOR?=	1
 LIB_MINOR?=	0
 LIB_ADD?=
+LIB_GUID?=
 
 LIBTOOL?=	${TOP}/mk/libtool/libtool
 LIBTOOL_COOKIE?=${TOP}/mk/libtool.ok
@@ -393,4 +394,5 @@ ${LTCONFIG} ${LTCONFIG_GUESS} ${LTCONFIG_SUB} ${LTMAIN_SH}:
 
 include ${TOP}/mk/build.common.mk
 include ${TOP}/mk/build.dep.mk
+include ${TOP}/mk/build.proj.mk
 include ${TOP}/mk/build.subdir.mk

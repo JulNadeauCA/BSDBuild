@@ -63,12 +63,9 @@ sub Test
 
 	MkCompileC('HAVE_X11', '${X11_CFLAGS}', '${X11_LIBS} -lX11', << 'EOF');
 #include <X11/Xlib.h>
-
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	Display *disp;
-
 	disp = XOpenDisplay(NULL);
 	XCloseDisplay(disp);
 	return (0);
@@ -76,17 +73,30 @@ main(int argc, char *argv[])
 EOF
 
 	MkIf('"${HAVE_X11}" != ""');
-		MkSaveMK('X11_CFLAGS', 'X11_LIBS');
 		MkSaveDefine('X11_CFLAGS', 'X11_LIBS');
+		MkSaveMK	('X11_CFLAGS', 'X11_LIBS');
 	MkElse;
-		MkSaveUndef('X11_CFLAGS', 'X11_LIBS');
+		MkSaveUndef	('X11_CFLAGS', 'X11_LIBS');
 	MkEndif;
+}
+
+sub Premake
+{
+	my $var = shift;
+
+	if ($var eq 'X11_LIBS') {
+		return (1);
+	} elsif ($var eq 'X11_CFLAGS') {
+		return (1);
+	}
+	return (0);
 }
 
 BEGIN
 {
 	$TESTS{'x11'} = \&Test;
 	$DESCR{'x11'} = 'the X window system';
+	$PREMAKE{'x11'} = \&Premake;
 }
 
 ;1

@@ -1,5 +1,5 @@
 # Public domain
 
 MDEFINE(SHAREDIR, "$PREFIX/share/bsdbuild");
-MDEFINE(VERSION, "2.1");
-MDEFINE(RELEASE, "Forest of the Horrifying");
+MDEFINE(VERSION, "2.2-beta");
+MDEFINE(RELEASE, "Descent into Darkness");

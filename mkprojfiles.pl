@@ -28,20 +28,25 @@ use BSDBuild::Core;
 
 my @lines = ();
 my $line = '';
+
 my $libName = undef;
 my $progName = undef;
 my $progGUI = 0;
+
 my $libShared = 0;
 my $libStatic = 1;
+
 my @subdirs = ();
 my @srcs = ();
 my @cflags = ();
 my @libs = ();
+
 my $project = '';
+my $projGUID = '';
 my $pkgKind = '';
 my $pkgName = '';
 my $pkgGUID = '';
-my $projGUID = '';
+my $pkgLinks = '';
 
 my %modFn = ();
 
@@ -94,6 +99,9 @@ package.kind = "$pkgKind"
 EOF
 	if ($pkgGUID) {
 		print "package.guid = \"$pkgGUID\"\n";
+	}
+	if ($pkgLinks) {
+		print "package.links = \"$pkgLinks\"\n";
 	}
 	if (@srcs) {
 		print 'package.files = {', "\n";
@@ -209,11 +217,17 @@ foreach $_ (@lines) {
 	elsif (/^\s*LIB_GUID\s*=\s*\"*\s*([\w\-\.]+)\s*\"*\s*$/) {
 		$pkgGUID = $1;
 	}
+	elsif (/^\s*LIB_LINKS\s*=\s*\"*\s*([\w\-\.]+)\s*\"*\s*$/) {
+		$pkgLinks = $1;
+	}
 	elsif (/^\s*PROG\s*=\s*([\w\-\.]+)\s*$/) {
 		$progName = $1;
 	}
 	elsif (/^\s*PROG_GUID\s*=\s*\"*\s*([\w\-\.]+)\s*\"*\s*$/) {
 		$pkgGUID = $1;
+	}
+	elsif (/^\s*PROG_LINKS\s*=\s*\"*\s*([\w\-\.]+)\s*\"*\s*$/) {
+		$pkgLinks = $1;
 	}
 	elsif (/^\s*PROG_TYPE\s*=\s*\"*\s*([\w]+)\s*\"*\s*$/) {
 		if ($1 =~ /gui/i)	{ $progGUI = 1; }

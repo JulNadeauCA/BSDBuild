@@ -102,8 +102,23 @@ Exact interpretation is platform-specific.
 Major version number for shared libraries.
 .It Ev LIB_MINOR
 Minor version number for shared libraries.
-.It Ev LIB_ADD
-Extra object filers to use in generating the library.
+.It Ev LIB_XOBJS
+Extra object files to use in generating the library.
+.It Ev LIBS
+Other libtool-generated libraries (*.la) to include in this library.
+.It Ev USE_LIBTOOL
+If set to
+.Sq Yes ,
+use
+.Xr libtool 1
+to build the libraries.
+If set to
+.Sq No ,
+generate the library using the traditional method involving
+.Xr ar 1 ,
+.Xr ranlib 1 ,
+and
+.Ar -fPIC .
 .It Ev LIBTOOL
 Path to GNU
 .Xr libtool 1 .
@@ -132,7 +147,8 @@ Compiler flags for Objective C sources.
 Defaults to
 .Sq ${CFLAGS} .
 .It Ev CPPFLAGS
-Compiler preprocessor flags, for sources in all languages.
+Compiler preprocessor flags, for sources in all languages featuring
+a C preprocessor.
 .It Ev ASM
 Compiler for assembler sources.
 Defaults to
@@ -175,6 +191,11 @@ Resource file to use with
 .It Ev SHARE
 List of data files to install into
 .Dv ${SHAREDIR} .
+Files must have been generated from the build process.
+.It Ev SHARESRC
+Similar to
+.Ev SHARE
+for non-generated files to be copied from the source directory.
 .It Ev INCLDIR
 Library header files will be installed into this directory.
 See

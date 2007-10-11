@@ -117,7 +117,8 @@ Compiler flags for Objective C sources.
 Defaults to
 .Sq ${CFLAGS} .
 .It Ev CPPFLAGS
-Compiler preprocessor flags, for sources in all languages.
+Compiler preprocessor flags, for sources in all languages featuring
+a C preprocessor.
 .It Ev ASM
 Compiler for assembler sources.
 Defaults to
@@ -160,6 +161,11 @@ Resource file to use with
 .It Ev SHARE
 List of data files to install into
 .Dv ${SHAREDIR} .
+Files must have been generated from the build process.
+.It Ev SHARESRC
+Similar to
+.Ev SHARE
+for non-generated files to be copied from the source directory.
 .It Ev CONFDIR
 System-wide configuration files will be installed into this directory.
 It is usually set relative to

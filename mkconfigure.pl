@@ -126,6 +126,7 @@ sub Help
     my $help_opt = pack('A' x 30, split('', '--help'));
     my $nls_opt = pack('A' x 30, split('', '--enable-nls'));
     my $gettext_opt = pack('A' x 30, split('', '--with-gettext'));
+    my $libtool_opt = pack('A' x 30, split('', '--with-libtool'));
     my $manpages_opt = pack('A' x 30, split('', '--with-manpages'));
     my $docs_opt = pack('A' x 30, split('', '--with-docs'));
     my $debug_opt = pack('A' x 30, split('', '--enable-debug'));
@@ -139,6 +140,7 @@ sub Help
         "echo \"    $help_opt Display this message\"",
         "echo \"    $nls_opt Native Language Support [no]\"",
         "echo \"    $gettext_opt Use gettext tools (msgmerge, ...) [check]\"",
+        "echo \"    $libtool_opt Specify path to libtool [check]\"",
         "echo \"    $manpages_opt Manual pages (-mdoc) [yes]\"",
         "echo \"    $docs_opt Printable docs (-me/tbl/eqn/pic/refer) [no]\"",
         "echo \"    $debug_opt Include debugging code [no]\"",
@@ -417,6 +419,23 @@ else
 fi
 echo "ENABLE_NLS=${ENABLE_NLS}" >> Makefile.config
 echo "HAVE_GETTEXT=${HAVE_GETTEXT}" >> Makefile.config
+
+if [ "${with_libtool}" != "" ]; then
+	echo "LIBTOOL=${with_libtool}" >> Makefile.config
+else
+	ltool=""
+	for path in `echo $PATH | sed 's/:/ /g'`; do
+		if [ -x "${path}/libtool" ]; then
+			ltool=${path}/libtool
+		fi
+	done
+	if [ "${ltool}" != "" ]; then
+		echo "LIBTOOL=${ltool}" >> Makefile.config
+	else
+		echo "Warning: libtool not found on system, using bundled copy"
+		echo "LIBTOOL=\${TOP}/mk/libtool/libtool" >> Makefile.config
+	fi
+fi
 
 echo "PREFIX?=${PREFIX}" >> Makefile.config
 echo "#ifndef PREFIX" > config/prefix.h

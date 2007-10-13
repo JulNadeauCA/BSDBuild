@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
-	MkPrintN('checking for FP definitions in <limits.h>')
+	MkPrintN('checking for FP definitions in <limits.h>...');
 	MkCompileC('_MK_HAVE_LIMITS_H_FP', '', '', << 'EOF');
 #include <limits.h>
 

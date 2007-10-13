@@ -158,6 +158,20 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
+	
+	# Check for long long type.
+	MkPrintN('checking for long long...');
+	TryCompile('HAVE_LONG_LONG', << 'EOF');
+int
+main(int argc, char *argv[])
+{
+	long long ll = 0.0;
+	unsigned long long ull = 0.0;
+	ll = 1.0;
+	ull = 1.0;
+	return (0);
+}
+EOF
 
 	MkPrintN('checking for cygwin environment...');
 	TryCompileFlags('HAVE_CYGWIN', '-mcygwin', << 'EOF');

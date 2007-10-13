@@ -63,8 +63,7 @@ SHARE=	Core.pm \
 	altivec.pm \
 	unistd_h.pm \
 	stdlib_h.pm \
-	limits_h.pm \
-	longlong.pm
+	limits_h.pm
 
 all:
 

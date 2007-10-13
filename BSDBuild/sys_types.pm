@@ -36,7 +36,10 @@ int main(int argc, char *argv[]) {
 }
 EOF
 	MkIf('"${_MK_HAVE_SYS_TYPES_H}" = "yes"');
-		MkPrintN('checking for unsigned typedefs...');
+		MkPrintN('checking for conflicting typedefs...');
+		#
+		# XXX should check each type separatedly!
+		#
 		MkCompileC('_MK_HAVE_UNSIGNED_TYPEDEFS', '', '', << 'EOF');
 #include <sys/types.h>
 int main(int argc, char *argv[]) {
@@ -48,7 +51,10 @@ int main(int argc, char *argv[]) {
 }
 EOF
 	MkElse;
-		MkPrintN('checking for unsigned typedefs...');
+		MkPrintN('checking for conflicting typedefs...');
+		#
+		# XXX should check each type separatedly!
+		#
 		MkCompileC('_MK_HAVE_UNSIGNED_TYPEDEFS', '', '', << 'EOF');
 int main(int argc, char *argv[]) {
 	Uchar foo = 0;

@@ -86,6 +86,21 @@ sub c_libdir
 	PmLibPath($dir);
 }
 
+sub c_extra_warnings
+{
+	PmBuildFlag('extra-warnings');
+}
+
+sub c_fatal_warnings
+{
+	PmBuildFlag('extra-warnings');
+}
+
+sub c_no_secure_warnings
+{
+	PmDefineBool('_CRT_SECURE_NO_WARNINGS');
+}
+
 sub c_option
 {
 	my $opt = shift;
@@ -94,14 +109,6 @@ sub c_option
 	MkDefine('CXXFLAGS', '$CXXFLAGS '.$opt);
 	MkSaveMK('CFLAGS');
 	MkSaveMK('CXXFLAGS');
-	
-	if ($opt eq '-Wall') {
-		PmBuildFlag('extra-warnings');
-		PmDefineBool('_CRT_SECURE_NO_WARNINGS');
-	} elsif ($opt eq '-Werror') {
-		PmBuildFlag('fatal-warnings');
-		PmDefineBool('_CRT_SECURE_NO_WARNINGS');
-	}
 }
 
 sub Register
@@ -525,6 +532,12 @@ EOF
 					c_libdir(@args);
 				} elsif ($cmd eq 'c_option') {
 					c_option(@args);
+				} elsif ($cmd eq 'c_extra_warnings') {
+					c_extra_warnings(@args);
+				} elsif ($cmd eq 'c_fatal_warnings') {
+					c_fatal_warnings(@args);
+				} elsif ($cmd eq 'c_no_secure_warnings') {
+					c_no_secure_warnings(@args);
 				} elsif ($cmd eq 'exit') {
 					print "exit $args[0]\n";
 				}

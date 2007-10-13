@@ -28,16 +28,27 @@ sub Test
 {
 	MkCompileC('_MK_HAVE_LIMITS_H', '', '', << 'EOF');
 #include <limits.h>
+
 int main(int argc, char *argv[]) {
 	int i;
 	unsigned u;
 	long l;
-	ulong ul;
-	float f;
-	double d;
+	unsigned long ul;
 
 	i = INT_MIN;	i = INT_MAX;	u = UINT_MAX;
 	l = LONG_MIN;	l = LONG_MAX;	ul = ULONG_MAX;
+	return (0);
+}
+EOF
+
+	MkPrintN('checking for FP definitions in <limits.h>')
+	MkCompileC('_MK_HAVE_LIMITS_H_FP', '', '', << 'EOF');
+#include <limits.h>
+
+int main(int argc, char *argv[]) {
+	float f;
+	double d;
+
 	f = FLT_MIN;	f = FLT_MAX;
 	d = DBL_MIN;	d = DBL_MAX;
 	return (0);

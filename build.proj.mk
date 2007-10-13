@@ -77,6 +77,7 @@ proj: proj-subdir
 			fi; \
 			echo "mv -f config.$$_tgtos config"; \
 			mv -f config.$$_tgtos config; \
+		        echo "config" >> .projfiles2.out; \
 		fi; \
 		cat .projfiles2.out | ${ZIP} ${ZIPFLAGS} \
 		    ${PROJDIR}/$$_tgtproj-$$_tgtos.zip -@; \

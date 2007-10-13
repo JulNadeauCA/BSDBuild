@@ -101,7 +101,7 @@ EOF
 		print "package.guid = \"$pkgGUID\"\n";
 	}
 	if ($pkgLinks) {
-		print "package.links = \"$pkgLinks\"\n";
+		print "tinsert(package.links,{\"$pkgLinks\"})\n";
 	}
 	if (@srcs) {
 		print 'package.files = {', "\n";

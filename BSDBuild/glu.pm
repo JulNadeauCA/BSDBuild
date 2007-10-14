@@ -44,6 +44,8 @@ sub Test
 		# Assume -framework OpenGL was already included.
 		MkDefine('GLU_CFLAGS', '');
 		MkDefine('GLU_LIBS', '');
+	MkElif q{"$HAVE_MINGW" = "yes"};
+		MkDefine('GLU_LIBS', '-lglu32');
 	MkElse;
 		MkDefine('GLU_CFLAGS', '');
 		foreach my $dir (@include_dirs) {

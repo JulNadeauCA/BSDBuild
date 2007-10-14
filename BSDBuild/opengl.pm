@@ -64,6 +64,9 @@ sub Test
 	MkIf q{"$SYSTEM" = "Darwin"};
 		MkDefine('OPENGL_CFLAGS', '');
 		MkDefine('OPENGL_LIBS', '-framework OpenGL');
+	MkElif q{"$HAVE_MINGW" = "yes"};
+		MkDefine('OPENGL_CFLAGS', '');
+		MkDefine('OPENGL_LIBS', '-lopengl32');
 	MkElse;
 		MkDefine('OPENGL_CFLAGS', '${GL_CFLAGS}');
 		MkDefine('OPENGL_LIBS', '${GL_LIBS} -lGL');
@@ -98,9 +101,9 @@ sub Premake
 	if ($var eq 'OPENGL_LIBS') {
 		print << 'EOF';
 if (windows) then
-	tinsert(package.links, { "opengl32", "glu32" })
+	tinsert(package.links, { "opengl32" })
 else
-	tinsert(package.links, { "GL", "GLU" })
+	tinsert(package.links, { "GL" })
 end
 EOF
 		return (1);

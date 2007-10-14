@@ -27,7 +27,7 @@
 
 sub Test
 {
-	TryCompile 'HAVE_STRTOLL', << 'EOF';
+	TryCompile '_MK_HAVE_STRTOLL', << 'EOF';
 #include <stdlib.h>
 
 int
@@ -35,8 +35,9 @@ main(int argc, char *argv[])
 {
 	long long int lli;
 	char *ep = NULL;
+	char *foo = "1234";
 
-	lli = strtoll(NULL, &ep, 10);
+	lli = strtoll(foo, &ep, 10);
 	return (0);
 }
 EOF

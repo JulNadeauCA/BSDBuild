@@ -44,6 +44,7 @@ sub Test
 	MkPrintN('checking whether Agar works...');
 	MkCompileC('HAVE_AGAR', '${AGAR_CFLAGS}', '${AGAR_LIBS}', << 'EOF');
 #include <agar/core.h>
+#include <agar/gui.h>
 
 int
 main(int argc, char *argv[])

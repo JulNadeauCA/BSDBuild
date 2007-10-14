@@ -36,6 +36,17 @@ int main(int argc, char *argv[]) {
 }
 EOF
 	MkIf('"${_MK_HAVE_SYS_TYPES_H}" = "yes"');
+		MkPrintN('checking for 64-bit types...');
+		MkCompileC('HAVE_64BIT', '', '', << 'EOF');
+#include <sys/types.h>
+int main(int argc, char *argv[]) {
+	int64_t i64 = 0;
+	u_int64_t u64 = 0;
+	i64 = 1;
+	u64 = 1;
+	return (0);
+}
+EOF
 		MkPrintN('checking for conflicting typedefs...');
 		#
 		# XXX should check each type separatedly!
@@ -51,6 +62,8 @@ int main(int argc, char *argv[]) {
 }
 EOF
 	MkElse;
+		MkSaveUndef('HAVE_64BIT');
+
 		MkPrintN('checking for conflicting typedefs...');
 		#
 		# XXX should check each type separatedly!

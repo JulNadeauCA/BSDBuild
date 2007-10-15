@@ -40,20 +40,6 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-
-	MkPrintN('checking for FP definitions in <limits.h>...');
-	MkCompileC('_MK_HAVE_LIMITS_H_FP', '', '', << 'EOF');
-#include <limits.h>
-
-int main(int argc, char *argv[]) {
-	float f;
-	double d;
-
-	f = FLT_MIN;	f = FLT_MAX;
-	d = DBL_MIN;	d = DBL_MAX;
-	return (0);
-}
-EOF
 	return (0);
 }
 

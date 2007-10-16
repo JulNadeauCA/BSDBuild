@@ -439,22 +439,27 @@ else
 		fi
 	done
 	if [ "${ltool}" != "" ]; then
-		LIBTOOL=${ltool}
+		${ltool} --version 1>/dev/null 2>&1
+		if [ $? == 0 ]; then
+			LIBTOOL=${ltool}
+		else
+			LIBTOOL=\${TOP}/mk/libtool/libtool
+			LIBTOOL_BUNDLED="yes"
+		fi
 	else
 		LIBTOOL=\${TOP}/mk/libtool/libtool
 		LIBTOOL_BUNDLED="yes"
 	fi
 fi
-echo "LIBTOOL=${LIBTOOL}" >> Makefile.config
-grep ^VERSION=1.5 "${LIBTOOL}" 1>/dev/null 2>&1
-if [ $? == 0 ]; then
-	echo "yes (1.5)"
-	echo "LIBTOOLFLAGS=-prefer-pic" >> Makefile.config
+if [ "${LIBTOOL_BUNDLED}" = "yes" ]; then
+	echo "yes (bundled)"
 else
-	if [ "${LIBTOOL_BUNDLED}" = "yes" ]; then
-		echo "yes (bundled)"
+	grep ^VERSION=1.5 "${LIBTOOL}" 1>/dev/null 2>&1
+	if [ $? == 0 ]; then
+		echo "yes (GNU libtool 1.5)"
+		echo "LIBTOOLFLAGS=-prefer-pic" >> Makefile.config
 	else
-		echo "yes"
+		echo "yes (GNU libtool)"
 	fi
 fi
 

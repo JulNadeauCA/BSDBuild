@@ -101,7 +101,9 @@ EOF
 		print "package.guid = \"$pkgGUID\"\n";
 	}
 	if ($pkgLinks) {
-		print "tinsert(package.links,{\"$pkgLinks\"})\n";
+		foreach my $ln (split(' ', $pkgLinks)) {
+			print "tinsert(package.links,{\"$ln\"})\n";
+		}
 	}
 	if (@srcs) {
 		print 'package.files = {', "\n";
@@ -217,7 +219,7 @@ foreach $_ (@lines) {
 	elsif (/^\s*LIB_GUID\s*=\s*\"*\s*([\w\-\.]+)\s*\"*\s*$/) {
 		$pkgGUID = $1;
 	}
-	elsif (/^\s*LIB_LINKS\s*=\s*\"*\s*([\w\-\.]+)\s*\"*\s*$/) {
+	elsif (/^\s*LIB_LINKS\s*=\s*\"*\s*([\w\-\.\s]+)\s*\"*\s*$/) {
 		$pkgLinks = $1;
 	}
 	elsif (/^\s*PROG\s*=\s*([\w\-\.]+)\s*$/) {
@@ -226,7 +228,7 @@ foreach $_ (@lines) {
 	elsif (/^\s*PROG_GUID\s*=\s*\"*\s*([\w\-\.]+)\s*\"*\s*$/) {
 		$pkgGUID = $1;
 	}
-	elsif (/^\s*PROG_LINKS\s*=\s*\"*\s*([\w\-\.]+)\s*\"*\s*$/) {
+	elsif (/^\s*PROG_LINKS\s*=\s*\"*\s*([\w\-\.\s]+)\s*\"*\s*$/) {
 		$pkgLinks = $1;
 	}
 	elsif (/^\s*PROG_TYPE\s*=\s*\"*\s*([\w]+)\s*\"*\s*$/) {

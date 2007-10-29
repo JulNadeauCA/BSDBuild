@@ -67,7 +67,10 @@ SHARE=	Core.pm \
 	strtoll.pm \
 	open_exlock.pm \
 	fgetln.pm \
-	Mail-SpamAssassin.pm
+	Mail-SpamAssassin.pm \
+	getpeerucred.pm \
+	so_peercred.pm \
+	getpeereid.pm
 
 all:
 

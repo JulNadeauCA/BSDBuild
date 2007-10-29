@@ -384,7 +384,7 @@ for path in `echo $PATH | sed 's/:/ /g'`; do
 done
 if [ "${NROFF}" != "" ]; then
 	echo | ${NROFF} -Tmandoc >/dev/null
-	if [ $? == 0 ]; then
+	if [ "$?" = "0" ]; then
 		HAVE_MANDOC="yes"
 	fi
 fi
@@ -461,7 +461,7 @@ echo "LIBTOOL=${LIBTOOL}" >> Makefile.config
 #	done
 #	if [ "${ltool}" != "" ]; then
 #		${ltool} --version 1>/dev/null 2>&1
-#		if [ $? == 0 ]; then
+#		if [ "$?" = "0" ]; then
 #			LIBTOOL=${ltool}
 #		else
 #			LIBTOOL=\${TOP}/mk/libtool/libtool
@@ -476,7 +476,7 @@ echo "LIBTOOL=${LIBTOOL}" >> Makefile.config
 #	echo "yes (bundled)"
 #else
 #	grep ^VERSION=1.5 "${LIBTOOL}" 1>/dev/null 2>&1
-#	if [ $? == 0 ]; then
+#	if [ "$?" = "0" ]; then
 #		echo "yes (GNU libtool 1.5)"
 #		echo "LIBTOOLFLAGS=-prefer-pic" >> Makefile.config
 #	else

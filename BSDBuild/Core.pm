@@ -265,7 +265,7 @@ EOF
 	MkElse;
 		MkDefine('compile', 'ok');
 		print '(cd $testdir && ./conftest) >> config.log', "\n";
-		MkIf('$? == 0');
+		MkIf('"$?" = "0"');
 			MkPrint('yes');
 			MkSaveCompileSuccess($define);
 		MkElse;
@@ -330,7 +330,7 @@ EOF
 echo "\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest conftest.c $libs" >>config.log
 \$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest conftest.c $libs 2>>config.log
 EOF
-		MkIf('$? == 0');
+		MkIf('"$?" = "0"');
 			MkPrint('yes');
 			MkDefine('compile', 'ok');
 			MkSaveCompileSuccess($define);
@@ -364,7 +364,7 @@ $code
 EOT
 (cd \$testdir && perl conftest.pl) >> config.log
 EOF
-	MkIf('$? == 0');
+	MkIf('"$?" = "0"');
 		MkPrint('yes');
 		MkSaveCompileSuccess($define);
 	MkElse;

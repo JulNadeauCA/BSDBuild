@@ -46,7 +46,7 @@ EOF
 BEGIN
 {
 	$TESTS{'flock'} = \&Test;
-	$DESCR{'flock'} = 'an flock() function';
+	$DESCR{'flock'} = 'the flock() function';
 }
 
 ;1

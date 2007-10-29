@@ -64,7 +64,9 @@ SHARE=	Core.pm \
 	unistd_h.pm \
 	stdlib_h.pm \
 	limits_h.pm \
-	strtoll.pm
+	strtoll.pm \
+	open_exlock.pm \
+	fgetln.pm
 
 all:
 

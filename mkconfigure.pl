@@ -130,6 +130,7 @@ sub Help
     my $sharedir_opt = pack('A' x 30, split('', '--sharedir'));
     my $localedir_opt = pack('A' x 30, split('', '--localedir'));
     my $srcdir_opt = pack('A' x 30, split('', '--srcdir'));
+    my $testdir_opt = pack('A' x 30, split('', '--testdir'));
     my $help_opt = pack('A' x 30, split('', '--help'));
     my $nls_opt = pack('A' x 30, split('', '--enable-nls'));
     my $gettext_opt = pack('A' x 30, split('', '--with-gettext'));
@@ -144,6 +145,7 @@ sub Help
         "echo \"    $sharedir_opt Share prefix [\$PREFIX/share]\"",
         "echo \"    $localedir_opt Locale prefix [\$PREFIX/share/locale]\"",
         "echo \"    $srcdir_opt Source tree for concurrent build [.]\"",
+        "echo \"    $testdir_opt Directory in which to execute tests [.]\"",
         "echo \"    $help_opt Display this message\"",
         "echo \"    $nls_opt Native Language Support [no]\"",
         "echo \"    $gettext_opt Use gettext tools (msgmerge, ...) [check]\"",
@@ -289,6 +291,9 @@ do
 	--srcdir=*)
 	    srcdir=$optarg
 	    ;;
+	--testdir=*)
+	    testdir=$optarg
+	    ;;
 	*)
 	    echo "invalid argument: $arg"
 	    echo "try ./configure --help"
@@ -312,6 +317,16 @@ if [ "${srcdir}" != "" ]; then
 	fi
 else
 	SRC=`pwd`
+fi
+
+if [ "${testdir}" != "" ]; then
+	echo "Configure tests will be executed in ${testdir}"
+	if [ ! -e "${testdir}" ]; then
+		echo "Creating ${testdir}"
+		mkdir ${testdir}
+	fi
+else
+	testdir="."
 fi
 EOF
 

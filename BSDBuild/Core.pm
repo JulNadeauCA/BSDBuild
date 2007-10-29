@@ -196,13 +196,13 @@ EOT
 EOF
 		print << 'EOF';
 compile="ok"
-echo "$CC $CFLAGS $TEST_CFLAGS -o conftest conftest.c" >>config.log
-$CC $CFLAGS $TEST_CFLAGS -o conftest conftest.c 2>>config.log
+echo "$CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest conftest.c" >>config.log
+$CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest conftest.c 2>>config.log
 if [ $? != 0 ]; then
 	echo "-> failed ($?)" >> config.log
 	compile="failed"
 fi
-rm -f conftest conftest.c
+rm -f $testdir/conftest conftest.c
 EOF
 
 		MkIf('"${compile}" = "ok"');
@@ -255,8 +255,8 @@ $code
 EOT
 EOF
 	print << "EOF";
-echo "\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o conftest conftest.c $libs" >>config.log
-\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o conftest conftest.c $libs 2>>config.log
+echo "\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest conftest.c $libs" >>config.log
+\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest conftest.c $libs 2>>config.log
 EOF
 	MkIf('$? != 0');
 		MkPrint('no (compile failed)');
@@ -264,7 +264,7 @@ EOF
 		MkSaveCompileFailed($define);
 	MkElse;
 		MkDefine('compile', 'ok');
-		print './conftest >> config.log', "\n";
+		print '(cd $testdir && ./conftest) >> config.log', "\n";
 		MkIf('$? == 0');
 			MkPrint('yes');
 			MkSaveCompileSuccess($define);
@@ -273,8 +273,7 @@ EOF
 			MkSaveCompileFailed($define);
 		MkEndif;
 	MkEndif;
-	print 'rm -f conftest conftest.c', "\n";
-EOF
+	print 'rm -f $testdir/conftest conftest.c', "\n";
 }
 
 sub TryCompileFlags
@@ -290,13 +289,13 @@ EOT
 EOF
 		print << "EOF";
 compile="ok"
-echo "\$CC \$CFLAGS \$TEST_CFLAGS $flags -o conftest conftest.c" >>config.log
-\$CC \$CFLAGS \$TEST_CFLAGS $flags -o conftest conftest.c 2>>config.log
+echo "\$CC \$CFLAGS \$TEST_CFLAGS $flags -o \$testdir/conftest conftest.c" >>config.log
+\$CC \$CFLAGS \$TEST_CFLAGS $flags -o \$testdir/conftest conftest.c 2>>config.log
 if [ \$? != 0 ]; then
 	echo "-> failed (\$?)" >> config.log
 	compile="failed"
 fi
-rm -f conftest conftest.c
+rm -f \$testdir/conftest conftest.c
 EOF
 		MkIf('"${compile}" = "ok"');
 			MkPrint('yes');
@@ -328,8 +327,8 @@ $code
 EOT
 EOF
 		print << "EOF";
-echo "\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o conftest conftest.c $libs" >>config.log
-\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o conftest conftest.c $libs 2>>config.log
+echo "\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest conftest.c $libs" >>config.log
+\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest conftest.c $libs 2>>config.log
 EOF
 		MkIf('$? == 0');
 			MkPrint('yes');
@@ -341,8 +340,38 @@ EOF
 			MkSaveCompileFailed($define);
 		MkEndif;
 
-		print 'rm -f conftest conftest.c', "\n";
+		print 'rm -f $testdir/conftest conftest.c', "\n";
 	}
+}
+
+#
+# Run a test Perl script.
+#
+# Sets $define to "yes" or "no" and saves it to both Makefile.config
+# and ./config/.
+#
+sub MkRunPerl
+{
+	my $define = shift;
+	my $args = shift;
+	my $code = shift;
+
+	$code =~ s/\$/\\\$/g;
+
+	print << "EOF";
+cat << EOT > \$testdir/conftest.pl
+$code
+EOT
+(cd \$testdir && perl conftest.pl) >> config.log
+EOF
+	MkIf('$? == 0');
+		MkPrint('yes');
+		MkSaveCompileSuccess($define);
+	MkElse;
+		MkPrint('no (script failed)');
+		MkSaveCompileFailed($define);
+	MkEndif;
+	print 'rm -f $testdir/conftest.pl', "\n";
 }
 
 BEGIN

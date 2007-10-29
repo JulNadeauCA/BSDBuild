@@ -28,7 +28,9 @@
 sub Test
 {
 	TryCompile 'HAVE_SETPROCTITLE', << 'EOF';
-#include <string.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdlib.h>
 int
 main(int argc, char *argv[])
 {

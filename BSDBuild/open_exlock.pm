@@ -37,7 +37,7 @@ main(int argc, char *argv[])
 {
 	int fd;
 
-	fd = open("foo", O_WRONLY|O_CREAT|O_EXCL);
+	fd = open("foo", O_WRONLY|O_CREAT|O_EXLOCK);
 	close(fd);
 	return (0);
 }

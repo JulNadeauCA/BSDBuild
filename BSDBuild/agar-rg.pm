@@ -46,8 +46,10 @@ sub Test
 #include <agar/rg.h>
 
 int main(int argc, char *argv[]) {
-	RG_Tileset ts;
-	RG_TilesetInit(&ts, "foo");
+	RG_Tileset *ts;
+
+	ts = RG_TilesetNew(NULL, "foo", 0);
+	AG_ObjectDestroy(ts);
 	return (0);
 }
 EOF

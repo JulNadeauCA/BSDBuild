@@ -45,8 +45,10 @@ sub Test
 #include <agar/core.h>
 #include <agar/map.h>
 int main(int argc, char *argv[]) {
-	MAP m;
-	MAP_Init(&m, "test");
+	MAP *m;
+
+	m = MAP_New(NULL, "foo");
+	AG_ObjectDestroy(m);
 	return (0);
 }
 EOF

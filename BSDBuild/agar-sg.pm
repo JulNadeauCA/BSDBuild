@@ -45,8 +45,9 @@ sub Test
 #include <agar/core.h>
 #include <agar/sg.h>
 int main(int argc, char *argv[]) {
-	SG sg;
-	SG_Init(&sg, "sg");
+	SG *sg;
+	sg = SG_New(NULL, "foo");
+	AG_ObjectDestroy(sg);
 	return (0);
 }
 EOF

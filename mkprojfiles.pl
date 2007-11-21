@@ -75,27 +75,18 @@ EOF
 	}
 }
 
-sub DoPackage
+sub DoPackage ($$)
 {
-	if ($libName) {
-		$pkgName = $libName;
-		if ($libShared)	{ $pkgKind = 'dll'; }
-		else		{ $pkgKind = 'lib'; }
-	} elsif ($progName) {
-		$pkgName = $progName;
-		if ($progGUI)	{ $pkgKind = 'winexe'; }
-		else		{ $pkgKind = 'exe'; }
-	} else {
-		#print STDERR "Unable to determine package kind\n";
-		exit (0);
-	}
-	unless ($pkgName) {
+	my ($name, $kind) = @_;
+
+	unless ($name) {
 		#print STDERR "Unable to determine package name\n";
 		exit (0);
 	}
 	print << "EOF";
-package.name = "$pkgName"
-package.kind = "$pkgKind"
+package = newpackage()
+package.name = "$name"
+package.kind = "$kind"
 EOF
 	if ($pkgGUID) {
 		print "package.guid = \"$pkgGUID\"\n";
@@ -271,5 +262,18 @@ foreach $_ (@lines) {
 if ($project) {
 	DoProject();
 } else {
-	DoPackage();
+	if ($libName) {
+		if ($libShared)	{
+			DoPackage($libName, 'lib');
+			DoPackage($libName.'_dll', 'dll');
+		} else {
+			DoPackage($libName, 'lib');
+		}
+	} elsif ($progName) {
+		if ($progGUI)	{ DoPackage($progName, 'winexe'); }
+		else		{ DoPackage($progName, 'exe'); }
+	} else {
+		#print STDERR "Unable to determine package kind\n";
+		exit (0);
+	}
 }

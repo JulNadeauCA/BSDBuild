@@ -99,6 +99,7 @@ sub c_fatal_warnings
 sub c_no_secure_warnings
 {
 	PmDefineBool('_CRT_SECURE_NO_WARNINGS');
+	PmDefineBool('_CRT_SECURE_NO_DEPRECATE');
 }
 
 sub c_option

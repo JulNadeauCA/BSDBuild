@@ -70,7 +70,9 @@ SHARE=	Core.pm \
 	Mail-SpamAssassin.pm \
 	getpeerucred.pm \
 	so_peercred.pm \
-	getpeereid.pm
+	getpeereid.pm \
+	tritonsg.pm \
+	math_c99.pm
 
 all:
 

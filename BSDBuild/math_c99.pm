@@ -29,33 +29,37 @@ sub Test
 {
 	my ($ver) = @_;
 
-	MkDefine('MATH_LIBS', '-lm');
-	MkDefine('MATH_CFLAGS', '');
-	MkCompileC('HAVE_MATH', '${CFLAGS} ${MATH_CFLAGS}', '${MATH_LIBS}',
+	MkDefine('MATH_C99_LIBS', '-lm');
+	MkDefine('MATH_C99_CFLAGS', '');
+	MkCompileC('HAVE_MATH_C99', '${CFLAGS} ${MATH_C99_CFLAGS}',
+	           '${MATH_C99_LIBS}',
 	    << 'EOF');
 #include <math.h>
 
 int
 main(int argc, char *argv[])
 {
+	float f = 1.0;
 	double d = 1.0;
+
 	d = fabs(d);
+	f = fabsf(f);
 	return (0);
 }
 EOF
-	MkIf('"${HAVE_MATH}" = "yes"');
-	    MkSaveMK('MATH_CFLAGS', 'MATH_LIBS');
-		MkSaveDefine('MATH_CFLAGS', 'MATH_LIBS');
+	MkIf('"${HAVE_MATH_C99}" = "yes"');
+	    MkSaveMK('MATH_C99_CFLAGS', 'MATH_C99_LIBS');
+		MkSaveDefine('MATH_C99_CFLAGS', 'MATH_C99_LIBS');
 	MkElse;
-		MkSaveUndef('MATH_LIBS');
+		MkSaveUndef('MATH_C99_LIBS');
 	MkEndif;
 	return (0);
 }
 
 BEGIN
 {
-	$TESTS{'math'} = \&Test;
-	$DESCR{'math'} = 'the C math library';
+	$TESTS{'math_c99'} = \&Test;
+	$DESCR{'math_c99'} = 'the C math library (C99)';
 }
 
 ;1

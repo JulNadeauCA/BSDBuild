@@ -38,9 +38,23 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_STRLCAT', 'yes');
+		MkSaveDefine('HAVE_STRLCAT');
+	} else {
+		MkSaveUndef('HAVE_STRLCAT');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'strlcat'} = \&Test;
+	$EMUL{'strlcat'} = \&Emul;
 	$DESCR{'strlcat'} = 'a strlcat() function';
 }
 

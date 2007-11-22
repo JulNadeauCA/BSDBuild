@@ -38,9 +38,23 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_STRSEP', 'yes');
+		MkSaveDefine('HAVE_STRSEP');
+	} else {
+		MkSaveUndef('HAVE_STRSEP');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'strsep'} = \&Test;
+	$EMUL{'strsep'} = \&Emul;
 	$DESCR{'strsep'} = 'a strsep() function';
 }
 

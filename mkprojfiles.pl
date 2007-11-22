@@ -43,8 +43,6 @@ my @libs = ();
 
 my $project = '';
 my $projGUID = '';
-my $pkgKind = '';
-my $pkgName = '';
 my $pkgGUID = '';
 my $pkgLinks = '';
 
@@ -261,19 +259,18 @@ foreach $_ (@lines) {
 }
 if ($project) {
 	DoProject();
-} else {
-	if ($libName) {
-		if ($libShared)	{
-			DoPackage($libName.'_static', 'lib');
-			DoPackage($libName, 'dll');
-		} else {
-			DoPackage($libName, 'lib');
-		}
-	} elsif ($progName) {
-		if ($progGUI)	{ DoPackage($progName, 'winexe'); }
-		else		{ DoPackage($progName, 'exe'); }
+}
+if ($libName) {
+	if ($libShared)	{
+		DoPackage($libName.'_static', 'lib');
+		DoPackage($libName, 'dll');
 	} else {
-		#print STDERR "Unable to determine package kind\n";
-		exit (0);
+		DoPackage($libName, 'lib');
 	}
+} elsif ($progName) {
+	if ($progGUI)	{ DoPackage($progName, 'winexe'); }
+	else		{ DoPackage($progName, 'exe'); }
+} else {
+	#print STDERR "Unable to determine package kind\n";
+	exit (0);
 }

@@ -42,9 +42,24 @@ EOF
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os eq 'windows' ||
+	    $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_SETJMP', 'yes');
+		MkSaveDefine('HAVE_SETJMP');
+	} else {
+		MkSaveUndef('HAVE_SETJMP');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'setjmp'} = \&Test;
+	$EMUL{'setjmp'} = \&Emul;
 	$DESCR{'setjmp'} = 'setjmp() and longjmp()';
 }
 

@@ -38,9 +38,19 @@ EOF
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	MkDefine('_MK_HAVE_STDLIB_H', 'yes');
+	MkSaveDefine('_MK_HAVE_STDLIB_H');
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'stdlib_h'} = \&Test;
+	$EMUL{'stdlib_h'} = \&Emul;
 	$DESCR{'stdlib_h'} = '<stdlib.h>';
 }
 

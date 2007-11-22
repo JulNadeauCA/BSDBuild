@@ -42,9 +42,23 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'openbsd') {
+		MkDefine('HAVE_RMD160', 'yes');
+		MkSaveDefine('HAVE_RMD160');
+	} else {
+		MkSaveUndef('HAVE_RMD160');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'rmd160'} = \&Test;
+	$EMUL{'rmd160'} = \&Emul;
 	$DESCR{'rmd160'} = 'RMD160 functions';
 }
 

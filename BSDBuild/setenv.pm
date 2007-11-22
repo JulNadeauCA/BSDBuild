@@ -40,9 +40,24 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os eq 'windows' ||
+	    $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_SETENV', 'yes');
+		MkSaveDefine('HAVE_SETENV');
+	} else {
+		MkSaveUndef('HAVE_SETENV');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'setenv'} = \&Test;
+	$EMUL{'setenv'} = \&Emul;
 	$DESCR{'setenv'} = 'setenv() and unsetenv() functions';
 }
 

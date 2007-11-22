@@ -24,6 +24,11 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 use BSDBuild::Core;
+use Getopt::Long;
+
+our $EmulOS = undef;
+our $EmulOSRel = undef;
+our $EmulArch = undef;
 
 sub mdefine
 {
@@ -330,6 +335,14 @@ else
 	testdir="."
 fi
 EOF
+	
+	GetOptions("emul-os=s" =>	\$EmulOS,
+	           "emul-osrel=s" =>	\$EmulOSRel,
+	           "emul-arch=s" =>	\$EmulArch);
+
+	if ($EmulOS) {
+		print STDERR "Emulating: $EmulOS $EmulOSRel $EmulArch\n";
+	}
 
 	my $registers = 1;
 	while (<STDIN>) {
@@ -337,7 +350,7 @@ EOF
 		if (/^\s*#/) {
 		    next;
 		}
-		foreach my $s (split(';')) {
+		DIRECTIVE: foreach my $s (split(';')) {
 			if ($s =~ /([A-Z_]+)\((.*)\)/) {
 				my $cmd = lc($1);
 				my $argspec = $2;
@@ -551,14 +564,31 @@ EOF
 						print STDERR $@;
 						exit (1);
 					}
-					my $c = $TESTS{$app};
-					unless ($c) {
-						die "missing test";
+					my $c;
+					if ($EmulOS) {
+						unless (exists($EMUL{$app}) &&
+						        defined($EMUL{$app})) {
+							print STDERR
+							    "Ignoring: $app\n";
+							next DIRECTIVE;
+						}
+						$c = $EMUL{$app};
+						@args = ($EmulOS, $EmulOSRel,
+						         $EmulArch);
+					} else {
+						$c = $TESTS{$app};
+						unless ($c) {
+							die "missing test: ".
+							    $app;
+						}
 					}
 					print STDERR "+ $app: $DESCR{$app}\n";
 					MkPrintN("checking for ".
 					         "$DESCR{$app}...");
 					&$c(@args);
+					if ($EmulOS) {
+						MkPrintN("ok\n");
+					}
 				} elsif ($cmd eq 'mdefine') {
 					mdefine(@args);
 				} elsif ($cmd eq 'hdefine') {

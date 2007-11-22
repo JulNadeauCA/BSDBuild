@@ -34,18 +34,30 @@ int
 main(int argc, char *argv[])
 {
 	int fd = 0;
-
 	flock(fd, LOCK_EX);
 	flock(fd, LOCK_UN);
-
 	return (0);
 }
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_FLOCK', 'yes');
+		MkSaveDefine('HAVE_FLOCK');
+	} else {
+		MkSaveUndef('HAVE_FLOCK');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'flock'} = \&Test;
+	$EMUL{'flock'} = \&Emul;
 	$DESCR{'flock'} = 'the flock() function';
 }
 

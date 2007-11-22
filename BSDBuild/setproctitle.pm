@@ -40,9 +40,23 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_SETPROCTITLE', 'yes');
+		MkSaveDefine('HAVE_SETPROCTITLE');
+	} else {
+		MkSaveUndef('HAVE_SETPROCTITLE');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'setproctitle'} = \&Test;
+	$EMUL{'setproctitle'} = \&Emul;
 	$DESCR{'setproctitle'} = 'a setproctitle() function';
 }
 

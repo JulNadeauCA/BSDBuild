@@ -43,9 +43,23 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_GETPWUID', 'yes');
+		MkSaveDefine('HAVE_GETPWUID');
+	} else {
+		MkSaveUndef('HAVE_GETPWUID');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'getpwuid'} = \&Test;
+	$EMUL{'getpwuid'} = \&Emul;
 	$DESCR{'getpwuid'} = 'a getpwuid() function';
 }
 

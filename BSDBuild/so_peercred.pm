@@ -50,9 +50,23 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux') {
+		MkDefine('HAVE_SO_PEERCRED', 'yes');
+		MkSaveDefine('HAVE_SO_PEERCRED');
+	} else {
+		MkSaveUndef('HAVE_SO_PEERCRED');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'so_peercred'} = \&Test;
+	$EMUL{'so_peercred'} = \&Emul;
 	$DESCR{'so_peercred'} = 'the SO_PEERCRED interface';
 }
 

@@ -46,8 +46,8 @@ int main(int argc, char *argv[])
 	TAILQ_INSERT_HEAD(&fooq, &foo1, foos);
 	TAILQ_FOREACH(pfoo, &fooq, foos) { }
 	TAILQ_FOREACH_REVERSE(pfoo, &fooq, fooqname, foos) { }
-	for (pfoo = TAILQ_FIRST(&foo1);
-	     pfoo != TAILQ_END(&foo1);
+	for (pfoo = TAILQ_FIRST(&fooq);
+	     pfoo != TAILQ_END(&fooq);
 		 pfoo = pfoo_next) {
 		pfoo_next = TAILQ_NEXT(pfoo,foos);
 	}
@@ -64,9 +64,23 @@ EOF
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'openbsd') {
+		MkDefine('_MK_HAVE_SYS_QUEUE_H', 'yes');
+		MkSaveDefine('_MK_HAVE_SYS_QUEUE_H');
+	} else {
+		MkSaveUndef('_MK_HAVE_SYS_QUEUE_H');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'sys_queue'} = \&Test;
+	$EMUL{'sys_queue'} = \&Emul;
 	$DESCR{'sys_queue'} = 'a compatible <sys/queue.h>';
 }
 

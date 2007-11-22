@@ -49,10 +49,24 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd/) {
+		MkDefine('HAVE_GETADDRINFO', 'yes');
+		MkSaveDefine('HAVE_GETADDRINFO');
+	} else {
+		MkSaveUndef('HAVE_GETADDRINFO');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'getaddrinfo'} = \&Test;
-	$DESCR{'getaddrinfo'} = 'a getaddrinfo() function';
+	$EMUL{'getaddrinfo'} = \&Emul;
+	$DESCR{'getaddrinfo'} = 'the getaddrinfo() function';
 }
 
 ;1

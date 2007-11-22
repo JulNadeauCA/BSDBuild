@@ -42,9 +42,23 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'openbsd' && $machine eq 'i386') {
+		MkDefine('HAVE_PCTR', 'yes');
+		MkSaveDefine('HAVE_PCTR');
+	} else {
+		MkSaveUndef('HAVE_PCTR');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'pctr'} = \&Test;
+	$EMUL{'pctr'} = \&Emul;
 	$DESCR{'pctr'} = 'the pctr(4) interface';
 }
 

@@ -36,12 +36,10 @@ testfmt(const char *fmt, ...)
 {
 	char buf[16];
 	va_list ap;
-	
 	va_start(ap, fmt);
 	(void)vsnprintf(buf, sizeof(buf), fmt, ap);
 	va_end(ap);
 }
-
 int
 main(int argc, char *argv[])
 {
@@ -51,10 +49,24 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_VSNPRINTF', 'yes');
+		MkSaveDefine('HAVE_VSNPRINTF');
+	} else {
+		MkSaveUndef('HAVE_VSNPRINTF');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'vsnprintf'} = \&Test;
-	$DESCR{'vsnprintf'} = 'a vsnprintf() function';
+	$EMUL{'vsnprintf'} = \&Test;
+	$DESCR{'vsnprintf'} = 'the vsnprintf() function';
 }
 
 ;1

@@ -28,6 +28,9 @@
 sub Test
 {
 	TryCompile 'HAVE_VASPRINTF', << 'EOF';
+#ifdef __linux__
+#define _GNU_SOURCE
+#endif
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -42,11 +45,8 @@ testprintf(const char *fmt, ...)
 		return (-1);
 	}
 	va_end(args);
-
-	free(buf);
 	return (0);
 }
-
 int
 main(int argc, char *argv[])
 {
@@ -55,9 +55,23 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_VASPRINTF', 'yes');
+		MkSaveDefine('HAVE_VASPRINTF');
+	} else {
+		MkSaveUndef('HAVE_VASPRINTF');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'vasprintf'} = \&Test;
+	$EMUL{'vasprintf'} = \&Emul;
 	$DESCR{'vasprintf'} = 'a vasprintf() function';
 }
 

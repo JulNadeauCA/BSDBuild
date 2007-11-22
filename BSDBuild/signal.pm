@@ -45,9 +45,23 @@ EOF
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('_MK_HAVE_SIGNAL', 'yes');
+		MkSaveDefine('_MK_HAVE_SIGNAL');
+	} else {
+		MkSaveUndef('_MK_HAVE_SIGNAL');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'signal'} = \&Test;
+	$EMUL{'signal'} = \&Emul;
 	$DESCR{'signal'} = 'the signal() function';
 }
 

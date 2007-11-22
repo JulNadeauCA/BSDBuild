@@ -52,9 +52,30 @@ EOF
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os eq 'windows' ||
+	    $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_MATH', 'yes');
+		MkDefine('MATH_LIBS', '-lm');
+		MkDefine('MATH_CFLAGS', '');
+		MkSaveDefine('HAVE_MATH');
+	} else {
+		MkDefine('MATH_LIBS', '');
+		MkDefine('MATH_CFLAGS', '');
+		MkSaveUndef('HAVE_MATH');
+	}
+	MkSaveDefine('MATH_LIBS', 'MATH_CFLAGS');
+	MkSaveMK('MATH_LIBS', 'MATH_CFLAGS');
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'math'} = \&Test;
+	$EMUL{'math'} = \&Emul;
 	$DESCR{'math'} = 'the C math library';
 }
 

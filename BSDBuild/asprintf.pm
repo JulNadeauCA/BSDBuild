@@ -28,15 +28,16 @@
 sub Test
 {
 	TryCompile 'HAVE_ASPRINTF', << 'EOF';
+#ifdef __linux__
+#define _GNU_SOURCE
+#endif
 #include <stdio.h>
 
 int
 main(int argc, char *argv[])
 {
 	char *buf;
-
 	if (asprintf(&buf, "foo %s", "bar") == 0) {
-		free(buf);
 	    return (0);
 	}
 	return (1);
@@ -44,9 +45,23 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_ASPRINTF', 'yes');
+		MkSaveDefine('HAVE_ASPRINTF');
+	} else {
+		MkSaveUndef('HAVE_ASPRINTF');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'asprintf'} = \&Test;
+	$EMUL{'asprintf'} = \&Emul;
 	$DESCR{'asprintf'} = 'an asprintf() function';
 }
 

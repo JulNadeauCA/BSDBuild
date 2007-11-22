@@ -47,9 +47,23 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_MMAP', 'yes');
+		MkSaveDefine('HAVE_MMAP');
+	} else {
+		MkSaveUndef('HAVE_MMAP');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'mmap'} = \&Test;
+	$EMUL{'mmap'} = \&Emul;
 	$DESCR{'mmap'} = 'mmap() interface';
 }
 

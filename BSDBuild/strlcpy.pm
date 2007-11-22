@@ -38,9 +38,23 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_STRLCPY', 'yes');
+		MkSaveDefine('HAVE_STRLCPY');
+	} else {
+		MkSaveUndef('HAVE_STRLCPY');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'strlcpy'} = \&Test;
+	$EMUL{'strlcpy'} = \&Emul;
 	$DESCR{'strlcpy'} = 'a strlcpy() function';
 }
 

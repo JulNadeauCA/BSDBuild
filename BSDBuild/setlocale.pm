@@ -39,9 +39,23 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_SETLOCALE', 'yes');
+		MkSaveDefine('HAVE_SETLOCALE');
+	} else {
+		MkSaveUndef('HAVE_SETLOCALE');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'setlocale'} = \&Test;
+	$EMUL{'setlocale'} = \&Emul;
 	$DESCR{'setlocale'} = 'a setlocale() function';
 }
 

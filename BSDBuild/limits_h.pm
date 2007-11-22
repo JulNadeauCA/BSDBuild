@@ -43,9 +43,24 @@ EOF
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os eq 'windows' ||
+	    $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('_MK_HAVE_LIMITS_H', 'yes');
+		MkSaveDefine('_MK_HAVE_LIMITS_H');
+	} else {
+		MkSaveUndef('_MK_HAVE_LIMITS_H');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'limits_h'} = \&Test;
+	$EMUL{'limits_h'} = \&Emul;
 	$DESCR{'limits_h'} = '<limits.h>';
 }
 

@@ -42,9 +42,23 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_GETUID', 'yes');
+		MkSaveDefine('HAVE_GETUID');
+	} else {
+		MkSaveUndef('HAVE_GETUID');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'getuid'} = \&Test;
+	$EMUL{'getuid'} = \&Emul;
 	$DESCR{'getuid'} = 'a getuid() function';
 }
 

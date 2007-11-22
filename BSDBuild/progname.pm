@@ -39,10 +39,24 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_PROGNAME', 'yes');
+		MkSaveDefine('HAVE_PROGNAME');
+	} else {
+		MkSaveUndef('HAVE_PROGNAME');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'progname'} = \&Test;
-	$DESCR{'progname'} = 'BSD-style __progname';
+	$EMUL{'progname'} = \&Emul;
+	$DESCR{'progname'} = 'the __progname variable';
 }
 
 ;1

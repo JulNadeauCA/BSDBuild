@@ -42,9 +42,23 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'openbsd') {
+		MkDefine('HAVE_MD5', 'yes');
+		MkSaveDefine('HAVE_MD5');
+	} else {
+		MkSaveUndef('HAVE_MD5');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'md5'} = \&Test;
+	$EMUL{'md5'} = \&Emul;
 	$DESCR{'md5'} = 'MD5 functions';
 }
 

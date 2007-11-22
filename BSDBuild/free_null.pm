@@ -37,9 +37,23 @@ EOF
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('FREE_NULL_IS_A_NOOP', 'yes');
+		MkSaveDefine('FREE_NULL_IS_A_NOOP');
+	} else {
+		MkSaveUndef('FREE_NULL_IS_A_NOOP');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'free_null'} = \&Test;
+	$EMUL{'free_null'} = \&Emul;
 	$DESCR{'free_null'} = 'free(NULL) is a no-op';
 }
 

@@ -43,9 +43,23 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_STRTOLL', 'yes');
+		MkSaveDefine('HAVE_STRTOLL');
+	} else {
+		MkSaveUndef('HAVE_STRTOLL');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'strtoll'} = \&Test;
+	$EMUL{'strtoll'} = \&Emul;
 	$DESCR{'strtoll'} = 'a strtoll() function';
 }
 

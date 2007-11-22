@@ -158,9 +158,85 @@ sub TestPthreads
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux') {
+		MkDefine('HAVE_PTHREADS', 'yes');
+		MkDefine('HAVE_PTHREADS_XOPEN', 'yes');
+
+		MkDefine('PTHREADS_CFLAGS', '');
+		MkDefine('PTHREADS_LIBS', '-lpthread');
+		MkDefine('PTHREADS_XOPEN_CFLAGS', '-U_XOPEN_SOURCE '.
+		                                  '-D_XOPEN_SOURCE=600');
+		MkDefine('PTHREADS_XOPEN_LIBS', '-lpthread');
+	
+		MkSaveDefine('HAVE_PTHREADS', 'HAVE_PTHREADS_XOPEN', 'PTHREADS_CFLAGS',
+		             'PTHREADS_LIBS', 'PTHREADS_XOPEN_CFLAGS',
+					 'PTHREADS_XOPEN_LIBS');
+
+		MkSaveUndef('HAVE_PTHREAD_MUTEX_RECURSIVE');
+		MkSaveUndef('HAVE_PTHREAD_MUTEX_RECURSIVE_NP');
+		return (1);
+	}
+	if ($os eq 'darwin') {
+		MkDefine('HAVE_PTHREADS', 'yes');
+		MkDefine('HAVE_PTHREADS_XOPEN', 'yes');
+		MkDefine('HAVE_PTHREAD_MUTEX_RECURSIVE', 'yes');
+
+		MkDefine('PTHREADS_CFLAGS', '');
+		MkDefine('PTHREADS_LIBS', '-lpthread');
+		MkDefine('PTHREADS_XOPEN_CFLAGS', '-U_XOPEN_SOURCE '.
+		                                  '-D_XOPEN_SOURCE=600');
+		MkDefine('PTHREADS_XOPEN_LIBS', '-lpthread');
+
+		MkSaveDefine('HAVE_PTHREADS', 'HAVE_PTHREADS_XOPEN', 'PTHREADS_CFLAGS',
+		             'PTHREADS_LIBS', 'HAVE_PTHREAD_MUTEX_RECURSIVE');
+
+		MkSaveUndef('HAVE_PTHREAD_MUTEX_RECURSIVE_NP');
+		return (1);
+	}
+	if ($os =~ /^(net|open)bsd$/) {
+		MkDefine('HAVE_PTHREADS', 'yes');
+		MkDefine('HAVE_PTHREADS_XOPEN', 'yes');
+		MkDefine('HAVE_PTHREAD_MUTEX_RECURSIVE', 'yes');
+
+		MkDefine('PTHREADS_CFLAGS', '');
+		MkDefine('PTHREADS_LIBS', '-lpthread');
+		MkDefine('PTHREADS_XOPEN_CFLAGS', '-U_XOPEN_SOURCE '.
+		                                  '-D_XOPEN_SOURCE=600');
+		MkDefine('PTHREADS_XOPEN_LIBS', '-lpthread');
+
+		MkSaveDefine('HAVE_PTHREADS', 'HAVE_PTHREADS_XOPEN', 'PTHREADS_CFLAGS',
+		             'PTHREADS_LIBS', 'HAVE_PTHREAD_MUTEX_RECURSIVE');
+
+		MkSaveUndef('HAVE_PTHREAD_MUTEX_RECURSIVE_NP');
+		return (1);
+	}
+	if ($os eq 'freebsd') {
+		MkDefine('HAVE_PTHREADS', 'yes');
+		MkDefine('HAVE_PTHREADS_XOPEN', 'yes');
+		MkDefine('HAVE_PTHREAD_MUTEX_RECURSIVE', 'yes');
+
+		MkDefine('PTHREADS_CFLAGS', '');
+		MkDefine('PTHREADS_LIBS', '-lpthread');
+		MkDefine('PTHREADS_XOPEN_CFLAGS', '');
+		MkDefine('PTHREADS_XOPEN_LIBS', '-lpthread');
+
+		MkSaveDefine('HAVE_PTHREADS', 'HAVE_PTHREADS_XOPEN', 'PTHREADS_CFLAGS',
+		             'PTHREADS_LIBS', 'HAVE_PTHREAD_MUTEX_RECURSIVE');
+
+		MkSaveUndef('HAVE_PTHREAD_MUTEX_RECURSIVE_NP');
+		return (1);
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'pthreads'} = \&TestPthreads;
+	$EMUL{'pthreads'} = \&Emul;
 	$DESCR{'pthreads'} = 'POSIX threads';
 }
 

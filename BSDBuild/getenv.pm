@@ -38,9 +38,24 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os eq 'windows' ||
+	    $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_GETENV', 'yes');
+		MkSaveDefine('HAVE_GETENV');
+	} else {
+		MkSaveUndef('HAVE_GETENV');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'getenv'} = \&Test;
+	$EMUL{'getenv'} = \&Emul;
 	$DESCR{'getenv'} = 'a getenv() function';
 }
 

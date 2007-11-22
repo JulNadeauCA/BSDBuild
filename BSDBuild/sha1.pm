@@ -42,9 +42,23 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'openbsd') {
+		MkDefine('HAVE_SHA1', 'yes');
+		MkSaveDefine('HAVE_SHA1');
+	} else {
+		MkSaveUndef('HAVE_SHA1');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'sha1'} = \&Test;
+	$EMUL{'sha1'} = \&Emul;
 	$DESCR{'sha1'} = 'SHA1 functions';
 }
 

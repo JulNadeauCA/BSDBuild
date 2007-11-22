@@ -45,9 +45,23 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'darwin' || $os eq 'openbsd' || $os eq 'freebsd') {
+		MkDefine('HAVE_FGETLN', 'yes');
+		MkSaveDefine('HAVE_FGETLN');
+	} else {
+		MkSaveUndef('HAVE_FGETLN');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'fgetln'} = \&Test;
+	$EMUL{'fgetln'} = \&Emul;
 	$DESCR{'fgetln'} = 'the fgetln() function';
 }
 

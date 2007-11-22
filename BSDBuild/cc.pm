@@ -214,9 +214,32 @@ fi
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	MkDefine('HAVE_IEEE754', 'yes');
+	MkSaveDefine('HAVE_IEEE754');
+
+	MkSaveUndef('HAVE_BOUNDED_ATTRIBUTE');
+	MkSaveUndef('HAVE_FORMAT_ATTRIBUTE');
+	MkSaveUndef('HAVE_NONNULL_ATTRIBUTE');
+	MkSaveUndef('HAVE_ALIGNED_ATTRIBUTE');
+	MkSaveUndef('HAVE_PACKED_ATTRIBUTE');
+
+	MkSaveUndef('HAVE_LONG_DOUBLE');
+	MkSaveUndef('HAVE_LONG_LONG');
+	
+	MkSaveUndef('HAVE_CYGWIN');
+	MkSaveUndef('HAVE_MINGW');
+
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'cc'} = \&Test;
+	$EMUL{'cc'} = \&Emul;
 	$DESCR{'cc'} = 'a usable C compiler';
 }
 

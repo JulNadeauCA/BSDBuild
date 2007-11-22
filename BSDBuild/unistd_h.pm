@@ -41,9 +41,23 @@ EOF
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('_MK_HAVE_UNISTD_H', 'yes');
+		MkSaveDefine('_MK_HAVE_UNISTD_H');
+	} else {
+		MkSaveUndef('_MK_HAVE_UNISTD_H');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'unistd_h'} = \&Test;
+	$EMUL{'unistd_h'} = \&Emul;
 	$DESCR{'unistd_h'} = '<unistd.h>';
 }
 

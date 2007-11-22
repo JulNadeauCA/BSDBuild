@@ -41,9 +41,23 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'darwin' || $os eq 'openbsd' || $os eq 'freebsd') {
+		MkDefine('HAVE_ARC4RANDOM', 'yes');
+		MkSaveDefine('HAVE_ARC4RANDOM');
+	} else {
+		MkSaveUndef('HAVE_ARC4RANDOM');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'arc4random'} = \&Test;
+	$EMUL{'arc4random'} = \&Emul;
 	$DESCR{'arc4random'} = 'the arc4random() random number generator';
 }
 

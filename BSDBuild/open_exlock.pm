@@ -44,9 +44,23 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_OPEN_EXLOCK', 'yes');
+		MkSaveDefine('HAVE_OPEN_EXLOCK');
+	} else {
+		MkSaveUndef('HAVE_OPEN_EXLOCK');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'open_exlock'} = \&Test;
+	$EMUL{'open_exlock'} = \&Emul;
 	$DESCR{'open_exlock'} = 'the O_EXLOCK open() flag';
 }
 

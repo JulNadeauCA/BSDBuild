@@ -34,17 +34,30 @@ int
 main(int argc, char *argv[])
 {
 	char buf[16];
-
 	(void)snprintf(buf, sizeof(buf), "foo");
 	return (0);
 }
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_SNPRINTF', 'yes');
+		MkSaveDefine('HAVE_SNPRINTF');
+	} else {
+		MkSaveUndef('HAVE_SNPRINTF');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'snprintf'} = \&Test;
-	$DESCR{'snprintf'} = 'a snprintf() function';
+	$EMUL{'snprintf'} = \&Emul;
+	$DESCR{'snprintf'} = 'the snprintf() function';
 }
 
 ;1

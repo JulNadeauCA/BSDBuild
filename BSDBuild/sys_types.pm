@@ -81,9 +81,31 @@ EOF
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os eq 'windows' ||
+	    $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('_MK_HAVE_SYS_TYPES_H', 'yes');
+		MkSaveDefine('_MK_HAVE_SYS_TYPES_H');
+	} else {
+		MkSaveUndef('_MK_HAVE_SYS_TYPES_H');
+	}
+	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('HAVE_64BIT', 'yes');
+		MkSaveDefine('HAVE_64BIT');
+	} else {
+		MkSaveUndef('HAVE_64BIT');
+	}
+	MkSaveUndef('_MK_HAVE_UNSIGNED_TYPEDEFS');
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'sys_types'} = \&Test;
+	$EMUL{'sys_types'} = \&Emul;
 	$DESCR{'sys_types'} = '<sys/types.h>';
 }
 

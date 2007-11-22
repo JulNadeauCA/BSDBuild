@@ -59,10 +59,26 @@ EOF
 	return (0);
 }
 
+sub Premake
+{
+	my $var = shift;
+
+	if ($var eq 'AGAR_LIBS') {
+		print << 'EOF';
+tinsert(package.links, { "ag_core_static", "ag_gui_static", "SDL", "opengl32" })
+EOF
+		return (1);
+	} elsif ($var eq 'AGAR_CFLAGS') {
+		return (1);
+	}
+	return (0);
+}
+
 BEGIN
 {
 	$TESTS{'agar'} = \&Test;
 	$DESCR{'agar'} = 'Agar (http://libagar.org/)';
+	$PREMAKE{'agar'} = \&Premake;
 }
 
 ;1

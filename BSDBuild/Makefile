@@ -72,7 +72,8 @@ SHARE=	Core.pm \
 	so_peercred.pm \
 	getpeereid.pm \
 	tritonsg.pm \
-	math_c99.pm
+	math_c99.pm \
+	getopt.pm
 
 all:
 

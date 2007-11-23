@@ -135,12 +135,12 @@ sub Log
 	return "echo \"$msg\" >> config.log\n";
 }
 
-sub Fail
+sub MkFail
 {
 	my $msg = shift;
     
 	$msg =~ s/["]/\"/g;							# Escape quotes
-	return << "EOF";
+	print << "EOF";
 echo \"$msg\"
 exit 1
 EOF
@@ -381,7 +381,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($LUA %TESTS %DESCR MkExecOutput Which Fail MKSave TryCompile MkCompileC MkCompileAndRunC TryCompileFlags Log MkDefine MkAppend MkIf MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN PmComment PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag);
+    @EXPORT = qw($LUA %TESTS %DESCR MkExecOutput Which MkFail MKSave TryCompile MkCompileC MkCompileAndRunC TryCompileFlags Log MkDefine MkAppend MkIf MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN PmComment PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag);
 }
 
 ;1

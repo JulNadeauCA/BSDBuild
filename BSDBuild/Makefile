@@ -73,7 +73,8 @@ SHARE=	Core.pm \
 	getpeereid.pm \
 	tritonsg.pm \
 	math_c99.pm \
-	getopt.pm
+	getopt.pm \
+	byte_order.pm
 
 all:
 

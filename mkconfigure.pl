@@ -344,6 +344,7 @@ EOF
 		print STDERR "Emulating: $EmulOS $EmulOSRel $EmulArch\n";
 	}
 
+	my %done = ();
 	my $registers = 1;
 	while (<STDIN>) {
 		chop;
@@ -549,12 +550,9 @@ EOF
 						$registers = 0;
 					}
 				}
-
 				if ($cmd eq 'check' || $cmd eq 'require') {
-					my $app = shift(@args);
-					my $mod = "$INSTALLDIR/BSDBuild/".
-					          "${app}.pm";
-					
+					my $t = shift(@args);
+					my $mod = "$INSTALLDIR/BSDBuild/$t.pm";
 					unless (-e $mod) {
 						print STDERR "$mod: $!\n";
 						exit (1);
@@ -564,31 +562,46 @@ EOF
 						print STDERR $@;
 						exit (1);
 					}
+					if (exists($DEPS{$t})) {
+						foreach my $dep (split(',',
+						                 $DEPS{$t})) {
+							if (!exists(
+							    $done{$dep})) {
+								print STDERR
+								    "$t ".
+								    "depends ".
+								    "on: ".
+								    $dep.
+								    "\n";
+								exit(1);
+							}
+						}
+					}
+		
 					my $c;
 					if ($EmulOS) {
-						unless (exists($EMUL{$app}) &&
-						        defined($EMUL{$app})) {
+						unless (exists($EMUL{$t}) &&
+						        defined($EMUL{$t})) {
 							print STDERR
-							    "Ignoring: $app\n";
+							    "Ignoring: $t\n";
 							next DIRECTIVE;
 						}
-						$c = $EMUL{$app};
+						$c = $EMUL{$t};
 						@args = ($EmulOS, $EmulOSRel,
 						         $EmulArch);
 					} else {
-						$c = $TESTS{$app};
+						$c = $TESTS{$t};
 						unless ($c) {
-							die "missing test: ".
-							    $app;
+							die "Bad test: $t";
 						}
 					}
-					print STDERR "+ $app: $DESCR{$app}\n";
-					MkPrintN("checking for ".
-					         "$DESCR{$app}...");
+					print STDERR "+ $t: $DESCR{$t}\n";
+					MkPrintN("checking for $DESCR{$t}...");
 					&$c(@args);
 					if ($EmulOS) {
 						MkPrintN("ok\n");
 					}
+					$done{$t} = 1;
 				} elsif ($cmd eq 'mdefine') {
 					mdefine(@args);
 				} elsif ($cmd eq 'hdefine') {

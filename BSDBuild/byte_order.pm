@@ -79,9 +79,9 @@ EOF
 			MkIf('"${compile}" = "failed"');
 				MkFail('Unable to determine byte order');
 			MkEndif;
-			MkIf('"${_MK_LITTLE_ENDIAN}" = "yes"');
-				MkDefine('_MK_BIG_ENDIAN', 'no');
-				MkSaveUndef('_MK_BIG_ENDIAN');
+			MkIf('"${_MK_LITTLE_ENDIAN}" = "no"');
+				MkDefine('_MK_BIG_ENDIAN', 'yes');
+				MkSaveDefine('_MK_BIG_ENDIAN');
 			MkEndif;
 		MkEndif;
 	MkEndif;

@@ -125,25 +125,26 @@ sub Register
 	$descr =~ /\"(.*)\"/;
 	$descr = $1;
 
-	my $darg = pack('A' x 30, split('', $arg));
+	my $darg = pack('A' x 25, split('', $arg));
 	push @HELP, "echo \"    $darg $descr\"";
 }
 
 sub Help
 {
-    my $prefix_opt = pack('A' x 30, split('', '--prefix'));
-    my $sysconfdir_opt = pack('A' x 30, split('', '--sysconfdir'));
-    my $sharedir_opt = pack('A' x 30, split('', '--sharedir'));
-    my $localedir_opt = pack('A' x 30, split('', '--localedir'));
-    my $srcdir_opt = pack('A' x 30, split('', '--srcdir'));
-    my $testdir_opt = pack('A' x 30, split('', '--testdir'));
-    my $help_opt = pack('A' x 30, split('', '--help'));
-    my $nls_opt = pack('A' x 30, split('', '--enable-nls'));
-    my $gettext_opt = pack('A' x 30, split('', '--with-gettext'));
-    my $libtool_opt = pack('A' x 30, split('', '--with-libtool'));
-    my $manpages_opt = pack('A' x 30, split('', '--with-manpages'));
-    my $docs_opt = pack('A' x 30, split('', '--with-docs'));
-    my $debug_opt = pack('A' x 30, split('', '--enable-debug'));
+    my $prefix_opt = pack('A' x 25, split('', '--prefix'));
+    my $sysconfdir_opt = pack('A' x 25, split('', '--sysconfdir'));
+    my $sharedir_opt = pack('A' x 25, split('', '--sharedir'));
+    my $localedir_opt = pack('A' x 25, split('', '--localedir'));
+    my $srcdir_opt = pack('A' x 25, split('', '--srcdir'));
+    my $testdir_opt = pack('A' x 25, split('', '--testdir'));
+    my $help_opt = pack('A' x 25, split('', '--help'));
+    my $nls_opt = pack('A' x 25, split('', '--enable-nls'));
+    my $gettext_opt = pack('A' x 25, split('', '--with-gettext'));
+    my $libtool_opt = pack('A' x 25, split('', '--with-libtool'));
+    my $manpages_opt = pack('A' x 25, split('', '--with-manpages'));
+    my $manlinks_opt = pack('A' x 25, split('', '--with-manlinks'));
+    my $docs_opt = pack('A' x 25, split('', '--with-docs'));
+    my $debug_opt = pack('A' x 25, split('', '--enable-debug'));
 
     my $regs = join("\n",
         "echo \"    $prefix_opt Installation prefix [/usr/local]\"",
@@ -157,6 +158,7 @@ sub Help
         "echo \"    $gettext_opt Use gettext tools (msgmerge, ...) [check]\"",
         "echo \"    $libtool_opt Specify path to libtool [check]\"",
         "echo \"    $manpages_opt Manual pages (-mdoc) [yes]\"",
+        "echo \"    $manlinks_opt Manual pages links for functions [no]\"",
         "echo \"    $docs_opt Printable docs (-me/tbl/eqn/pic/refer) [no]\"",
         "echo \"    $debug_opt Include debugging code [no]\"",
 	@HELP);
@@ -406,7 +408,8 @@ fi
 if [ "${HAVE_MANDOC}" = "no" ]; then
 	if [ "${with_manpages}" = "yes" ]; then
 		echo "*"
-		echo "* --with-manpages requested, but nroff/mandoc not found."
+		echo "* --with-manpages was requested, but either the nroff(1)"
+		echo "* utility or the mdoc(7) macro package was not found."
 		echo "*"
 		exit 1
 	fi
@@ -418,6 +421,10 @@ else
 	if [ "${with_manpages}" = "no" ]; then
 		echo "NOMAN=yes" >> Makefile.config
 		echo "NOMANLINKS=yes" >> Makefile.config
+	else
+		if [ "${with_manlinks}" != "yes" ]; then
+			echo "NOMANLINKS=yes" >> Makefile.config
+		fi
 	fi
 fi
 

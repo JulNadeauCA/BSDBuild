@@ -48,10 +48,10 @@ sub Emul
 
 	if ($os eq 'linux' || $os eq 'darwin' || $os eq 'windows' ||
 	    $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_SETJMP', 'yes');
-		MkSaveDefine('HAVE_SETJMP');
+		MkDefine('_MK_HAVE_SETJMP', 'yes');
+		MkSaveDefine('_MK_HAVE_SETJMP');
 	} else {
-		MkSaveUndef('HAVE_SETJMP');
+		MkSaveUndef('_MK_HAVE_SETJMP');
 	}
 	return (1);
 }

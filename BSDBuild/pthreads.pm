@@ -28,7 +28,7 @@
 my $pthreads_test = << 'EOF';
 #include <pthread.h>
 #include <signal.h>
-void *start_routine(void *arg) { return (NULL); }
+static void *start_routine(void *arg) { return (NULL); }
 int main(int argc, char *argv[])
 {
 	pthread_mutex_t mutex;

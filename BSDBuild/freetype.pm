@@ -69,10 +69,63 @@ EOF
 	return (0);
 }
 
+sub Premake
+{
+	my $var = shift;
+
+	if ($var eq 'FREETYPE_LIBS') {
+		print << 'EOF';
+tinsert(package.links, { "freetype6" })
+EOF
+		return (1);
+	} elsif ($var eq 'FREETYPE_CFLAGS') {
+		return (1);
+	}
+	return (0);
+}
+
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'darwin') {
+		MkDefine('FREETYPE_CFLAGS', '-I/usr/X11R6/include '.
+		                            '-I/usr/X11R6/include/freetype2');
+		MkDefine('FREETYPE_LIBS', '-L/usr/X11R6/lib -lfreetype');
+	} elsif ($os eq 'windows') {
+		MkDefine('FREETYPE_CFLAGS', '');
+		MkDefine('FREETYPE_LIBS', 'freetype6');
+	} elsif ($os eq 'linux' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('FREETYPE_CFLAGS', '-I/usr/include/freetype2 '.
+		                            '-I/usr/local/include/freetype2 '.
+									'-I/usr/local/include '.
+									'-I/usr/X11R6/include/freetype2 '.
+									'-I/usr/X11R6/include');
+		MkDefine('FREETYPE_LIBS', '-L/usr/local/lib '.
+		                          '-Wl,--rpath --Wl,/usr/local/lib ' .
+		                          '-L/usr/X11R6/lib '.
+		                          '-Wl,--rpath --Wl,/usr/X11R6/lib ' .
+		                          '-lfreetype -lz');
+	} else {
+		goto UNAVAIL;
+	}
+	MkDefine('HAVE_FREETYPE', 'yes');
+	MkSaveDefine('HAVE_FREETYPE', 'FREETYPE_CFLAGS', 'FREETYPE_LIBS');
+	MkSaveMK('FREETYPE_CFLAGS', 'FREETYPE_LIBS');
+	return (1);
+UNAVAIL:
+	MkDefine('HAVE_FREETYPE', 'no');
+	MkSaveUndef('HAVE_FREETYPE');
+	MkSaveMK('FREETYPE_CFLAGS', 'FREETYPE_LIBS');
+	return (1);
+}
+
 BEGIN
 {
-	$TESTS{'freetype'} = \&Test;
 	$DESCR{'freetype'} = 'FreeType (http://www.freetype.org)';
+	$TESTS{'freetype'} = \&Test;
+	$EMUL{'freetype'} = \&Emul;
+	$PREMAKE{'sdl'} = \&Premake;
 }
 
 ;1

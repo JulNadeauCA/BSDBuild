@@ -92,9 +92,30 @@ sub Premake
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('X11_CFLAGS', '-I/usr/X11R6/include');
+		MkDefine('X11_LIBS', '-L/usr/X11R6/lib -lX11');
+		MkDefine('HAVE_X11', 'yes');
+		MkSaveDefine('HAVE_X11', 'X11_CFLAGS', 'X11_LIBS');
+		MkSaveMK('X11_CFLAGS', 'X11_LIBS');
+	} else {
+		MkDefine('X11_CFLAGS', '');
+		MkDefine('X11_LIBS', '');
+		MkDefine('HAVE_X11', 'no');
+		MkSaveUndef('HAVE_X11');
+		MkSaveMK('X11_CFLAGS', 'X11_LIBS');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'x11'} = \&Test;
+	$EMUL{'x11'} = \&Emul;
 	$DESCR{'x11'} = 'the X window system';
 	$PREMAKE{'x11'} = \&Premake;
 }

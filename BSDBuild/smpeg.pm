@@ -48,7 +48,6 @@ sub Test
 
 BEGIN
 {
-	$HOMEPAGE = 'http://www.lokigames.com/development/smpeg.php3';
 	$DESCR{'smpeg'} = "smpeg ($HOMEPAGE)";
 	$TESTS{'smpeg'} = \&Test;
 }

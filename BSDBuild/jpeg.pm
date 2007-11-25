@@ -97,11 +97,24 @@ sub Premake
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	MkDefine('HAVE_JPEG', 'no');
+	MkDefine('JPEG_CFLAGS', '');
+	MkDefine('JPEG_LIBS', '');
+
+	MkSaveUndef('HAVE_JPEG');
+	MkSaveMK('JPEG_CFLAGS', 'JPEG_LIBS');
+	return (1);
+}
+
 BEGIN
 {
-	$HOMEPAGE = 'ftp://ftp.uu.net/graphics/jpeg/';
-	$DESCR{'jpeg'} = "libjpeg ($HOMEPAGE)";
+	$DESCR{'jpeg'} = 'libjpeg (ftp://ftp.uu.net/graphics/jpeg/)';
 	$TESTS{'jpeg'} = \&Test;
+	$EMUL{'jpeg'} = \&Emul;
 	$PREMAKE{'jpeg'} = \&Premake;
 }
 

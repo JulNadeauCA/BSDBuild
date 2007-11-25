@@ -113,9 +113,37 @@ EOF
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+	
+	if ($os eq 'darwin') {
+		MkDefine('OPENGL_CFLAGS', '');
+		MkDefine('OPENGL_LIBS', '-framework OpenGL');
+	} elsif ($os eq 'windows') {
+		MkDefine('OPENGL_CFLAGS', '');
+		MkDefine('OPENGL_LIBS', 'opengl32');
+	} elsif ($os eq 'linux' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('OPENGL_CFLAGS', '-I/usr/X11R6/include');
+		MkDefine('OPENGL_LIBS', '-lGL');
+	} else {
+		goto UNAVAIL;
+	}
+	MkDefine('HAVE_OPENGL', 'yes');
+	MkSaveDefine('HAVE_OPENGL', 'OPENGL_CFLAGS', 'OPENGL_LIBS');
+	MkSaveMK('OPENGL_CFLAGS', 'OPENGL_LIBS');
+	return (1);
+UNAVAIL:
+	MkDefine('HAVE_OPENGL', 'no');
+	MkSaveUndef('HAVE_OPENGL');
+	MkSaveMK('OPENGL_CFLAGS', 'OPENGL_LIBS');
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'opengl'} = \&Test;
+	$EMUL{'opengl'} = \&Emul;
 	$DESCR{'opengl'} = 'OpenGL (http://www.opengl.org)';
 	$PREMAKE{'opengl'} = \&Premake;
 }

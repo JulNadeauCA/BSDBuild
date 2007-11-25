@@ -48,10 +48,10 @@ sub Emul
 	my ($os, $osrel, $machine) = @_;
 
 	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_STRTOLL', 'yes');
-		MkSaveDefine('HAVE_STRTOLL');
+		MkDefine('_MK_HAVE_STRTOLL', 'yes');
+		MkSaveDefine('_MK_HAVE_STRTOLL');
 	} else {
-		MkSaveUndef('HAVE_STRTOLL');
+		MkSaveUndef('_MK_HAVE_STRTOLL');
 	}
 	return (1);
 }

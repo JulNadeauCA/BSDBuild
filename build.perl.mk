@@ -34,6 +34,7 @@ SCRIPTS_DIR?=${BINDIR}
 MODULES_DIR?=${SHAREDIR}/perl
 SCRIPTS_SUBST?=
 MODULES_SUBST?=
+CLEANFILES?=
 
 all: all-subdir
 install: install-perl install-subdir

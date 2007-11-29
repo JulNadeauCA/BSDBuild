@@ -28,6 +28,7 @@ use BSDBuild::Core;
 
 my @lines = ();
 my $line = '';
+my $projFlav = '';
 
 my $libName = undef;
 my $progName = undef;
@@ -46,7 +47,7 @@ my $projGUID = '';
 my $pkgGUID = '';
 my $pkgLinks = '';
 
-my %modFn = ();
+my %linkFn = ();
 
 sub Version
 {
@@ -89,9 +90,26 @@ EOF
 	if ($pkgGUID) {
 		print "package.guid = \"$pkgGUID\"\n";
 	}
+	my @args = @ARGV;
+	if (@args) {
+		$projFlav = shift(@args);
+		foreach my $incl (@args) {
+			if (-e $incl) {
+				print "dofile(\"$incl\")\n";
+			} else {
+				print STDERR "Ignoring include: $incl: $!\n";
+			}
+		}
+	}
 	if ($pkgLinks) {
 		foreach my $ln (split(' ', $pkgLinks)) {
-			print "tinsert(package.links,{\"$ln\"})\n";
+			my $handled = 0;
+			foreach my $fn (values %linkFn) {
+				if (&$fn($ln)) { $handled++; }
+			}
+			if (!$handled) {
+				print "tinsert(package.links,{\"$ln\"})\n";
+			}
 		}
 	}
 	if (@srcs) {
@@ -103,18 +121,9 @@ EOF
 		}
 		print '}', "\n";
 	}
-	if (@ARGV) {
-		foreach my $incl (@ARGV) {
-			if (-e $incl) {
-				print "dofile(\"$incl\")\n";
-			} else {
-				print STDERR "Ignoring include: $incl: $!\n";
-			}
-		}
-	}
 	if (@cflags) {
-		my $handled = 0;
 		foreach my $cflag (@cflags) {
+			my $handled = 0;
 			if ($cflag =~ /^-I\s*([\w\-\.\/]+)$/) {
 				print "tinsert(package.includepaths,".
 				      "{\"$1\"})\n";
@@ -122,26 +131,26 @@ EOF
 			}
 			if ($cflag =~ /^\${([\w\-\.]+)}$/) { $cflag = $1; }
 			elsif ($cflag =~ /^\$([\w\-\.]+)$/) { $cflag = $1; }
-			foreach my $fn (values %modFn) {
-				if (&$fn($cflag)) {
-					$handled++;
-				}
-			}
+			#foreach my $fn (values %cflagSubstFn) {
+			#	if (&$fn($projFlav, 'CFLAGS', $cflag)) {
+			#		$handled++;
+			#	}
+			#}
 			if (!$handled) {
 				print STDERR "Ignoring CFLAGS: $cflag\n";
 			}
 		}
 	}
 	if (@libs) {
-		my $handled = 0;
 		foreach my $lib (@libs) {
+			my $handled = 0;
 			if ($lib =~ /^\${([\w\-\.]+)}$/) { $lib = $1; }
 			elsif ($lib =~ /^\$([\w\-\.]+)$/) { $lib = $1; }
-			foreach my $fn (values %modFn) {
-				if (&$fn($lib)) {
-					$handled++;
-				}
-			}
+			#foreach my $fn (values %libsSubstFn) {
+			#	if (&$fn($projFlav, 'LIBS', $lib)) {
+			#		$handled++;
+			#	}
+			#}
 			if (!$handled) {
 				print STDERR "Ignoring LIBS: $lib\n";
 			}
@@ -161,9 +170,9 @@ if (opendir(DIR, $INSTALLDIR.'/BSDBuild')) {
 			print STDERR "Module failed: $modname: $@\n";
 			exit (1);
 		}
-		if (exists($PREMAKE{$modname}) &&
-		    defined($PREMAKE{$modname})) {
-			$modFn{$modname} = $PREMAKE{$modname};
+		if (exists($LINK{$modname}) &&
+		    defined($LINK{$modname})) {
+			$linkFn{$modname} = $LINK{$modname};
 		}
 	}
 	closedir(DIR);

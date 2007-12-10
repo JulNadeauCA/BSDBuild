@@ -30,8 +30,8 @@ sub Test
 	MkCompileC('HAVE_SDL_CPUINFO', '', '', << 'EOF');
 #include <SDL_cpuinfo.h>
 int main(int argc, char *argv[]) {
-	size_t len = 1;
-	ssize_t slen = 1;
+	int c = 0;
+	if (SDL_HasMMX()) { c = 1; }
 	return (0);
 }
 EOF
@@ -40,8 +40,9 @@ EOF
 
 BEGIN
 {
-	$TESTS{'sys_types'} = \&Test;
-	$DESCR{'sys_types'} = '<sys/types.h>';
+	$TESTS{'sdl_cpuinfo'} = \&Test;
+	$DESCR{'sdl_cpuinfo'} = 'SDL cpuinfo functions';
+	$DEPS{'sdl_cpuinfo'} = 'cc,sdl';
 }
 
 ;1

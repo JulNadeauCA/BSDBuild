@@ -73,14 +73,14 @@ EOF
 	MkEndif;
 
 	# Check for floating point support.
-	MkPrintN('checking for floating point types...');
+	# TODO representation
+	MkPrintN('checking for IEEE754 floating point...');
 	MkCompileC('HAVE_IEEE754', '', '', << 'EOF');
 int
 main(int argc, char *argv[])
 {
 	float f = 1.5;
 	double d = 2.5;
-
 	f = 0;
 	d = 0;
 	return (0);
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
 EOF
 
 	MkPrintN('checking __nonnull__ attribute...');
-	TryCompileFlags('HAVE_NONNULL_ATTRIBUTE', '-Wall -Werror', << 'EOF');
+	TryCompileFlagsC('HAVE_NONNULL_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 void foo(char *) __attribute__((__nonnull__ (1)));
 void foo(char *a) { }
 int main(int argc, char *argv[])
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
 EOF
 
 	MkPrintN('checking __aligned__ attribute...');
-	TryCompileFlags('HAVE_ALIGNED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
+	TryCompileFlagsC('HAVE_ALIGNED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 int main(int argc, char *argv[])
 {
 	struct s1 { int x,y,z; } __attribute__ ((aligned(16)));
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 EOF
 	
 	MkPrintN('checking __packed__ attribute...');
-	TryCompileFlags('HAVE_PACKED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
+	TryCompileFlagsC('HAVE_PACKED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 int main(int argc, char *argv[])
 {
 	struct s1 { char c; int x,y,z; } __attribute__ ((packed));
@@ -174,7 +174,7 @@ main(int argc, char *argv[])
 EOF
 
 	MkPrintN('checking for cygwin environment...');
-	TryCompileFlags('HAVE_CYGWIN', '-mcygwin', << 'EOF');
+	TryCompileFlagsC('HAVE_CYGWIN', '-mcygwin', << 'EOF');
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <windows.h>
@@ -188,28 +188,12 @@ main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-
-	MkPrintN('checking for mingw environment...');
-	TryCompileFlags('HAVE_MINGW', '', << 'EOF');
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <windows.h>
-
-int
-main(int argc, char *argv[]) {
-	struct stat sb;
-	DWORD rv;
-	rv = GetFileAttributes("foo");
-	stat("foo", &sb);
-	return (0);
-}
-EOF
-
-	# Disable cygwin. XXX option
 	print << 'EOF';
 if [ "${compile}" = "ok" ]; then
-	CFLAGS="$CFLAGS -mno-cygwin"
-	echo "CFLAGS=$CFLAGS" >> Makefile.config
+	if [ "${with_cygwin}" != "yes" ]; then
+		CFLAGS="$CFLAGS -mno-cygwin"
+		echo "CFLAGS=$CFLAGS" >> Makefile.config
+	fi
 fi
 EOF
 }
@@ -231,8 +215,6 @@ sub Emul
 	MkSaveUndef('HAVE_LONG_LONG');
 	
 	MkSaveUndef('HAVE_CYGWIN');
-	MkSaveUndef('HAVE_MINGW');
-
 	return (1);
 }
 

@@ -89,16 +89,16 @@ EOF
 	return (0);
 }
 
-sub Premake
+sub Link
 {
-	my $var = shift;
+	my $lib = shift;
 
-	if ($var eq 'SDL_LIBS') {
-		print << 'EOF';
-tinsert(package.links, { "SDL", "SDLmain" })
+	if ($lib eq 'SDL' || $lib eq 'SDLmain') {
+			print << 'EOF';
+if (hdefs["HAVE_SDL"] ~= nil) then
+	tinsert(package.links, { "SDL", "SDLmain" })
+end
 EOF
-		return (1);
-	} elsif ($var eq 'SDL_CFLAGS') {
 		return (1);
 	}
 	return (0);
@@ -143,7 +143,8 @@ BEGIN
 	$DESCR{'sdl'} = 'SDL (http://www.libsdl.org)';
 	$EMUL{'sdl'} = \&Emul;
 	$TESTS{'sdl'} = \&Test;
-	$PREMAKE{'sdl'} = \&Premake;
+	$LINK{'sdl'} = \&Link;
+	$DEPS{'sdl'} = 'cc';
 }
 
 ;1

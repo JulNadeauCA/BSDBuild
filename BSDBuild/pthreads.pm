@@ -250,11 +250,32 @@ sub Emul
 	return (1);
 }
 
+sub Link
+{
+	my $lib = shift;
+
+	if ($lib eq 'pthreads') {
+			print << 'EOF';
+if (hdefs["HAVE_PTHREADS"] ~= nil) then
+	if (windows) then
+		table.insert(package.links, { "pthreadVC2" })
+	else
+		table.insert(package.links, { "pthread" })
+	end
+end
+EOF
+		return (1);
+	}
+	return (0);
+}
+
 BEGIN
 {
+	$DESCR{'pthreads'} = 'POSIX threads';
 	$TESTS{'pthreads'} = \&TestPthreads;
 	$EMUL{'pthreads'} = \&Emul;
-	$DESCR{'pthreads'} = 'POSIX threads';
+	$LINK{'pthreads'} = \&Link;
+	$DEPS{'pthreads'} = 'cc';
 }
 
 ;1

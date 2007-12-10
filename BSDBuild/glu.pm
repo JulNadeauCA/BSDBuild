@@ -43,7 +43,7 @@ sub Test
 	MkIf q{"$SYSTEM" = "Darwin"};
 		# Assume -framework OpenGL was already included.
 		MkDefine('GLU_CFLAGS', '');
-		MkDefine('GLU_LIBS', '');
+		MkDefine('GLU_LIBS', '-framework GLU');
 	MkElif q{"$HAVE_MINGW" = "yes"};
 		MkDefine('GLU_LIBS', '-lglu32');
 	MkElse;
@@ -81,23 +81,14 @@ EOF
 	return (0);
 }
 
-sub Premake
+sub Link
 {
-	my $var = shift;
+	my $lib = shift;
 
-	if ($var eq 'GLU_LIBS') {
-		print << 'EOF';
-if (windows) then
-	tinsert(package.links, { "glu32" })
-else
-	tinsert(package.links, { "GLU" })
-end
-EOF
-		return (1);
-	} elsif ($var eq 'GLU_CFLAGS') {
-		print << 'EOF';
-if (bsd or linux) then
-	tinsert(package.includepaths, { "/usr/X11R6/include" })
+	if ($lib eq 'glu') {
+			print << 'EOF';
+if (hdefs["HAVE_GLU"] ~= nil) then
+	table.insert(package.links, { "glu32" })
 end
 EOF
 		return (1);
@@ -105,13 +96,40 @@ EOF
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+	
+	if ($os eq 'darwin') {
+		MkDefine('GLU_CFLAGS', '');
+		MkDefine('GLU_LIBS', '-framework GLU');
+	} elsif ($os eq 'windows') {
+		MkDefine('GLU_CFLAGS', '');
+		MkDefine('GLU_LIBS', 'glu32');
+	} elsif ($os eq 'linux' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('GLU_CFLAGS', '-I/usr/X11R6/include');
+		MkDefine('GLU_LIBS', '-lGLU');
+	} else {
+		goto UNAVAIL;
+	}
+	MkDefine('HAVE_GLU', 'yes');
+	MkSaveDefine('HAVE_GLU', 'GLU_CFLAGS', 'GLU_LIBS');
+	MkSaveMK('GLU_CFLAGS', 'GLU_LIBS');
+	return (1);
+UNAVAIL:
+	MkDefine('HAVE_GLU', 'no');
+	MkSaveUndef('HAVE_GLU');
+	MkSaveMK('GLU_CFLAGS', 'GLU_LIBS');
+	return (1);
+}
+
 BEGIN
 {
 	$DESCR{'glu'} = 'GLU (http://www.opengl.org)';
-	$DEPS{'glu'} = 'opengl,math';
-
 	$TESTS{'glu'} = \&Test;
-	$PREMAKE{'glu'} = \&Premake;
+	$LINK{'glu'} = \&Link;
+	$EMUL{'glu'} = \&Emul;
+	$DEPS{'glu'} = 'cc,opengl,math';
 }
 
 ;1

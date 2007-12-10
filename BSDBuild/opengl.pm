@@ -94,20 +94,20 @@ EOF
 	return (0);
 }
 
-sub Premake
+sub Link
 {
-	my $var = shift;
+	my $lib = shift;
 
-	if ($var eq 'OPENGL_LIBS') {
-		print << 'EOF';
-if (windows) then
-	tinsert(package.links, { "opengl32" })
-else
-	tinsert(package.links, { "GL" })
+	if ($lib eq 'opengl') {
+			print << 'EOF';
+if (hdefs["HAVE_OPENGL"] ~= nil) then
+	if (windows) then
+		tinsert(package.links, { "opengl32" })
+	else
+		tinsert(package.links, { "GL" })
+	end
 end
 EOF
-		return (1);
-	} elsif ($var eq 'OPENGL_CFLAGS') {
 		return (1);
 	}
 	return (0);
@@ -142,10 +142,11 @@ UNAVAIL:
 
 BEGIN
 {
+	$DESCR{'opengl'} = 'OpenGL (http://www.opengl.org)';
 	$TESTS{'opengl'} = \&Test;
 	$EMUL{'opengl'} = \&Emul;
-	$DESCR{'opengl'} = 'OpenGL (http://www.opengl.org)';
-	$PREMAKE{'opengl'} = \&Premake;
+	$LINK{'opengl'} = \&Link;
+	$DEPS{'opengl'} = 'cc';
 }
 
 ;1

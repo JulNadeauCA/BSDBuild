@@ -80,18 +80,6 @@ EOF
 	MkEndif;
 }
 
-sub Premake
-{
-	my $var = shift;
-
-	if ($var eq 'X11_LIBS') {
-		return (1);
-	} elsif ($var eq 'X11_CFLAGS') {
-		return (1);
-	}
-	return (0);
-}
-
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
@@ -114,10 +102,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'x11'} = 'the X window system';
 	$TESTS{'x11'} = \&Test;
 	$EMUL{'x11'} = \&Emul;
-	$DESCR{'x11'} = 'the X window system';
-	$PREMAKE{'x11'} = \&Premake;
+	$DEPS{'x11'} = 'cc';
 }
 
 ;1

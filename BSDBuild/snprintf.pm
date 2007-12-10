@@ -55,9 +55,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'snprintf'} = 'the snprintf() function';
 	$TESTS{'snprintf'} = \&Test;
 	$EMUL{'snprintf'} = \&Emul;
-	$DESCR{'snprintf'} = 'the snprintf() function';
+	$DEPS{'snprintf'} = 'cc';
 }
 
 ;1

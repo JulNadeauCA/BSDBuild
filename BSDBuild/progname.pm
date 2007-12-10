@@ -54,9 +54,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'progname'} = 'the __progname variable';
 	$TESTS{'progname'} = \&Test;
 	$EMUL{'progname'} = \&Emul;
-	$DESCR{'progname'} = 'the __progname variable';
+	$DEPS{'progname'} = 'cc';
 }
 
 ;1

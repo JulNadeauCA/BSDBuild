@@ -64,9 +64,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'vsnprintf'} = 'the vsnprintf() function';
 	$TESTS{'vsnprintf'} = \&Test;
 	$EMUL{'vsnprintf'} = \&Test;
-	$DESCR{'vsnprintf'} = 'the vsnprintf() function';
+	$DEPS{'vsnprintf'} = 'cc';
 }
 
 ;1

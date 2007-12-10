@@ -71,6 +71,7 @@ EOF
 BEGIN
 {
 	$TESTS{'fastcgi'} = \&Test;
+	$DEPS{'fastcgi'} = 'cc';
 	$DESCR{'fastcgi'} = 'FastCGI libraries (http://www.fastcgi.com)';
 }
 ;1

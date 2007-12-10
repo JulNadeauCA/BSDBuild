@@ -57,6 +57,7 @@ sub Emul
 BEGIN
 {
 	$TESTS{'arc4random'} = \&Test;
+	$DEPS{'arc4random'} = 'cc';
 	$EMUL{'arc4random'} = \&Emul;
 	$DESCR{'arc4random'} = 'the arc4random() random number generator';
 }

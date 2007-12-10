@@ -62,6 +62,7 @@ sub Emul
 BEGIN
 {
 	$TESTS{'getopt'} = \&Test;
+	$DEPS{'getopt'} = 'cc';
 	$EMUL{'getopt'} = \&Emul;
 	$DESCR{'getopt'} = 'the getopt() function';
 }

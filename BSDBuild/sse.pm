@@ -164,8 +164,9 @@ EOF
 
 BEGIN
 {
-	$TESTS{'sse'} = \&Test;
 	$DESCR{'sse'} = 'SSE extensions';
+	$TESTS{'sse'} = \&Test;
+	$DEPS{'sse'} = 'cc';
 }
 
 ;1

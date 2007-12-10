@@ -52,6 +52,7 @@ EOF
 BEGIN
 {
 	$TESTS{'getpeerucred'} = \&Test;
+	$DEPS{'getpeerucred'} = 'cc';
 	$DESCR{'getpeerucred'} = 'the getpeerucred() interface';
 }
 

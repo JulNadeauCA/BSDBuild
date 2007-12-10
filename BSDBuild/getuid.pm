@@ -57,9 +57,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'getuid'} = 'a getuid() function';
 	$TESTS{'getuid'} = \&Test;
 	$EMUL{'getuid'} = \&Emul;
-	$DESCR{'getuid'} = 'a getuid() function';
+	$DEPS{'getuid'} = 'cc';
 }
 
 ;1

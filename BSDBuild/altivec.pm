@@ -95,6 +95,7 @@ sub Emul
 BEGIN
 {
 	$TESTS{'altivec'} = \&Test;
+	$DEPS{'altivec'} = 'cc';
 	$EMUL{'altivec'} = \&Emul;
 	$DESCR{'altivec'} = 'AltiVec (with <altivec.h>)';
 }

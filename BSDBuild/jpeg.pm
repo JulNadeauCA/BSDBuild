@@ -85,13 +85,16 @@ EOF
 	return (0);
 }
 
-sub Premake
+sub Link
 {
-	my $var = shift;
+	my $lib = shift;
 
-	if ($var eq 'JPEG_LIBS') {
-		return (1);
-	} elsif ($var eq 'JPEG_CFLAGS') {
+	if ($lib eq 'jpeg') {
+			print << 'EOF';
+if (hdefs["HAVE_JPEG"] ~= nil) then
+	table.insert(package.links, { "jpeg" })
+end
+EOF
 		return (1);
 	}
 	return (0);
@@ -115,7 +118,8 @@ BEGIN
 	$DESCR{'jpeg'} = 'libjpeg (ftp://ftp.uu.net/graphics/jpeg/)';
 	$TESTS{'jpeg'} = \&Test;
 	$EMUL{'jpeg'} = \&Emul;
-	$PREMAKE{'jpeg'} = \&Premake;
+	$LINK{'jpeg'} = \&Link;
+	$DEPS{'jpeg'} = 'cc';
 }
 
 ;1

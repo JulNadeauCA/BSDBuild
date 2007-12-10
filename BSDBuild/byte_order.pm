@@ -106,6 +106,7 @@ sub Emul
 BEGIN
 {
 	$TESTS{'byte_order'} = \&Test;
+	$DEPS{'byte_order'} = 'cc';
 	$EMUL{'byte_order'} = \&Emul;
 	$DESCR{'byte_order'} = 'byte order';
 }

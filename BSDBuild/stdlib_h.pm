@@ -49,9 +49,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'stdlib_h'} = '<stdlib.h>';
 	$TESTS{'stdlib_h'} = \&Test;
 	$EMUL{'stdlib_h'} = \&Emul;
-	$DESCR{'stdlib_h'} = '<stdlib.h>';
+	$DEPS{'stdlib_h'} = 'cc';
 }
 
 ;1

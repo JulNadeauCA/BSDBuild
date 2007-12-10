@@ -58,9 +58,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'strtoll'} = 'a strtoll() function';
 	$TESTS{'strtoll'} = \&Test;
 	$EMUL{'strtoll'} = \&Emul;
-	$DESCR{'strtoll'} = 'a strtoll() function';
+	$DEPS{'strtoll'} = 'cc';
 }
 
 ;1

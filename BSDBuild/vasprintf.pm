@@ -70,9 +70,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'vasprintf'} = 'a vasprintf() function';
 	$TESTS{'vasprintf'} = \&Test;
 	$EMUL{'vasprintf'} = \&Emul;
-	$DESCR{'vasprintf'} = 'a vasprintf() function';
+	$DEPS{'vasprintf'} = 'cc';
 }
 
 ;1

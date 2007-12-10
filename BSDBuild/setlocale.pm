@@ -54,9 +54,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'setlocale'} = 'a setlocale() function';
 	$TESTS{'setlocale'} = \&Test;
 	$EMUL{'setlocale'} = \&Emul;
-	$DESCR{'setlocale'} = 'a setlocale() function';
+	$DEPS{'setlocale'} = 'cc';
 }
 
 ;1

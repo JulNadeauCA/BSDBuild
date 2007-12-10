@@ -63,8 +63,9 @@ EOF
 
 BEGIN
 {
-	$TESTS{'ode'} = \&Test;
 	$DESCR{'ode'} = 'ODE (http://www.ode.org/)';
+	$TESTS{'ode'} = \&Test;
+	$DEPS{'ode'} = 'cc';
 }
 
 ;1

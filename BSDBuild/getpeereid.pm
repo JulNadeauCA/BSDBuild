@@ -49,6 +49,7 @@ EOF
 BEGIN
 {
 	$TESTS{'getpeereid'} = \&Test;
+	$DEPS{'getpeereid'} = 'cc';
 	$DESCR{'getpeereid'} = 'the getpeereid() interface';
 }
 

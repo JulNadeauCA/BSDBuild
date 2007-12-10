@@ -64,6 +64,7 @@ EOF
 BEGIN
 {
 	$TESTS{'db4'} = \&Test;
+	$DEPS{'db4'} = 'cc';
 	$DESCR{'db4'} = 'Berkeley DB 4 (http://www.sleepycat.com)';
 }
 

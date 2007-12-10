@@ -57,9 +57,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'md5'} = 'MD5 functions';
 	$TESTS{'md5'} = \&Test;
 	$EMUL{'md5'} = \&Emul;
-	$DESCR{'md5'} = 'MD5 functions';
+	$DEPS{'md5'} = 'cc';
 }
 
 ;1

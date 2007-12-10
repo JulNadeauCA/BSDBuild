@@ -79,9 +79,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'sys_queue'} = 'a compatible <sys/queue.h>';
 	$TESTS{'sys_queue'} = \&Test;
 	$EMUL{'sys_queue'} = \&Emul;
-	$DESCR{'sys_queue'} = 'a compatible <sys/queue.h>';
+	$DEPS{'sys_queue'} = 'cc';
 }
 
 ;1

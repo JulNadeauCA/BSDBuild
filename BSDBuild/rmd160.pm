@@ -57,9 +57,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'rmd160'} = 'RMD160 functions';
 	$TESTS{'rmd160'} = \&Test;
 	$EMUL{'rmd160'} = \&Emul;
-	$DESCR{'rmd160'} = 'RMD160 functions';
+	$DEPS{'rmd160'} = 'cc';
 }
 
 ;1

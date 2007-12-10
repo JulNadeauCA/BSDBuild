@@ -62,9 +62,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'mmap'} = 'mmap() interface';
 	$TESTS{'mmap'} = \&Test;
 	$EMUL{'mmap'} = \&Emul;
-	$DESCR{'mmap'} = 'mmap() interface';
+	$DEPS{'mmap'} = 'cc';
 }
 
 ;1

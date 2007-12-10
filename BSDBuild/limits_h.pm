@@ -59,9 +59,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'limits_h'} = '<limits.h>';
 	$TESTS{'limits_h'} = \&Test;
 	$EMUL{'limits_h'} = \&Emul;
-	$DESCR{'limits_h'} = '<limits.h>';
+	$DEPS{'limits_h'} = 'cc';
 }
 
 ;1

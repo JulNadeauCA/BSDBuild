@@ -65,9 +65,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'so_peercred'} = 'the SO_PEERCRED interface';
 	$TESTS{'so_peercred'} = \&Test;
 	$EMUL{'so_peercred'} = \&Emul;
-	$DESCR{'so_peercred'} = 'the SO_PEERCRED interface';
+	$DEPS{'so_peercred'} = 'cc';
 }
 
 ;1

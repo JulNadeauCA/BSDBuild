@@ -61,6 +61,7 @@ sub Emul
 BEGIN
 {
 	$TESTS{'asprintf'} = \&Test;
+	$DEPS{'asprintf'} = 'cc';
 	$EMUL{'asprintf'} = \&Emul;
 	$DESCR{'asprintf'} = 'an asprintf() function';
 }

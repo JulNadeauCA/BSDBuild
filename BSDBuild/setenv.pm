@@ -56,9 +56,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'setenv'} = 'setenv() and unsetenv()';
 	$TESTS{'setenv'} = \&Test;
 	$EMUL{'setenv'} = \&Emul;
-	$DESCR{'setenv'} = 'setenv() and unsetenv() functions';
+	$DEPS{'setenv'} = 'cc';
 }
 
 ;1

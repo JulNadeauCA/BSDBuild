@@ -74,6 +74,7 @@ BEGIN
 {
 	$DESCR{'sdl_image'} = 'SDL_image (http://libsdl.org/projects/SDL_image)';
 	$TESTS{'sdl_image'} = \&Test;
+	$DEPS{'sdl_image'} = 'cc,sdl';
 }
 
 ;1

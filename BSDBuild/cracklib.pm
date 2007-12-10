@@ -69,6 +69,7 @@ EOF
 BEGIN
 {
 	$DESCR{'cracklib'} = "cracklib";
+	$DEPS{'cracklib'} = 'cc';
 	$TESTS{'cracklib'} = \&Test;
 }
 

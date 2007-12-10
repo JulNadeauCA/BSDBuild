@@ -58,9 +58,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'getpwuid'} = 'a getpwuid() function';
+	$DEPS{'getpwuid'} = 'cc';
 	$TESTS{'getpwuid'} = \&Test;
 	$EMUL{'getpwuid'} = \&Emul;
-	$DESCR{'getpwuid'} = 'a getpwuid() function';
 }
 
 ;1

@@ -48,8 +48,9 @@ sub Test
 
 BEGIN
 {
-	$DESCR{'smpeg'} = "smpeg ($HOMEPAGE)";
+	$DESCR{'smpeg'} = 'the smpeg library';
 	$TESTS{'smpeg'} = \&Test;
+	$DEPS{'smpeg'} = 'cc,sdl';
 }
 
 ;1

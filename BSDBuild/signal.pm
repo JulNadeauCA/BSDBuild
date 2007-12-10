@@ -60,9 +60,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'signal'} = 'the signal() function';
 	$TESTS{'signal'} = \&Test;
 	$EMUL{'signal'} = \&Emul;
-	$DESCR{'signal'} = 'the signal() function';
+	$DEPS{'signal'} = 'cc';
 }
 
 ;1

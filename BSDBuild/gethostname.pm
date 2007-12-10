@@ -59,6 +59,7 @@ sub Emul
 BEGIN
 {
 	$TESTS{'gethostname'} = \&Test;
+	$DEPS{'gethostname'} = 'cc';
 	$EMUL{'gethostname'} = \&Emul;
 	$DESCR{'gethostname'} = 'a gethostname() function';
 }

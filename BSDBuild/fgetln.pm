@@ -61,6 +61,7 @@ sub Emul
 BEGIN
 {
 	$TESTS{'fgetln'} = \&Test;
+	$DEPS{'fgetln'} = 'cc';
 	$EMUL{'fgetln'} = \&Emul;
 	$DESCR{'fgetln'} = 'the fgetln() function';
 }

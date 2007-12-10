@@ -55,6 +55,7 @@ sub Emul
 BEGIN
 {
 	$TESTS{'getenv'} = \&Test;
+	$DEPS{'getenv'} = 'cc';
 	$EMUL{'getenv'} = \&Emul;
 	$DESCR{'getenv'} = 'a getenv() function';
 }

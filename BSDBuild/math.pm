@@ -74,9 +74,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'math'} = 'the C math library';
 	$TESTS{'math'} = \&Test;
 	$EMUL{'math'} = \&Emul;
-	$DESCR{'math'} = 'the C math library';
+	$DEPS{'math'} = 'cc';
 }
 
 ;1

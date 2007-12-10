@@ -58,9 +58,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'setjmp'} = 'setjmp() and longjmp()';
 	$TESTS{'setjmp'} = \&Test;
 	$EMUL{'setjmp'} = \&Emul;
-	$DESCR{'setjmp'} = 'setjmp() and longjmp()';
+	$DEPS{'setjmp'} = 'cc';
 }
 
 ;1

@@ -56,9 +56,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'unistd_h'} = '<unistd.h>';
 	$TESTS{'unistd_h'} = \&Test;
 	$EMUL{'unistd_h'} = \&Emul;
-	$DESCR{'unistd_h'} = '<unistd.h>';
+	$DEPS{'unistd_h'} = 'cc';
 }
 
 ;1

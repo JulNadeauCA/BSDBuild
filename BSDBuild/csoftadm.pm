@@ -60,6 +60,7 @@ EOF
 BEGIN
 {
 	$DESCR{'csoftadm'} = 'libcsoftadm (http://hypertriton.com/csoftadm)';
+	$DEPS{'csoftadm'} = 'cc';
 	$TESTS{'csoftadm'} = \&Test;
 }
 ;1

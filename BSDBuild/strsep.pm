@@ -53,9 +53,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'strsep'} = 'a strsep() function';
 	$TESTS{'strsep'} = \&Test;
 	$EMUL{'strsep'} = \&Emul;
-	$DESCR{'strsep'} = 'a strsep() function';
+	$DEPS{'strsep'} = 'cc';
 }
 
 ;1

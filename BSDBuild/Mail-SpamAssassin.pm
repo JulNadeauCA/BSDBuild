@@ -50,6 +50,7 @@ BEGIN
 {
 	$TESTS{'Mail-SpamAssassin'} = \&Test;
 	$DESCR{'Mail-SpamAssassin'} = 'the Mail::SpamAssassin module';
+	$DEPS{'Mail-SpamAssassin'} = 'perl';
 }
 
 ;1

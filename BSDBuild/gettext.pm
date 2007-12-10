@@ -50,8 +50,9 @@ EOF
 
 BEGIN
 {
-	$TESTS{'gettext'} = \&Test;
 	$DESCR{'gettext'} = 'a gettext library';
+	$TESTS{'gettext'} = \&Test;
+	$DEPS{'gettext'} = 'cc';
 }
 
 ;1

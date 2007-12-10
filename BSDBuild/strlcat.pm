@@ -53,9 +53,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'strlcat'} = 'a strlcat() function';
 	$TESTS{'strlcat'} = \&Test;
 	$EMUL{'strlcat'} = \&Emul;
-	$DESCR{'strlcat'} = 'a strlcat() function';
+	$DEPS{'strlcat'} = 'cc';
 }
 
 ;1

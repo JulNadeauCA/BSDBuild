@@ -74,8 +74,9 @@ EOF
 
 BEGIN
 {
-	$TESTS{'perl'} = \&Test;
 	$DESCR{'perl'} = 'Perl (http://www.cpan.org)';
+	$TESTS{'perl'} = \&Test;
+	$DEPS{'perl'} = 'cc';
 }
 
 ;1

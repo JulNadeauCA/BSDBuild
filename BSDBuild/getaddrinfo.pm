@@ -65,6 +65,7 @@ sub Emul
 BEGIN
 {
 	$TESTS{'getaddrinfo'} = \&Test;
+	$DEPS{'getaddrinfo'} = 'cc';
 	$EMUL{'getaddrinfo'} = \&Emul;
 	$DESCR{'getaddrinfo'} = 'the getaddrinfo() function';
 }

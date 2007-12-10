@@ -55,9 +55,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'setproctitle'} = 'a setproctitle() function';
 	$TESTS{'setproctitle'} = \&Test;
 	$EMUL{'setproctitle'} = \&Emul;
-	$DESCR{'setproctitle'} = 'a setproctitle() function';
+	$DEPS{'setproctitle'} = 'cc';
 }
 
 ;1

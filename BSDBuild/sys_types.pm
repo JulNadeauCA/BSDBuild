@@ -104,9 +104,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'sys_types'} = '<sys/types.h>';
 	$TESTS{'sys_types'} = \&Test;
 	$EMUL{'sys_types'} = \&Emul;
-	$DESCR{'sys_types'} = '<sys/types.h>';
+	$DEPS{'sys_types'} = 'cc';
 }
 
 ;1

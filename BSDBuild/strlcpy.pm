@@ -53,9 +53,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'strlcpy'} = 'a strlcpy() function';
 	$TESTS{'strlcpy'} = \&Test;
 	$EMUL{'strlcpy'} = \&Emul;
-	$DESCR{'strlcpy'} = 'a strlcpy() function';
+	$DEPS{'strlcpy'} = 'cc';
 }
 
 ;1

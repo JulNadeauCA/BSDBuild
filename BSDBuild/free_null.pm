@@ -53,6 +53,7 @@ sub Emul
 BEGIN
 {
 	$TESTS{'free_null'} = \&Test;
+	$DEPS{'free_null'} = 'cc';
 	$EMUL{'free_null'} = \&Emul;
 	$DESCR{'free_null'} = 'free(NULL) is a no-op';
 }

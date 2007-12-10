@@ -57,9 +57,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'sha1'} = 'SHA1 functions';
 	$TESTS{'sha1'} = \&Test;
 	$EMUL{'sha1'} = \&Emul;
-	$DESCR{'sha1'} = 'SHA1 functions';
+	$DEPS{'sha1'} = 'cc';
 }
 
 ;1

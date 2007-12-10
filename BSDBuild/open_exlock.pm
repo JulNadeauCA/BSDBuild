@@ -59,9 +59,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'open_exlock'} = 'the O_EXLOCK open() flag';
 	$TESTS{'open_exlock'} = \&Test;
 	$EMUL{'open_exlock'} = \&Emul;
-	$DESCR{'open_exlock'} = 'the O_EXLOCK open() flag';
+	$DEPS{'open_exlock'} = 'cc';
 }
 
 ;1

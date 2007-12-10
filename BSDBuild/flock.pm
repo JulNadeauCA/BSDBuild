@@ -57,6 +57,7 @@ sub Emul
 BEGIN
 {
 	$TESTS{'flock'} = \&Test;
+	$DEPS{'flock'} = 'cc';
 	$EMUL{'flock'} = \&Emul;
 	$DESCR{'flock'} = 'the flock() function';
 }

@@ -60,6 +60,7 @@ BEGIN
 	$TESTS{'pctr'} = \&Test;
 	$EMUL{'pctr'} = \&Emul;
 	$DESCR{'pctr'} = 'the pctr(4) interface';
+	$DEPS{'pctr'} = 'cc';
 }
 
 ;1

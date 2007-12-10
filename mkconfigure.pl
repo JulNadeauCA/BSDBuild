@@ -131,6 +131,8 @@ sub Help
 {
     my $prefix_opt = pack('A' x 25, split('', '--prefix'));
     my $sysconfdir_opt = pack('A' x 25, split('', '--sysconfdir'));
+    my $bindir_opt = pack('A' x 25, split('', '--bindir'));
+    my $libdir_opt = pack('A' x 25, split('', '--libdir'));
     my $sharedir_opt = pack('A' x 25, split('', '--sharedir'));
     my $localedir_opt = pack('A' x 25, split('', '--localedir'));
     my $mandir_opt = pack('A' x 25, split('', '--mandir'));
@@ -150,6 +152,8 @@ sub Help
     my $regs = join("\n",
         "echo \"    $prefix_opt Installation prefix [/usr/local]\"",
         "echo \"    $sysconfdir_opt System-wide configuration prefix [/etc]\"",
+        "echo \"    $bindir_opt Executable directory [\$PREFIX/bin]\"",
+        "echo \"    $libdir_opt Library directory [\$PREFIX/lib]\"",
         "echo \"    $sharedir_opt Share directory [\$PREFIX/share]\"",
         "echo \"    $localedir_opt Locale directory [\$PREFIX/share/locale]\"",
         "echo \"    $mandir_opt Manpage directory [\$PREFIX/share/man]\"",
@@ -258,6 +262,12 @@ do
 	    ;;
 	--sysconfdir=*)
 	    sysconfdir=$optarg
+	    ;;
+	--bindir=*)
+	    bindir=$optarg
+	    ;;
+	--libdir=*)
+	    libdir=$optarg
 	    ;;
 	--sharedir=*)
 	    sharedir=$optarg
@@ -484,6 +494,26 @@ echo "PREFIX?=${PREFIX}" >> Makefile.config
 echo "#ifndef PREFIX" > config/prefix.h
 echo "#define PREFIX \"${PREFIX}\"" >> config/prefix.h
 echo "#endif /* PREFIX */" >> config/prefix.h
+
+if [ "${bindir}" != "" ]; then
+	BINDIR="${bindir}"
+else
+	BINDIR="${PREFIX}/bin"
+fi
+echo "BINDIR=${BINDIR}" >> Makefile.config
+echo "#ifndef BINDIR" > config/bindir.h
+echo "#define BINDIR \"${BINDIR}\"" >> config/bindir.h
+echo "#endif /* BINDIR */" >> config/bindir.h
+
+if [ "${libdir}" != "" ]; then
+	LIBDIR="${libdir}"
+else
+	LIBDIR="${PREFIX}/lib"
+fi
+echo "LIBDIR=${LIBDIR}" >> Makefile.config
+echo "#ifndef LIBDIR" > config/libdir.h
+echo "#define LIBDIR \"${LIBDIR}\"" >> config/libdir.h
+echo "#endif /* LIBDIR */" >> config/libdir.h
 
 if [ "${sharedir}" != "" ]; then
 	SHAREDIR="${sharedir}"

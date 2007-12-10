@@ -42,23 +42,33 @@ sub PmComment {
 }
 sub PmDefineBool {
 	my $def = shift;
-	print {$LUA} "tinsert(package.defines,{\"$def\"})\n";
+	print {$LUA} << "EOF";
+table.insert(package.defines,{"$def"})
+EOF
 }
 sub PmDefineString {
 	my ($def, $val) = @_;
-	print {$LUA} "tinsert(package.defines,{\"$def=$val\"})\n";
+	print {$LUA} << "EOF";
+table.insert(package.defines,{"$def=$val"})
+EOF
 }
 sub PmIncludePath {
 	my $path = shift;
-	print {$LUA} "tinsert(package.includepaths,{\"$path\"})\n";
+	print {$LUA} << "EOF";
+table.insert(package.includepaths,{"$path"})
+EOF
 }
 sub PmLibPath {
 	my $path = shift;
-	print {$LUA} "tinsert(package.libpaths,{\"$path\"})\n";
+	print {$LUA} << "EOF";
+table.insert(package.libpaths,{"$path"})
+EOF
 }
 sub PmBuildFlag {
 	my $flag = shift;
-	print {$LUA} "tinsert(package.buildflags,{\"$flag\"})\n";
+	print {$LUA} << "EOF";
+table.insert(package.buildflags,{"$flag"})
+EOF
 }
 
 # Read the output of a program into a variable.
@@ -158,7 +168,10 @@ sub MKSave
 sub MkSaveMK
 {
 	foreach my $var (@_) {
-		print "echo \"$var=\$$var\" >> Makefile.config\n";
+		print << "EOF";
+echo "$var=\$$var" >>Makefile.config
+echo "mdefs[\\"$var\\"] = \\"\$$var\\"" >>configure.lua
+EOF
 	}
 }
 
@@ -167,7 +180,8 @@ sub MkSaveUndef
 	foreach my $var (@_) {
 		my $include = 'config/'.lc($var).'.h';
 		print << "EOF";
-echo "#undef $var" > $include
+echo "#undef $var" >$include
+echo "hdefs[\\"$var\\"] = nil" >>configure.lua
 EOF
 	}
 }
@@ -178,8 +192,9 @@ sub MkSaveDefine
 		my $include = 'config/'.lc($var).'.h';
 		print << "EOF";
 echo "#ifndef $var" > $include
-echo "#define $var \\\"\$$var\\\"" >> $include
+echo "#define $var \\"\$$var\\"" >> $include
 echo "#endif" >> $include
+echo "hdefs[\\"$var\\"] = \\"\$$var\\"" >>configure.lua
 EOF
 	}
 }
@@ -276,7 +291,48 @@ EOF
 	print 'rm -f $testdir/conftest conftest.c', "\n";
 }
 
-sub TryCompileFlags
+#
+# Compile and run a test C++ program. If the program returns a non-zero
+# exit code, the test fails.
+#
+# Sets $define to "yes" or "no" and saves it to both Makefile.config and
+# ./config/.
+#
+sub MkCompileAndRunCXX
+{
+	my $define = shift;
+	my $cxxflags = shift;
+	my $libs = shift;
+	my $code = shift;
+
+	print << "EOF";
+cat << EOT > conftest.cpp
+$code
+EOT
+EOF
+	print << "EOF";
+echo "\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $cxxflags -o \$testdir/conftest conftest.cpp $libs" >>config.log
+\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $cxxflags -o \$testdir/conftest conftest.cpp $libs 2>>config.log
+EOF
+	MkIf('$? != 0');
+		MkPrint('no (compile failed)');
+		MkDefine('compile', 'failed');
+		MkSaveCompileFailed($define);
+	MkElse;
+		MkDefine('compile', 'ok');
+		print '(cd $testdir && ./conftest) >> config.log', "\n";
+		MkIf('"$?" = "0"');
+			MkPrint('yes');
+			MkSaveCompileSuccess($define);
+		MkElse;
+			MkPrint('no (exec failed)');
+			MkSaveCompileFailed($define);
+		MkEndif;
+	MkEndif;
+	print 'rm -f $testdir/conftest conftest.cpp', "\n";
+}
+
+sub TryCompileFlagsC
 {
 	my $define = shift;
 	my $flags = shift;
@@ -296,6 +352,37 @@ if [ \$? != 0 ]; then
 	compile="failed"
 fi
 rm -f \$testdir/conftest conftest.c
+EOF
+		MkIf('"${compile}" = "ok"');
+			MkPrint('yes');
+			MkSaveCompileSuccess($define);
+		MkElse;
+			MkPrint('no');
+			MkSaveCompileFailed($define);
+		MkEndif;
+	}
+}
+
+sub TryCompileFlagsCXX
+{
+	my $define = shift;
+	my $flags = shift;
+
+	while (my $code = shift) {
+		print << "EOF";
+cat << EOT > conftest.cpp
+$code
+EOT
+EOF
+		print << "EOF";
+compile="ok"
+echo "\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $flags -o \$testdir/conftest conftest.cpp" >>config.log
+\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $flags -o \$testdir/conftest conftest.cpp 2>>config.log
+if [ \$? != 0 ]; then
+	echo "-> failed (\$?)" >> config.log
+	compile="failed"
+fi
+rm -f \$testdir/conftest conftest.cpp
 EOF
 		MkIf('"${compile}" = "ok"');
 			MkPrint('yes');
@@ -345,6 +432,43 @@ EOF
 }
 
 #
+# Compile a test C++ program. If compilation fails, the test fails. The
+# test program is never executed.
+#
+# Sets $define to "yes" or "no" and saves it to both Makefile.config and
+# ./config/.
+#
+sub MkCompileCXX
+{
+	my $define = shift;
+	my $cxxflags = shift;
+	my $libs = shift;
+
+	while (my $code = shift) {
+		print << "EOF";
+cat << EOT > conftest.cpp
+$code
+EOT
+EOF
+		print << "EOF";
+echo "\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $cxxflags -o \$testdir/conftest conftest.cpp $libs" >>config.log
+\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $cxxflags -o \$testdir/conftest conftest.cpp $libs 2>>config.log
+EOF
+		MkIf('"$?" = "0"');
+			MkPrint('yes');
+			MkDefine('compile', 'ok');
+			MkSaveCompileSuccess($define);
+		MkElse;
+			MkPrint('no');
+			MkDefine('compile', 'failed');
+			MkSaveCompileFailed($define);
+		MkEndif;
+
+		print 'rm -f $testdir/conftest conftest.cpp', "\n";
+	}
+}
+
+#
 # Run a test Perl script.
 #
 # Sets $define to "yes" or "no" and saves it to both Makefile.config
@@ -381,7 +505,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($LUA %TESTS %DESCR MkExecOutput Which MkFail MKSave TryCompile MkCompileC MkCompileAndRunC TryCompileFlags Log MkDefine MkAppend MkIf MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN PmComment PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag);
+    @EXPORT = qw($LUA %TESTS %DESCR MkExecOutput Which MkFail MKSave TryCompile MkCompileC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkAppend MkIf MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN PmComment PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag);
 }
 
 ;1

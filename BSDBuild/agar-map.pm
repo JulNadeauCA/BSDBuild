@@ -63,11 +63,38 @@ EOF
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'windows') {
+		MkDefine('AGAR_MAP_CFLAGS', '');
+		MkDefine('AGAR_MAP_LIBS', 'ag_map');
+	} elsif ($os eq 'linux' || $os eq 'darwin' ||
+	         $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('AGAR_MAP_CFLAGS', '-I/usr/local/include/agar '.
+		                            '-I/usr/include/agar');
+		MkDefine('AGAR_MAP_LIBS', '-L/usr/local/lib -lag_map');
+	} else {
+		goto UNAVAIL;
+	}
+	MkDefine('HAVE_AGAR_MAP', 'yes');
+	MkSaveDefine('HAVE_AGAR_MAP', 'AGAR_MAP_CFLAGS', 'AGAR_MAP_LIBS');
+	MkSaveMK('AGAR_MAP_CFLAGS', 'AGAR_MAP_LIBS');
+	return (1);
+UNAVAIL:
+	MkDefine('HAVE_AGAR_MAP', 'no');
+	MkSaveUndef('HAVE_AGAR_MAP');
+	MkSaveMK('AGAR_MAP_CFLAGS', 'AGAR_MAP_LIBS');
+	return (1);
+}
+
 BEGIN
 {
-	$TESTS{'agar-map'} = \&Test;
 	$DESCR{'agar-map'} = 'agar-map (http://hypertriton.com/agar-map/)';
-	$DEPS{'agar-map'} = 'agar,agar-rg';
+	$DEPS{'agar-map'} = 'cc,agar,agar-rg,agar-vg';
+	$TESTS{'agar-map'} = \&Test;
+	$EMUL{'agar-map'} = \&Emul;
 }
 
 ;1

@@ -61,11 +61,38 @@ EOF
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'windows') {
+		MkDefine('AGAR_NET_CFLAGS', '');
+		MkDefine('AGAR_NET_LIBS', 'ag_net');
+	} elsif ($os eq 'linux' || $os eq 'darwin' ||
+	         $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('AGAR_NET_CFLAGS', '-I/usr/local/include/agar '.
+		                            '-I/usr/include/agar');
+		MkDefine('AGAR_NET_LIBS', '-L/usr/local/lib -lag_net');
+	} else {
+		goto UNAVAIL;
+	}
+	MkDefine('HAVE_AGAR_NET', 'yes');
+	MkSaveDefine('HAVE_AGAR_NET', 'AGAR_NET_CFLAGS', 'AGAR_NET_LIBS');
+	MkSaveMK('AGAR_NET_CFLAGS', 'AGAR_NET_LIBS');
+	return (1);
+UNAVAIL:
+	MkDefine('HAVE_AGAR_NET', 'no');
+	MkSaveUndef('HAVE_AGAR_NET');
+	MkSaveMK('AGAR_NET_CFLAGS', 'AGAR_NET_LIBS');
+	return (1);
+}
+
 BEGIN
 {
-	$TESTS{'agar-net'} = \&Test;
 	$DESCR{'agar-net'} = 'agar-net (http://hypertriton.com/agar-net/)';
-	$DEPS{'agar-net'} = 'agar';
+	$DEPS{'agar-net'} = 'cc,agar';
+	$TESTS{'agar-net'} = \&Test;
+	$EMUL{'agar-net'} = \&Emul;
 }
 
 ;1

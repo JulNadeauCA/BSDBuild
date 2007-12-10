@@ -62,11 +62,38 @@ EOF
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'windows') {
+		MkDefine('AGAR_SG_CFLAGS', '');
+		MkDefine('AGAR_SG_LIBS', 'ag_sg');
+	} elsif ($os eq 'linux' || $os eq 'darwin' ||
+	         $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('AGAR_SG_CFLAGS', '-I/usr/local/include/agar '.
+		                            '-I/usr/include/agar');
+		MkDefine('AGAR_SG_LIBS', '-L/usr/local/lib -lag_sg');
+	} else {
+		goto UNAVAIL;
+	}
+	MkDefine('HAVE_AGAR_SG', 'yes');
+	MkSaveDefine('HAVE_AGAR_SG', 'AGAR_SG_CFLAGS', 'AGAR_SG_LIBS');
+	MkSaveMK('AGAR_SG_CFLAGS', 'AGAR_SG_LIBS');
+	return (1);
+UNAVAIL:
+	MkDefine('HAVE_AGAR_SG', 'no');
+	MkSaveUndef('HAVE_AGAR_SG');
+	MkSaveMK('AGAR_SG_CFLAGS', 'AGAR_SG_LIBS');
+	return (1);
+}
+
 BEGIN
 {
-	$TESTS{'agar-sg'} = \&Test;
 	$DESCR{'agar-sg'} = 'agar-sg (http://hypertriton.com/agar-sg/)';
-	$DEPS{'agar-sg'} = 'agar';
+	$DEPS{'agar-sg'} = 'cc,agar';
+	$TESTS{'agar-sg'} = \&Test;
+	$EMUL{'agar-sg'} = \&Emul;
 }
 
 ;1

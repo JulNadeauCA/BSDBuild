@@ -64,11 +64,38 @@ EOF
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'windows') {
+		MkDefine('AGAR_RG_CFLAGS', '');
+		MkDefine('AGAR_RG_LIBS', 'ag_rg');
+	} elsif ($os eq 'linux' || $os eq 'darwin' ||
+	         $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('AGAR_RG_CFLAGS', '-I/usr/local/include/agar '.
+		                           '-I/usr/include/agar');
+		MkDefine('AGAR_RG_LIBS', '-L/usr/local/lib -lag_rg');
+	} else {
+		goto UNAVAIL;
+	}
+	MkDefine('HAVE_AGAR_RG', 'yes');
+	MkSaveDefine('HAVE_AGAR_RG', 'AGAR_RG_CFLAGS', 'AGAR_RG_LIBS');
+	MkSaveMK('AGAR_RG_CFLAGS', 'AGAR_RG_LIBS');
+	return (1);
+UNAVAIL:
+	MkDefine('HAVE_AGAR_RG', 'no');
+	MkSaveUndef('HAVE_AGAR_RG');
+	MkSaveMK('AGAR_RG_CFLAGS', 'AGAR_RG_LIBS');
+	return (1);
+}
+
 BEGIN
 {
-	$TESTS{'agar-rg'} = \&Test;
 	$DESCR{'agar-rg'} = 'agar-rg (http://hypertriton.com/agar-rg/)';
-	$DEPS{'agar-rg'} = 'agar,agar-vg';
+	$DEPS{'agar-rg'} = 'cc,agar,agar-vg';
+	$TESTS{'agar-rg'} = \&Test;
+	$EMUL{'agar-rg'} = \&Emul;
 }
 
 ;1

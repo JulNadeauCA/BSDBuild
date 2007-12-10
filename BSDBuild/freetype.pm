@@ -69,16 +69,16 @@ EOF
 	return (0);
 }
 
-sub Premake
+sub Link
 {
-	my $var = shift;
+	my $lib = shift;
 
-	if ($var eq 'FREETYPE_LIBS') {
-		print << 'EOF';
-tinsert(package.links, { "freetype6" })
+	if ($lib eq 'freetype') {
+			print << 'EOF';
+if (hdefs["HAVE_FREETYPE"] ~= nil) then
+	table.insert(package.links, { "freetype" })
+end
 EOF
-		return (1);
-	} elsif ($var eq 'FREETYPE_CFLAGS') {
 		return (1);
 	}
 	return (0);
@@ -123,9 +123,10 @@ UNAVAIL:
 BEGIN
 {
 	$DESCR{'freetype'} = 'FreeType (http://www.freetype.org)';
+	$DEPS{'freetype'} = 'cc';
 	$TESTS{'freetype'} = \&Test;
 	$EMUL{'freetype'} = \&Emul;
-	$PREMAKE{'sdl'} = \&Premake;
+	$LINK{'freetype'} = \&Link;
 }
 
 ;1

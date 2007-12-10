@@ -114,6 +114,8 @@ release: cleandir
 	 gpg -ab ${DISTFILE} && \
 	 scp ${DISTFILE} ${DISTFILE}.md5 ${DISTFILE}.asc \
 	 vedge@resin:www/stable.csoft.org/${PROJECT})
+	echo "TODO: Update sourceforge"
+	echo "TODO: Update freshmeat"
 
 .PHONY: install install-links install-links-subdir cleandir clean depend release
 

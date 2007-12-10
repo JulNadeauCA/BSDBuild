@@ -2,6 +2,7 @@ TOP=..
 
 SHARE=	Core.pm \
 	cc.pm \
+	cxx.pm \
 	glib.pm \
 	sdl.pm \
 	sdl_image.pm \
@@ -71,7 +72,7 @@ SHARE=	Core.pm \
 	getpeerucred.pm \
 	so_peercred.pm \
 	getpeereid.pm \
-	tritonsg.pm \
+	freesg.pm \
 	math_c99.pm \
 	getopt.pm \
 	byte_order.pm

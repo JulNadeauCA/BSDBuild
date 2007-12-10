@@ -37,7 +37,6 @@ sub mdefine
 	if ($val =~ /^"(.+)"$/) { $val = $1; }
 	MkDefine($def, $val);
 	MkSaveMK($def);
-	PmComment("$def = $val");
 }
 
 sub hdefine
@@ -53,7 +52,6 @@ sub hundef
 {
 	my $def = shift;
 	MkSaveUndef($def);
-	PmComment("$def = undef");
 }
 
 sub c_define
@@ -135,12 +133,15 @@ sub Help
     my $sysconfdir_opt = pack('A' x 25, split('', '--sysconfdir'));
     my $sharedir_opt = pack('A' x 25, split('', '--sharedir'));
     my $localedir_opt = pack('A' x 25, split('', '--localedir'));
+    my $mandir_opt = pack('A' x 25, split('', '--mandir'));
+    my $infodir_opt = pack('A' x 25, split('', '--infodir'));
     my $srcdir_opt = pack('A' x 25, split('', '--srcdir'));
     my $testdir_opt = pack('A' x 25, split('', '--testdir'));
     my $help_opt = pack('A' x 25, split('', '--help'));
     my $nls_opt = pack('A' x 25, split('', '--enable-nls'));
     my $gettext_opt = pack('A' x 25, split('', '--with-gettext'));
     my $libtool_opt = pack('A' x 25, split('', '--with-libtool'));
+    my $cygwin_opt = pack('A' x 25, split('', '--with-cygwin'));
     my $manpages_opt = pack('A' x 25, split('', '--with-manpages'));
     my $manlinks_opt = pack('A' x 25, split('', '--with-manlinks'));
     my $docs_opt = pack('A' x 25, split('', '--with-docs'));
@@ -149,14 +150,17 @@ sub Help
     my $regs = join("\n",
         "echo \"    $prefix_opt Installation prefix [/usr/local]\"",
         "echo \"    $sysconfdir_opt System-wide configuration prefix [/etc]\"",
-        "echo \"    $sharedir_opt Share prefix [\$PREFIX/share]\"",
-        "echo \"    $localedir_opt Locale prefix [\$PREFIX/share/locale]\"",
+        "echo \"    $sharedir_opt Share directory [\$PREFIX/share]\"",
+        "echo \"    $localedir_opt Locale directory [\$PREFIX/share/locale]\"",
+        "echo \"    $mandir_opt Manpage directory [\$PREFIX/share/man]\"",
+        "echo \"    $infodir_opt Info directory [\$PREFIX/share/info]\"",
         "echo \"    $srcdir_opt Source tree for concurrent build [.]\"",
         "echo \"    $testdir_opt Directory in which to execute tests [.]\"",
         "echo \"    $help_opt Display this message\"",
         "echo \"    $nls_opt Native Language Support [no]\"",
         "echo \"    $gettext_opt Use gettext tools (msgmerge, ...) [check]\"",
-        "echo \"    $libtool_opt Specify path to libtool [check]\"",
+        "echo \"    $libtool_opt Specify path to libtool [bundled]\"",
+        "echo \"    $cygwin_opt Add cygwin dependencies under cygwin [no]\"",
         "echo \"    $manpages_opt Manual pages (-mdoc) [yes]\"",
         "echo \"    $manlinks_opt Manual pages links for functions [no]\"",
         "echo \"    $docs_opt Printable docs (-me/tbl/eqn/pic/refer) [no]\"",
@@ -207,6 +211,8 @@ EOF
 --
 --    $ cat configure.in | mkconfigure > configure
 --
+hdefs = {}
+mdefs = {}
 EOF
 
 	print << 'EOF';
@@ -258,6 +264,12 @@ do
 	    ;;
 	--localedir=*)
 	    localedir=$optarg
+	    ;;
+	--mandir=*)
+	    mandir=$optarg
+	    ;;
+	--infodir=*)
+	    infodir=$optarg
 	    ;;
 	--enable-*)
 	    option=`echo $arg | sed -e 's/--enable-//' -e 's/=.*//'`
@@ -468,90 +480,60 @@ LIBTOOL_BUNDLED="yes"
 LIBTOOL=\${TOP}/mk/libtool/libtool
 echo "LIBTOOL=${LIBTOOL}" >> Makefile.config
 
-#
-# (insert defamatory comment about libtool here)
-#
-#echo -n "checking for libtool..."
-#if [ "${with_libtool}" != "" ]; then
-#	LIBTOOL=${with_libtool}
-#else
-#	ltool=""
-#	for path in `echo $PATH | sed 's/:/ /g'`; do
-#		if [ -x "${path}/libtool" ]; then
-#			ltool=${path}/libtool
-#		fi
-#	done
-#	if [ "${ltool}" != "" ]; then
-#		${ltool} --version 1>/dev/null 2>&1
-#		if [ "$?" = "0" ]; then
-#			LIBTOOL=${ltool}
-#		else
-#			LIBTOOL=\${TOP}/mk/libtool/libtool
-#			LIBTOOL_BUNDLED="yes"
-#		fi
-#	else
-#		LIBTOOL=\${TOP}/mk/libtool/libtool
-#		LIBTOOL_BUNDLED="yes"
-#	fi
-#fi
-#if [ "${LIBTOOL_BUNDLED}" = "yes" ]; then
-#	echo "yes (bundled)"
-#else
-#	grep ^VERSION=1.5 "${LIBTOOL}" 1>/dev/null 2>&1
-#	if [ "$?" = "0" ]; then
-#		echo "yes (GNU libtool 1.5)"
-#		echo "LIBTOOLFLAGS=-prefer-pic" >> Makefile.config
-#	else
-#		echo "yes (GNU libtool)"
-#	fi
-#fi
-
 echo "PREFIX?=${PREFIX}" >> Makefile.config
 echo "#ifndef PREFIX" > config/prefix.h
 echo "#define PREFIX \"${PREFIX}\"" >> config/prefix.h
 echo "#endif /* PREFIX */" >> config/prefix.h
 
 if [ "${sharedir}" != "" ]; then
-	echo "SHAREDIR=${sharedir}" >> Makefile.config
-	echo "#ifndef SHAREDIR" > config/sharedir.h
-	echo "#define SHAREDIR \"${sharedir}\"" >> config/sharedir.h
-	echo "#endif /* SHAREDIR */" >> config/sharedir.h
 	SHAREDIR="${sharedir}"
 else
-	echo "SHAREDIR=\${PREFIX}/share" >> Makefile.config
-	echo "#ifndef SHAREDIR" > config/sharedir.h
-	echo "#define SHAREDIR \"${SHAREDIR}\"" >> config/sharedir.h
-	echo "#endif /* SHAREDIR */" >> config/sharedir.h
 	SHAREDIR="${PREFIX}/share"
 fi
+echo "SHAREDIR=${SHAREDIR}" >> Makefile.config
+echo "#ifndef SHAREDIR" > config/sharedir.h
+echo "#define SHAREDIR \"${SHAREDIR}\"" >> config/sharedir.h
+echo "#endif /* SHAREDIR */" >> config/sharedir.h
 
 if [ "${localedir}" != "" ]; then
 	LOCALEDIR="${localedir}"
-	echo "LOCALEDIR=${LOCALEDIR}" >> Makefile.config
-	echo "#ifndef LOCALEDIR" > config/localedir.h
-	echo "#define LOCALEDIR \"${LOCALEDIR}\"" >> config/localedir.h
-	echo "#endif /* LOCALEDIR */" >> config/localedir.h
 else
 	LOCALEDIR="${SHAREDIR}/locale"
-	echo "LOCALEDIR=\${SHAREDIR}/locale" >> Makefile.config
-	echo "#ifndef LOCALEDIR" > config/localedir.h
-	echo "#define LOCALEDIR \"${LOCALEDIR}\"" >> config/localedir.h
-	echo "#endif /* LOCALEDIR */" >> config/localedir.h
 fi
+echo "LOCALEDIR=${LOCALEDIR}" >> Makefile.config
+echo "#ifndef LOCALEDIR" > config/localedir.h
+echo "#define LOCALEDIR \"${LOCALEDIR}\"" >> config/localedir.h
+echo "#endif /* LOCALEDIR */" >> config/localedir.h
+
+if [ "${mandir}" != "" ]; then
+	MANDIR="${mandir}"
+else
+	MANDIR="${SHAREDIR}/man"
+fi
+echo "MANDIR=${MANDIR}" >> Makefile.config
+echo "#ifndef MANDIR" > config/mandir.h
+echo "#define MANDIR \"${MANDIR}\"" >> config/mandir.h
+echo "#endif /* MANDIR */" >> config/mandir.h
+
+if [ "${infodir}" != "" ]; then
+	INFODIR="${infodir}"
+else
+	INFODIR="${SHAREDIR}/info"
+fi
+echo "INFODIR=${INFODIR}" >> Makefile.config
+echo "#ifndef INFODIR" > config/infodir.h
+echo "#define INFODIR \"${INFODIR}\"" >> config/infodir.h
+echo "#endif /* INFODIR */" >> config/infodir.h
 
 if [ "${sysconfdir}" != "" ]; then
 	SYSCONFDIR="${sysconfdir}"
-	echo "SYSCONFDIR=${sysconfdir}" >> Makefile.config
-	echo "#ifndef SYSCONFDIR" > config/sysconfdir.h
-	echo "#define SYSCONFDIR \"${SYSCONFDIR}\"" >> config/sysconfdir.h
-	echo "#endif /* SYSCONFDIR */" >> config/sysconfdir.h
 else
 	SYSCONFDIR="${PREFIX}/etc"
-	echo "SYSCONFDIR=\${PREFIX}/etc" >> Makefile.config
-	echo "#ifndef SYSCONFDIR" > config/sysconfdir.h
-	echo "#define SYSCONFDIR \"${SYSCONFDIR}\"" >> config/sysconfdir.h
-	echo "#endif /* SYSCONFDIR */" >> config/sysconfdir.h
 fi
+echo "SYSCONFDIR=${SYSCONFDIR}" >> Makefile.config
+echo "#ifndef SYSCONFDIR" > config/sysconfdir.h
+echo "#define SYSCONFDIR \"${SYSCONFDIR}\"" >> config/sysconfdir.h
+echo "#endif /* SYSCONFDIR */" >> config/sysconfdir.h
 
 EOF
 						$registers = 0;

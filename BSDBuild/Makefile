@@ -34,7 +34,6 @@ SHARE=	Core.pm \
 	pctr.pm \
 	getpwuid.pm \
 	getuid.pm \
-	agar.pm \
 	csoft-cgi.pm \
 	md5.pm \
 	sha1.pm \
@@ -43,6 +42,8 @@ SHARE=	Core.pm \
 	sys_types.pm \
 	sys_queue.pm \
 	free_null.pm \
+	agar.pm \
+	agar-core.pm \
 	agar-net.pm \
 	agar-sg.pm \
 	agar-sc.pm \

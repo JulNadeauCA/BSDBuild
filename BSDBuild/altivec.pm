@@ -45,8 +45,12 @@ EOF
 	
 	MkIf q{"$SYSTEM" = "Darwin"};
 		MkDefine('ALTIVEC_CFLAGS', '-faltivec -maltivec');
+		MkDefine('ALTIVEC_CHECK_CFLAGS', '-D_DARWIN_C_SOURCE');
+		MkSaveMK('ALTIVEC_CHECK_CFLAGS');
 	MkElse;
 		MkDefine('ALTIVEC_CFLAGS', '-mabi=altivec -maltivec');
+		MkDefine('ALTIVEC_CHECK_CFLAGS', '');
+		MkSaveMK('ALTIVEC_CHECK_CFLAGS');
 	MkEndif;
 
 	MkCompileC('HAVE_ALTIVEC', '${CFLAGS} ${ALTIVEC_CFLAGS}', '',

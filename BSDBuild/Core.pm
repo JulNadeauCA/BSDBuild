@@ -132,8 +132,8 @@ sub MkPrintN
 
 	$msg =~ s/["]/\"/g;
 	print << "EOF";
-echo -n "$msg"
-echo -n "$msg" >> config.log
+\$ECHO_N "$msg"
+\$ECHO_N "$msg" >> config.log
 EOF
 }
 

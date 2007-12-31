@@ -332,6 +332,17 @@ do
 	esac
 done
 
+if [ -e "/bin/echo" ]; then
+    /bin/echo -n ""
+    if [ $? = 0 ]; then
+    	ECHO_N="/bin/echo -n"
+    else
+    	ECHO_N="echo -n"
+    fi
+else
+    ECHO_N="echo -n"
+fi
+
 if [ "${prefix}" != "" ]; then
     PREFIX="$prefix"
 else

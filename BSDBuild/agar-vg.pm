@@ -88,11 +88,25 @@ UNAVAIL:
 	return (1);
 }
 
+sub Link
+{
+	my $var = shift;
+
+	if ($var eq 'ag_vg') {
+		print << 'EOF';
+tinsert(package.links, { "ag_vg" })
+EOF
+		return (1);
+	}
+	return (0);
+}
+
 BEGIN
 {
 	$DESCR{'agar-vg'} = 'agar-vg (http://hypertriton.com/agar-vg/)';
 	$DEPS{'agar-vg'} = 'cc,agar';
 	$TESTS{'agar-vg'} = \&Test;
+	$LINK{'agar-vg'} = \&Link;
 	$EMUL{'agar-vg'} = \&Emul;
 }
 

@@ -61,11 +61,25 @@ EOF
 	return (0);
 }
 
+sub Link
+{
+	my $var = shift;
+
+	if ($var eq 'freesg') {
+		print << 'EOF';
+tinsert(package.links, { "freesg" })
+EOF
+		return (1);
+	}
+	return (0);
+}
+
 BEGIN
 {
 	$TESTS{'freesg'} = \&Test;
 	$DESCR{'freesg'} = 'FreeSG (http://FreeSG.org/)';
 	$DEPS{'freesg'} = 'cc,agar';
+	$LINK{'freesg'} = \&Link;
 }
 
 ;1

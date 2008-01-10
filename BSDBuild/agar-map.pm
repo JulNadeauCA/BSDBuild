@@ -89,11 +89,25 @@ UNAVAIL:
 	return (1);
 }
 
+sub Link
+{
+	my $var = shift;
+
+	if ($var eq 'ag_map') {
+		print << 'EOF';
+tinsert(package.links, { "ag_map", "ag_rg", "ag_vg" })
+EOF
+		return (1);
+	}
+	return (0);
+}
+
 BEGIN
 {
 	$DESCR{'agar-map'} = 'agar-map (http://hypertriton.com/agar-map/)';
 	$DEPS{'agar-map'} = 'cc,agar,agar-rg,agar-vg';
 	$TESTS{'agar-map'} = \&Test;
+	$LINK{'agar-map'} = \&Link;
 	$EMUL{'agar-map'} = \&Emul;
 }
 

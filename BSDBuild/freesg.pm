@@ -45,7 +45,7 @@ sub Test
 #include <freesg/sg.h>
 int main(int argc, char *argv[]) {
 	SG *sg;
-	sg = SG_New(NULL, "foo");
+	sg = SG_New(NULL, "foo", 0);
 	AG_ObjectDestroy(sg);
 	return (0);
 }
@@ -59,6 +59,42 @@ EOF
 		MkSaveUndef('HAVE_FREESG', 'FREESG_CFLAGS', 'FREESG_LIBS');
 	MkEndif;
 	return (0);
+}
+
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'darwin') {
+		MkDefine('FREESG_CFLAGS', '-I/opt/local/include/freesg '.
+		                          '-I/opt/local/include '.
+		                          '-I/usr/local/include/freesg '.
+							      '-I/usr/local/include '.
+		                          '-I/usr/include/freesg -I/usr/include '.
+		                          '-D_THREAD_SAFE');
+		MkDefine('FREESG_LIBS', '-L/usr/lib -L/opt/local/lib -L/usr/local/lib '.
+		                        '-L/usr/X11R6/lib '.
+		                        '-lfreesg_pe -lfreesg -framework GLU');
+	} elsif ($os eq 'windows') {
+		MkDefine('FREESG_CFLAGS', '');
+		MkDefine('FREESG_LIBS', 'freesg_pe freesg glu');
+	} elsif ($os eq 'linux' || $os =~ /^(open|net|free)bsd$/) {
+		MkDefine('FREESG_CFLAGS', '-I/usr/include/freesg -I/usr/include '.
+		                          '-I/usr/local/include/freesg '.
+							      '-I/usr/local/include ');
+		MkDefine('FREESG_LIBS', '-L/usr/local/lib -lfreesg_pe -lfreesg -lGLU');
+	} else {
+		goto UNAVAIL;
+	}
+	MkDefine('HAVE_FREESG', 'yes');
+	MkSaveDefine('HAVE_FREESG', 'FREESG_CFLAGS', 'FREESG_LIBS');
+	MkSaveMK('FREESG_CFLAGS', 'FREESG_LIBS');
+	return (1);
+UNAVAIL:
+	MkDefine('HAVE_FREESG', 'no');
+	MkSaveUndef('HAVE_FREESG');
+	MkSaveMK('FREESG_CFLAGS', 'FREESG_LIBS');
+	return (1);
 }
 
 sub Link
@@ -79,6 +115,7 @@ BEGIN
 	$TESTS{'freesg'} = \&Test;
 	$DESCR{'freesg'} = 'FreeSG (http://FreeSG.org/)';
 	$DEPS{'freesg'} = 'cc,agar';
+	$EMUL{'freesg'} = \&Emul;
 	$LINK{'freesg'} = \&Link;
 }
 

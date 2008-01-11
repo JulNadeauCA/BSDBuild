@@ -46,10 +46,13 @@ sub Test
 #include <agar/dev.h>
 
 int main(int argc, char *argv[]) {
+	AG_Object obj;
 	AG_Window *win;
 
+	AG_ObjectInitStatic(&obj, &agObjectClass);
 	DEV_InitSubsystem(0);
-	win = DEV_Browser();
+	win = DEV_Browser(&obj);
+	AG_ObjectDestroy(&obj);
 	return (0);
 }
 EOF

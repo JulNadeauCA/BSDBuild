@@ -43,7 +43,7 @@ sub Test
 	MkIf q{"$SYSTEM" = "Darwin"};
 		# Assume -framework OpenGL was already included.
 		MkDefine('GLU_CFLAGS', '');
-		MkDefine('GLU_LIBS', '-framework GLU');
+		MkDefine('GLU_LIBS', '-framework GLUT');
 	MkElif q{"$HAVE_MINGW" = "yes"};
 		MkDefine('GLU_LIBS', '-lglu32');
 	MkElse;
@@ -102,7 +102,7 @@ sub Emul
 	
 	if ($os eq 'darwin') {
 		MkDefine('GLU_CFLAGS', '');
-		MkDefine('GLU_LIBS', '-framework GLU');
+		MkDefine('GLU_LIBS', '-framework GLUT');
 	} elsif ($os eq 'windows') {
 		MkDefine('GLU_CFLAGS', '');
 		MkDefine('GLU_LIBS', 'glu32');

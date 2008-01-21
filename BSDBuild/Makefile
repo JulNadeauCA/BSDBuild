@@ -67,6 +67,7 @@ SHARE=	Core.pm \
 	stdlib_h.pm \
 	limits_h.pm \
 	strtoll.pm \
+	strtold.pm \
 	open_exlock.pm \
 	fgetln.pm \
 	Mail-SpamAssassin.pm \

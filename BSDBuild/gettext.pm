@@ -56,7 +56,7 @@ EOF
 		MkEndif;
 	}
 	MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}', $test);
-	MkIf('"${HAVE_GETTEXT}" != ""');
+	MkIf('"${HAVE_GETTEXT}" = "yes"');
 		MkSaveDefine('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
 		MkSaveMK('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
 	MkElse;

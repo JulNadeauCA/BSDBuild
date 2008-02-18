@@ -25,26 +25,54 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+my @prefixes = (
+	'/usr',
+	'/usr/local',
+	'/opt',
+	'/opt/local',
+);
+
 sub Test
 {
-	# XXX TODO
-	MkDefine('GETTEXT_CFLAGS', '-I/usr/local/include');
-	MkDefine('GETTEXT_LIBS', '"-L/usr/local/lib -lintl"');
-	MkPrint('ok');
-
-	MkPrintN('checking whether gettext works...');
-	MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}',
-	           << 'EOF');
+	my $test = << "EOF";
 #include <libintl.h>
 int main(int argc, char *argv[])
 {
-	gettext("");
+	char *s;
+	bindtextdomain("foo", "/foo");
+	textdomain("foo");
+	s = gettext("string");
+	s = dgettext("foo","string");
 	return (0);
 }
 EOF
+	MkDefine('GETTEXT_CFLAGS', '');
+	MkDefine('GETTEXT_LIBS', '');
+
+	foreach my $pfx (@prefixes) {
+		MkIf("-e $pfx/include/libintl.h");
+		    MkDefine('GETTEXT_CFLAGS', "-I$pfx/include");
+		    MkDefine('GETTEXT_LIBS', "-L$pfx/lib -lintl");
+		MkEndif;
+	}
+	MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}', $test);
 	MkIf('"${HAVE_GETTEXT}" != ""');
 		MkSaveDefine('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
-		MkSaveMK	('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
+		MkSaveMK('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
+	MkElse;
+		MkPrintN('checking whether -lintl requires -liconv...');
+		foreach my $pfx (@prefixes) {
+			MkIf("-e $pfx/include/iconv.h");
+			    MkDefine('GETTEXT_CFLAGS', "\${GETTEXT_CFLAGS} -I$pfx/include");
+			    MkDefine('GETTEXT_LIBS', "\${GETTEXT_LIBS} -L$pfx/lib -liconv");
+			MkEndif;
+		}
+		MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}',
+		    $test);
+		MkIf('"${HAVE_GETTEXT}" != ""');
+			MkSaveDefine('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
+			MkSaveMK('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
+		MkEndif;
 	MkEndif;
 }
 

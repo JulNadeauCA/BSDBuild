@@ -45,19 +45,17 @@ my @lib_dirs = (
 
 sub Test
 {
-	MkDefine('x11_found_includes', 'no');
-	MkDefine('x11_found_libs', 'no');
+	MkDefine('X11_CFLAGS', '');
+	MkDefine('X11_LIBS', '');
 
 	foreach my $dir (@include_dirs) {
 		MkIf("-d $dir/X11");
-		    MkDefine('X11_CFLAGS', "\"-I$dir\"");
-			MkDefine('x11_found_includes', "yes");
+		    MkDefine('X11_CFLAGS', "-I$dir");
 		MkEndif;
 	}
 	foreach my $dir (@lib_dirs) {
 		MkIf("-d $dir");
-		    MkDefine('X11_LIBS', "\"-L$dir\"");
-			MkDefine('x11_found_libs', "yes");
+		    MkDefine('X11_LIBS', "-L$dir");
 		MkEndif;
 	}
 

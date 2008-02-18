@@ -30,7 +30,6 @@ PERL?=/usr/bin/perl
 SCRIPTS?=
 MODULES?=
 SHARE?=
-SCRIPTS_DIR?=${BINDIR}
 MODULES_DIR?=${SHAREDIR}/perl
 SCRIPTS_SUBST?=
 MODULES_SUBST?=
@@ -46,22 +45,22 @@ depend: depend-subdir
 
 install-perl:
 	if [ "${SCRIPTS}" != "" ]; then \
-	    if [ ! -d "${SCRIPTS_DIR}" ]; then \
-	        echo "${INSTALL_PROG_DIR} ${SCRIPTS_DIR}"; \
-	        ${SUDO} ${INSTALL_PROG_DIR} ${SCRIPTS_DIR}; \
+	    if [ ! -d "${BINDIR}" ]; then \
+	        echo "${INSTALL_PROG_DIR} ${BINDIR}"; \
+	        ${SUDO} ${INSTALL_PROG_DIR} ${BINDIR}; \
 	    fi; \
 	    if [ "${SCRIPTS_SUBST}" != "" ]; then \
 		    for F in ${SCRIPTS}; do \
 		        echo "sed -e '${SCRIPTS_SUBST}' $$F > $$F.prep"; \
 		        sed -e '${SCRIPTS_SUBST}' $$F > $$F.prep; \
-			echo "${INSTALL_PROG} $$F.prep ${SCRIPTS_DIR}/$$F"; \
-			${SUDO} ${INSTALL_PROG} $$F.prep ${SCRIPTS_DIR}/$$F; \
+			echo "${INSTALL_PROG} $$F.prep ${BINDIR}/$$F"; \
+			${SUDO} ${INSTALL_PROG} $$F.prep ${BINDIR}/$$F; \
 			rm -f $$F.prep; \
 		    done; \
 	    else \
 		for F in ${SCRIPTS}; do \
-		    echo "${INSTALL_PROG} $$F ${SCRIPTS_DIR}"; \
-		    ${SUDO} ${INSTALL_PROG} $$F ${SCRIPTS_DIR}; \
+		    echo "${INSTALL_PROG} $$F ${BINDIR}"; \
+		    ${SUDO} ${INSTALL_PROG} $$F ${BINDIR}; \
 		done; \
 	    fi; \
 	fi
@@ -100,8 +99,8 @@ install-perl:
 deinstall-perl:
 	@if [ "${SCRIPTS}" != "" ]; then \
 	    for F in ${SCRIPTS}; do \
-	        echo "${DEINSTALL_PROG} ${SCRIPTS_DIR}/$$F"; \
-	        ${SUDO} ${DEINSTALL_PROG} ${SCRIPTS_DIR}/$$F; \
+	        echo "${DEINSTALL_PROG} ${BINDIR}/$$F"; \
+	        ${SUDO} ${DEINSTALL_PROG} ${BINDIR}/$$F; \
 	    done; \
 	fi
 	@if [ "${MODULES}" != "" ]; then \

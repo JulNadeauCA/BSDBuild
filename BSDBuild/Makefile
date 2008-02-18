@@ -77,7 +77,8 @@ SHARE=	Core.pm \
 	freesg.pm \
 	math_c99.pm \
 	getopt.pm \
-	byte_order.pm
+	byte_order.pm \
+	openmgi.pm
 
 all:
 

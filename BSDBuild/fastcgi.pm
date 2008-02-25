@@ -25,9 +25,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-my @dirs = (
+my @prefixes = (
 	'/usr/local',
 	'/usr',
+	'/opt/local',
+	'/opt',
 );
 
 sub Test
@@ -35,13 +37,13 @@ sub Test
 	MkDefine('FASTCGI_CFLAGS', '');
 	MkDefine('FASTCGI_LIBS', '');
 
-	foreach my $dir (@dirs) {
+	foreach my $dir (@prefixes) {
 		MkIf("-e $dir/include/fcgi_stdio.h");
-			MkDefine('FASTCGI_CFLAGS', "\"-I$dir/include\"");
-		    MkDefine('FASTCGI_LIBS', "\"-L$dir/lib -lfcgi\"");
+			MkDefine('FASTCGI_CFLAGS', "-I$dir/include");
+		    MkDefine('FASTCGI_LIBS', "-L$dir/lib -lfcgi");
 		MkEndif;
 	}
-	MkIf('${FASTCGI_LIBS} != ""');
+	MkIf('"${FASTCGI_LIBS}" != ""');
 		MkPrint('yes');
 		MkPrintN('checking whether fastcgi works...');
 		MkCompileC('HAVE_FASTCGI', '${FASTCGI_CFLAGS}', '${FASTCGI_LIBS}',
@@ -72,6 +74,6 @@ BEGIN
 {
 	$TESTS{'fastcgi'} = \&Test;
 	$DEPS{'fastcgi'} = 'cc';
-	$DESCR{'fastcgi'} = 'FastCGI libraries (http://www.fastcgi.com)';
+	$DESCR{'fastcgi'} = 'FastCGI (http://fastcgi.com)';
 }
 ;1

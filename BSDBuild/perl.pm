@@ -76,7 +76,7 @@ BEGIN
 {
 	$DESCR{'perl'} = 'Perl (http://www.cpan.org)';
 	$TESTS{'perl'} = \&Test;
-	$DEPS{'perl'} = 'cc';
+	$DEPS{'perl'} = '';
 }
 
 ;1

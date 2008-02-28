@@ -49,30 +49,40 @@ EOF
 	MkDefine('GETTEXT_CFLAGS', '');
 	MkDefine('GETTEXT_LIBS', '');
 
-	foreach my $pfx (@prefixes) {
-		MkIf("-e $pfx/include/libintl.h");
-		    MkDefine('GETTEXT_CFLAGS', "-I$pfx/include");
-		    MkDefine('GETTEXT_LIBS', "-L$pfx/lib -lintl");
-		MkEndif;
-	}
 	MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}', $test);
-	MkIf('"${HAVE_GETTEXT}" = "yes"');
-		MkSaveDefine('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
-		MkSaveMK('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
-	MkElse;
-		MkPrintN('checking whether -lintl requires -liconv...');
+	MkIf('"${HAVE_GETTEXT}" = "no"');
+		MkPrintN('checking whether gettext requires -lintl...');
 		foreach my $pfx (@prefixes) {
-			MkIf("-e $pfx/include/iconv.h");
-			    MkDefine('GETTEXT_CFLAGS', "\${GETTEXT_CFLAGS} -I$pfx/include");
-			    MkDefine('GETTEXT_LIBS', "\${GETTEXT_LIBS} -L$pfx/lib -liconv");
+			MkIf("-e $pfx/include/libintl.h");
+			    MkDefine('GETTEXT_CFLAGS', "-I$pfx/include");
+			    MkDefine('GETTEXT_LIBS', "-L$pfx/lib -lintl");
 			MkEndif;
 		}
 		MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}',
 		    $test);
-		MkIf('"${HAVE_GETTEXT}" != ""');
+		MkIf('"${HAVE_GETTEXT}" = "yes"');
 			MkSaveDefine('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
 			MkSaveMK('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
+		MkElse;
+			MkPrintN('checking whether -lintl requires -liconv...');
+			foreach my $pfx (@prefixes) {
+				MkIf("-e $pfx/include/iconv.h");
+				    MkDefine('GETTEXT_CFLAGS',
+					    "\${GETTEXT_CFLAGS} -I$pfx/include");
+				    MkDefine('GETTEXT_LIBS',
+					    "\${GETTEXT_LIBS} -L$pfx/lib -liconv");
+				MkEndif;
+			}
+			MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}',
+			    $test);
+			MkIf('"${HAVE_GETTEXT}" != ""');
+				MkSaveDefine('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
+				MkSaveMK('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
+			MkEndif;
 		MkEndif;
+	MkElse;
+			MkSaveDefine('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
+			MkSaveMK('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
 	MkEndif;
 }
 

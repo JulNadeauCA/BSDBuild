@@ -46,6 +46,18 @@ my @lib_dirs = (
 sub Test
 {
 	my ($ver) = @_;
+	my $code = << 'EOF';
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
+int main(int argc, char *argv[]) {
+	glFlush();
+	glLoadIdentity();
+	return (0);
+}
+EOF
 
 	MkDefine('GL_CFLAGS', '');
 	MkDefine('GL_LIBS', '');
@@ -72,24 +84,20 @@ sub Test
 		MkDefine('OPENGL_LIBS', '${GL_LIBS} -lGL');
 	MkEndif;
 
-	MkCompileC('HAVE_OPENGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', << 'EOF');
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#else
-#include <GL/gl.h>
-#endif
-int main(int argc, char *argv[]) {
-	glFlush();
-	glLoadIdentity();
-	return (0);
-}
-EOF
-
+	MkCompileC('HAVE_OPENGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', $code);
 	MkIf '"${HAVE_OPENGL}" = "yes"';
 		MkSaveMK('OPENGL_CFLAGS', 'OPENGL_LIBS');
 		MkSaveDefine('OPENGL_CFLAGS', 'OPENGL_LIBS');
 	MkElse;
-		MkSaveUndef('OPENGL_CFLAGS', 'OPENGL_LIBS');
+		MkPrintN('checking whether -lGL requires -lm...');
+		MkDefine('OPENGL_LIBS', '${OPENGL_LIBS} -lm');
+		MkCompileC('HAVE_OPENGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', $code);
+		MkIf '"${HAVE_OPENGL}" = "yes"';
+			MkSaveMK('OPENGL_CFLAGS', 'OPENGL_LIBS');
+			MkSaveDefine('OPENGL_CFLAGS', 'OPENGL_LIBS');
+		MkElse;
+			MkSaveUndef('OPENGL_CFLAGS', 'OPENGL_LIBS');
+		MkEndif;
 	MkEndif;
 	return (0);
 }

@@ -71,7 +71,7 @@ Install program to the target installation directory
 Uninstall program from the installation directory.
 .El
 .Sh VARIABLES
-.Bl -tag -width "PROG_INSTALL "
+.Bl -tag -width "CONF_OVERWRITE "
 .It Ev PROG
 Filename of target executable.
 Platform-specific transforms may be applied to the name.
@@ -181,6 +181,9 @@ target will not override existing configuration files, instead it will
 output a
 .Dq The following configuration files have been preserved
 message.
+.It Ev CONF_OVERWRITE
+Overwrite any existing configuration file on installation.
+Default is "No".
 .El
 .Sh SEE ALSO
 .Xr build.common.mk 5 ,

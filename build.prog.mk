@@ -57,6 +57,7 @@ POBJS?=none
 SHOBJS?=none
 CONF?=none
 CONFDIR?=
+CONF_OVERWRITE?=No
 CLEANFILES?=
 
 all: all-subdir ${PROG}
@@ -328,18 +329,25 @@ install-prog:
                 echo "${INSTALL_DATA_DIR} ${CONFDIR}"; \
                 ${SUDO} ${INSTALL_DATA_DIR} ${CONFDIR}; \
             fi; \
-	    echo "+----------------"; \
-	    echo "| The following configuration files have been preserved."; \
-	    echo "| You may want to compare them to the current sample files.";\
-	    echo "|"; \
-            for F in ${CONF}; do \
-	        if [ -e "${CONFDIR}/$$F" ]; then \
-          	      echo "| - $$F"; \
-		else \
-         	       ${SUDO} ${INSTALL_DATA} $$F ${CONFDIR}; \
-		fi; \
-            done; \
-	    echo "+----------------"; \
+	    if [ "${CONF_OVERWRITE}" != "Yes" ]; then \
+	        echo "+----------------"; \
+	        echo "| The following configuration files exist and "; \
+	        echo "| will not be overwritten:"; \
+	        echo "|"; \
+	        for F in ${CONF}; do \
+	            if [ -e "${CONFDIR}/$$F" ]; then \
+	                echo "| - $$F"; \
+	            else \
+	                ${SUDO} ${INSTALL_DATA} $$F ${CONFDIR}; \
+	            fi; \
+	        done; \
+	        echo "+----------------"; \
+	    else \
+	        for F in ${CONF}; do \
+	            echo "${INSTALL_DATA} $$F ${CONFDIR}"; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${CONFDIR}; \
+	        done; \
+	    fi; \
 	fi
 
 deinstall-prog:

@@ -72,7 +72,7 @@ Install library files to the target installation directory
 Uninstall libraries from the installation directory.
 .El
 .Sh VARIABLES
-.Bl -tag -width "LIB_INSTALL "
+.Bl -tag -width "CONF_OVERWRITE "
 .It Ev LIB
 Name of target library.
 Platform-specific transforms will be applied to the name.
@@ -197,6 +197,9 @@ See
 .Xr build.common.mk 5 .
 .It Ev INCL
 List of library header files.
+.It Ev CONF_OVERWRITE
+Overwrite any existing configuration file on installation.
+Default is "No".
 .El
 .Sh SEE ALSO
 .Xr build.common.mk 5 ,

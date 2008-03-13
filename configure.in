@@ -1,5 +1,5 @@
 # Public domain
 
 MDEFINE(SHAREDIR, "$PREFIX/share/bsdbuild");
-MDEFINE(VERSION, "2.2");
-MDEFINE(RELEASE, "Descent into Darkness");
+MDEFINE(VERSION, "2.3");
+MDEFINE(RELEASE, "Witching Hour");

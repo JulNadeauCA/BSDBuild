@@ -1,0 +1,21 @@
+
+BSDBuild Installation
+---------------------
+
+To install BSDBuild onto your system, use the following:
+
+	$ ./configure
+	$ make depend all
+	# make install
+
+This will install mkconfigure(1) and mkify(1) on your system.
+
+The mkify(1) utility is used to construct a BSDBuild "mk" directory
+intended to be bundled with your application so that people building
+it do not need to know at all about BSDBuild. See the mkify(1) manual
+page for more details.
+
+The mkconfigure(1) utility is used to generate a standard Bourne
+"./configure" script from a configure.in file. See the mkconfigure(1)
+manual page for more details.
+

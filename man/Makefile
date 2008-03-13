@@ -1,5 +1,8 @@
 TOP=..
 
+MAN1=	mkify.1 \
+	mkconfigure.1
+
 MAN5=	build.common.mk.5 \
 	build.den.mk.5 \
 	build.dep.mk.5 \

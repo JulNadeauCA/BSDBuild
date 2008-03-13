@@ -1,0 +1,86 @@
+.\"
+.\" Copyright (c) 2008 Hypertriton, Inc. <http://www.hypertriton.com/>
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 
+.\" THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+.\" IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+.\" WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+.\" INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+.\" (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+.\" SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+.\" STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+.\" IN ANY WAY OUT OF THE USE OF THIS SOFTWARE EVEN IF ADVISED OF THE
+.\" POSSIBILITY OF SUCH DAMAGE.
+.\"
+.Dd JULY 19, 2007
+.Dt MKIFY 1
+.Os
+.ds vT BSDBuild Reference
+.ds oS BSDBuild 1.0
+.Sh NAME
+.Nm mkify
+.Nd BSDBuild auto-bundling script
+.Sh SYNOPSIS
+.Nm mkify
+.Ar module
+.Ar ...
+.Sh DESCRIPTION
+The
+.Nm
+utility copies installed BSDBuild include files from their system location
+to
+.Pa mk
+under the working directory.
+It accepts a list of BSDBuild modules as arguments (e.g.,
+.Sq prog
+will cause
+.Xr build.prog.mk 5
+to be installed).
+.Nm
+also scans for include directives and will automatically install all
+dependencies as well.
+.Pp
+The BSDBuild build system is designed to be bundled with applications as
+a stand-alone set of
+.Xr make 1
+include files, which are typically installed in a directory named
+.Pa mk
+in the top-level directory (or some other central location) in an
+application source code, such that people building applications which
+use the BSDBuild build system do not need to have BSDBuild or any
+other software installed on their systems.
+.Pp
+While the need for a
+.Pa mk
+directory may be perceived as a problem, there are several advantages:
+.Bl -enum
+.It
+Makefiles are not generated, they can be edited directly.
+BSDBuild will generate Makefiles only when performing concurrent builds
+(i.e., building object files in a directory separate from the source tree).
+.It
+BSDBuild makefiles are orders of magnitude smaller than any generated
+Makefile, avoiding masses of redundant code.
+.It
+There is no
+.Pa Makefile.in ,
+so the total number of files in your tree is reduced.
+.El
+.Sh SEE ALSO
+.Xr build.prog.mk 5 ,
+.Xr build.lib.mk 5 ,
+.Xr build.common.mk 5 ,
+.Xr mkconfigure 1
+.Pp
+http://hypertriton.com/bsdbuild/

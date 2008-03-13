@@ -5,7 +5,7 @@ DIST=		${PROJECT}-${VERSION}
 DISTFILE=	${DIST}.tar.gz
 
 SHARE=	hstrip.pl mkdep mkify.pl mkconfigure.pl mkprojfiles.pl \
-	mkconcurrent.pl version.sh manlinks.pl cmpfiles.pl \
+	mkconcurrent.pl manlinks.pl cmpfiles.pl \
 	get-version.pl get-release.pl \
 	build.common.mk build.dep.mk build.lib.mk build.man.mk \
 	build.perl.mk build.prog.mk build.subdir.mk build.www.mk \

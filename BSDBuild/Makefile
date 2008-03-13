@@ -78,7 +78,8 @@ SHARE=	Core.pm \
 	math_c99.pm \
 	getopt.pm \
 	byte_order.pm \
-	openmgi.pm
+	openmgi.pm \
+	iconv.pm
 
 all:
 

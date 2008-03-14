@@ -45,7 +45,7 @@ sub Test
 int
 main(int argc, char *argv[])
 {
-	cgi_init(NULL);
+	CGI_Init(NULL);
 	return (0);
 }
 EOF

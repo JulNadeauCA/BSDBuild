@@ -117,7 +117,7 @@ release: cleandir
 	echo "TODO: Update sourceforge"
 	echo "TODO: Update freshmeat"
 
-.PHONY: install install-links install-links-subdir cleandir clean depend release
+.PHONY: install install-links install-links-subdir cleandir clean depend release configure
 
 include ${TOP}/Makefile.config
 include ${TOP}/mk/build.common.mk

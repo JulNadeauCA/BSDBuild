@@ -38,7 +38,7 @@ sub Test
         MkSaveMK('CGI_CFLAGS', 'CGI_LIBS');
         MkSaveDefine('CGI_CFLAGS', 'CGI_LIBS');
 
-		MkPrint('checking whether csoft-cgi works...');
+		MkPrintN('checking whether csoft-cgi works...');
 		MkCompileC('HAVE_CGI', '${CGI_CFLAGS}', '${CGI_LIBS}', << 'EOF');
 #include <libcgi/cgi.h>
 

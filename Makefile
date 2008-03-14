@@ -1,6 +1,7 @@
 TOP=.
 
 PROJECT=	bsdbuild
+VERSION=	2.3
 DIST=		${PROJECT}-${VERSION}
 DISTFILE=	${DIST}.tar.gz
 
@@ -106,8 +107,7 @@ depend:
 release: cleandir
 	(cd .. && rm -fr ${DIST} && \
 	 cp -fRp ${PROJECT} ${DIST} && \
-	 rm -fr ${DIST}/CVS && \
-	 tar -f ${DIST}.tar -c ${DIST} && \
+	 tar --exclude=.svn -f ${DIST}.tar -c ${DIST} && \
 	 gzip -9f ${DIST}.tar && \
 	 md5sum ${DISTFILE} > ${DISTFILE}.md5 && \
 	 sha1sum ${DISTFILE} >> ${DISTFILE}.md5 && \

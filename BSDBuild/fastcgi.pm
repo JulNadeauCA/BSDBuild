@@ -61,12 +61,11 @@ EOF
 		MkPrint('no');
 	MkEndif;
 
-	MkIf('"${HAVE_FASTCGI}" != "no"');
-		MkSaveDefine('HAVE_FASTCGI');
-		MkSaveMK('FASTCGI_CFLAGS');
-		MkSaveMK('FASTCGI_LIBS');
+	MkIf('"${HAVE_FASTCGI}" = "yes"');
+		MkSaveMK('FASTCGI_CFLAGS', 'FASTCGI_LIBS');
+		MkSaveDefine('FASTCGI_CFLAGS', 'FASTCGI_LIBS');
 	MkElse;
-		MkSaveUndef('HAVE_FASTCGI');
+		MkSaveUndef('HAVE_FASTCGI', 'FASTCGI_CFLAGS', 'FASTCGI_LIBS');
 	MkEndif;
 }
 

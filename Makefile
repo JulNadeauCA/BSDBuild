@@ -7,7 +7,7 @@ DISTFILE=	${DIST}.tar.gz
 
 SHARE=	hstrip.pl mkdep mkify.pl mkconfigure.pl mkprojfiles.pl \
 	mkconcurrent.pl manlinks.pl cmpfiles.pl \
-	get-version.pl get-release.pl \
+	get-version.pl get-release.pl ml.xsl \
 	build.common.mk build.dep.mk build.lib.mk build.man.mk \
 	build.perl.mk build.prog.mk build.subdir.mk build.www.mk \
 	build.po.mk build.doc.mk build.den.mk build.proj.mk

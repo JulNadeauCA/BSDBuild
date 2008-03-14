@@ -119,6 +119,17 @@ BEGIN
 		my $dest = join('/', $mk, $f);
 
 		MKCopy($f, $dir);
+
+		if ($type eq 'www') {
+			mkdir('xsl');
+	    		open(IN, $dir.'/ml.xsl') || die "$dir/ml.xsl: $!";
+	    		open(OUT, '>xsl/ml.xsl') || die "xsl/ml.xsl: $!";
+			foreach my $l (<IN>) {
+				print OUT $l;
+			}
+			close(OUT);
+			close(IN);
+		}
 	}
 
 	MKCopy('mkdep', $dir);

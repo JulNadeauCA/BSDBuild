@@ -56,7 +56,6 @@ OBJS?=none
 POBJS?=none
 SHOBJS?=none
 CONF?=none
-CONFDIR?=
 CONF_OVERWRITE?=No
 CLEANFILES?=
 
@@ -325,9 +324,9 @@ install-prog:
 	    fi; \
 	fi
 	@if [ "${CONF}" != "none" ]; then \
-            if [ ! -d "${CONFDIR}" ]; then \
-                echo "${INSTALL_DATA_DIR} ${CONFDIR}"; \
-                ${SUDO} ${INSTALL_DATA_DIR} ${CONFDIR}; \
+            if [ ! -d "${SYSCONFDIR}" ]; then \
+                echo "${INSTALL_DATA_DIR} ${SYSCONFDIR}"; \
+                ${SUDO} ${INSTALL_DATA_DIR} ${SYSCONFDIR}; \
             fi; \
 	    if [ "${CONF_OVERWRITE}" != "Yes" ]; then \
 	        echo "+----------------"; \
@@ -335,17 +334,17 @@ install-prog:
 	        echo "| will not be overwritten:"; \
 	        echo "|"; \
 	        for F in ${CONF}; do \
-	            if [ -e "${CONFDIR}/$$F" ]; then \
+	            if [ -e "${SYSCONFDIR}/$$F" ]; then \
 	                echo "| - $$F"; \
 	            else \
-	                ${SUDO} ${INSTALL_DATA} $$F ${CONFDIR}; \
+	                ${SUDO} ${INSTALL_DATA} $$F ${SYSCONFDIR}; \
 	            fi; \
 	        done; \
 	        echo "+----------------"; \
 	    else \
 	        for F in ${CONF}; do \
-	            echo "${INSTALL_DATA} $$F ${CONFDIR}"; \
-	            ${SUDO} ${INSTALL_DATA} $$F ${CONFDIR}; \
+	            echo "${INSTALL_DATA} $$F ${SYSCONFDIR}"; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${SYSCONFDIR}; \
 	        done; \
 	    fi; \
 	fi
@@ -364,9 +363,13 @@ deinstall-prog:
 	@if [ "${CONF}" != "none" ]; then \
 	    echo "+----------------"; \
 	    echo "| To completely deinstall ${PROG} you need to perform."; \
-	    echo "| this step as root:"; \
+	    echo "| the following steps as root:"; \
 	    echo "|"; \
-	    echo "|           rm -fR ${CONFDIR}"; \
+	    for F in ${CONF}; do \
+	        if [ -e "${SYSCONFDIR}/$$F" ]; then \
+	            echo "| rm -f $$F"; \
+	        fi; \
+	    done; \
 	    echo "|"; \
 	    echo "| Do not do this if you plan on re-installing ${PROG}"; \
 	    echo "| at some future time."; \

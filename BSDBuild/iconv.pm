@@ -42,6 +42,29 @@ sub Test
 
 int main(int argc, char *argv[])
 {
+	char *inbuf = "foo";
+	size_t inlen = strlen(inbuf), rv;
+	char *outbuf = malloc(3);
+	size_t outbuflen = 3;
+	iconv_t cd;
+
+	cd = iconv_open("ISO-8859-1", "UTF-8");
+	rv = iconv(cd, &inbuf, &inlen, &outbuf, &outbuflen);
+	if (rv == (size_t)-1 && errno == E2BIG) {
+	}
+	iconv_close(cd);
+	return (0);
+}
+EOF
+	my $testConst = << "EOF";
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <iconv.h>
+
+int main(int argc, char *argv[])
+{
 	const char *inbuf = "foo";
 	size_t inlen = strlen(inbuf), rv;
 	char *outbuf = malloc(3);
@@ -59,7 +82,8 @@ EOF
 	MkDefine('ICONV_CFLAGS', '');
 	MkDefine('ICONV_LIBS', '');
 
-	MkCompileC('HAVE_ICONV', '${ICONV_CFLAGS}', '${ICONV_LIBS}', $test);
+	MkCompileC('HAVE_ICONV', '${ICONV_CFLAGS} -Wno-cast-qual', '${ICONV_LIBS}',
+	           $test);
 	MkIf('"${HAVE_ICONV}" = "no"');
 		MkPrintN('checking for iconv() in -liconv...');
 		foreach my $pfx (@prefixes) {
@@ -68,14 +92,22 @@ EOF
 			    MkDefine('ICONV_LIBS', "-L$pfx/lib -liconv");
 			MkEndif;
 		}
-		MkCompileC('HAVE_ICONV', '${ICONV_CFLAGS}', '${ICONV_LIBS}', $test);
+		MkCompileC('HAVE_ICONV', '${ICONV_CFLAGS} -Wno-cast-qual',
+		           '${ICONV_LIBS}', $test);
 		MkIf('"${HAVE_ICONV}" = "yes"');
 			MkSaveDefine('ICONV_CFLAGS', 'ICONV_LIBS');
 			MkSaveMK('ICONV_CFLAGS', 'ICONV_LIBS');
 		MkEndif;
+
 	MkElse;
 			MkSaveDefine('ICONV_CFLAGS', 'ICONV_LIBS');
 			MkSaveMK('ICONV_CFLAGS', 'ICONV_LIBS');
+	MkEndif;
+
+	MkIf('"${HAVE_ICONV}" = "yes"');
+		MkPrintN('checking whether iconv() is const-correct...');
+		MkCompileC('HAVE_ICONV_CONST', '${ICONV_CFLAGS} -Wcast-qual -Werror',
+		           '${ICONV_LIBS}', $testConst);
 	MkEndif;
 }
 

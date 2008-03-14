@@ -94,20 +94,26 @@ EOF
 		}
 		MkCompileC('HAVE_ICONV', '${ICONV_CFLAGS} -Wno-cast-qual',
 		           '${ICONV_LIBS}', $test);
-		MkIf('"${HAVE_ICONV}" = "yes"');
-			MkSaveDefine('ICONV_CFLAGS', 'ICONV_LIBS');
-			MkSaveMK('ICONV_CFLAGS', 'ICONV_LIBS');
+		MkIf('"${HAVE_ICONV}" != "yes"');
+			MkPrintN('checking for iconv() in -liconv (const)...');
+			MkCompileC('HAVE_ICONV', '${ICONV_CFLAGS} -Wno-cast-qual',
+			           '${ICONV_LIBS}', $testConst);
 		MkEndif;
-
 	MkElse;
-			MkSaveDefine('ICONV_CFLAGS', 'ICONV_LIBS');
-			MkSaveMK('ICONV_CFLAGS', 'ICONV_LIBS');
+			MkPrintN('checking for iconv() with const...');
+			MkCompileC('HAVE_ICONV', '${ICONV_CFLAGS} -Wno-cast-qual',
+			           '${ICONV_LIBS}', $testConst);
 	MkEndif;
+		
+	MkSaveDefine('ICONV_CFLAGS', 'ICONV_LIBS');
+	MkSaveMK('ICONV_CFLAGS', 'ICONV_LIBS');
 
 	MkIf('"${HAVE_ICONV}" = "yes"');
 		MkPrintN('checking whether iconv() is const-correct...');
 		MkCompileC('HAVE_ICONV_CONST', '${ICONV_CFLAGS} -Wcast-qual -Werror',
 		           '${ICONV_LIBS}', $testConst);
+	MkElse;
+		MkSaveUndef('HAVE_ICONV_CONST');
 	MkEndif;
 }
 

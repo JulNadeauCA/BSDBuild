@@ -59,6 +59,10 @@ CONF?=none
 CONF_OVERWRITE?=No
 CLEANFILES?=
 
+CTAGS?=
+CTAGSFLAGS?=
+DPADD+=prog-tags
+
 all: all-subdir ${PROG}
 install: install-prog install-subdir
 deinstall: deinstall-prog deinstall-subdir
@@ -282,7 +286,7 @@ clean-prog:
 	fi
 
 cleandir-prog:
-	rm -f core *.core config.log .depend
+	rm -f core *.core config.log .depend tags
 	if [ -e "./config/prefix.h" ]; then rm -fr ./config; fi
 	if [ -e "Makefile.config" ]; then echo -n >Makefile.config; fi
 
@@ -378,9 +382,21 @@ deinstall-prog:
 
 none:
 
+prog-tags:
+	-@if [ "${CTAGS}" != "" ]; then \
+	    if [ "${SRC}" != "" ]; then \
+	        (cd ${SRC}; \
+		 echo "${CTAGS} ${CTAGSFLAGS} -R"; \
+	         ${CTAGS} ${CTAGSFLAGS} -R); \
+	    else \
+	        echo "${CTAGS} ${CTAGSFLAGS} -R"; \
+	        ${CTAGS} ${CTAGSFLAGS} -R; \
+	    fi; \
+	fi
+
 .PHONY: install deinstall clean cleandir regress depend
 .PHONY: install-prog deinstall-prog clean-prog cleandir-prog
-.PHONY: _prog_objs _prog_pobjs none
+.PHONY: _prog_objs _prog_pobjs prog-tags none
 
 include ${TOP}/mk/build.common.mk
 include ${TOP}/mk/build.dep.mk

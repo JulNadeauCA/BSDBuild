@@ -220,7 +220,7 @@ mdefs = {}
 EOF
 
 	print << 'EOF';
-# Copyright (c) 2001-2007 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2008 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -496,6 +496,21 @@ else
 fi
 echo "ENABLE_NLS=${ENABLE_NLS}" >> Makefile.config
 echo "HAVE_GETTEXT=${HAVE_GETTEXT}" >> Makefile.config
+
+CTAGS=""
+for path in `echo $PATH | sed 's/:/ /g'`; do
+	if [ -x "${path}/ectags" ]; then
+		CTAGS="${path}/ectags"
+	fi
+done
+if [ "${CTAGS}" = "" ]; then
+	for path in `echo $PATH | sed 's/:/ /g'`; do
+		if [ -x "${path}/ctags" ]; then
+			CTAGS="${path}/ctags"
+		fi
+	done
+fi
+echo "CTAGS=${CTAGS}" >> Makefile.config
 
 LIBTOOL_BUNDLED="yes"
 LIBTOOL=\${TOP}/mk/libtool/libtool

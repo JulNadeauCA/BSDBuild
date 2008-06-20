@@ -44,7 +44,7 @@ sub Test
 		# Assume -framework OpenGL was already included.
 		MkDefine('GLU_CFLAGS', '');
 		MkDefine('GLU_LIBS', '-framework GLUT');
-	MkElif q{"$HAVE_MINGW" = "yes"};
+	MkElif q{-e "/usr/lib/w32api/libopengl32.a"};
 		MkDefine('GLU_LIBS', '-lglu32');
 	MkElse;
 		MkDefine('GLU_CFLAGS', '');

@@ -76,7 +76,7 @@ EOF
 	MkIf q{"$SYSTEM" = "Darwin"};
 		MkDefine('OPENGL_CFLAGS', '');
 		MkDefine('OPENGL_LIBS', '-framework OpenGL');
-	MkElif q{"$HAVE_MINGW" = "yes"};
+	MkElif q{-e "/usr/lib/w32api/libopengl32.a"};
 		MkDefine('OPENGL_CFLAGS', '');
 		MkDefine('OPENGL_LIBS', '-lopengl32');
 	MkElse;

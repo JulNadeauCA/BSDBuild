@@ -146,6 +146,7 @@ sub Help
     my $cygwin_opt = pack('A' x 25, split('', '--with-cygwin'));
     my $manpages_opt = pack('A' x 25, split('', '--with-manpages'));
     my $manlinks_opt = pack('A' x 25, split('', '--with-manlinks'));
+    my $ctags_opt = pack('A' x 25, split('', '--with-ctags'));
     my $docs_opt = pack('A' x 25, split('', '--with-docs'));
     my $debug_opt = pack('A' x 25, split('', '--enable-debug'));
 
@@ -167,6 +168,7 @@ sub Help
         "echo \"    $cygwin_opt Add cygwin dependencies under cygwin [no]\"",
         "echo \"    $manpages_opt Manual pages (-mdoc) [yes]\"",
         "echo \"    $manlinks_opt Manual pages links for functions [no]\"",
+        "echo \"    $ctags_opt Automatically generate tag files [no]\"",
         "echo \"    $docs_opt Printable docs (-me/tbl/eqn/pic/refer) [no]\"",
         "echo \"    $debug_opt Include debugging code [no]\"",
 	@HELP);
@@ -498,17 +500,19 @@ echo "ENABLE_NLS=${ENABLE_NLS}" >> Makefile.config
 echo "HAVE_GETTEXT=${HAVE_GETTEXT}" >> Makefile.config
 
 CTAGS=""
-for path in `echo $PATH | sed 's/:/ /g'`; do
-	if [ -x "${path}/ectags" ]; then
-		CTAGS="${path}/ectags"
-	fi
-done
-if [ "${CTAGS}" = "" ]; then
+if [ "${with_ctags}" = "yes" ]; then
 	for path in `echo $PATH | sed 's/:/ /g'`; do
-		if [ -x "${path}/ctags" ]; then
-			CTAGS="${path}/ctags"
+		if [ -x "${path}/ectags" ]; then
+			CTAGS="${path}/ectags"
 		fi
 	done
+	if [ "${CTAGS}" = "" ]; then
+		for path in `echo $PATH | sed 's/:/ /g'`; do
+			if [ -x "${path}/ctags" ]; then
+				CTAGS="${path}/ctags"
+			fi
+		done
+	fi
 fi
 echo "CTAGS=${CTAGS}" >> Makefile.config
 

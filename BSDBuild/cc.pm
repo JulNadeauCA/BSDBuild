@@ -33,8 +33,10 @@ if [ "$CC" = "" ]; then
 	for i in `echo $PATH |sed 's/:/ /g'`; do
 		if [ -x "${i}/cc" ]; then
 			CC="${i}/cc"
+			break
 		elif [ -x "${i}/gcc" ]; then
 			CC="${i}/gcc"
+			break
 		fi
 	done
 	if [ "$CC" = "" ]; then

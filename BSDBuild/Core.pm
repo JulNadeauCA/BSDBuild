@@ -82,6 +82,7 @@ $define=""
 for path in `echo \$PATH | sed 's/:/ /g'`; do
 	if [ -x "\${path}/$bin" ]; then
 		$define=`\${path}/$bin $args`
+		break
 	fi
 done
 EOF
@@ -98,6 +99,7 @@ $define=""
 for path in `echo \$PATH | sed 's/:/ /g'`; do
 	if [ -x "\${path}/$bin" ]; then
 		$define=`\${path}/$bin $args`
+		break
 	fi
 done
 EOF

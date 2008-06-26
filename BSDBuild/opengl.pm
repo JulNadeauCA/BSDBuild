@@ -72,18 +72,24 @@ EOF
 			MkDefine('GL_LIBS', "-L$dir");
 		MkEndif;
 	}
+	MkPrint('yes');
 
 	MkIf q{"$SYSTEM" = "Darwin"};
 		MkDefine('OPENGL_CFLAGS', '');
 		MkDefine('OPENGL_LIBS', '-framework OpenGL');
-	MkElif q{-e "/usr/lib/w32api/libopengl32.a"};
-		MkDefine('OPENGL_CFLAGS', '');
-		MkDefine('OPENGL_LIBS', '-lopengl32');
 	MkElse;
 		MkDefine('OPENGL_CFLAGS', '${GL_CFLAGS}');
-		MkDefine('OPENGL_LIBS', '${GL_LIBS} -lGL');
+		
+		MkPrintN('checking whether -lopengl32 works...');
+		MkCompileC('HAVE_LIBOPENGL32', '${OPENGL_CFLAGS}', '-lopengl32', $code);
+		MkIf '"${HAVE_LIBOPENGL32}" = "yes"';
+			MkDefine('OPENGL_LIBS', '${GL_LIBS} -lopengl32');
+		MkElse;
+			MkDefine('OPENGL_LIBS', '${GL_LIBS} -lGL');
+		MkEndif;
 	MkEndif;
 
+	MkPrintN('checking whether OpenGL works...');
 	MkCompileC('HAVE_OPENGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', $code);
 	MkIf '"${HAVE_OPENGL}" = "yes"';
 		MkSaveMK('OPENGL_CFLAGS', 'OPENGL_LIBS');

@@ -80,7 +80,8 @@ SHARE=	Core.pm \
 	getopt.pm \
 	byte_order.pm \
 	openmgi.pm \
-	iconv.pm
+	iconv.pm \
+	curl.pm
 
 all:
 

@@ -75,6 +75,7 @@ SHARE=	Core.pm \
 	so_peercred.pm \
 	getpeereid.pm \
 	freesg.pm \
+	freesg_m.pm \
 	math_c99.pm \
 	getopt.pm \
 	byte_order.pm \

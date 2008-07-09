@@ -50,6 +50,8 @@ install: install-subdir
 	${SUDO} chmod 755 ${BINDIR}/mkconfigure
 	${SUDO} cp -f mkprojfiles.out ${BINDIR}/mkprojfiles
 	${SUDO} chmod 755 ${BINDIR}/mkprojfiles
+	${SUDO} cp -f h2mandoc.pl ${BINDIR}/h2mandoc
+	${SUDO} chmod 755 ${BINDIR}/h2mandoc
 
 install-links-subdir:
 	@(if [ "${SUBDIR}" = "" ]; then \

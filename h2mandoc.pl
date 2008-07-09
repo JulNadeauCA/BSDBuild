@@ -101,16 +101,18 @@ foreach $_ (split(';', $elines)) {
 	if (/^#/) { next; }
 	if (/^\s*static\s+__inline__
 	      \s+([\w\s]+\s+\*{0,1})\s*([\(\)\w\*\s,]+)/mx ||
-	    /([\w\s]+\s+\*{0,1})\s*([\(\)\w\*\s,]+)/) {
+	    /([\w\s]+\s+\*{0,1})\s*([\(\)\w\*\s,]+)/m) {
 		my $type = $1;
 		my $args = $2;
 		while ($type =~ /\s$/) { chop($type); }
 		$type =~ s/([\w\*]+)\s+([\w\*]+)/$1 $2/;
 		if ($args =~ /^(\w+)\(([\w\*\s,]+)\)$/) {
-			my $al = $2;
+			my $fnName = $1;
+			my $argList = $2;
+			$type =~ s/\n//g;
 			print '.Ft "'.$type."\"\n";
-			print '.Fn '.$1;
-			foreach my $arg (split(',', $al)) {
+			print '.Fn '.$fnName;
+			foreach my $arg (split(',', $argList)) {
 				$arg =~ s/\s*([\w\s]+)\s*/$1/g;
 				print ' "'.$arg.'"';
 			}

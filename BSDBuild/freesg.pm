@@ -42,6 +42,7 @@ sub Test
 		    '${FREESG_LIBS} ${AGAR_LIBS}',
 		           << 'EOF');
 #include <agar/core.h>
+#include <agar/gui.h>
 #include <freesg/sg.h>
 int main(int argc, char *argv[]) {
 	SG *sg;

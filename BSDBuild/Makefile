@@ -81,7 +81,8 @@ SHARE=	Core.pm \
 	byte_order.pm \
 	openmgi.pm \
 	iconv.pm \
-	curl.pm
+	curl.pm \
+	edacious.pm
 
 all:
 

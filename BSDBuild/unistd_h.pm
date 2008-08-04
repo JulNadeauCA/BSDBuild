@@ -29,6 +29,7 @@ sub Test
 {
 	MkCompileC('_MK_HAVE_UNISTD_H', '', '', << 'EOF');
 #include <unistd.h>
+#include <sys/types.h>
 int main(int argc, char *argv[]) {
 	uid_t uid = 0;
 	pid_t pid = 0;

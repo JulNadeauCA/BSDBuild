@@ -234,6 +234,53 @@ EOF
 	}
 }
 
+sub BeginTestHeaders
+{
+	MkDefine('TEST_CFLAGS_ORIG', '${TEST_CFLAGS}');
+	MkDefine('TEST_HEADERS', 'Yes');
+}
+
+sub EndTestHeaders
+{
+	MkDefine('TEST_CFLAGS', '${TEST_CFLAGS_ORIG}');
+	MkDefine('TEST_HEADERS', '');
+}
+
+sub DetectHeaderC
+{
+	my $def = shift;
+
+	print "echo > conftest.c\n";
+	while (my $hdr = shift) {
+		print << "EOF";
+echo "#include $hdr" >> conftest.c
+EOF
+	}
+	print << 'EOF';
+echo "int main (int argc, char *argv[]) { return (0); }" >> conftest.c
+EOF
+	print << 'EOF';
+compile="ok"
+echo "$CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest conftest.c" >>config.log
+$CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest conftest.c 2>>config.log
+if [ $? != 0 ]; then
+	echo "-> failed ($?)" >> config.log
+	compile="failed"
+fi
+rm -f $testdir/conftest conftest.c
+EOF
+	MkIf('"${compile}" = "ok"');
+		MkDefine($def, 'yes');
+		MkSaveDefine($def);
+		MkIf('"${TEST_HEADERS}" = "Yes"');
+			MkDefine('TEST_CFLAGS', "\${TEST_CFLAGS} -D$def");
+		MkEndif;
+	MkElse;
+		MkDefine($def, 'no');
+		MkSaveUndef($def);
+	MkEndif;
+}
+
 sub MkSaveCompileSuccess ($)
 {
 	my $define = shift;
@@ -507,7 +554,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($LUA %TESTS %DESCR MkExecOutput Which MkFail MKSave TryCompile MkCompileC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkAppend MkIf MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN PmComment PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag);
+    @EXPORT = qw($LUA %TESTS %DESCR MkExecOutput Which MkFail MKSave TryCompile MkCompileC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkAppend MkIf MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN PmComment PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag DetectHeaderC BeginTestHeaders EndTestHeaders);
 }
 
 ;1

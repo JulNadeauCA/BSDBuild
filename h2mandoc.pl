@@ -110,13 +110,15 @@ foreach $_ (split(';', $elines)) {
 			my $fnName = $1;
 			my $argList = $2;
 			$type =~ s/\n//g;
-			print '.Ft "'.$type."\"\n";
-			print '.Fn '.$fnName;
-			foreach my $arg (split(',', $argList)) {
-				$arg =~ s/\s*([\w\s]+)\s*/$1/g;
-				print ' "'.$arg.'"';
+			if ($type) {
+				print '.Ft "'.$type."\"\n";
+				print '.Fn '.$fnName;
+				foreach my $arg (split(',', $argList)) {
+					$arg =~ s/\s*([\w\s]+)\s*/$1/g;
+					print ' "'.$arg.'"';
+				}
+				print "\n.Pp\n";
 			}
-			print "\n.Pp\n";
 		}
 	}
 }
@@ -129,5 +131,4 @@ print << 'EOF';
 The
 .Nm
 interface first appeared in FOO 1.3.
-.nr nS 0
 EOF

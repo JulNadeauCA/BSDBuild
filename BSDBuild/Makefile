@@ -82,7 +82,11 @@ SHARE=	Core.pm \
 	openmgi.pm \
 	iconv.pm \
 	curl.pm \
-	edacious.pm
+	edacious.pm \
+	dlopen.pm \
+	dyld.pm \
+	shl_load.pm \
+	float_h.pm
 
 all:
 

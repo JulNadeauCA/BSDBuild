@@ -68,9 +68,11 @@ sub c_define
 sub c_incdir
 {
 	my $dir = shift;
-	
-	MkDefine('CFLAGS', '$CFLAGS -I'.$dir);
-	MkDefine('CXXFLAGS', '$CXXFLAGS -I'.$dir);
+	my $qdir = $dir;
+
+	if ($dir =~ /^\$/) { $qdir = '\"'.$dir.'\"'; }
+	MkDefine('CFLAGS', '$CFLAGS -I'.$qdir);
+	MkDefine('CXXFLAGS', '$CXXFLAGS -I'.$qdir);
 	MkSaveMK('CFLAGS');
 	MkSaveMK('CXXFLAGS');
 
@@ -80,9 +82,10 @@ sub c_incdir
 
 sub c_libdir
 {
-	my $def = shift;
+	my $dir = shift;
 
-	MkDefine('LIBS', '$LIBS -L'.$def);
+	if ($dir =~ /^\$/) { $qdir = '\"'.$dir.'\"'; }
+	MkDefine('LIBS', '$LIBS -L'.$dir);
 	MkSaveMK('LIBS');
 
 	$dir =~ s/\$SRC/\./g;

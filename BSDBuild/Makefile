@@ -75,7 +75,6 @@ SHARE=	Core.pm \
 	so_peercred.pm \
 	getpeereid.pm \
 	freesg.pm \
-	freesg_m.pm \
 	math_c99.pm \
 	getopt.pm \
 	byte_order.pm \
@@ -86,7 +85,8 @@ SHARE=	Core.pm \
 	dlopen.pm \
 	dyld.pm \
 	shl_load.pm \
-	float_h.pm
+	float_h.pm \
+	agar-math.pm
 
 all:
 

@@ -29,24 +29,24 @@ sub Test
 	
 	MkExecOutput('agar-config', '--version', 'AGAR_VERSION');
 	MkExecOutput('agar-vg-config', '--version', 'AGAR_VG_VERSION');
-	MkExecOutput('freesg-config', '--version', 'FREESG_VERSION');
+	MkExecOutput('agar-math-config', '--version', 'AGAR_MATH_VERSION');
 	MkExecOutput('edacious-config', '--version', 'EDACIOUS_VERSION');
 	MkIf('"${AGAR_VERSION}" != "" -a "${AGAR_VG_VERSION}" != "" '.
-	     '-a "${FREESG_VERSION}" != "" -a "${EDACIOUS_VERSION}" != ""');
+	     '-a "${AGAR_MATH_VERSION}" != "" -a "${EDACIOUS_VERSION}" != ""');
 		MkPrint('yes');
 		MkPrintN('checking whether Edacious works...');
 		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');
 		MkExecOutput('agar-vg-config', '--cflags', 'AGAR_VG_CFLAGS');
 		MkExecOutput('agar-vg-config', '--libs', 'AGAR_VG_LIBS');
-		MkExecOutput('freesg-config', '--cflags', 'FREESG_CFLAGS');
-		MkExecOutput('freesg-config', '--libs', 'FREESG_LIBS');
+		MkExecOutput('agar-math-config', '--cflags', 'AGAR_MATH_CFLAGS');
+		MkExecOutput('agar-math-config', '--libs', 'AGAR_MATH_LIBS');
 		MkExecOutput('edacious-config', '--cflags', 'EDACIOUS_CFLAGS');
 		MkExecOutput('edacious-config', '--libs', 'EDACIOUS_LIBS');
 		MkCompileC('HAVE_EDACIOUS',
-		    '${EDACIOUS_CFLAGS} ${FREESG_CFLAGS} ${AGAR_VG_CFLAGS} '.
+		    '${EDACIOUS_CFLAGS} ${AGAR_MATH_CFLAGS} ${AGAR_VG_CFLAGS} '.
 			'${AGAR_CFLAGS}',
-		    '${EDACIOUS_LIBS} ${FREESG_LIBS} ${AGAR_VG_LIBS} '.
+		    '${EDACIOUS_LIBS} ${AGAR_MATH_LIBS} ${AGAR_VG_LIBS} '.
 			'${AGAR_LIBS}',
 		           << 'EOF');
 #include <edacious/core.h>
@@ -85,7 +85,7 @@ BEGIN
 {
 	$TESTS{'edacious'} = \&Test;
 	$DESCR{'edacious'} = 'Edacious (http://edacious.hypertriton.com/)';
-	$DEPS{'edacious'} = 'cc,agar,agar-vg,freesg';
+	$DEPS{'edacious'} = 'cc,agar,agar-vg,agar-math';
 	$LINK{'edacious'} = \&Link;
 }
 

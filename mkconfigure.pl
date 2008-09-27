@@ -70,7 +70,7 @@ sub c_incdir
 	my $dir = shift;
 	my $qdir = $dir;
 
-	if ($dir =~ /^\$/) { $qdir = '\"'.$dir.'\"'; }
+#	if ($dir =~ /^\$/) { $qdir = '\"'.$dir.'\"'; }
 	MkDefine('CFLAGS', '$CFLAGS -I'.$qdir);
 	MkDefine('CXXFLAGS', '$CXXFLAGS -I'.$qdir);
 	MkSaveMK('CFLAGS');
@@ -84,7 +84,7 @@ sub c_libdir
 {
 	my $dir = shift;
 
-	if ($dir =~ /^\$/) { $qdir = '\"'.$dir.'\"'; }
+#	if ($dir =~ /^\$/) { $qdir = '\"'.$dir.'\"'; }
 	MkDefine('LIBS', '$LIBS -L'.$dir);
 	MkSaveMK('LIBS');
 
@@ -428,7 +428,19 @@ for arg
 do
 	echo "Argument: $arg" >> config.log
 done
-mkdir config 1>/dev/null 2>&1
+if [ -e "config" ]; then
+	if [ -f "config" ]; then
+		echo "File ./config is in the way. Please remove it first."
+		exit 1;
+	else
+		rm -fR config;
+	fi
+fi
+mkdir config
+if [ $? != 0 ]; then
+	echo "Could not create ./config/ directory."
+	exit 1
+fi
 
 HAVE_MANDOC="no"
 NROFF=""

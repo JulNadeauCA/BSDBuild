@@ -86,7 +86,8 @@ SHARE=	Core.pm \
 	dyld.pm \
 	shl_load.pm \
 	float_h.pm \
-	agar-math.pm
+	agar-math.pm \
+	percgi.pm
 
 all:
 

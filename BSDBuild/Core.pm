@@ -281,7 +281,7 @@ EOF
 
 sub TryCompile
 {
-	my $define = shift;
+	my ($define, $code) = @_;
 
 	print << "EOF";
 MK_CACHED="No"

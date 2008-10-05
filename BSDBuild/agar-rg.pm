@@ -29,8 +29,8 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	MkExecOutput('agar-config', '--version', 'AGAR_VERSION');
-	MkExecOutput('agar-rg-config', '--version', 'AGAR_RG_VERSION');
+	MkExecOutputUnique('agar-config', '--version', 'AGAR_VERSION');
+	MkExecOutputUnique('agar-rg-config', '--version', 'AGAR_RG_VERSION');
 	MkIf('"${AGAR_VERSION}" != "" -a "${AGAR_RG_VERSION}" != ""');
 		MkPrint('yes');
 		MkPrintN('checking whether agar-rg works...');

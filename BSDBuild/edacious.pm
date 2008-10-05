@@ -27,10 +27,10 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	MkExecOutput('agar-config', '--version', 'AGAR_VERSION');
-	MkExecOutput('agar-vg-config', '--version', 'AGAR_VG_VERSION');
-	MkExecOutput('agar-math-config', '--version', 'AGAR_MATH_VERSION');
-	MkExecOutput('edacious-config', '--version', 'EDACIOUS_VERSION');
+	MkExecOutputUnique('agar-config', '--version', 'AGAR_VERSION');
+	MkExecOutputUnique('agar-vg-config', '--version', 'AGAR_VG_VERSION');
+	MkExecOutputUnique('agar-math-config', '--version', 'AGAR_MATH_VERSION');
+	MkExecOutputUnique('edacious-config', '--version', 'EDACIOUS_VERSION');
 	MkIf('"${AGAR_VERSION}" != "" -a "${AGAR_VG_VERSION}" != "" '.
 	     '-a "${AGAR_MATH_VERSION}" != "" -a "${EDACIOUS_VERSION}" != ""');
 		MkPrint('yes');

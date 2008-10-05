@@ -28,8 +28,8 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	MkExecOutput('agar-config', '--version', 'AGAR_VERSION');
-	MkExecOutput('agar-dev-config', '--version', 'AGAR_DEV_VERSION');
+	MkExecOutputUnique('agar-config', '--version', 'AGAR_VERSION');
+	MkExecOutputUnique('agar-dev-config', '--version', 'AGAR_DEV_VERSION');
 	MkIf('"${AGAR_VERSION}" != "" -a "${AGAR_DEV_VERSION}" != ""');
 		MkPrint('yes');
 		MkPrintN('checking whether agar-dev works...');

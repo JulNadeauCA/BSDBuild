@@ -29,7 +29,7 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	MkExecOutput('agar-config', '--version', 'AGAR_VERSION');
+	MkExecOutputUnique('agar-config', '--version', 'AGAR_VERSION');
 	MkIf('"${AGAR_VERSION}" != ""');
 		MkPrint('yes');
 		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');

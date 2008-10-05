@@ -27,7 +27,7 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	MkExecOutput('agar-core-config', '--version', 'AGAR_CORE_VERSION');
+	MkExecOutputUnique('agar-core-config', '--version', 'AGAR_CORE_VERSION');
 	MkIf('"${AGAR_CORE_VERSION}" != ""');
 		MkPrint('yes');
 		MkExecOutput('agar-core-config', '--cflags', 'AGAR_CORE_CFLAGS');

@@ -142,7 +142,10 @@ sub Help
     my $infodir_opt = pack('A' x 25, split('', '--infodir'));
     my $srcdir_opt = pack('A' x 25, split('', '--srcdir'));
     my $testdir_opt = pack('A' x 25, split('', '--testdir'));
+
+    my $cache_opt = pack('A' x 25, split('', '--cache'));
     my $help_opt = pack('A' x 25, split('', '--help'));
+
     my $nls_opt = pack('A' x 25, split('', '--enable-nls'));
     my $gettext_opt = pack('A' x 25, split('', '--with-gettext'));
     my $libtool_opt = pack('A' x 25, split('', '--with-libtool'));
@@ -151,6 +154,7 @@ sub Help
     my $manlinks_opt = pack('A' x 25, split('', '--with-manlinks'));
     my $ctags_opt = pack('A' x 25, split('', '--with-ctags'));
     my $docs_opt = pack('A' x 25, split('', '--with-docs'));
+    
     my $debug_opt = pack('A' x 25, split('', '--enable-debug'));
 
     my $regs = join("\n",
@@ -164,15 +168,15 @@ sub Help
         "echo \"    $infodir_opt Info directory [\$PREFIX/share/info]\"",
         "echo \"    $srcdir_opt Source tree for concurrent build [.]\"",
         "echo \"    $testdir_opt Directory in which to execute tests [.]\"",
-        "echo \"    $help_opt Display this message\"",
-        "echo \"    $nls_opt Native Language Support [no]\"",
-        "echo \"    $gettext_opt Use gettext tools (msgmerge, ...) [check]\"",
-        "echo \"    $libtool_opt Specify path to libtool [bundled]\"",
-        "echo \"    $cygwin_opt Add cygwin dependencies under cygwin [no]\"",
+        "echo \"    $cache_opt Cache directory for test results [none]\"",
         "echo \"    $manpages_opt Manual pages (-mdoc) [yes]\"",
         "echo \"    $manlinks_opt Manual pages links for functions [no]\"",
         "echo \"    $ctags_opt Automatically generate tag files [no]\"",
         "echo \"    $docs_opt Printable docs (-me/tbl/eqn/pic/refer) [no]\"",
+        "echo \"    $libtool_opt Specify path to libtool [use bundled]\"",
+        "echo \"    $cygwin_opt Add cygwin dependencies under cygwin [no]\"",
+        "echo \"    $nls_opt Native Language Support [no]\"",
+        "echo \"    $gettext_opt Use gettext tools [check]\"",
         "echo \"    $debug_opt Include debugging code [no]\"",
 	@HELP);
 
@@ -328,6 +332,9 @@ do
 	    ;;
 	--testdir=*)
 	    testdir=$optarg
+	    ;;
+	--cache=*)
+	    cache=$optarg
 	    ;;
 	*)
 	    echo "invalid argument: $arg"

@@ -29,8 +29,8 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	MkExecOutput('agar-config', '--version', 'AGAR_VERSION');
-	MkExecOutput('agar-map-config', '--version', 'AGAR_MAP_VERSION');
+	MkExecOutputUnique('agar-config', '--version', 'AGAR_VERSION');
+	MkExecOutputUnique('agar-map-config', '--version', 'AGAR_MAP_VERSION');
 	MkIf('"${AGAR_VERSION}" != "" -a "${AGAR_MAP_VERSION}" != ""');
 		MkPrint('yes');
 		MkPrintN('checking whether agar-map works...');

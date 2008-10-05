@@ -29,7 +29,7 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	MkExecOutput('agar-net-config', '--version', 'AGAR_NET_VERSION');
+	MkExecOutputUnique('agar-net-config', '--version', 'AGAR_NET_VERSION');
 	MkIf('"${AGAR_NET_VERSION}" != ""');
 		MkPrint('yes');
 		MkExecOutput('agar-net-config', '--cflags', 'AGAR_NET_CFLAGS');

@@ -145,7 +145,7 @@ main(int argc, char *argv[]) {
 }
 EOF
 	print << 'EOF';
-if [ "${compile}" = "ok" ]; then
+if [ "${MK_COMPILE_STATUS}" = "OK" ]; then
 	if [ "${with_cygwin}" != "yes" ]; then
 		CXXFLAGS="$CXXFLAGS -mno-cygwin"
 		echo "CXXFLAGS=$CXXFLAGS" >> Makefile.config

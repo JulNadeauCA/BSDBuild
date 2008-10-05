@@ -76,7 +76,7 @@ main(int argc, char *argv[])
 	return (u.c[sizeof (long) - 1] == 1);
 }
 EOF
-			MkIf('"${compile}" = "failed"');
+			MkIf('"${MK_COMPILE_STATUS}" != "OK"');
 				MkFail('Unable to determine byte order');
 			MkEndif;
 			MkIf('"${_MK_LITTLE_ENDIAN}" = "no"');

@@ -350,16 +350,16 @@ EOF
 echo "int main (int argc, char *argv[]) { return (0); }" >> conftest.c
 EOF
 	print << 'EOF';
-compile="ok"
+MK_COMPILE_STATUS="OK"
 echo "$CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest conftest.c" >>config.log
 $CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest conftest.c 2>>config.log
 if [ $? != 0 ]; then
 	echo "-> failed ($?)" >> config.log
-	compile="failed"
+	MK_COMPILE_STATUS="FAIL($?)"
 fi
 rm -f $testdir/conftest conftest.c
 EOF
-	MkIf('"${compile}" = "ok"');
+	MkIf('"${MK_COMPILE_STATUS}" = "OK"');
 		MkDefine($def, 'yes');
 		MkSaveDefine($def);
 		MkIf('"${TEST_HEADERS}" = "Yes"');
@@ -401,30 +401,52 @@ sub MkCompileAndRunC
 	my ($define, $cflags, $libs, $code) = @_;
 
 	print << "EOF";
-cat << EOT > conftest.c
+MK_CACHED="No"
+MK_COMPILE_STATUS="OK"
+MK_RUN_STATUS="OK"
+if [ "\${cache}" != "" ]; then
+	if [ -e "\${cache}/ctest-$define" ]; then
+		$define=`cat \${cache}/ctest-$define`
+		MK_COMPILE_STATUS=`cat \${cache}/ctest-status-$define`
+		MK_RUN_STATUS=`cat \${cache}/ctest-runstatus-$define`
+		MK_CACHED="Yes"
+	fi
+fi
+if [ "\${MK_CACHED}" = "No" ]; then
+	cat << EOT > conftest.c
 $code
 EOT
+	echo "\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest conftest.c $libs" >>config.log
+	\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest conftest.c $libs 2>>config.log
+	if [ \$? != 0 ]; then
+		echo "-> failed (\$?)" >> config.log
+		MK_COMPILE_STATUS="FAIL(\$?)"
+	fi
+fi
 EOF
-	print << "EOF";
-echo "\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest conftest.c $libs" >>config.log
-\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest conftest.c $libs 2>>config.log
-EOF
-	MkIf('$? != 0');
-		MkPrint('no (compile failed)');
-		MkDefine('compile', 'failed');
-		MkSaveCompileFailed($define);
-	MkElse;
-		MkDefine('compile', 'ok');
+	MkIf('"${MK_COMPILE_STATUS}" = "OK"');
 		print '(cd $testdir && ./conftest) >> config.log', "\n";
 		MkIf('"$?" = "0"');
 			MkPrint('yes');
 			MkSaveCompileSuccess($define);
 		MkElse;
-			MkPrint('no (exec failed)');
+			MkPrint('no (test program failed)');
+			MkDefine('MK_RUN_STATUS', 'FAIL(\$?)');
 			MkSaveCompileFailed($define);
 		MkEndif;
+	MkElse;
+		MkPrint('no (compilation failed)');
+		MkDefine('MK_RUN_STATUS', 'FAIL(\$?)');
+		MkSaveCompileFailed($define);
 	MkEndif;
-	print 'rm -f $testdir/conftest conftest.c', "\n";
+print << "EOF";
+if [ "\${cache}" != "" ]; then
+	echo "\$$define" > \${cache}/ctest-$define
+	echo \$MK_COMPILE_STATUS > \${cache}/ctest-status-$define
+	echo \$MK_RUN_STATUS > \${cache}/ctest-runstatus-$define
+fi
+rm -f \$testdir/conftest conftest.c
+EOF
 }
 
 #
@@ -436,36 +458,50 @@ EOF
 #
 sub MkCompileAndRunCXX
 {
-	my $define = shift;
-	my $cxxflags = shift;
-	my $libs = shift;
-	my $code = shift;
+	my ($define, $cxxflags, $libs, $code) = @_;
 
 	print << "EOF";
-cat << EOT > conftest.cpp
+MK_CACHED="No"
+MK_COMPILE_STATUS="OK"
+if [ "\${cache}" != "" ]; then
+	if [ -e "\${cache}/cxxtest-$define" ]; then
+		$define=`cat \${cache}/cxxtest-$define`
+		MK_COMPILE_STATUS=`cat \${cache}/cxxtest-status-$define`
+		MK_CACHED="Yes"
+	fi
+fi
+if [ "\${MK_CACHED}" = "No" ]; then
+	cat << EOT > conftest.cpp
 $code
 EOT
+	echo "\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $cxxflags -o \$testdir/conftest conftest.cpp $libs" >>config.log
+	\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $cxxflags -o \$testdir/conftest conftest.cpp $libs 2>>config.log
+	if [ \$? != 0 ]; then
+		echo "-> failed (\$?)" >> config.log
+		MK_COMPILE_STATUS="FAIL(\$?)"
+	fi
 EOF
-	print << "EOF";
-echo "\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $cxxflags -o \$testdir/conftest conftest.cpp $libs" >>config.log
-\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $cxxflags -o \$testdir/conftest conftest.cpp $libs 2>>config.log
-EOF
-	MkIf('$? != 0');
-		MkPrint('no (compile failed)');
-		MkDefine('compile', 'failed');
-		MkSaveCompileFailed($define);
-	MkElse;
-		MkDefine('compile', 'ok');
+	MkIf('"${MK_COMPILE_STATUS}" = "OK"');
 		print '(cd $testdir && ./conftest) >> config.log', "\n";
 		MkIf('"$?" = "0"');
 			MkPrint('yes');
 			MkSaveCompileSuccess($define);
 		MkElse;
-			MkPrint('no (exec failed)');
+			MkPrint('no (test program failed)');
 			MkSaveCompileFailed($define);
 		MkEndif;
+	MkElse;
+		MkPrint('no (compilation failed)');
+		MkSaveCompileFailed($define);
 	MkEndif;
-	print 'rm -f $testdir/conftest conftest.cpp', "\n";
+
+print << "EOF";
+if [ "\${cache}" != "" ]; then
+	echo "\$$define" > \${cache}/cxxtest-$define
+	echo \$MK_COMPILE_STATUS > \${cache}/cxxtest-status-$define
+fi
+rm -f \$testdir/conftest conftest.cpp
+EOF
 }
 
 sub TryCompileFlagsC
@@ -641,11 +677,9 @@ fi
 EOF
 	MkIf('"${MK_COMPILE_STATUS}" = "OK"');
 		MkPrint('yes');
-		MkDefine('compile', 'ok');
 		MkSaveCompileSuccess($define);
 	MkElse;
 		MkPrint('no');
-		MkDefine('compile', 'failed');
 		MkSaveCompileFailed($define);
 	MkEndif;
 

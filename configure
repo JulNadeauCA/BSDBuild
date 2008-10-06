@@ -8,7 +8,7 @@
 #
 #     $ cat configure.in | mkconfigure > configure
 #
-# Copyright (c) 2001-2007 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2008 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -112,6 +112,9 @@ do
 	--testdir=*)
 	    testdir=$optarg
 	    ;;
+	--cache=*)
+	    cache=$optarg
+	    ;;
 	*)
 	    echo "invalid argument: $arg"
 	    echo "try ./configure --help"
@@ -169,14 +172,15 @@ echo "    --mandir                  Manpage directory [$PREFIX/share/man]"
 echo "    --infodir                 Info directory [$PREFIX/share/info]"
 echo "    --srcdir                  Source tree for concurrent build [.]"
 echo "    --testdir                 Directory in which to execute tests [.]"
-echo "    --help                    Display this message"
-echo "    --enable-nls              Native Language Support [no]"
-echo "    --with-gettext            Use gettext tools (msgmerge, ...) [check]"
-echo "    --with-libtool            Specify path to libtool [bundled]"
-echo "    --with-cygwin             Add cygwin dependencies under cygwin [no]"
+echo "    --cache                   Cache directory for test results [none]"
 echo "    --with-manpages           Manual pages (-mdoc) [yes]"
 echo "    --with-manlinks           Manual pages links for functions [no]"
+echo "    --with-ctags              Automatically generate tag files [no]"
 echo "    --with-docs               Printable docs (-me/tbl/eqn/pic/refer) [no]"
+echo "    --with-libtool            Specify path to libtool [use bundled]"
+echo "    --with-cygwin             Add cygwin dependencies under cygwin [no]"
+echo "    --enable-nls              Native Language Support [no]"
+echo "    --with-gettext            Use gettext tools [check]"
 echo "    --enable-debug            Include debugging code [no]"
 exit 1
 fi
@@ -195,7 +199,19 @@ for arg
 do
 	echo "Argument: $arg" >> config.log
 done
-mkdir config 1>/dev/null 2>&1
+if [ -e "config" ]; then
+	if [ -f "config" ]; then
+		echo "File ./config is in the way. Please remove it first."
+		exit 1;
+	else
+		rm -fR config;
+	fi
+fi
+mkdir config
+if [ $? != 0 ]; then
+	echo "Could not create ./config/ directory."
+	exit 1
+fi
 
 HAVE_MANDOC="no"
 NROFF=""
@@ -268,6 +284,23 @@ else
 fi
 echo "ENABLE_NLS=${ENABLE_NLS}" >> Makefile.config
 echo "HAVE_GETTEXT=${HAVE_GETTEXT}" >> Makefile.config
+
+CTAGS=""
+if [ "${with_ctags}" = "yes" ]; then
+	for path in `echo $PATH | sed 's/:/ /g'`; do
+		if [ -x "${path}/ectags" ]; then
+			CTAGS="${path}/ectags"
+		fi
+	done
+	if [ "${CTAGS}" = "" ]; then
+		for path in `echo $PATH | sed 's/:/ /g'`; do
+			if [ -x "${path}/ctags" ]; then
+				CTAGS="${path}/ctags"
+			fi
+		done
+	fi
+fi
+echo "CTAGS=${CTAGS}" >> Makefile.config
 
 LIBTOOL_BUNDLED="yes"
 LIBTOOL=\${TOP}/mk/libtool/libtool
@@ -351,11 +384,13 @@ echo "#endif /* SYSCONFDIR */" >> config/sysconfdir.h
 SHAREDIR="$PREFIX/share/bsdbuild"
 echo "SHAREDIR=$SHAREDIR" >>Makefile.config
 echo "mdefs[\"SHAREDIR\"] = \"$SHAREDIR\"" >>configure.lua
-VERSION="2.3"
+VERSION="2.4"
 echo "VERSION=$VERSION" >>Makefile.config
 echo "mdefs[\"VERSION\"] = \"$VERSION\"" >>configure.lua
-RELEASE="Witching Hour"
+RELEASE="Alive in Strange Reality"
 echo "RELEASE=$RELEASE" >>Makefile.config
 echo "mdefs[\"RELEASE\"] = \"$RELEASE\"" >>configure.lua
-echo "Don't forget to run \"make depend\"."
-echo "Don't forget to run \"make depend\"." >> config.log
+echo "*"
+echo "* Use \"make all install\" to compile and install BSDBuild."
+echo "* Use \"make install-links\" to install links to source (for developers)."
+echo "*"

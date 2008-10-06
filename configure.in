@@ -1,5 +1,11 @@
 # Public domain
 
 MDEFINE(SHAREDIR, "$PREFIX/share/bsdbuild");
-MDEFINE(VERSION, "2.3");
-MDEFINE(RELEASE, "Witching Hour");
+MDEFINE(VERSION, "2.4");
+MDEFINE(RELEASE, "Alive in Strange Reality")
+
+echo "*"
+echo "* Use \"make all install\" to compile and install BSDBuild."
+echo "* Use \"make install-links\" to install links to source (for developers)."
+echo "*"
+

@@ -701,6 +701,5 @@ EOF
 			}
 		}
 	}
-	MkPrint("Don't forget to run \\\"make depend\\\".");
 }
 

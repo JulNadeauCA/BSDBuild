@@ -22,165 +22,235 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
 
-sub MKCopy;
+@Scripts = qw(
+	mkdep
+	mkconcurrent.pl
+	manlinks.pl
+	cmpfiles.pl
+	gen-declspecs.pl);
+		  
+@LibtoolFiles = qw(
+	config.guess
+	config.sub
+	configure.in
+	configure
+	ltmain.sh
+	ltconfig);
 
-sub MKCopy
+$SHAREDIR = '%SHAREDIR%';
+%copied = ();
+
+#
+# Install file as-is.
+# 
+sub InstallASIS
 {
-	my ($src, $dir) = @_;
-	my $destmk = join('/', 'mk', $src);
-	my $srcmk = join('/', $dir, $src);
-	my @deps = ();
+	my $file = shift;
+	my $dst = shift;
+	
+	if (!defined($dst)) { $dst = 'mk/'.$file; }
 
-	print "copy: $src\n";
-
-	unless (-f $srcmk) {
-		#print STDERR "src $srcmk: $!\n";
-		return 0;
+	print STDERR " $file";
+	unless (open(SRC, $SHAREDIR.'/'.$file)) {
+		print STDERR "Reading $SHAREDIR/$file: $!\n";
+		return (0);
 	}
-	unless (open(SRC, $srcmk)) {
-		#print STDERR "src $srcmk: $!\n";
+	unless (open(DST, ">$dst")) {
+		print STDERR "Writing to $dst: $!\n";
+		return (0);
+	}
+	print DST <SRC>;
+	close(DST);
+	close(SRC);
+	return (1);
+}
+
+#
+# Copy files needed by <build.www.mk>.
+#
+sub CopyDepsWWW
+{
+	if (!-e 'xsl') {
+		unless (mkdir('xsl', 0755)) {
+			print STDERR "xsl/: $!\n";
+			return (0);
+		}
+	}
+	InstallASIS('ml.xsl', 'xsl/ml.xsl') || return (0);
+	InstallASIS('hstrip.pl') || return (0);
+}
+
+#
+# Copy files needed by <build.lib.mk>.
+#
+sub CopyDepsLIB
+{
+	if (! -e 'mk/libtool') {
+		unless (mkdir('mk/libtool', 0755)) {
+			print STDERR "mk/libtool/: $!\n";
+			return (0);
+		}
+	}
+	foreach my $f (@LibtoolFiles) {
+		InstallASIS('libtool/'.$f) || return (0);
+	}
+	chmod(0755, 'mk/libtool/config.sub') ||
+	    print STDERR "mk/libtool/config.sub: $!\n";
+
+	return (1);
+}
+
+#
+# Install a .mk file. Scan the file for include dependency and install
+# these as well.
+#
+sub InstallMK ($)
+{
+	my ($file) = @_;
+	my $dst = 'mk/'.$file;
+	my $path = $SHAREDIR.'/'.$file;
+	my @deps = ();
+	
+	print STDERR " $file";
+
+	unless (open(SRC, $SHAREDIR.'/'.$file)) {
+		print STDERR "$SHAREDIR/$file: $!\n";
 		return 0;
 	}
 	chop(@src = <SRC>);
 	close(SRC);
 
-	unless (open(DEST, ">$destmk")) {
-		print STDERR "dst $destmk: $!\n";
+	unless (open(DEST, ">$dst")) {
+		print STDERR "dst $dst: $!\n";
 		close(SRC);
 		return 0;
 	}
 	foreach $_ (@src) {
 		print DEST $_, "\n";
 
-		if (/^include .+\/mk\/(.+)$/) {
-			print "$src: depends on $1\n";
-			push @deps, $1;
+		if (/^include\s*.+\/mk\/(.+)\s*$/) {
+			if (!exists($copied{$1})) {
+				push @deps, $1;
+				$copied{$1}++;
+			}
 		}
 	}
 	close(DEST);
 
 	foreach my $dep (@deps) {
-		MKCopy($dep, $dir);
+		InstallMK($dep);
 	}
-	if ($src eq 'build.www.mk') {
-		MKCopy('hstrip.pl', $dir);
+	if ($file eq 'build.www.mk') {
+		CopyDepsWWW() || return (0);
 	}
-	if ($src eq 'build.lib.mk') {
-		mkdir("mk/libtool");
-		for $lf ('config.guess', 'config.sub', 'configure',
-		         'configure.in', 'ltconfig', 'ltmain.sh') {
-			if (open(LF, "$dir/libtool/$lf")) {
-				open(DF, ">mk/libtool/$lf");
-				print DF <LF>;
-				close(DF);
-				close(LF);
-			}
-		}
-		chmod(0755, 'mk/libtool/config.sub');
+	if ($file eq 'build.lib.mk') {
+		CopyDepsLIB() || return (0);
 	}
-
+	
+	$copied{$file}++;
 	return 1;
 }
 
-BEGIN
-{
-	my $dir = '%PREFIX%/share/bsdbuild';
-	my $mk = './mk';
+if (!-d 'mk' && @ARGV < 1) {
+	print STDERR "Usage: $0 [module-name ...]\n";
+	exit(1);
+}
 
-	unless (@ARGV) {
-		print STDERR "Usage: $0 [module1 module2 ...]\n\n";
-		print STDERR "Possible modules include: \n";
-		print STDERR "\tprog     Executable\n";
-		print STDERR "\tlib      Library\n";
-		print STDERR "\tman      Manual pages\n";
-		print STDERR "\twww      HTML pages\n\n";
-		print STDERR "See contents of $dir for full list\n";
+if (!-e 'mk' || @ARGV > 0) {
+	if (! -e 'mk') {
+		unless (mkdir('mk', 0755)) {
+			print STDERR "mk/: $!\n";
+			exit (1);
+		}
+	}
+	print STDERR "Installing in mk:";
+	foreach my $type (@ARGV) {
+		InstallMK("build.${type}.mk");
+	}
+	print STDERR ".\n";
+} else {
+	unless (opendir(MKDIR, 'mk')) {
+		print "mk/: $!\n";
 		exit(1);
 	}
-	if (! -d $mk && !mkdir($mk)) {
-		print STDERR "mkdir $mk: $!\n";
-		exit (1);
-	}
-	if (opendir(MKDIR, $mk)) {
-		foreach my $f (readdir(MKDIR)) {
-			next unless -f "$mk/$f";
-			MKCopy($f, $dir);
-		}
-		closedir(MKDIR);
-	} else {
-		print "opendir $mk: $!\n";
-		exit (1);
-	}
-	my $type = '';
-	foreach my $f (@ARGV) {
-		$type = $f;
-		$f = join('.', 'build', $f, 'mk');
-		my $dest = join('/', $mk, $f);
-
-		MKCopy($f, $dir);
-
-		if ($type eq 'www') {
-			mkdir('xsl');
-	    		open(IN, $dir.'/ml.xsl') || die "$dir/ml.xsl: $!";
-	    		open(OUT, '>xsl/ml.xsl') || die "xsl/ml.xsl: $!";
-			foreach my $l (<IN>) {
-				print OUT $l;
-			}
-			close(OUT);
-			close(IN);
+	print STDERR "Updating mk:";
+	foreach my $f (readdir(MKDIR)) {
+		if ($f =~ /^\./ || -d 'mk/'.$f) { next; }
+		if ($f =~ /^(build\.[\w]+\.mk)$/) {
+			InstallMK($f);
+		} elsif (-e $SHAREDIR.'/'.$f) {
+			InstallASIS($f);
 		}
 	}
+	print STDERR ".\n";
+	closedir(MKDIR);
+}
 
-	MKCopy('mkdep', $dir);
-	MKCopy('mkconcurrent.pl', $dir);
-	MKCopy('mkpremake.pl', $dir);
-	MKCopy('manlinks.pl', $dir);
-	MKCopy('cmpfiles.pl', $dir);
+print STDERR "Installing scripts:";
+foreach my $script (@Scripts) {
+	InstallASIS($script);
+}
+print STDERR ".\n";
 
-	if (!-e 'configure.in' &&
-	    open(CONFIN, '>configure.in')) {
-		print CONFIN << 'EOF';
+if (!-e 'configure.in' &&
+    open(CONFIN, '>configure.in')) {
+	print CONFIN << 'EOF';
 # Public domain
 #
-# Sample BSDbuild configure script source.
-# To generate a configure script, use the command:
+# Sample BSDbuild configure script source. Standard Bourne script fragments
+# and BSDBuild directives are both allowed. See mkconfigure(1) for details.
 #
+# To generate a configure script, use the command:
 #     $ cat configure.in |mkconfigure > configure
 #
 
-# Name and version of the application, written to config/progname.h
-# and config/version.h.
-HDEFINE(PROGNAME, "\"foo\"")
-HDEFINE(VERSION, "\"1.0-beta\"")
+# Name and version of the application. HDEFINE() will write the value of
+# the variable to config/progname.h and config/version.h.
+HDEFINE(PROGNAME, "foo")
+HDEFINE(VERSION, "1.0-beta")
 
-# Codename of the release (optional).
-HDEFINE(RELEASE, "\"Foo\"")
+# An optional codename for the current release.
+HDEFINE(RELEASE, "Foo")
 
-# Register the ${enable_warnings} option.
+# We can insert arbitrary Bourne script.
+echo "Building release: ${RELEASE}"
+
+# Register a ./configure option named "--enable-warnings".
 REGISTER("--enable-warnings",   "Enable compiler warnings [default: no]")
 
 # Check for a suitable C compiler.
 CHECK(cc)
 
-# Output these CFLAGS to Makefile.config.
-MDEFINE(CFLAGS, "$CFLAGS -I$SRC")
+# Add current directory to C include.
+C_INCDIR($SRC)
+# We could have also used:
+# MDEFINE(CFLAGS, "$CFLAGS -I$SRC")
 
-# Set the recommended -Wall switches.
+# Set our preferred -Wall switches.
 if [ "${enable_warnings}" = "yes" ]; then
-        MDEFINE(CFLAGS, "$CFLAGS -Wall -Werror -Wmissing-prototypes")
-        MDEFINE(CFLAGS, "$CFLAGS -Wno-unused")
+	# HAVE_GCC has been set by CHECK(cc).
+	if [ "${HAVE_GCC}" = "yes" ]; then
+		MDEFINE(CFLAGS, "$CFLAGS -Wall -Werror -Wmissing-prototypes")
+		MDEFINE(CFLAGS, "$CFLAGS -Wno-unused")
+	fi
 fi
 EOF
-		system('mkconfigure < configure.in > configure');
-		chmod(0755, 'configure');
-		close(CONFIN);
-	}
+	close(CONFIN);
 
-	if (!-e 'Makefile' &&
-	    open(MAKE, '>Makefile')) {
-		if ($type eq 'prog') {
-			print MAKE << 'EOF';
+	system("$BINDIR/mkconfigure < configure.in > configure");
+	if ($? != 0) {
+		print STDERR "mkconfigure failed\n";
+		exit(1);
+	}
+	chmod(0755, 'configure') || print STDERR "chmod: $!\n";
+}
+
+if (!-e 'Makefile' &&
+    open(MAKE, '>Makefile')) {
+	if ($type eq 'prog') {
+		print MAKE << 'EOF';
 # Sample Makefile for a program.
 
 # Path to parent directory of "mk".
@@ -198,8 +268,8 @@ SRCS=foo.c bar.cc baz.m
 include ${TOP}/Makefile.config
 include ${TOP}/mk/build.prog.mk
 EOF
-		} elsif ($type eq 'lib') {
-			print MAKE << 'EOF';
+	} elsif ($type eq 'lib') {
+		print MAKE << 'EOF';
 # Sample Makefile for a library.
 
 # Path to parent directory of "mk".
@@ -217,8 +287,8 @@ SRCS=	foo.c bar.cc baz.m
 include ${TOP}/Makefile.config
 include ${TOP}/mk/build.lib.mk
 EOF
-		} elsif ($type eq 'www') {
-			print MAKE << 'EOF';
+	} elsif ($type eq 'www') {
+		print MAKE << 'EOF';
 # Sample Makefile for a webpage or website.
 
 # Path to parent directory of "mk".
@@ -234,12 +304,11 @@ HTML=	foo.html bar.html
 
 include ${TOP}/mk/build.www.mk
 EOF
-		}
-		close(MAKE);
 	}
-	if (!-e 'Makefile.config' &&
-	    open(MAKE, '>Makefile.config')) {
-		print MAKE "# File is auto-generated, do not edit\n";
-		close(MAKE);
-	}
+	close(MAKE);
+}
+if (!-e 'Makefile.config' &&
+    open(MAKE, '>Makefile.config')) {
+	print MAKE "# File is auto-generated, do not edit\n";
+	close(MAKE);
 }

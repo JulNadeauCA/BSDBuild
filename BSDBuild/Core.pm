@@ -321,6 +321,7 @@ if [ "\${cache}" != "" ]; then
 	echo "\$$define" > \${cache}/ctest-$define
 	echo \$MK_COMPILE_STATUS > \${cache}/ctest-status-$define
 fi
+rm -f \$testdir/conftest conftest.c
 EOF
 }
 

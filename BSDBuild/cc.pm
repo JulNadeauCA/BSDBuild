@@ -73,6 +73,16 @@ EOF
 	MkIf('"${HAVE_CC_WARNINGS}" = "yes"');
 		MkDefine('TEST_CFLAGS', '-Wall -Werror');
 	MkEndif;
+	
+	MkPrintN('checking for gcc...');
+	MkCompileC('HAVE_GCC', '', '', << 'EOF');
+int main(int argc, char *argv[]) {
+#if !defined(__GNUC__)
+# error "Not GCC"
+#endif
+	return (0);
+}
+EOF
 
 	# Check for floating point support.
 	# TODO representation

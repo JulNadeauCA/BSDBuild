@@ -44,7 +44,7 @@ SHARE=	Core.pm \
 	free_null.pm \
 	agar.pm \
 	agar-core.pm \
-	agar-net.pm \
+	agar-network.pm \
 	agar-rg.pm \
 	agar-vg.pm \
 	agar-map.pm \

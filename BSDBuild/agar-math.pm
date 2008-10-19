@@ -31,7 +31,7 @@ sub Test
 	MkExecOutput('agar-math-config', '--version', 'AGAR_MATH_VERSION');
 	MkIf('"${AGAR_VERSION}" != "" -a "${AGAR_MATH_VERSION}" != ""');
 		MkPrint('yes');
-		MkPrintN('checking whether FreeSG works...');
+		MkPrintN('checking whether Agar-Math works...');
 		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');
 		MkExecOutput('agar-math-config', '--cflags', 'AGAR_MATH_CFLAGS');

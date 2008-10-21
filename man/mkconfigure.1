@@ -105,6 +105,11 @@ This results in the
 flag being added to the compiler command line, but it is also interpreted
 by
 .Xr build.proj.mk 5 .
+.It Ev C_INCPREP(dir)
+(C-style compilers only) Specify a single directory to contain include files.
+The configure script will provide the user with the option of generating
+preprocessed header files into this directory, or replace it by a symlink
+to the source directory.
 .It Ev C_OPTION
 Provide a gcc-style compiler option, such as
 .Ar -Wall ,

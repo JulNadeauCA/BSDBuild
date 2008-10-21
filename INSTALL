@@ -5,7 +5,7 @@ BSDBuild Installation
 To install BSDBuild onto your system, use the following:
 
 	$ ./configure
-	$ make depend all
+	$ make
 	# make install
 
 This will install mkconfigure(1) and mkify(1) on your system.

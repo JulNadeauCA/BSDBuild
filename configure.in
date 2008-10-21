@@ -5,6 +5,7 @@ MDEFINE(VERSION, "2.4");
 MDEFINE(RELEASE, "Alive in Strange Reality")
 
 echo "*"
+echo "* Configuration successful."
 echo "* Use \"make all install\" to compile and install BSDBuild."
 echo "* Use \"make install-links\" to install links to source (for developers)."
 echo "*"

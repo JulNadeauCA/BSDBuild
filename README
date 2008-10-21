@@ -1,3 +1,8 @@
+  __   __  _
+ |__) |_  |  \
+ |__) __| |_ /
+   |   |   |
+   +---+---+------> Build
 
 This is BSDBuild, a self-contained, portable build system in the spirit
 of the traditional 4.4BSD make library files. It allows standard BSD-style

@@ -29,7 +29,8 @@
 	mkconcurrent.pl
 	manlinks.pl
 	cmpfiles.pl
-	gen-declspecs.pl);
+	gen-declspecs.pl
+	gen-includes.pl);
 		  
 @LibtoolFiles = qw(
 	config.guess

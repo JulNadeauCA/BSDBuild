@@ -86,17 +86,11 @@ sub c_incprep
 	my $subdir = shift;
 
 	print << "EOF";
-#
-# Preprocess headers for visibility and calling convention stuff. Developers
-# can use the unpreprocessed headers directly with --includes=link.
-# 
-if [ ! -e "$dir" ]; then
-	mkdir "$dir"
-fi
+if [ ! -e "$dir" ]; then mkdir "$dir"; fi
 if [ "\${includes}" = "link" ]; then
 	echo "* Not preprocessing includes"
 	if [ ! -e "$dir/$subdir" ]; then
-		if [ "\${srcdir}" != "" ]; then
+		if [ "\${SRCDIR}" != "\${BLDDIR}" ]; then
 			ln -s "\$SRC" "$dir/$subdir"
 		else
 			ln -s "\$BLD" "$dir/$subdir"
@@ -105,11 +99,11 @@ if [ "\${includes}" = "link" ]; then
 else
 	if [ ! -e "$dir/$subdir" ]; then
 		\$ECHO_N "* Preprocessing includes..."
-		if [ "\${srcdir}" != "" ]; then
+		if [ "\${SRCDIR}" != "\${BLDDIR}" ]; then
 			(cd \$SRC && perl mk/gen-includes.pl "\$BLD/$dir/$subdir" 1>>\$BLD/config.log 2>&1)
 			cp -fR config $dir/$subdir
 		else
-			perl mk/gen-includes.pl "$dir/$subdir" 1>config.log 2>&1
+			perl mk/gen-includes.pl "$dir/$subdir" 1>>config.log 2>&1
 		fi
 		if [ \$? != 0 ]; then
 			echo "perl mk/gen-includes.pl failed";

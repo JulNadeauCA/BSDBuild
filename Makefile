@@ -5,53 +5,64 @@ VERSION=	2.3
 DIST=		${PROJECT}-${VERSION}
 DISTFILE=	${DIST}.tar.gz
 
-SHARE=	hstrip.pl mkdep mkify.pl mkconfigure.pl mkprojfiles.pl \
-	mkconcurrent.pl manlinks.pl cmpfiles.pl \
-	get-version.pl get-release.pl ml.xsl \
+SCRIPTS=mkconfigure \
+	mkprojfiles \
+	mkify \
+	h2mandoc
+
+SHARE=	hstrip.pl mkdep mkconcurrent.pl manlinks.pl cmpfiles.pl \
+	gen-includes.pl gen-declspecs.pl get-version.pl get-release.pl \
+	ml.xsl \
 	build.common.mk build.dep.mk build.lib.mk build.man.mk \
 	build.perl.mk build.prog.mk build.subdir.mk build.www.mk \
 	build.po.mk build.doc.mk build.den.mk build.proj.mk
+	
 LTFILES=config.guess config.sub configure configure.in ltconfig ltmain.sh
 
 SUBDIR=	BSDBuild man
 
-all:	mkconfigure.out mkprojfiles.out mkify all-subdir
+all: all-subdir ${SCRIPTS}
 
-mkconfigure.out: mkconfigure.pl
-	sed -e s,%PREFIX%,${PREFIX}, -e s,%VERSION%,${VERSION}, \
-	    mkconfigure.pl > mkconfigure.out
+mkconfigure: mkconfigure.pl
+	sed -e s,%PREFIX%,${PREFIX}, \
+	    -e s,%VERSION%,${VERSION}, \
+	    mkconfigure.pl > mkconfigure
 
-mkprojfiles.out: mkprojfiles.pl
-	sed -e s,%PREFIX%,${PREFIX}, -e s,%VERSION%,${VERSION}, \
-	    mkprojfiles.pl > mkprojfiles.out
+mkprojfiles: mkprojfiles.pl
+	sed -e s,%PREFIX%,${PREFIX}, \
+	    -e s,%VERSION%,${VERSION}, \
+	    mkprojfiles.pl > mkprojfiles
 
 mkify: mkify.pl
-	sed s,%PREFIX%,${PREFIX}, mkify.pl > mkify
+	sed -e s,%SHAREDIR%,${SHAREDIR}, \
+	    -e s,%BINDIR%,${BINDIR}, \
+	    mkify.pl > mkify
+
+h2mandoc: h2mandoc.pl
+	sed -e s,%VERSION%,${VERSION}, \
+	    h2mandoc.pl > h2mandoc
 
 install: install-subdir
 	@if [ ! -d "${SHAREDIR}" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}; \
+	    ${SUDO} ${INSTALL_DATA_DIR} "${SHAREDIR}"; \
 	fi
 	@if [ ! -d "${SHAREDIR}/libtool" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/libtool"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}/libtool; \
+	    ${SUDO} ${INSTALL_DATA_DIR} "${SHAREDIR}/libtool"; \
 	fi
 	@for F in ${SHARE}; do \
 	    echo "${INSTALL_DATA} $$F ${SHAREDIR}"; \
-	    ${SUDO} ${INSTALL_DATA} $$F ${SHAREDIR}; \
+	    ${SUDO} ${INSTALL_DATA} $$F "${SHAREDIR}"; \
 	done
 	@for F in ${LTFILES}; do \
 	    echo "${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool"; \
-	    ${SUDO} ${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool; \
+	    ${SUDO} ${INSTALL_DATA} libtool/$$F "${SHAREDIR}/libtool"; \
 	done
-	${SUDO} ${INSTALL_PROG} mkify ${BINDIR}
-	${SUDO} cp -f mkconfigure.out ${BINDIR}/mkconfigure
-	${SUDO} chmod 755 ${BINDIR}/mkconfigure
-	${SUDO} cp -f mkprojfiles.out ${BINDIR}/mkprojfiles
-	${SUDO} chmod 755 ${BINDIR}/mkprojfiles
-	${SUDO} cp -f h2mandoc.pl ${BINDIR}/h2mandoc
-	${SUDO} chmod 755 ${BINDIR}/h2mandoc
+	@for F in ${SCRIPTS}; do \
+	    echo "${INSTALL_PROG} $$F ${BINDIR}"; \
+	    ${SUDO} ${INSTALL_PROG} $$F "${BINDIR}"; \
+	done
 
 install-links-subdir:
 	@(if [ "${SUBDIR}" = "" ]; then \
@@ -72,32 +83,31 @@ install-links-subdir:
 install-links: install-links-subdir
 	@if [ ! -d "${SHAREDIR}" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}; \
+	    ${SUDO} ${INSTALL_DATA_DIR} "${SHAREDIR}"; \
 	fi
 	@if [ ! -d "${SHAREDIR}/libtool" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/libtool"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}/libtool; \
+	    ${SUDO} ${INSTALL_DATA_DIR} "${SHAREDIR}/libtool"; \
 	fi
 	@for F in ${SHARE}; do \
 	    echo "ln -sf `pwd`/$$F ${SHAREDIR}/$$F"; \
-	    ${SUDO} ln -sf `pwd`/$$F ${SHAREDIR}/$$F; \
+	    ${SUDO} ln -sf `pwd`/$$F "${SHAREDIR}/$$F"; \
 	done
 	@for F in ${LTFILES}; do \
 	    echo "${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool"; \
-	    ${SUDO} ${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool; \
+	    ${SUDO} ${INSTALL_DATA} libtool/$$F "${SHAREDIR}/libtool"; \
 	done
-	${SUDO} ${INSTALL_PROG} mkify ${BINDIR}
-	${SUDO} cp -f mkconfigure.out ${BINDIR}/mkconfigure
-	${SUDO} chmod 755 ${BINDIR}/mkconfigure
-	${SUDO} cp -f mkprojfiles.out ${BINDIR}/mkprojfiles
-	${SUDO} chmod 755 ${BINDIR}/mkprojfiles
+	@for F in ${SCRIPTS}; do \
+	    echo "${INSTALL_PROG} $$F.pl ${BINDIR}/$$F"; \
+	    ${SUDO} ${INSTALL_PROG} $$F.pl "${BINDIR}"; \
+	done
 
 cleandir: cleandir-subdir
 	rm -f Makefile.config config.log
 	touch Makefile.config
 
 clean: clean-subdir
-	rm -f mkconfigure.out mkprojfiles.out mkify
+	rm -f ${SCRIPTS}
 
 configure: configure.in
 	cat configure.in | perl mkconfigure.pl > configure

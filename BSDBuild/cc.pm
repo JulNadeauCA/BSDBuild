@@ -40,33 +40,53 @@ if [ "$CC" = "" ]; then
 		fi
 	done
 	if [ "$CC" = "" ]; then
-		echo "Could not find a C compiler, try setting CC."
-		echo "CC is unset and cc/gcc is not in PATH." >> config.log
+		echo "Unable to find a C compiler in PATH. Please set your compiler"
+		echo "explicitely with the CC environment variable."
+		echo "Unable to find a C compiler in PATH." >> config.log
 		exit 1
 	fi
 fi
 
-cat << 'EOT' > cc-test.c
-int
-main(int argc, char *argv[])
-{
-	return (0);
-}
+cat << 'EOT' > conftest.c
+int main(int argc, char *argv[]) { return (0); }
 EOT
 
-$CC -o cc-test cc-test.c 2>>config.log
+$CC -o conftest conftest.c 2>>config.log
 if [ $? != 0 ]; then
     echo "no"
-	echo "The test C program failed to compile."
-	rm -f cc-test cc-test.c
+	echo "Test C program (conftest.c) failed to compile."
+	echo "Test C program (conftest.c) failed to compile." >> config.log
     exit 1
 fi
+
+EXECSUFFIX=""
+for OUTFILE in conftest.exe conftest conftest.*; do
+	if [ -f $OUTFILE ]; then
+		case $OUTFILE in
+		*.c | *.o | *.obj | *.bb | *.bbg | *.d | *.pdb | *.tds | *.xcoff | *.dSYM | *.xSYM )
+			;;
+		*.* )
+			EXECSUFFIX=`expr "$OUTFILE" : '[^.]*\(\..*\)'`
+			break ;;
+		* )
+			break ;;
+		esac;
+    fi
+done
+if [ "$EXECSUFFIX" != "" ]; then
+	echo "Detected executable suffix: $EXECSUFFIX" >> config.log
+fi
+echo "EXECSUFFIX=$EXECSUFFIX" >> Makefile.config
+echo "#ifndef EXECSUFFIX" > config/execsuffix.h
+echo "#define EXECSUFFIX \"${EXECSUFFIX}\"" >> config/execsuffix.h
+echo "#endif /* EXECSUFFIX */" >> config/execsuffix.h
+
 echo "yes"
-rm -f cc-test cc-test.c
+rm -f conftest.c conftest$EXECSUFFIX
 TEST_CFLAGS=""
 EOF
-	
-	MkPrintN('checking for compiler warnings...');
+
+	MkPrintN('checking for compiler warning options...');
 	MkCompileC('HAVE_CC_WARNINGS', '-Wall -Werror', '', << 'EOF');
 int main(int argc, char *argv[]) { return (0); }
 EOF
@@ -203,8 +223,11 @@ EOF
 	print << 'EOF';
 if [ "${MK_COMPILE_STATUS}" = "OK" ]; then
 	if [ "${with_cygwin}" != "yes" ]; then
+		echo "* Disabling cygwin compatibility layer"
 		CFLAGS="$CFLAGS -mno-cygwin"
 		echo "CFLAGS=$CFLAGS" >> Makefile.config
+	else
+		echo "* Using cygwin compatibility layer"
 	fi
 fi
 EOF

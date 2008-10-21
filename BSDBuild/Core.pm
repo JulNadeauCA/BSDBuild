@@ -321,7 +321,7 @@ if [ "\${cache}" != "" ]; then
 	echo "\$$define" > \${cache}/ctest-$define
 	echo \$MK_COMPILE_STATUS > \${cache}/ctest-status-$define
 fi
-rm -f \$testdir/conftest conftest.c
+rm -f conftest.c \$testdir/conftest\$EXECSUFFIX
 EOF
 }
 
@@ -358,7 +358,7 @@ if [ $? != 0 ]; then
 	echo "-> failed ($?)" >> config.log
 	MK_COMPILE_STATUS="FAIL($?)"
 fi
-rm -f $testdir/conftest conftest.c
+rm -f conftest.c $testdir/conftest$EXECSUFFIX
 EOF
 	MkIf('"${MK_COMPILE_STATUS}" = "OK"');
 		MkDefine($def, 'yes');
@@ -426,7 +426,7 @@ EOT
 fi
 EOF
 	MkIf('"${MK_COMPILE_STATUS}" = "OK"');
-		print '(cd $testdir && ./conftest) >> config.log', "\n";
+		print '(cd $testdir && ./conftest$EXECSUFFIX) >> config.log', "\n";
 		MkIf('"$?" = "0"');
 			MkPrint('yes');
 			MkSaveCompileSuccess($define);
@@ -446,7 +446,7 @@ if [ "\${cache}" != "" ]; then
 	echo \$MK_COMPILE_STATUS > \${cache}/ctest-status-$define
 	echo \$MK_RUN_STATUS > \${cache}/ctest-runstatus-$define
 fi
-rm -f \$testdir/conftest conftest.c
+rm -f conftest.c \$testdir/conftest$EXECSUFFIX
 EOF
 }
 
@@ -483,7 +483,7 @@ EOT
 	fi
 EOF
 	MkIf('"${MK_COMPILE_STATUS}" = "OK"');
-		print '(cd $testdir && ./conftest) >> config.log', "\n";
+		print '(cd $testdir && ./conftest$EXECSUFFIX) >> config.log', "\n";
 		MkIf('"$?" = "0"');
 			MkPrint('yes');
 			MkSaveCompileSuccess($define);
@@ -501,7 +501,7 @@ if [ "\${cache}" != "" ]; then
 	echo "\$$define" > \${cache}/cxxtest-$define
 	echo \$MK_COMPILE_STATUS > \${cache}/cxxtest-status-$define
 fi
-rm -f \$testdir/conftest conftest.cpp
+rm -f conftest.cpp \$testdir/conftest\$EXECSUFFIX
 EOF
 }
 
@@ -545,7 +545,7 @@ if [ "\${cache}" != "" ]; then
 	echo "\$$define" > \${cache}/ctest-$define
 	echo \$MK_COMPILE_STATUS > \${cache}/ctest-status-$define
 fi
-rm -f \$testdir/conftest conftest.c
+rm -f conftest.c \$testdir/conftest$EXECSUFFIX
 EOF
 }
 
@@ -588,7 +588,7 @@ if [ "\${cache}" != "" ]; then
 	echo "\$$define" > \${cache}/cxxtest-$define
 	echo \$MK_COMPILE_STATUS > \${cache}/cxxtest-status-$define
 fi
-rm -f \$testdir/conftest conftest.cpp
+rm -f conftest.cpp \$testdir/conftest\$EXECSUFFIX
 EOF
 }
 
@@ -639,7 +639,7 @@ if [ "\${cache}" != "" ]; then
 	echo "\$$define" > \${cache}/ctest-$define
 	echo \$MK_COMPILE_STATUS > \${cache}/ctest-status-$define
 fi
-rm -f \$testdir/conftest conftest.c
+rm -f conftest.c \$testdir/conftest\$EXECSUFFIX
 EOF
 }
 
@@ -689,7 +689,7 @@ if [ "\${cache}" != "" ]; then
 	echo "\$$define" > \${cache}/cxxtest-$define
 	echo \$MK_COMPILE_STATUS > \${cache}/cxxtest-status-$define
 fi
-rm -f \$testdir/conftest conftest.cpp
+rm -f conftest.cpp \$testdir/conftest\$EXECSUFFIX
 EOF
 }
 

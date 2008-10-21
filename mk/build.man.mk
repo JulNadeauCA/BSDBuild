@@ -50,6 +50,7 @@ MANS=${MAN1} ${MAN2} ${MAN3} ${MAN4} ${MAN5} ${MAN6} ${MAN7} ${MAN8} ${MAN9}
 MANLINKS?=
 NOMAN?=
 NOMANLINKS?=
+CLEANFILES?=
 
 all: all-subdir preformat-man
 install: install-man-dirs install-man install-subdir
@@ -259,6 +260,10 @@ clean-man:
 	     else \
 	         rm -f ${CATMAN9}; \
 	     fi; \
+	fi
+	@if [ "${CLEANFILES}" != "" ]; then \
+	    echo "rm -f ${CLEANFILES}"; \
+	    rm -f ${CLEANFILES}; \
 	fi
 
 install-man-dirs:
@@ -555,7 +560,7 @@ man:
 	fi
 
 manlinks: Makefile
-	echo -n > .manlinks.mk
+	echo > .manlinks.mk
 	@if [ "${MAN2}" != "" ]; then \
 		for F in ${MAN2}; do \
 			echo "cat $$F |perl ${TOP}/mk/manlinks.pl $$F >>.manlinks.mk"; \

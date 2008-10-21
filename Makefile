@@ -103,8 +103,8 @@ install-links: install-links-subdir
 	done
 
 cleandir: cleandir-subdir
-	rm -f Makefile.config config.log
-	touch Makefile.config
+	echo > Makefile.config
+	rm -fR config.log config configure.lua
 
 clean: clean-subdir
 	rm -f ${SCRIPTS}

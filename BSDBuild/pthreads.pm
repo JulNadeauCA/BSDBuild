@@ -134,6 +134,7 @@ sub TestPthreadsStd
 			# Fallback to scanning libs and include files.
 			MkDefine('PTHREADS_CFLAGS', '');
 			MkDefine('PTHREADS_LIBS', '');
+			MkPrintN('checking for -pthread (common paths)...');
 			SearchIncludes('PTHREADS_CFLAGS');
 			SearchLibs('PTHREADS_LIBS');
 			MkCompileC('HAVE_PTHREADS',
@@ -225,6 +226,7 @@ sub TestPthreadsXOpenExt
 	MkElse;
 		# Fallback to scanning libraries and includes.
 		MkDefine('PTHREADS_XOPEN_LIBS', '');
+		MkPrintN('checking for the X/Open Threads Extension (common paths)...');
 		SearchLibs('PTHREADS_XOPEN_LIBS');
 		SearchIncludes('PTHREADS_XOPEN_CFLAGS');
 		MkCompileC('HAVE_PTHREADS_XOPEN',

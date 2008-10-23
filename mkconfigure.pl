@@ -77,6 +77,7 @@ sub c_incdir
 	MkSaveMK('CXXFLAGS');
 
 	$dir =~ s/\$SRC/\./g;
+	$dir =~ s/\$BLD/\./g;
 	PmIncludePath($dir);
 }
 

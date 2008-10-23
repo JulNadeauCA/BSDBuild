@@ -97,7 +97,7 @@ EOF
 			if (-e $incl) {
 				print "dofile(\"$incl\")\n";
 			} else {
-				print STDERR "Ignoring include: $incl: $!\n";
+#				print STDERR "Ignoring include: $incl: $!\n";
 			}
 		}
 	}
@@ -137,7 +137,7 @@ EOF
 			#	}
 			#}
 			if (!$handled) {
-				print STDERR "Ignoring CFLAGS: $cflag\n";
+#				print STDERR "Ignoring CFLAGS: $cflag\n";
 			}
 		}
 	}
@@ -152,7 +152,7 @@ EOF
 			#	}
 			#}
 			if (!$handled) {
-				print STDERR "Ignoring LIBS: $lib\n";
+#				print STDERR "Ignoring LIBS: $lib\n";
 			}
 		}
 	}

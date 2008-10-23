@@ -29,6 +29,7 @@ use Getopt::Long;
 our $EmulOS = undef;
 our $EmulOSRel = undef;
 our $EmulArch = undef;
+our $EmulEnv = undef;
 
 sub mdefine
 {
@@ -76,8 +77,13 @@ sub c_incdir
 	MkSaveMK('CFLAGS');
 	MkSaveMK('CXXFLAGS');
 
-	$dir =~ s/\$SRC/\./g;
-	$dir =~ s/\$BLD/\./g;
+	if ($EmulEnv eq 'vs2005') {
+		$dir =~ s/\$SRC/\$\(SolutionDir\)/g;
+		$dir =~ s/\$BLD/\$\(SolutionDir\)/g;
+	} else {
+		$dir =~ s/\$SRC/\.\./g;
+		$dir =~ s/\$BLD/\.\./g;
+	}
 	PmIncludePath($dir);
 }
 
@@ -446,10 +452,14 @@ EOF
 	
 	GetOptions("emul-os=s" =>	\$EmulOS,
 	           "emul-osrel=s" =>	\$EmulOSRel,
-	           "emul-arch=s" =>	\$EmulArch);
+	           "emul-arch=s" =>	\$EmulArch,
+	           "emul-env=s" =>	\$EmulEnv);
 
-	if ($EmulOS) {
-		print STDERR "Emulating: $EmulOS $EmulOSRel $EmulArch\n";
+	if ($EmulOS || $EmulEnv) {
+		print STDERR "Emulating OS: $EmulOS\n";
+		print STDERR "Emulating OS Release: \"$EmulOSRel\"\n";
+		print STDERR "Emulating Architecture: \"$EmulArch\"\n";
+		print STDERR "Emulating Environment: \"$EmulEnv\"\n";
 	}
 
 	my %done = ();
@@ -728,8 +738,8 @@ EOF
 					if ($EmulOS) {
 						unless (exists($EMUL{$t}) &&
 						        defined($EMUL{$t})) {
-							print STDERR
-							    "Ignoring: $t\n";
+#							print STDERR
+#							    "Ignoring: $t\n";
 							next DIRECTIVE;
 						}
 						$c = $EMUL{$t};

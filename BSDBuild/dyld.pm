@@ -83,11 +83,26 @@ EOF
 	MkSaveDefine('DSO_CFLAGS', 'DSO_LIBS');
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	MkSaveUndef('HAVE_MACH_O_DYLD_H');
+	MkSaveUndef('HAVE_DYLD');
+	MkSaveUndef('HAVE_DYLD_RETURN_ON_ERROR');
+
+	MkDefine('DSO_CFLAGS', '');
+	MkDefine('DSO_LIBS', '');
+	MkSaveMK('DSO_CFLAGS', 'DSO_LIBS');
+	MkSaveDefine('DSO_CFLAGS', 'DSO_LIBS');
+	return (1);
+}
+
 BEGIN
 {
 	$DESCR{'dyld'} = 'dyld interface';
 	$TESTS{'dyld'} = \&Test;
-	$EMUL{'dyld'} = undef;
+	$EMUL{'dyld'} = \&Emul;
 	$DEPS{'dyld'} = 'cc';
 }
 

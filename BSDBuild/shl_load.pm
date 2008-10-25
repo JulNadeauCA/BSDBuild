@@ -60,11 +60,24 @@ EOF
 	MkSaveDefine('DSO_CFLAGS', 'DSO_LIBS');
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	MkSaveUndef('HAVE_DL_H');
+	MkSaveUndef('HAVE_SHL_LOAD');
+	MkDefine('DSO_CFLAGS', '');
+	MkDefine('DSO_LIBS', '');
+	MkSaveMK('DSO_CFLAGS', 'DSO_LIBS');
+	MkSaveDefine('DSO_CFLAGS', 'DSO_LIBS');
+	return (1);
+}
+
 BEGIN
 {
 	$DESCR{'shl_load'} = 'shl_load() interface';
 	$TESTS{'shl_load'} = \&Test;
-	$EMUL{'shl_load'} = undef;
+	$EMUL{'shl_load'} = \&Emul;
 	$DEPS{'shl_load'} = 'cc';
 }
 

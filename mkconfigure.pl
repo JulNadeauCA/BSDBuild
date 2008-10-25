@@ -105,15 +105,16 @@ if [ "\${includes}" = "link" ]; then
 	fi
 else
 	if [ ! -e "$dir/$subdir" ]; then
-		\$ECHO_N "* Preprocessing includes..."
 		if [ "\${SRCDIR}" != "\${BLDDIR}" ]; then
-			(cd \$SRC && perl mk/gen-includes.pl "\$BLD/$dir/$subdir" 1>>\$BLD/config.log 2>&1)
+			\$ECHO_N "* Preprocessing includes (from \${SRCDIR})..."
+			(cd \${SRCDIR} && perl mk/gen-includes.pl "\${BLDDIR}/$dir/$subdir" 1>>\${BLDDIR}/config.log 2>&1)
 			cp -fR config $dir/$subdir
 		else
+			\$ECHO_N "* Preprocessing includes (in \${BLDDIR})...";
 			perl mk/gen-includes.pl "$dir/$subdir" 1>>config.log 2>&1
 		fi
 		if [ \$? != 0 ]; then
-			echo "perl mk/gen-includes.pl failed";
+			echo "perl mk/gen-includes.pl failed"
 			exit 1
 		fi
 		echo "done"
@@ -410,7 +411,7 @@ else
 fi
 
 if [ "${srcdir}" != "" ]; then
-	echo "concurrent build (source in ${srcdir})"
+	echo "* Separate build (source in ${srcdir})"
 	SRC=${srcdir}
 	perl ${SRC}/mk/mkconcurrent.pl ${SRC}
 	if [ $? != 0 ]; then
@@ -420,6 +421,9 @@ else
 	SRC=`pwd`
 fi
 BLD=`pwd`
+
+SRCDIR="${SRC}"
+BLDDIR="${BLD}"
 
 if [ "${testdir}" != "" ]; then
 	echo "Configure tests will be executed in ${testdir}"

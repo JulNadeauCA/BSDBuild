@@ -43,6 +43,7 @@ sub Test
 		    '${AGAR_RG_LIBS} ${AGAR_LIBS}',
 		           << 'EOF');
 #include <agar/core.h>
+#include <agar/gui.h>
 #include <agar/rg.h>
 
 int main(int argc, char *argv[]) {

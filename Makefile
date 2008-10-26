@@ -10,7 +10,7 @@ SCRIPTS=mkconfigure \
 	mkify \
 	h2mandoc
 
-SHARE=	hstrip.pl mkdep mkconcurrent.pl manlinks.pl cmpfiles.pl \
+SHARE=	hstrip.pl mkdep mkconcurrent.pl manlinks.pl cmpfiles.pl cleanfiles.pl \
 	gen-includes.pl gen-declspecs.pl get-version.pl get-release.pl \
 	ml.xsl \
 	build.common.mk build.dep.mk build.lib.mk build.man.mk \

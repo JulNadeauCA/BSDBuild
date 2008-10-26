@@ -29,6 +29,7 @@
 	mkconcurrent.pl
 	manlinks.pl
 	cmpfiles.pl
+	cleanfiles.pl
 	gen-declspecs.pl
 	gen-includes.pl);
 		  

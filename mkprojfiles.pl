@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/bsdbuild
 #
-# Copyright (c) 2007 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2008 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -23,6 +23,31 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+
+#
+# Read a BSDBuild Makefile on standard input and output the Premake script
+# which will be used by <build.proj.mk> to generate IDE project files.
+# 
+# Premake project information is obtained from assignments to the standard
+# BSDBuild variables:
+#
+#	SUBDIR		-> Recurse using Premake dopackage()
+#	PROJECT		-> Premake project name
+#	PROJECT_GUID	-> Project GUID
+#	LIB		-> Use as output library name
+#	LIB_GUID	-> Library GUID
+#	LIB_LINKS	-> Explicitely linked libraries (for non-Unix platforms)
+#	LIB_SHARED	-> Produce dynamic linkable libraries
+#	LIB_STATIC	-> Produce static libraries
+#	PROG		-> Use as output program name
+#	PROG_GUID	-> Program GUID
+#	PROG_LINKS	-> Explicitely linked libraries (for non-Unix platforms)
+#	PROG_TYPE	-> Set program interface ("GUI" or "CLI")
+#	SRCS		-> List of source files
+#	CFLAGS		-> Compiler options, used as follows:
+#
+#		-I<pathname>	-> Add to package.includepaths
+#		-D<define>	-> Add to package.defines
 
 use BSDBuild::Core;
 
@@ -124,8 +149,13 @@ EOF
 	if (@cflags) {
 		foreach my $cflag (@cflags) {
 			my $handled = 0;
-			if ($cflag =~ /^-I\s*([\w\-\.\/]+)$/) {
+			if ($cflag =~ /^-I\s*([\w\-\.\/]+)\s*$/) {
 				print "tinsert(package.includepaths,".
+				      "{\"$1\"})\n";
+				next;
+			}
+			if ($cflag =~ /^-D\s*(\w+)\s*$/) {
+				print "tinsert(package.defines,".
 				      "{\"$1\"})\n";
 				next;
 			}

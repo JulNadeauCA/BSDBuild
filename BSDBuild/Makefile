@@ -44,11 +44,13 @@ SHARE=	Core.pm \
 	free_null.pm \
 	agar.pm \
 	agar-core.pm \
-	agar-network.pm \
 	agar-rg.pm \
 	agar-vg.pm \
 	agar-map.pm \
 	agar-dev.pm \
+	agar-opengl.pm \
+	agar-threads.pm \
+	agar-network.pm \
 	cg.pm \
 	cracklib.pm \
 	db4.pm \

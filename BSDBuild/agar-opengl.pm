@@ -27,15 +27,15 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	MkExecOutputUnique('agar-config', '--network', 'AGAR_HAVE_NETWORK');
-	MkIf('"${AGAR_HAVE_NETWORK}" = "yes"');
+	MkExecOutputUnique('agar-config', '--opengl', 'AGAR_HAVE_OPENGL');
+	MkIf('"${AGAR_HAVE_OPENGL}" = "yes"');
 		MkPrint('yes');
-		MkSaveMK('AGAR_HAVE_NETWORK');
-		MkSaveDefine('AGAR_HAVE_NETWORK');
+		MkSaveMK('AGAR_HAVE_OPENGL');
+		MkSaveDefine('AGAR_HAVE_OPENGL');
 	MkElse;
 	    MkPrint('no');
-		MkSaveMK('AGAR_HAVE_NETWORK');
-		MkSaveUndef('AGAR_HAVE_NETWORK');
+		MkSaveMK('AGAR_HAVE_OPENGL');
+		MkSaveUndef('AGAR_HAVE_OPENGL');
 	MkEndif;
 	return (0);
 }
@@ -44,9 +44,9 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	MkDefine('AGAR_HAVE_NETWORK', 'yes');
-	MkSaveMK('AGAR_HAVE_NETWORK');
-	MkSaveDefine('AGAR_HAVE_NETWORK');
+	MkDefine('AGAR_HAVE_OPENGL', 'yes');
+	MkSaveMK('AGAR_HAVE_OPENGL');
+	MkSaveDefine('AGAR_HAVE_OPENGL');
 	return (1);
 }
 
@@ -57,11 +57,11 @@ sub Link
 
 BEGIN
 {
-	$TESTS{'agar-network'} = \&Test;
-	$DEPS{'agar-network'} = 'agar';
-	$LINK{'agar-network'} = \&Link;
-	$EMUL{'agar-network'} = \&Emul;
-	$DESCR{'agar-network'} = 'network support in Agar';
+	$TESTS{'agar-opengl'} = \&Test;
+	$DEPS{'agar-opengl'} = 'agar,opengl';
+	$LINK{'agar-opengl'} = \&Link;
+	$EMUL{'agar-opengl'} = \&Emul;
+	$DESCR{'agar-opengl'} = 'OpenGL support in Agar';
 }
 
 ;1

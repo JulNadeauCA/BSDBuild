@@ -27,15 +27,15 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	MkExecOutputUnique('agar-config', '--network', 'AGAR_HAVE_NETWORK');
-	MkIf('"${AGAR_HAVE_NETWORK}" = "yes"');
+	MkExecOutputUnique('agar-config', '--threads', 'AGAR_HAVE_THREADS');
+	MkIf('"${AGAR_HAVE_THREADS}" = "yes"');
 		MkPrint('yes');
-		MkSaveMK('AGAR_HAVE_NETWORK');
-		MkSaveDefine('AGAR_HAVE_NETWORK');
+		MkSaveMK('AGAR_HAVE_THREADS');
+		MkSaveDefine('AGAR_HAVE_THREADS');
 	MkElse;
 	    MkPrint('no');
-		MkSaveMK('AGAR_HAVE_NETWORK');
-		MkSaveUndef('AGAR_HAVE_NETWORK');
+		MkSaveMK('AGAR_HAVE_THREADS');
+		MkSaveUndef('AGAR_HAVE_THREADS');
 	MkEndif;
 	return (0);
 }
@@ -44,9 +44,9 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	MkDefine('AGAR_HAVE_NETWORK', 'yes');
-	MkSaveMK('AGAR_HAVE_NETWORK');
-	MkSaveDefine('AGAR_HAVE_NETWORK');
+	MkDefine('AGAR_HAVE_THREADS', 'yes');
+	MkSaveMK('AGAR_HAVE_THREADS');
+	MkSaveDefine('AGAR_HAVE_THREADS');
 	return (1);
 }
 
@@ -57,11 +57,11 @@ sub Link
 
 BEGIN
 {
-	$TESTS{'agar-network'} = \&Test;
-	$DEPS{'agar-network'} = 'agar';
-	$LINK{'agar-network'} = \&Link;
-	$EMUL{'agar-network'} = \&Emul;
-	$DESCR{'agar-network'} = 'network support in Agar';
+	$TESTS{'agar-threads'} = \&Test;
+	$DEPS{'agar-threads'} = 'agar';
+	$LINK{'agar-threads'} = \&Link;
+	$EMUL{'agar-threads'} = \&Emul;
+	$DESCR{'agar-threads'} = 'threads support in Agar';
 }
 
 ;1

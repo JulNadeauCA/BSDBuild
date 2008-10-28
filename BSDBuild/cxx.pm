@@ -30,9 +30,15 @@ sub Test
 if [ "$CXX" = "" ]; then
 	for i in `echo $PATH |sed 's/:/ /g'`; do
 		if [ -x "${i}/c++" ]; then
-			CXX="${i}/c++"
+			if [ -f "${i}/c++" ]; then
+				CXX="${i}/c++"
+				break
+			fi
 		elif [ -x "${i}/gcc" ]; then
-			CXX="${i}/gcc"
+			if [ -f "${i}/gcc" ]; then
+				CXX="${i}/gcc"
+				break
+			fi
 		fi
 	done
 	if [ "$CXX" = "" ]; then

@@ -32,11 +32,15 @@ sub Test
 if [ "$CC" = "" ]; then
 	for i in `echo $PATH |sed 's/:/ /g'`; do
 		if [ -x "${i}/cc" ]; then
-			CC="${i}/cc"
-			break
+			if [ -f "${i}/cc" ]; then
+				CC="${i}/cc"
+				break
+			fi
 		elif [ -x "${i}/gcc" ]; then
-			CC="${i}/gcc"
-			break
+			if [ -f "${i}/gcc" ]; then
+				CC="${i}/gcc"
+				break
+			fi
 		fi
 	done
 	if [ "$CC" = "" ]; then

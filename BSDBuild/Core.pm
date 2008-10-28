@@ -91,9 +91,11 @@ if [ "\${MK_CACHED}" = "No" ]; then
 	$define=""
 	for path in `echo \$PATH | sed 's/:/ /g'`; do
 		if [ -x "\${path}/$bin" ]; then
-			$define=`\${path}/$bin $args`
-			MK_EXEC_FOUND="Yes"
-			break
+			if [ -f "\${path}/$bin" ]; then
+				$define=`\${path}/$bin $args`
+				MK_EXEC_FOUND="Yes"
+				break
+			fi
 		fi
 	done
 	if [ "\${cache}" != "" ]; then
@@ -129,15 +131,17 @@ if [ "\${MK_CACHED}" = "No" ]; then
 	$define=""
 	for path in `echo \$PATH | sed 's/:/ /g'`; do
 		if [ -x "\${path}/$bin" ]; then
-			if [ "\$MK_EXEC_FOUND" = "Yes" ]; then
-				echo "yes."
-				echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)"
-				echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)" >> config.log
-				break;
+			if [ -f "\${path}/$bin" ]; then
+				if [ "\$MK_EXEC_FOUND" = "Yes" ]; then
+					echo "yes."
+					echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)"
+					echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)" >> config.log
+					break;
+				fi
+				$define=`\${path}/$bin $args`
+				MK_EXEC_FOUND="Yes"
+				MK_EXEC_FOUND_PATH="\${path}/$bin"
 			fi
-			$define=`\${path}/$bin $args`
-			MK_EXEC_FOUND="Yes"
-			MK_EXEC_FOUND_PATH="\${path}/$bin"
 		fi
 	done
 	if [ "\${cache}" != "" ]; then
@@ -176,8 +180,10 @@ sub Which
 $define=""
 for path in `echo \$PATH | sed 's/:/ /g'`; do
 	if [ -x "\${path}/$bin" ]; then
-		$define=`\${path}/$bin $args`
-		break
+		if [ -f "\${path}/$bin" ]; then
+			$define=`\${path}/$bin $args`
+			break
+		fi
 	fi
 done
 EOF

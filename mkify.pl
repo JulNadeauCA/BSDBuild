@@ -31,7 +31,8 @@
 	cmpfiles.pl
 	cleanfiles.pl
 	gen-declspecs.pl
-	gen-includes.pl);
+	gen-includes.pl
+	install-manpages.sh);
 		  
 @LibtoolFiles = qw(
 	config.guess

@@ -1,7 +1,7 @@
 TOP=.
+include ${TOP}/Makefile.config
 
 PROJECT=	bsdbuild
-VERSION=	2.3
 DIST=		${PROJECT}-${VERSION}
 DISTFILE=	${DIST}.tar.gz
 
@@ -12,7 +12,7 @@ SCRIPTS=mkconfigure \
 
 SHARE=	hstrip.pl mkdep mkconcurrent.pl manlinks.pl cmpfiles.pl cleanfiles.pl \
 	gen-includes.pl gen-declspecs.pl get-version.pl get-release.pl \
-	ml.xsl \
+	install-manpages.sh ml.xsl \
 	build.common.mk build.dep.mk build.lib.mk build.man.mk \
 	build.perl.mk build.prog.mk build.subdir.mk build.www.mk \
 	build.po.mk build.doc.mk build.den.mk build.proj.mk
@@ -131,6 +131,5 @@ release: cleandir
 
 .PHONY: install install-links install-links-subdir cleandir clean depend release configure
 
-include ${TOP}/Makefile.config
 include ${TOP}/mk/build.common.mk
 include ${TOP}/mk/build.subdir.mk

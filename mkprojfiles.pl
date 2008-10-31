@@ -301,6 +301,7 @@ if ($project) {
 }
 if ($libName) {
 	if ($libShared)	{
+		DoPackage($libName.'_static', 'lib');
 		DoPackage($libName, 'dll');
 	} else {
 		DoPackage($libName, 'lib');

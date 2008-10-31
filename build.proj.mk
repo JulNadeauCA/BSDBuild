@@ -91,6 +91,7 @@ proj: proj-subdir
 			echo > Makefile.config; \
 			exit 1; \
 		fi; \
+	        ${MAKE} includes; \
 		rm -f configure.tmp config.log; \
 		echo >Makefile.config; \
 	        perl ${TOP}/mk/cmpfiles.pl; \
@@ -112,12 +113,14 @@ proj: proj-subdir
 		echo "* End generated files"; \
 		cp -f .projfiles.out ${PROJFILELIST}; \
 	        rm .cmpfiles.out; \
+		\
 		if [ "${PROJFILESEXTRA}" != "" ]; then \
 	            for EXTRA in ${PROJFILESEXTRA}; do \
 		        echo "$$EXTRA" >> ${PROJFILELIST}; \
 		    done; \
 		fi; \
 	        echo "config" >> ${PROJFILELIST}; \
+	        echo "include" >> ${PROJFILELIST}; \
 		rm -f ${PROJDIR}/$$_tgtproj-$$_tgtos.zip; \
 		if [ "${PROJPREPKG}" != "" ]; then \
 			echo "${MAKE} ${PROJPREPKG}"; \

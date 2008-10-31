@@ -45,9 +45,13 @@ sub Test
 		MkIf '"${HAVE_CYGWIN}" = "no"';
 			TryCompile('_MK_HAVE_STRTOLD', $test);
 		MkElse;
+			MkDefine('_MK_HAVE_STRTOLD', 'no');
+			MkSaveUndef('_MK_HAVE_STRTOLD');
 			MkPrint('not checking (cygwin issues)');
 		MkEndif;
 	MkElse;
+		MkDefine('_MK_HAVE_STRTOLD', 'no');
+		MkSaveUndef('_MK_HAVE_STRTOLD');
 		MkPrint('skipping (no long double)');
 	MkEndif;
 }

@@ -24,12 +24,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Test
-{
-	TryCompile '_MK_HAVE_STRTOLD', << 'EOF';
+my $test = << 'EOF';
 #define _XOPEN_SOURCE 600
 #include <stdlib.h>
-
 int
 main(int argc, char *argv[])
 {
@@ -41,6 +38,18 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
+
+sub Test
+{
+	MkIf '"${HAVE_LONG_DOUBLE}" = "yes"';
+		MkIf '"${HAVE_CYGWIN}" = "no"';
+			TryCompile('_MK_HAVE_STRTOLD', $test);
+		MkElse;
+			MkPrint('not checking (cygwin issues)');
+		MkEndif;
+	MkElse;
+		MkPrint('skipping (no long double)');
+	MkEndif;
 }
 
 sub Emul

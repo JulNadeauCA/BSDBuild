@@ -74,21 +74,13 @@ sub Emul
 	if ($os eq 'windows') {
 		MkDefine('AGAR_DEV_CFLAGS', '');
 		MkDefine('AGAR_DEV_LIBS', 'ag_dev');
-	} elsif ($os eq 'linux' || $os eq 'darwin' ||
-	         $os =~ /^(open|net|free)bsd$/) {
+	} else {
 		MkDefine('AGAR_DEV_CFLAGS', '-I/usr/local/include/agar '.
 		                            '-I/usr/include/agar');
 		MkDefine('AGAR_DEV_LIBS', '-L/usr/local/lib -lag_dev');
-	} else {
-		goto UNAVAIL;
 	}
 	MkDefine('HAVE_AGAR_DEV', 'yes');
 	MkSaveDefine('HAVE_AGAR_DEV', 'AGAR_DEV_CFLAGS', 'AGAR_DEV_LIBS');
-	MkSaveMK('AGAR_DEV_CFLAGS', 'AGAR_DEV_LIBS');
-	return (1);
-UNAVAIL:
-	MkDefine('HAVE_AGAR_DEV', 'no');
-	MkSaveUndef('HAVE_AGAR_DEV');
 	MkSaveMK('AGAR_DEV_CFLAGS', 'AGAR_DEV_LIBS');
 	return (1);
 }

@@ -79,21 +79,14 @@ sub Emul
 	} elsif ($os eq 'windows') {
 		MkDefine('AGAR_MATH_CFLAGS', '');
 		MkDefine('AGAR_MATH_LIBS', 'ag_math');
-	} elsif ($os eq 'linux' || $os =~ /^(open|net|free)bsd$/) {
+	} else {
 		MkDefine('AGAR_MATH_CFLAGS', '-I/usr/include/agar -I/usr/include '.
 		                             '-I/usr/local/include/agar '.
 							         '-I/usr/local/include ');
 		MkDefine('AGAR_MATH_LIBS', '-L/usr/local/lib -lag_math');
-	} else {
-		goto UNAVAIL;
 	}
 	MkDefine('HAVE_AGAR_MATH', 'yes');
 	MkSaveDefine('HAVE_AGAR_MATH', 'AGAR_MATH_CFLAGS', 'AGAR_MATH_LIBS');
-	MkSaveMK('AGAR_MATH_CFLAGS', 'AGAR_MATH_LIBS');
-	return (1);
-UNAVAIL:
-	MkDefine('HAVE_AGAR_MATH', 'no');
-	MkSaveUndef('HAVE_AGAR_MATH');
 	MkSaveMK('AGAR_MATH_CFLAGS', 'AGAR_MATH_LIBS');
 	return (1);
 }

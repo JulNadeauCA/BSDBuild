@@ -24,6 +24,11 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 our $LUA = undef;
+our $EmulOS = undef;
+our $EmulOSRel = undef;
+our $EmulArch = undef;
+our $EmulEnv = undef;
+
 
 #
 # Bourne instructions.
@@ -736,7 +741,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($LUA %TESTS %DESCR MkExecOutput MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkAppend MkIf MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN PmComment PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag DetectHeaderC BeginTestHeaders EndTestHeaders);
+    @EXPORT = qw($LUA $EmulOS $EmulOSRel $EmulArch $EmulEnv %TESTS %DESCR MkExecOutput MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkAppend MkIf MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN PmComment PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag DetectHeaderC BeginTestHeaders EndTestHeaders);
 }
 
 ;1

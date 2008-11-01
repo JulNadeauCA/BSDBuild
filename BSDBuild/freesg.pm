@@ -79,21 +79,14 @@ sub Emul
 	} elsif ($os eq 'windows') {
 		MkDefine('FREESG_CFLAGS', '');
 		MkDefine('FREESG_LIBS', 'freesg_pe freesg glu');
-	} elsif ($os eq 'linux' || $os =~ /^(open|net|free)bsd$/) {
+	} else {
 		MkDefine('FREESG_CFLAGS', '-I/usr/include/freesg -I/usr/include '.
 		                          '-I/usr/local/include/freesg '.
 							      '-I/usr/local/include ');
 		MkDefine('FREESG_LIBS', '-L/usr/local/lib -lfreesg_pe -lfreesg -lGLU');
-	} else {
-		goto UNAVAIL;
 	}
 	MkDefine('HAVE_FREESG', 'yes');
 	MkSaveDefine('HAVE_FREESG', 'FREESG_CFLAGS', 'FREESG_LIBS');
-	MkSaveMK('FREESG_CFLAGS', 'FREESG_LIBS');
-	return (1);
-UNAVAIL:
-	MkDefine('HAVE_FREESG', 'no');
-	MkSaveUndef('HAVE_FREESG');
 	MkSaveMK('FREESG_CFLAGS', 'FREESG_LIBS');
 	return (1);
 }

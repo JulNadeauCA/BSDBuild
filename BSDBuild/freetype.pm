@@ -72,13 +72,36 @@ EOF
 sub Link
 {
 	my $lib = shift;
+	my @inclpaths = ();
+	my @libpaths = ();
 
 	if ($lib eq 'freetype') {
-			print << 'EOF';
-if (hdefs["HAVE_FREETYPE"] ~= nil) then
-	table.insert(package.links, { "freetype" })
-end
-EOF
+		print 'if (hdefs["HAVE_FREETYPE"] ~= nil) then'."\n";
+		print 'table.insert(package.links, { "freetype" })'."\n";
+
+		if ($EmulEnv =~ /^cb-(gcc|ow)$/) {
+			if ($EmulOS eq 'windows') {
+				@inclpaths = ('C:\\\\MinGW\\\\include\\\\freetype',
+				              'C:\\\\MinGW\\\\include',
+				              'C:\\\\Program Files\\\\freetype\\\\include');
+				@libpaths = ('C:\\\\MinGW\\\\lib\\\\freetype',
+				             'C:\\\\MinGW\\\\lib',
+				             'C:\\\\Program Files\\\\freetype\\\\lib');
+			} else {
+				@inclpaths = ('/usr/include/freetype',
+				              '/usr/local/include/freetype',
+						      '/usr/X11R6/include/freetype');
+				@libpaths = ('/usr/local/lib', '/usr/X11R6/lib', '/usr/lib');
+			}
+			foreach my $path (@inclpaths) {
+				print "table.insert(package.includepaths,{\"$path\"})\n";
+			}
+			foreach my $path (@libpaths) {
+				print "table.insert(package.libpaths,{\"$path\"})\n";
+			}
+		}
+
+		print "end\n";
 		return (1);
 	}
 	return (0);
@@ -95,7 +118,7 @@ sub Emul
 	} elsif ($os eq 'windows') {
 		MkDefine('FREETYPE_CFLAGS', '');
 		MkDefine('FREETYPE_LIBS', 'freetype6');
-	} elsif ($os eq 'linux' || $os =~ /^(open|net|free)bsd$/) {
+	} else {
 		MkDefine('FREETYPE_CFLAGS', '-I/usr/include/freetype2 '.
 		                            '-I/usr/local/include/freetype2 '.
 									'-I/usr/local/include '.
@@ -106,16 +129,9 @@ sub Emul
 		                          '-L/usr/X11R6/lib '.
 		                          '-Wl,--rpath --Wl,/usr/X11R6/lib ' .
 		                          '-lfreetype -lz');
-	} else {
-		goto UNAVAIL;
 	}
 	MkDefine('HAVE_FREETYPE', 'yes');
 	MkSaveDefine('HAVE_FREETYPE', 'FREETYPE_CFLAGS', 'FREETYPE_LIBS');
-	MkSaveMK('FREETYPE_CFLAGS', 'FREETYPE_LIBS');
-	return (1);
-UNAVAIL:
-	MkDefine('HAVE_FREETYPE', 'no');
-	MkSaveUndef('HAVE_FREETYPE');
 	MkSaveMK('FREETYPE_CFLAGS', 'FREETYPE_LIBS');
 	return (1);
 }

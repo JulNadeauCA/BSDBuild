@@ -271,9 +271,7 @@ sub Emul
 
 		MkSaveUndef('HAVE_PTHREAD_MUTEX_RECURSIVE');
 		MkSaveUndef('HAVE_PTHREAD_MUTEX_RECURSIVE_NP');
-		return (1);
-	}
-	if ($os eq 'darwin') {
+	} elsif ($os eq 'darwin') {
 		MkDefine('HAVE_PTHREADS', 'yes');
 		MkDefine('HAVE_PTHREADS_XOPEN', 'yes');
 		MkDefine('HAVE_PTHREAD_MUTEX_RECURSIVE', 'yes');
@@ -288,9 +286,7 @@ sub Emul
 		             'PTHREADS_LIBS', 'HAVE_PTHREAD_MUTEX_RECURSIVE');
 
 		MkSaveUndef('HAVE_PTHREAD_MUTEX_RECURSIVE_NP');
-		return (1);
-	}
-	if ($os eq 'windows') {
+	} elsif ($os eq 'windows') {
 		MkDefine('HAVE_PTHREADS', 'yes');
 		MkDefine('HAVE_PTHREADS_XOPEN', 'yes');
 		MkDefine('HAVE_PTHREAD_MUTEX_RECURSIVE', 'yes');
@@ -305,9 +301,21 @@ sub Emul
 		             'PTHREADS_LIBS', 'HAVE_PTHREAD_MUTEX_RECURSIVE');
 
 		MkSaveUndef('HAVE_PTHREAD_MUTEX_RECURSIVE_NP');
-		return (1);
-	}
-	if ($os =~ /^(net|open)bsd$/) {
+	} elsif ($os eq 'freebsd') {
+		MkDefine('HAVE_PTHREADS', 'yes');
+		MkDefine('HAVE_PTHREADS_XOPEN', 'yes');
+		MkDefine('HAVE_PTHREAD_MUTEX_RECURSIVE', 'yes');
+
+		MkDefine('PTHREADS_CFLAGS', '');
+		MkDefine('PTHREADS_LIBS', '-lpthread');
+		MkDefine('PTHREADS_XOPEN_CFLAGS', '');
+		MkDefine('PTHREADS_XOPEN_LIBS', '-lpthread');
+
+		MkSaveDefine('HAVE_PTHREADS', 'HAVE_PTHREADS_XOPEN', 'PTHREADS_CFLAGS',
+		             'PTHREADS_LIBS', 'HAVE_PTHREAD_MUTEX_RECURSIVE');
+
+		MkSaveUndef('HAVE_PTHREAD_MUTEX_RECURSIVE_NP');
+	} else {
 		MkDefine('HAVE_PTHREADS', 'yes');
 		MkDefine('HAVE_PTHREADS_XOPEN', 'yes');
 		MkDefine('HAVE_PTHREAD_MUTEX_RECURSIVE', 'yes');
@@ -322,23 +330,6 @@ sub Emul
 		             'PTHREADS_LIBS', 'HAVE_PTHREAD_MUTEX_RECURSIVE');
 
 		MkSaveUndef('HAVE_PTHREAD_MUTEX_RECURSIVE_NP');
-		return (1);
-	}
-	if ($os eq 'freebsd') {
-		MkDefine('HAVE_PTHREADS', 'yes');
-		MkDefine('HAVE_PTHREADS_XOPEN', 'yes');
-		MkDefine('HAVE_PTHREAD_MUTEX_RECURSIVE', 'yes');
-
-		MkDefine('PTHREADS_CFLAGS', '');
-		MkDefine('PTHREADS_LIBS', '-lpthread');
-		MkDefine('PTHREADS_XOPEN_CFLAGS', '');
-		MkDefine('PTHREADS_XOPEN_LIBS', '-lpthread');
-
-		MkSaveDefine('HAVE_PTHREADS', 'HAVE_PTHREADS_XOPEN', 'PTHREADS_CFLAGS',
-		             'PTHREADS_LIBS', 'HAVE_PTHREAD_MUTEX_RECURSIVE');
-
-		MkSaveUndef('HAVE_PTHREAD_MUTEX_RECURSIVE_NP');
-		return (1);
 	}
 	return (1);
 }
@@ -346,20 +337,44 @@ sub Emul
 sub Link
 {
 	my $lib = shift;
+	my @inclpaths = ();
+	my @libpaths = ();
 
-	if ($lib eq 'pthreads') {
-			print << 'EOF';
-if (hdefs["HAVE_PTHREADS"] ~= nil) then
-	if (windows) then
-		table.insert(package.links, { "pthreadVC2" })
-	else
-		table.insert(package.links, { "pthread" })
-	end
-end
-EOF
-		return (1);
+	if ($lib ne 'pthreads') {
+		return (0);
 	}
-	return (0);
+
+	if ($EmulEnv =~ /^cb-(gcc|ow)$/) {
+		if ($EmulOS eq 'windows') {
+			@inclpaths = ('C:\\\\MinGW\\\\include\\\\Pthreads',
+		                  'C:\\\\MinGW\\\\include\\\\Pthread',
+			              'C:\\\\MinGW\\\\include',
+			              'C:\\\\Program Files\\\\Pthreads\\\\include');
+			@libpaths = ('C:\\\\MinGW\\\\lib\\\\Pthreads',
+			             'C:\\\\MinGW\\\\lib',
+			             'C:\\\\Program Files\\\\Pthreads\\\\lib');
+		} else {
+			@inclpaths = ('/usr/local/include',
+					      '/usr/local/include/pthreads',
+			              '/usr/include');
+			@libpaths = ('/usr/local/lib', '/usr/lib');
+		}
+	}
+
+	print 'if (hdefs["HAVE_PTHREADS"] ~= nil) then'."\n";
+	if ($EmulOS eq 'windows') {
+		print 'table.insert(package.links, { "pthreadVC2" })'."\n";
+	} else {
+		print 'table.insert(package.links, { "pthread" })'."\n";
+	}
+	foreach my $path (@inclpaths) {
+		print "table.insert(package.includepaths,{\"$path\"})\n";
+	}
+	foreach my $path (@libpaths) {
+		print "table.insert(package.libpaths,{\"$path\"})\n";
+	}
+	print "end\n";
+	return (1);
 }
 
 BEGIN

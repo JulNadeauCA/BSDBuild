@@ -111,20 +111,31 @@ EOF
 sub Link
 {
 	my $lib = shift;
+	my @paths = ();
 
-	if ($lib eq 'opengl') {
-			print << 'EOF';
-if (hdefs["HAVE_OPENGL"] ~= nil) then
-	if (windows) then
-		tinsert(package.links, { "opengl32" })
-	else
-		tinsert(package.links, { "GL" })
-	end
-end
-EOF
-		return (1);
+	if ($lib ne 'opengl') {
+		return (0);
 	}
-	return (0);
+
+	if ($EmulEnv =~ /^cb-(gcc|ow)$/) {
+		@paths = ('C:\\\\MinGW\\\\include');
+	} else {
+		@paths = ('/usr/include',
+		          '/usr/local/include',
+		          '/usr/X11R6/include');
+	}
+
+	print 'if (hdefs["HAVE_OPENGL"] ~= nil) then'."\n";
+	if ($EmulOS eq 'windows') {
+		print 'table.insert(package.links, {"opengl32"})'."\n";
+	} else {
+		print 'table.insert(package.links, {"GL"})'."\n";
+	}
+	foreach my $path (@paths) {
+		print "table.insert(package.includepaths,{\"$path\"})\n";
+	}
+	print "end\n";
+	return (1);
 }
 
 sub Emul
@@ -137,19 +148,12 @@ sub Emul
 	} elsif ($os eq 'windows') {
 		MkDefine('OPENGL_CFLAGS', '');
 		MkDefine('OPENGL_LIBS', 'opengl32');
-	} elsif ($os eq 'linux' || $os =~ /^(open|net|free)bsd$/) {
+	} else {
 		MkDefine('OPENGL_CFLAGS', '-I/usr/X11R6/include');
 		MkDefine('OPENGL_LIBS', '-lGL');
-	} else {
-		goto UNAVAIL;
 	}
 	MkDefine('HAVE_OPENGL', 'yes');
 	MkSaveDefine('HAVE_OPENGL', 'OPENGL_CFLAGS', 'OPENGL_LIBS');
-	MkSaveMK('OPENGL_CFLAGS', 'OPENGL_LIBS');
-	return (1);
-UNAVAIL:
-	MkDefine('HAVE_OPENGL', 'no');
-	MkSaveUndef('HAVE_OPENGL');
 	MkSaveMK('OPENGL_CFLAGS', 'OPENGL_LIBS');
 	return (1);
 }

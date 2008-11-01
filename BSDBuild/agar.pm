@@ -77,23 +77,16 @@ sub Emul
 	} elsif ($os eq 'windows') {
 		MkDefine('AGAR_CFLAGS', '');
 		MkDefine('AGAR_LIBS', 'ag_core ag_gui');
-	} elsif ($os eq 'linux' || $os =~ /^(open|net|free)bsd$/) {
+	} else {
 		MkDefine('AGAR_CFLAGS', '-I/usr/include/agar -I/usr/include '.
 		                        '-I/usr/local/include/agar '.
 							    '-I/usr/local/include ');
 		MkDefine('AGAR_LIBS', '-L/usr/local/lib -lag_gui -lag_core -lSDL '.
 		                      '-lpthread -lfreetype -lz -L/usr/X11R6/lib '.
 							  '-lGL -lm');
-	} else {
-		goto UNAVAIL;
 	}
 	MkDefine('HAVE_AGAR', 'yes');
 	MkSaveDefine('HAVE_AGAR', 'AGAR_CFLAGS', 'AGAR_LIBS');
-	MkSaveMK('AGAR_CFLAGS', 'AGAR_LIBS');
-	return (1);
-UNAVAIL:
-	MkDefine('HAVE_AGAR', 'no');
-	MkSaveUndef('HAVE_AGAR');
 	MkSaveMK('AGAR_CFLAGS', 'AGAR_LIBS');
 	return (1);
 }

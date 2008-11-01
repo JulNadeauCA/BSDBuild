@@ -24,6 +24,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+use BSDBuild::Core;
+
 sub Test
 {
 	my ($ver) = @_;
@@ -92,16 +94,40 @@ EOF
 sub Link
 {
 	my $lib = shift;
+	my @inclpaths = ();
+	my @libpaths = ();
 
-	if ($lib eq 'SDL' || $lib eq 'SDLmain') {
-			print << 'EOF';
-if (hdefs["HAVE_SDL"] ~= nil) then
-	tinsert(package.links, { "SDL", "SDLmain" })
-end
-EOF
-		return (1);
+	if ($lib ne 'SDL' && $lib ne 'SDLmain') {
+		return (0);
 	}
-	return (0);
+
+	if ($EmulEnv =~ /^cb-(gcc|ow)$/) {
+		if ($EmulOS eq 'windows') {
+			@inclpaths = ('C:\\\\MinGW\\\\include\\\\SDL',
+			              'C:\\\\MinGW\\\\include',
+			              'C:\\\\Program Files\\\\SDL\\\\include');
+			@libpaths = ('C:\\\\MinGW\\\\lib\\\\SDL',
+			             'C:\\\\MinGW\\\\lib',
+			             'C:\\\\Program Files\\\\SDL\\\\lib');
+		} else {
+			@inclpaths = ('/usr/local/include/SDL',
+			              '/usr/include/SDL',
+						  '/usr/local/include',
+			              '/usr/include');
+			@libpaths = ('/usr/local/lib', '/usr/lib');
+		}
+	}
+
+	print 'if (hdefs["HAVE_SDL"] ~= nil) then'."\n";
+	print 'table.insert(package.links, { "SDL", "SDLmain" })'."\n";
+	foreach my $path (@inclpaths) {
+		print "table.insert(package.includepaths,{\"$path\"})\n";
+	}
+	foreach my $path (@libpaths) {
+		print "table.insert(package.libpaths,{\"$path\"})\n";
+	}
+	print "end\n";
+	return (1);
 }
 
 sub Emul

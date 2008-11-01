@@ -26,11 +26,6 @@
 use BSDBuild::Core;
 use Getopt::Long;
 
-our $EmulOS = undef;
-our $EmulOSRel = undef;
-our $EmulArch = undef;
-our $EmulEnv = undef;
-
 sub mdefine
 {
 	my ($def, $val) = @_;

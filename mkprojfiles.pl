@@ -99,9 +99,9 @@ EOF
 	}
 }
 
-sub DoPackage ($$)
+sub DoPackage ($$$)
 {
-	my ($name, $kind) = @_;
+	my ($name, $kind, $lang) = @_;
 
 	unless ($name) {
 		#print STDERR "Unable to determine package name\n";
@@ -111,19 +111,17 @@ sub DoPackage ($$)
 package = newpackage()
 package.name = "$name"
 package.kind = "$kind"
+package.language = "$lang"
 EOF
 	if ($pkgGUID) {
 		print "package.guid = \"$pkgGUID\"\n";
 	}
-	my @args = @ARGV;
-	if (@args) {
-		$projFlav = shift(@args);
-		foreach my $incl (@args) {
-			if (-e $incl) {
-				print "dofile(\"$incl\")\n";
-			} else {
-#				print STDERR "Ignoring include: $incl: $!\n";
-			}
+	if ($ENV{'PROJFLAVOR'}) {
+		$projFlav = $ENV{'PROJFLAVOR'};
+	}
+	if ($ENV{'PROJINCLUDES'}) {
+		foreach my $incl (split(' ', $ENV{'PROJINCLUDES'})) {
+			print "dofile(\"$incl\")\n";
 		}
 	}
 	if ($pkgLinks) {
@@ -166,9 +164,10 @@ EOF
 			#		$handled++;
 			#	}
 			#}
-			if (!$handled) {
-#				print STDERR "Ignoring CFLAGS: $cflag\n";
-			}
+			#if (!$handled) {
+			#	print STDERR "* CFLAGS: Not substituting: ".
+			#	             "\"$cflag\"\n";
+			#}
 		}
 	}
 	if (@libs) {
@@ -181,13 +180,19 @@ EOF
 			#		$handled++;
 			#	}
 			#}
-			if (!$handled) {
-#				print STDERR "Ignoring LIBS: $lib\n";
-			}
+			#if (!$handled) {
+			#	print STDERR "Ignoring LIBS: $lib\n";
+			#}
 		}
 	}
 }
 
+# $EmulFoo is required by some tests.
+$EmulEnv = $ENV{'PROJTARGET'};
+$EmulOS = $ENV{'PROJOS'};
+$EmulArch = $ENV{'PROJARCH'};
+
+# Map the LINK routine of every module.
 $INSTALLDIR = '%PREFIX%/share/bsdbuild';
 if (opendir(DIR, $INSTALLDIR.'/BSDBuild')) {
 	foreach my $file (readdir(DIR)) {
@@ -219,6 +224,8 @@ print << 'EOF';
 --     $ make proj
 --
 EOF
+
+# Parse the Makefile looking for specific variables.
 foreach $_ (<STDIN>) {
 	chop;
 
@@ -233,7 +240,6 @@ foreach $_ (<STDIN>) {
 		}
 	}
 }
-
 foreach $_ (@lines) {
 	if (/^\s*PROJECT\s*=\s*\"*\s*([\w\-\.]+)\s*\"*\s*$/) {
 		$project = $1;
@@ -299,16 +305,45 @@ foreach $_ (@lines) {
 if ($project) {
 	DoProject();
 }
+
+my $packLang = 'c';
+my %langs = ();
+foreach my $src (@srcs) {
+	if ($src =~ /\.c$/i) { $langs{'c'} = 1; }
+	elsif ($src =~ /\.(cc|cpp)$/i) { $langs{'c++'} = 1; }
+	elsif ($src =~ /\.cs$/i) { $langs{'c#'} = 1; }
+}
+if (exists($langs{'c'})) {
+	if (exists($langs{'c++'})) {
+ 	   	print STDERR "*\n".
+		             "* WARNING: Package contains both C and C++\n".
+			     "* source files.\n".
+			     "*\n";
+		$packLang = 'c++';
+	} elsif (exists($langs{'c#'})) {
+ 	   	print STDERR "*\n".
+		             "* WARNING: Package contains both C and C#\n".
+			     "* source files.\n".
+			     "*\n";
+		$packLang = 'c#';
+	}
+} elsif (exists($langs{'c++'})) {
+	$packLang = 'c++';
+} elsif (exists($langs{'c#'})) {
+	$packLang = 'c#';
+}
+print STDERR "* Using package language: $packLang\n";
+
 if ($libName) {
 	if ($libShared)	{
-		DoPackage($libName.'_static', 'lib');
-		DoPackage($libName, 'dll');
+		DoPackage($libName.'_static', 'lib', $packLang);
+		DoPackage($libName, 'dll', $packLang);
 	} else {
-		DoPackage($libName, 'lib');
+		DoPackage($libName, 'lib', $packLang);
 	}
 } elsif ($progName) {
-	if ($progGUI)	{ DoPackage($progName, 'winexe'); }
-	else		{ DoPackage($progName, 'exe'); }
+	if ($progGUI)	{ DoPackage($progName, 'winexe', $packLang); }
+	else		{ DoPackage($progName, 'exe', $packLang); }
 } else {
 	#print STDERR "Unable to determine package kind\n";
 	exit (0);

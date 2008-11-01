@@ -144,22 +144,15 @@ sub Emul
 	} elsif ($os eq 'windows') {
 		MkDefine('SDL_CFLAGS', '');
 		MkDefine('SDL_LIBS', 'SDL SDLmain');
-	} elsif ($os eq 'linux' || $os =~ /^(open|net|free)bsd$/) {
+	} else {
 		MkDefine('SDL_CFLAGS', '-I/usr/include/SDL -I/usr/include '.
 		                       '-I/usr/local/include/SDL -I/usr/local/include '.
 		                       '-I/usr/X11R6/include/SDL -I/usr/X11R6/include '.
 		                       '-D_GNU_SOURCE=1 -D_REENTRANT');
 		MkDefine('SDL_LIBS', '-lSDL -lpthread');
-	} else {
-		goto UNAVAIL;
 	}
 	MkDefine('HAVE_SDL', 'yes');
 	MkSaveDefine('HAVE_SDL', 'SDL_CFLAGS', 'SDL_LIBS');
-	MkSaveMK('SDL_CFLAGS', 'SDL_LIBS');
-	return (1);
-UNAVAIL:
-	MkDefine('HAVE_SDL', 'no');
-	MkSaveUndef('HAVE_SDL');
 	MkSaveMK('SDL_CFLAGS', 'SDL_LIBS');
 	return (1);
 }

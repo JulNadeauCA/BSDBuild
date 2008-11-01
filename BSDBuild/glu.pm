@@ -106,19 +106,12 @@ sub Emul
 	} elsif ($os eq 'windows') {
 		MkDefine('GLU_CFLAGS', '');
 		MkDefine('GLU_LIBS', 'glu32');
-	} elsif ($os eq 'linux' || $os =~ /^(open|net|free)bsd$/) {
+	} else {
 		MkDefine('GLU_CFLAGS', '-I/usr/X11R6/include');
 		MkDefine('GLU_LIBS', '-lGLU');
-	} else {
-		goto UNAVAIL;
 	}
 	MkDefine('HAVE_GLU', 'yes');
 	MkSaveDefine('HAVE_GLU', 'GLU_CFLAGS', 'GLU_LIBS');
-	MkSaveMK('GLU_CFLAGS', 'GLU_LIBS');
-	return (1);
-UNAVAIL:
-	MkDefine('HAVE_GLU', 'no');
-	MkSaveUndef('HAVE_GLU');
 	MkSaveMK('GLU_CFLAGS', 'GLU_LIBS');
 	return (1);
 }

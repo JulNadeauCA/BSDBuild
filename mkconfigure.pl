@@ -451,13 +451,11 @@ EOF
 	
 	GetOptions("emul-os=s" =>	\$EmulOS,
 	           "emul-osrel=s" =>	\$EmulOSRel,
-	           "emul-arch=s" =>	\$EmulArch,
 	           "emul-env=s" =>	\$EmulEnv);
 
 	if ($EmulOS || $EmulEnv) {
 		print STDERR "Emulating OS: $EmulOS\n";
 		print STDERR "Emulating OS Release: \"$EmulOSRel\"\n";
-		print STDERR "Emulating Architecture: \"$EmulArch\"\n";
 		print STDERR "Emulating Environment: \"$EmulEnv\"\n";
 	}
 
@@ -743,7 +741,7 @@ EOF
 						}
 						$c = $EMUL{$t};
 						@args = ($EmulOS, $EmulOSRel,
-						         $EmulArch);
+						         '');
 					} else {
 						$c = $TESTS{$t};
 						unless ($c) {

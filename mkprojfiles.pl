@@ -190,7 +190,6 @@ EOF
 # $EmulFoo is required by some tests.
 $EmulEnv = $ENV{'PROJTARGET'};
 $EmulOS = $ENV{'PROJOS'};
-$EmulArch = $ENV{'PROJARCH'};
 
 # Map the LINK routine of every module.
 $INSTALLDIR = '%PREFIX%/share/bsdbuild';

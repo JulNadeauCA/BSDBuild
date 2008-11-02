@@ -89,13 +89,15 @@ sub Link
 {
 	my $var = shift;
 
-	if ($var eq 'ag_dev') {
-		print << 'EOF';
-tinsert(package.links, { "ag_dev" })
-EOF
-		return (1);
+	if ($var ne 'ag_dev') {
+		return (0);
 	}
-	return (0);
+	PmLink('ag_dev');
+	if ($EmulEnv =~ /^cb-/) {
+		PmIncludePath('$(#agar.include)');
+		PmLibPath('$(#agar.lib)');
+	}
+	return (1);
 }
 
 BEGIN

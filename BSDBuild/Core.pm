@@ -42,36 +42,54 @@ sub MkEndif { print 'fi;',"\n"; }
 #
 sub PmComment {
 	my $com = shift;
-	print {$LUA} "-- $com\n";
+	print "-- $com\n";
+}
+sub PmIf {
+	my $cond = shift;
+	print "if ($cond) then\n";
+}
+sub PmIfHDefined {
+	my $def = shift;
+	print "if (hdefs[\"$def\"] ~= nil) then\n";
+}
+sub PmEndif {
+	my $cond = shift;
+	print "end\n";
 }
 sub PmDefineBool {
 	my $def = shift;
-	print {$LUA} << "EOF";
+	print << "EOF";
 table.insert(package.defines,{"$def"})
 EOF
 }
 sub PmDefineString {
 	my ($def, $val) = @_;
-	print {$LUA} << "EOF";
+	print << "EOF";
 table.insert(package.defines,{"$def=$val"})
 EOF
 }
 sub PmIncludePath {
 	my $path = shift;
-	print {$LUA} << "EOF";
+	print << "EOF";
 table.insert(package.includepaths,{"$path"})
 EOF
 }
 sub PmLibPath {
 	my $path = shift;
-	print {$LUA} << "EOF";
+	print << "EOF";
 table.insert(package.libpaths,{"$path"})
 EOF
 }
 sub PmBuildFlag {
 	my $flag = shift;
-	print {$LUA} << "EOF";
+	print << "EOF";
 table.insert(package.buildflags,{"$flag"})
+EOF
+}
+sub PmLink {
+	my $link = shift;
+	print << "EOF";
+table.insert(package.links,{"$link"})
 EOF
 }
 
@@ -740,7 +758,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR MkExecOutput MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkAppend MkIf MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN PmComment PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag DetectHeaderC BeginTestHeaders EndTestHeaders);
+    @EXPORT = qw($LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR MkExecOutput MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkAppend MkIf MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders);
 }
 
 ;1

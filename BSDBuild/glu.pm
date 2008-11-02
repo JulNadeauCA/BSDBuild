@@ -85,15 +85,21 @@ sub Link
 {
 	my $lib = shift;
 
-	if ($lib eq 'glu') {
-			print << 'EOF';
-if (hdefs["HAVE_GLU"] ~= nil) then
-	table.insert(package.links, { "glu32" })
-end
-EOF
-		return (1);
+	if ($lib ne 'glu') {
+		return (0);
 	}
-	return (0);
+	PmIfHDefined('HAVE_GLU');
+		if ($EmulOS eq 'windows') {
+			PmLink('glu32');
+		} else {
+			PmLink('GLU');
+		}
+		if ($EmulEnv =~ /^cb-/) {
+			PmIncludePath('$(#GLU.include)');
+			PmLibPath('$(#GLU.lib)');
+		}
+	PmEndif;
+	return (1);
 }
 
 sub Emul

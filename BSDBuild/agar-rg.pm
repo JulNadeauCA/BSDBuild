@@ -87,19 +87,21 @@ sub Link
 {
 	my $var = shift;
 
-	if ($var eq 'ag_rg') {
-		print << 'EOF';
-tinsert(package.links, { "ag_rg", "ag_vg" })
-EOF
-		return (1);
+	if ($var ne 'ag_rg') {
+		return (0);
 	}
-	return (0);
+	PmLink('ag_rg');
+	if ($EmulEnv =~ /^cb-/) {
+		PmIncludePath('$(#agar.include)');
+		PmLibPath('$(#agar.lib)');
+	}
+	return (1);
 }
 
 BEGIN
 {
 	$DESCR{'agar-rg'} = 'agar-rg (http://hypertriton.com/agar-rg/)';
-	$DEPS{'agar-rg'} = 'cc,agar,agar-vg';
+	$DEPS{'agar-rg'} = 'cc,agar';
 	$TESTS{'agar-rg'} = \&Test;
 	$LINK{'agar-rg'} = \&Link;
 	$EMUL{'agar-rg'} = \&Emul;

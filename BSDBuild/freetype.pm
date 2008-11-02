@@ -72,39 +72,18 @@ EOF
 sub Link
 {
 	my $lib = shift;
-	my @inclpaths = ();
-	my @libpaths = ();
 
-	if ($lib eq 'freetype') {
-		print 'if (hdefs["HAVE_FREETYPE"] ~= nil) then'."\n";
-		print 'table.insert(package.links, { "freetype" })'."\n";
-
-		if ($EmulEnv =~ /^cb-(gcc|ow)$/) {
-			if ($EmulOS eq 'windows') {
-				@inclpaths = ('C:\\\\MinGW\\\\include\\\\freetype',
-				              'C:\\\\MinGW\\\\include',
-				              'C:\\\\Program Files\\\\freetype\\\\include');
-				@libpaths = ('C:\\\\MinGW\\\\lib\\\\freetype',
-				             'C:\\\\MinGW\\\\lib',
-				             'C:\\\\Program Files\\\\freetype\\\\lib');
-			} else {
-				@inclpaths = ('/usr/include/freetype',
-				              '/usr/local/include/freetype',
-						      '/usr/X11R6/include/freetype');
-				@libpaths = ('/usr/local/lib', '/usr/X11R6/lib', '/usr/lib');
-			}
-			foreach my $path (@inclpaths) {
-				print "table.insert(package.includepaths,{\"$path\"})\n";
-			}
-			foreach my $path (@libpaths) {
-				print "table.insert(package.libpaths,{\"$path\"})\n";
-			}
-		}
-
-		print "end\n";
-		return (1);
+	if ($lib ne 'freetype') {
+		return (0);
 	}
-	return (0);
+	PmIfHDefined('HAVE_FREETYPE');
+		PmLink('freetype');
+		if ($EmulEnv =~ /^cb-/) {
+			PmIncludePath('$(#freetype.include)');
+			PmLibPath('$(#freetype.lib)');
+		}
+	PmEndif;
+	return (1);
 }
 
 sub Emul

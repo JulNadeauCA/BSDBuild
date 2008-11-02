@@ -85,13 +85,17 @@ sub Link
 {
 	my $var = shift;
 
-	if ($var eq 'ag_map') {
-		print << 'EOF';
-tinsert(package.links, { "ag_map", "ag_rg", "ag_vg" })
-EOF
-		return (1);
+	if ($var ne 'ag_map' && $var ne 'freesg_map') {
+		return (0);
 	}
-	return (0);
+	PmLink('freesg_map');
+	PmLink('ag_rg');
+	PmLink('ag_vg');
+	if ($EmulEnv =~ /^cb-/) {
+		PmIncludePath('$(#agar.include)');
+		PmLibPath('$(#agar.lib)');
+	}
+	return (1);
 }
 
 BEGIN

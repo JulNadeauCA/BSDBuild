@@ -337,43 +337,21 @@ sub Emul
 sub Link
 {
 	my $lib = shift;
-	my @inclpaths = ();
-	my @libpaths = ();
 
 	if ($lib ne 'pthreads') {
 		return (0);
 	}
-
-	if ($EmulEnv =~ /^cb-(gcc|ow)$/) {
+	PmIfHDefined('HAVE_PTHREADS');
 		if ($EmulOS eq 'windows') {
-			@inclpaths = ('C:\\\\MinGW\\\\include\\\\Pthreads',
-		                  'C:\\\\MinGW\\\\include\\\\Pthread',
-			              'C:\\\\MinGW\\\\include',
-			              'C:\\\\Program Files\\\\Pthreads\\\\include');
-			@libpaths = ('C:\\\\MinGW\\\\lib\\\\Pthreads',
-			             'C:\\\\MinGW\\\\lib',
-			             'C:\\\\Program Files\\\\Pthreads\\\\lib');
+			PmLink('pthreadVC2');
 		} else {
-			@inclpaths = ('/usr/local/include',
-					      '/usr/local/include/pthreads',
-			              '/usr/include');
-			@libpaths = ('/usr/local/lib', '/usr/lib');
+			PmLink('pthread');
 		}
-	}
-
-	print 'if (hdefs["HAVE_PTHREADS"] ~= nil) then'."\n";
-	if ($EmulOS eq 'windows') {
-		print 'table.insert(package.links, { "pthreadVC2" })'."\n";
-	} else {
-		print 'table.insert(package.links, { "pthread" })'."\n";
-	}
-	foreach my $path (@inclpaths) {
-		print "table.insert(package.includepaths,{\"$path\"})\n";
-	}
-	foreach my $path (@libpaths) {
-		print "table.insert(package.libpaths,{\"$path\"})\n";
-	}
-	print "end\n";
+		if ($EmulEnv =~ /^cb-/) {
+			PmIncludePath('$(#pthreads.include)');
+			PmLibPath('$(#pthreads.lib)');
+		}
+	PmEndif;
 	return (1);
 }
 

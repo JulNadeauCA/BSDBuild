@@ -94,39 +94,18 @@ EOF
 sub Link
 {
 	my $lib = shift;
-	my @inclpaths = ();
-	my @libpaths = ();
 
 	if ($lib ne 'SDL' && $lib ne 'SDLmain') {
 		return (0);
 	}
-
-	if ($EmulEnv =~ /^cb-(gcc|ow)$/) {
-		if ($EmulOS eq 'windows') {
-			@inclpaths = ('C:\\\\MinGW\\\\include\\\\SDL',
-			              'C:\\\\MinGW\\\\include',
-			              'C:\\\\Program Files\\\\SDL\\\\include');
-			@libpaths = ('C:\\\\MinGW\\\\lib\\\\SDL',
-			             'C:\\\\MinGW\\\\lib',
-			             'C:\\\\Program Files\\\\SDL\\\\lib');
-		} else {
-			@inclpaths = ('/usr/local/include/SDL',
-			              '/usr/include/SDL',
-						  '/usr/local/include',
-			              '/usr/include');
-			@libpaths = ('/usr/local/lib', '/usr/lib');
+	PmIfHDefined('HAVE_SDL');
+		PmLink('SDL');
+		PmLink('SDLmain');
+		if ($EmulEnv =~ /^cb-/) {
+			PmIncludePath('$(#sdl.include)');
+			PmLibPath('$(#sdl.lib)');
 		}
-	}
-
-	print 'if (hdefs["HAVE_SDL"] ~= nil) then'."\n";
-	print 'table.insert(package.links, { "SDL", "SDLmain" })'."\n";
-	foreach my $path (@inclpaths) {
-		print "table.insert(package.includepaths,{\"$path\"})\n";
-	}
-	foreach my $path (@libpaths) {
-		print "table.insert(package.libpaths,{\"$path\"})\n";
-	}
-	print "end\n";
+	PmEndif;
 	return (1);
 }
 

@@ -96,11 +96,30 @@ sub Link
 	my $var = shift;
 
 	if ($var eq 'freesg') {
-		print << 'EOF';
-tinsert(package.links, { "freesg" })
-EOF
+		PmLink('freesg');
+		if ($EmulEnv =~ /^cb-/) {
+			PmIncludePath('$(#freesg.include)');
+			PmLibPath('$(#freesg.lib)');
+		}
 		return (1);
 	}
+	if ($var eq 'freesg_sk') {
+		PmLink('freesg_sk');
+		if ($EmulEnv =~ /^cb-/) {
+			PmIncludePath('$(#freesg.include)');
+			PmLibPath('$(#freesg.lib)');
+		}
+		return (1);
+	}
+	if ($var eq 'freesg_pe') {
+		PmLink('freesg_pe');
+		if ($EmulEnv =~ /^cb-/) {
+			PmIncludePath('$(#freesg.include)');
+			PmLibPath('$(#freesg.lib)');
+		}
+		return (1);
+	}
+
 	return (0);
 }
 

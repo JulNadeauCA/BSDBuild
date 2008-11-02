@@ -93,15 +93,17 @@ sub Link
 {
 	my $lib = shift;
 
-	if ($lib eq 'jpeg') {
-			print << 'EOF';
-if (hdefs["HAVE_JPEG"] ~= nil) then
-	table.insert(package.links, { "jpeg" })
-end
-EOF
-		return (1);
+	if ($lib ne 'jpeg') {
+		return (0);
 	}
-	return (0);
+	PmIfHDefined('HAVE_JPEG');
+		PmLink('jpeg');
+		if ($EmulEnv =~ /^cb-/) {
+			PmIncludePath('$(#jpeg.include)');
+			PmLibPath('$(#jpeg.lib)');
+		}
+	PmEndif;
+	return (1);
 }
 
 sub Emul

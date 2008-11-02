@@ -111,30 +111,21 @@ EOF
 sub Link
 {
 	my $lib = shift;
-	my @paths = ();
 
 	if ($lib ne 'opengl') {
 		return (0);
 	}
-
-	if ($EmulEnv =~ /^cb-(gcc|ow)$/) {
-		@paths = ('C:\\\\MinGW\\\\include');
-	} else {
-		@paths = ('/usr/include',
-		          '/usr/local/include',
-		          '/usr/X11R6/include');
-	}
-
-	print 'if (hdefs["HAVE_OPENGL"] ~= nil) then'."\n";
-	if ($EmulOS eq 'windows') {
-		print 'table.insert(package.links, {"opengl32"})'."\n";
-	} else {
-		print 'table.insert(package.links, {"GL"})'."\n";
-	}
-	foreach my $path (@paths) {
-		print "table.insert(package.includepaths,{\"$path\"})\n";
-	}
-	print "end\n";
+	PmIfHDefined('HAVE_OPENGL');
+		if ($EmulOS eq 'windows') {
+			PmLink('opengl32');
+		} else {
+			PmLink('GL');
+		}
+		if ($EmulEnv =~ /^cb-/) {
+			PmIncludePath('$(#gl.include)');
+			PmLibPath('$(#gl.lib)');
+		}
+	PmEndif;
 	return (1);
 }
 

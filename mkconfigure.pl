@@ -58,7 +58,7 @@ sub c_define
 	MkDefine('CXXFLAGS', '$CXXFLAGS -D'.$def);
 	MkSaveMK('CFLAGS');
 	MkSaveMK('CXXFLAGS');
-	PmDefineBool($def);
+	print {$LUA} "table.insert(package.defines,{\"$def\"})\n";
 }
 
 sub c_incdir
@@ -79,7 +79,7 @@ sub c_incdir
 		$dir =~ s/\$SRC/\.\./g;
 		$dir =~ s/\$BLD/\.\./g;
 	}
-	PmIncludePath($dir);
+	print {$LUA} "table.insert(package.includepaths,{\"$dir\"})\n";
 }
 
 sub c_incprep
@@ -129,23 +129,27 @@ sub c_libdir
 	MkSaveMK('LIBS');
 
 	$dir =~ s/\$SRC/\./g;
-	PmLibPath($dir);
+	print {$LUA} "table.insert(package.libpaths,{\"$dir\"})\n";
 }
 
 sub c_extra_warnings
 {
-	PmBuildFlag('extra-warnings');
+	print {$LUA} 'table.insert(package.buildflags,{"extra-warnings"})'."\n";
 }
 
 sub c_fatal_warnings
 {
-	PmBuildFlag('extra-warnings');
+	print {$LUA} 'table.insert(package.buildflags,{"extra-warnings"})'."\n";
 }
 
 sub c_no_secure_warnings
 {
-	PmDefineBool('_CRT_SECURE_NO_WARNINGS');
-	PmDefineBool('_CRT_SECURE_NO_DEPRECATE');
+	print {$LUA} << "EOF";
+if (windows) then
+	table.insert(package.defines,{"_CRT_SECURE_NO_WARNINGS"})
+	table.insert(package.defines,{"_CRT_SECURE_NO_DEPRECATE"})
+end
+EOF
 }
 
 sub c_option

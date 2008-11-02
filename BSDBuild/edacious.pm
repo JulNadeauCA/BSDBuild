@@ -102,13 +102,15 @@ sub Link
 {
 	my $var = shift;
 
-	if ($var eq 'edacious' || $var eq 'es_core') {
-		print << 'EOF';
-tinsert(package.links, { "es_core" })
-EOF
-		return (1);
+	if ($var ne 'edacious' && $var ne 'es_core') {
+		return (0);
 	}
-	return (0);
+	PmLink('es_core');
+	if ($EmulEnv =~ /^cb-/) {
+		PmIncludePath('$(#edacious.include)');
+		PmLibPath('$(#edacious.lib)');
+	}
+	return (1);
 }
 
 BEGIN

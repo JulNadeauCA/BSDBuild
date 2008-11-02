@@ -96,17 +96,41 @@ sub Link
 	my $var = shift;
 
 	if ($var eq 'ag_core') {
-		print << 'EOF';
-tinsert(package.links, { "ag_core", "SDL" })
-EOF
+		PmLink('ag_core');
+		PmLink('SDL');
+
+		if ($EmulEnv =~ /^cb-/) {
+			PmIncludePath('$(#agar.include)');
+			PmIncludePath('$(#sdl.include)');
+			PmLibPath('$(#agar.lib)');
+			PmLibPath('$(#sdl.lib)');
+		}
 		return (1);
 	}
+
 	if ($var eq 'ag_gui') {
-		print << 'EOF';
-tinsert(package.links, { "ag_gui", "SDL", "opengl32", "freetype" })
-EOF
+		PmLink('ag_gui');
+		PmLink('SDL');
+		if ($EmulOS eq 'windows') {
+			PmLink('opengl32');
+		} else {
+			PmLink('GL');
+		}
+		PmLink('freetype');
+		
+		if ($EmulEnv =~ /^cb-/) {
+			PmIncludePath('$(#agar.include)');
+			PmIncludePath('$(#sdl.include)');
+			PmIncludePath('$(#gl.include)');
+			PmIncludePath('$(#freetype.include)');
+			PmLibPath('$(#agar.lib)');
+			PmLibPath('$(#sdl.lib)');
+			PmLibPath('$(#gl.lib)');
+			PmLibPath('$(#freetype.lib)');
+		}
 		return (1);
 	}
+
 	return (0);
 }
 

@@ -63,6 +63,7 @@ my $libShared = 0;
 my $libStatic = 1;
 
 my @subdirs = ();
+my @subdirConfig = ();
 my @srcs = ();
 my @cflags = ();
 my @libs = ();
@@ -93,7 +94,12 @@ EOF
 	if (@subdirs) {
 		foreach my $subdir (@subdirs) {
 			if ($subdir =~ /^\s*(.+)\*$/) { $subdir = $1; }
-			next unless $subdir;
+			unless ($subdir) {
+				next;
+			}
+			if (grep { $_ eq $subdir } @subdirConfig) {
+				next;
+			}
 			print "dopackage(\"$subdir\")\n";
 		}
 	}
@@ -281,6 +287,12 @@ foreach $_ (@lines) {
 	}
 	elsif (/^\s*SUBDIR\s*\+=\s*(.+)\s*$/) {
 		push @subdirs, split(/\s/, $1);
+	}
+	elsif (/^\s*SUBDIR_CONFIG\s*=\s*(.+)\s*$/) {
+		@subdirConfig = split(/\s/, $1);
+	}
+	elsif (/^\s*SUBDIR_CONFIG\s*\+=\s*(.+)\s*$/) {
+		push @subdirConfig, split(/\s/, $1);
 	}
 	elsif (/^\s*SRCS\s*=\s*(.+)\s*$/) {
 		@srcs = split(/\s/, $1);

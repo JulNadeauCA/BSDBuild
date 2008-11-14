@@ -1,7 +1,7 @@
 # Public domain
 
-MDEFINE(SHAREDIR, "$PREFIX/share/bsdbuild");
-MDEFINE(VERSION, "2.4");
+MDEFINE(SHAREDIR, "$PREFIX/share/bsdbuild")
+MDEFINE(VERSION, "2.4")
 MDEFINE(RELEASE, "Alive in Strange Reality")
 
 echo "*"

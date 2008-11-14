@@ -1,9 +1,7 @@
 TOP=.
 include ${TOP}/Makefile.config
 
-PROJECT=	bsdbuild
-DIST=		${PROJECT}-${VERSION}
-DISTFILE=	${DIST}.tar.gz
+PROJECT=bsdbuild
 
 SCRIPTS=mkconfigure \
 	mkprojfiles \
@@ -116,20 +114,19 @@ configure: configure.in
 depend:
 	# nothing
 
-release: cleandir
-	(cd .. && rm -fr ${DIST} && \
-	 cp -fRp ${PROJECT} ${DIST} && \
-	 tar --exclude=.svn -f ${DIST}.tar -c ${DIST} && \
-	 gzip -9f ${DIST}.tar && \
-	 md5sum ${DISTFILE} > ${DISTFILE}.md5 && \
-	 sha1sum ${DISTFILE} >> ${DISTFILE}.md5 && \
-	 gpg -ab ${DISTFILE} && \
-	 scp ${DISTFILE} ${DISTFILE}.md5 ${DISTFILE}.asc \
-	 vedge@resin:www/stable.csoft.org/${PROJECT})
-	echo "TODO: Update sourceforge"
-	echo "TODO: Update freshmeat"
+release:
+	env VERSION="${VERSION}" RELEASE="${RELEASE}" sh mk/dist.sh stable
 
-.PHONY: install install-links install-links-subdir cleandir clean depend release configure
+clean-release:
+	@(export VERSION=`perl get-version.pl`; \
+	  echo "rm -fR ../${PROJECT}-${VERSION}"; \
+	  rm -fR ../${PROJECT}-${VERSION}; \
+	  for F in ${PROJECT}-${VERSION}.tar.gz* ${PROJECT}-${VERSION}.zip*; do \
+		echo "rm -f ../$$F"; \
+		rm -f ../$$F; \
+	  done);
+
+.PHONY: install install-links install-links-subdir cleandir clean depend release configure clean-release
 
 include ${TOP}/mk/build.common.mk
 include ${TOP}/mk/build.subdir.mk

@@ -199,8 +199,6 @@ sub Help
     my $ctags_opt = pack('A' x 25, split('', '--with-ctags'));
     my $docs_opt = pack('A' x 25, split('', '--with-docs'));
     
-    my $debug_opt = pack('A' x 25, split('', '--enable-debug'));
-
     my $regs = join("\n",
         "echo \"    $prefix_opt Installation prefix [/usr/local]\"",
         "echo \"    $sysconfdir_opt System-wide configuration prefix [/etc]\"",
@@ -222,7 +220,6 @@ sub Help
         "echo \"    $cygwin_opt Add cygwin dependencies under cygwin [no]\"",
         "echo \"    $nls_opt Native Language Support [no]\"",
         "echo \"    $gettext_opt Use gettext tools [check]\"",
-        "echo \"    $debug_opt Include debugging code [no]\"",
 	@HELP);
 
     print << "EOF";
@@ -565,16 +562,6 @@ else
 fi
 if [ "${with_docs}" = "no" ]; then
 	echo "NODOC=yes" >> Makefile.config
-fi
-
-# Process debug option.
-if [ "${enable_debug}" = "yes" ]; then
-	echo "LDFLAGS+=-g" >> Makefile.config
-	echo "#ifndef DEBUG" > config/debug.h
-	echo "#define DEBUG 1" >> config/debug.h
-	echo "#endif /* DEBUG */" >> config/debug.h
-else
-	echo "#undef DEBUG" > config/debug.h
 fi
 
 # Process NLS options.

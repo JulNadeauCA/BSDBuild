@@ -162,6 +162,14 @@ sub c_option
 	MkSaveMK('CXXFLAGS');
 }
 
+sub ld_option
+{
+	my $opt = shift;
+
+	MkDefine('LDFLAGS', '$LDFLAGS'.$opt);
+	MkSaveMK('LDFLAGS');
+}
+
 sub Register
 {
 	my ($arg, $descr) = @_;
@@ -762,6 +770,8 @@ EOF
 					c_libdir(@args);
 				} elsif ($cmd eq 'c_option') {
 					c_option(@args);
+				} elsif ($cmd eq 'ld_option') {
+					ld_option(@args);
 				} elsif ($cmd eq 'c_extra_warnings') {
 					c_extra_warnings(@args);
 				} elsif ($cmd eq 'c_fatal_warnings') {

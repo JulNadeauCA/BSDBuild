@@ -87,7 +87,8 @@ SHARE=	Core.pm \
 	shl_load.pm \
 	float_h.pm \
 	agar-math.pm \
-	percgi.pm
+	percgi.pm \
+	gettimeofday.pm
 
 all:
 

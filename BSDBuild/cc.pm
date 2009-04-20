@@ -144,6 +144,17 @@ int main(int argc, char *argv[])
 }
 EOF
 	
+	MkPrintN('checking const attribute...');
+	TryCompileFlagsC('HAVE_CONST_ATTRIBUTE', '', << 'EOF');
+int foo(int) __attribute__ ((const));
+int foo(int x) { return (x*x); }
+int main(int argc, char *argv[])
+{
+	int x = foo(1);
+	return (x);
+}
+EOF
+	
 	MkPrintN('checking deprecated attribute...');
 	TryCompileFlagsC('HAVE_DEPRECATED_ATTRIBUTE', '', << 'EOF');
 void foo(void) __attribute__ ((deprecated));

@@ -122,8 +122,17 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
+	
+	MkPrintN('checking aligned attribute...');
+	TryCompileFlagsC('HAVE_ALIGNED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
+int main(int argc, char *argv[])
+{
+	struct s1 { int x,y,z; } __attribute__ ((aligned(16)));
+	return (0);
+}
+EOF
 
-	MkPrintN('checking __bounded__ attribute...');
+	MkPrintN('checking bounded attribute...');
 	MkCompileC('HAVE_BOUNDED_ATTRIBUTE', '', '', << 'EOF');
 void foo(char *, int) __attribute__ ((__bounded__(__string__,1,2)));
 void foo(char *a, int c) { }
@@ -135,7 +144,19 @@ int main(int argc, char *argv[])
 }
 EOF
 	
-	MkPrintN('checking __format__ attribute...');
+	MkPrintN('checking deprecated attribute...');
+	TryCompileFlagsC('HAVE_DEPRECATED_ATTRIBUTE', '', << 'EOF');
+void foo(void) __attribute__ ((deprecated));
+void foo(void) { }
+
+int main(int argc, char *argv[])
+{
+/*	foo(); */
+	return (0);
+}
+EOF
+	
+	MkPrintN('checking format attribute...');
 	MkCompileC('HAVE_FORMAT_ATTRIBUTE', '', '', << 'EOF');
 #include <stdarg.h>
 void foo1(char *, ...)
@@ -153,7 +174,7 @@ int main(int argc, char *argv[])
 }
 EOF
 
-	MkPrintN('checking __nonnull__ attribute...');
+	MkPrintN('checking nonnull attribute...');
 	TryCompileFlagsC('HAVE_NONNULL_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 void foo(char *) __attribute__((__nonnull__ (1)));
 void foo(char *a) { }
@@ -163,22 +184,47 @@ int main(int argc, char *argv[])
 	return (0);
 }
 EOF
-
-	MkPrintN('checking __aligned__ attribute...');
-	TryCompileFlagsC('HAVE_ALIGNED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
+	
+	MkPrintN('checking noreturn attribute...');
+	TryCompileFlagsC('HAVE_NORETURN_ATTRIBUTE', '', << 'EOF');
+#include <unistd.h>
+#include <stdlib.h>
+void foo(void) __attribute__ ((noreturn));
+void foo(void) { _exit(0); }
 int main(int argc, char *argv[])
 {
-	struct s1 { int x,y,z; } __attribute__ ((aligned(16)));
-	return (0);
+	foo();
 }
 EOF
-	
-	MkPrintN('checking __packed__ attribute...');
+
+	MkPrintN('checking packed attribute...');
 	TryCompileFlagsC('HAVE_PACKED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 int main(int argc, char *argv[])
 {
 	struct s1 { char c; int x,y,z; } __attribute__ ((packed));
 	return (0);
+}
+EOF
+	
+	MkPrintN('checking pure attribute...');
+	TryCompileFlagsC('HAVE_PURE_ATTRIBUTE', '', << 'EOF');
+int foo(int) __attribute__ ((pure));
+int foo(int x) { return (x*x); }
+int main(int argc, char *argv[])
+{
+	int x = foo(1);
+	return (x);
+}
+EOF
+	
+	MkPrintN('checking warn_unused_result attribute...');
+	TryCompileFlagsC('HAVE_WARN_UNUSED_RESULT_ATTRIBUTE', '', << 'EOF');
+int foo(void) __attribute__ ((warn_unused_result));
+int foo(void) { return (1); }
+int main(int argc, char *argv[])
+{
+	int rv = foo();
+	return (rv);
 }
 EOF
 	

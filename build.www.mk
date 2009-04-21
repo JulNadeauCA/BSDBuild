@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2001-2007 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2009 Hypertriton, Inc. <http://hypertriton.com/>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -126,20 +126,21 @@ install-www:
 	fi
 	@if [ ! -d "${HTMLDIR}" ]; then \
 		echo "${INSTALL_DATA_DIR} ${HTMLDIR}"; \
-		${SUDO} ${INSTALL_DATA_DIR} ${HTMLDIR}; \
+		${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${HTMLDIR}; \
 	fi
 	@if [ "${HTML_INSTSOURCE}" = "Yes" ]; then \
 		if [ ! -d "${HTMLDIR}/mk" ]; then \
 			echo "${INSTALL_DATA_DIR} ${HTMLDIR}/mk"; \
-			${SUDO} ${INSTALL_DATA_DIR} ${HTMLDIR}/mk; \
+			${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${HTMLDIR}/mk; \
 		fi; \
 		for MK in ${MKDEPS}; do \
 			echo "${INSTALL_DATA} ${TOP}/mk/$$MK ${HTMLDIR}/mk"; \
-			${SUDO} ${INSTALL_DATA} ${TOP}/mk/$$MK ${HTMLDIR}/mk; \
+			${SUDO} ${INSTALL_DATA} ${TOP}/mk/$$MK \
+			    ${DESTDIR}${HTMLDIR}/mk; \
 		done; \
        		if [ ! -d "${HTMLDIR}/xsl" ]; then \
 			echo "${INSTALL_DATA_DIR} ${HTMLDIR}/xsl"; \
-			${SUDO} ${INSTALL_DATA_DIR} ${HTMLDIR}/xsl; \
+			${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${HTMLDIR}/xsl; \
 		fi; \
 		for XSL in ${XSL}; do \
 			if [ -e "${HTMLDIR}/xsl/$$XSL" \
@@ -147,12 +148,13 @@ install-www:
 				echo "xsl/$$XSL: exists; preserving"; \
 			else \
 				echo "${INSTALL_DATA} $$XSL ${HTMLDIR}/xsl"; \
-				${SUDO} ${INSTALL_DATA} $$XSL ${HTMLDIR}/xsl; \
+				${SUDO} ${INSTALL_DATA} $$XSL \
+				    ${DESTDIR}${HTMLDIR}/xsl; \
 			fi; \
 		done; \
 		if [ ! -d "${HTMLDIR}/m4" ]; then \
 			echo "${INSTALL_DATA_DIR} ${HTMLDIR}/m4"; \
-			${SUDO} ${INSTALL_DATA_DIR} ${HTMLDIR}/m4; \
+			${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${HTMLDIR}/m4; \
 		fi; \
 		(cd m4; for M4IN in `ls -1 *.m4`; do \
 			if [ -e "${HTMLDIR}/m4/$$M4IN" \
@@ -160,7 +162,8 @@ install-www:
 				echo "m4/$$M4IN: exists; preserving"; \
 			else \
 				echo "${INSTALL_DATA} $$M4IN ${HTMLDIR}/m4"; \
-				${SUDO} ${INSTALL_DATA} $$M4IN ${HTMLDIR}/m4; \
+				${SUDO} ${INSTALL_DATA} $$M4IN \
+				    ${DESTDIR}${HTMLDIR}/m4; \
 			fi; \
 		done); \
 	fi
@@ -182,7 +185,7 @@ install-www:
 			echo "${INSTALL_DATA} Makefile.prep \
 			    ${HTMLDIR}/Makefile"; \
 			${SUDO} ${INSTALL_DATA} Makefile.prep \
-			    ${HTMLDIR}/Makefile; \
+			    ${DESTDIR}${HTMLDIR}/Makefile; \
 			rm -f Makefile.prep; \
 		fi; \
 		if [ "${HTML_INSTSOURCE}" = "Yes" ]; then \
@@ -192,7 +195,8 @@ install-www:
 				echo "$$SF exists; preserving"; \
 			else \
 				echo "${INSTALL_DATA} $$SF ${HTMLDIR}"; \
-				${SUDO} ${INSTALL_DATA} $$SF ${HTMLDIR}; \
+				${SUDO} ${INSTALL_DATA} $$SF \
+				    ${DESTDIR}${HTMLDIR}; \
 			fi; \
 		fi; \
 		if [ -e "${HTMLDIR}/$$F.var" \
@@ -200,7 +204,7 @@ install-www:
 			echo "$$F.var exists; preserving"; \
 		else \
 			echo "${INSTALL_DATA} $$F.var ${HTMLDIR}"; \
-			${SUDO} ${INSTALL_DATA} $$F.var ${HTMLDIR}; \
+			${SUDO} ${INSTALL_DATA} $$F.var ${DESTDIR}${HTMLDIR}; \
 		fi; \
 		for LANG in ${LANGUAGES}; do \
 			for ENC in `ls -1 $$F.$$LANG*`; do \
@@ -209,7 +213,8 @@ install-www:
 				    echo "$$ENC exists; preserving"; \
 			    else \
 				    echo "${INSTALL_DATA} $$ENC ${HTMLDIR}"; \
-				    ${SUDO} ${INSTALL_DATA} $$ENC ${HTMLDIR}; \
+				    ${SUDO} ${INSTALL_DATA} $$ENC \
+				        ${DESTDIR}${HTMLDIR}; \
 			    fi; \
 			done; \
 		done; \

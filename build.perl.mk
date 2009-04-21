@@ -47,40 +47,40 @@ install-perl:
 	if [ "${SCRIPTS}" != "" ]; then \
 	    if [ ! -d "${BINDIR}" ]; then \
 	        echo "${INSTALL_PROG_DIR} ${BINDIR}"; \
-	        ${SUDO} ${INSTALL_PROG_DIR} ${BINDIR}; \
+	        ${SUDO} ${INSTALL_PROG_DIR} ${DESTDIR}${BINDIR}; \
 	    fi; \
 	    if [ "${SCRIPTS_SUBST}" != "" ]; then \
 		    for F in ${SCRIPTS}; do \
 		        echo "sed -e '${SCRIPTS_SUBST}' $$F > $$F.prep"; \
 		        sed -e '${SCRIPTS_SUBST}' $$F > $$F.prep; \
 			echo "${INSTALL_PROG} $$F.prep ${BINDIR}/$$F"; \
-			${SUDO} ${INSTALL_PROG} $$F.prep ${BINDIR}/$$F; \
+			${SUDO} ${INSTALL_PROG} $$F.prep ${DESTDIR}${BINDIR}/$$F; \
 			rm -f $$F.prep; \
 		    done; \
 	    else \
 		for F in ${SCRIPTS}; do \
 		    echo "${INSTALL_PROG} $$F ${BINDIR}"; \
-		    ${SUDO} ${INSTALL_PROG} $$F ${BINDIR}; \
+		    ${SUDO} ${INSTALL_PROG} $$F ${DESTDIR}${BINDIR}; \
 		done; \
 	    fi; \
 	fi
 	@if [ "${MODULES}" != "" ]; then \
 	    if [ ! -d "${MODULES_DIR}" ]; then \
 	        echo "${INSTALL_DATA_DIR} ${MODULES_DIR}"; \
-	        ${SUDO} ${INSTALL_DATA_DIR} ${MODULES_DIR}; \
+	        ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${MODULES_DIR}; \
 	    fi; \
 	    if [ "${MODULES_SUBST}" != "" ]; then \
 		    for F in ${MODULES}; do \
 		        echo "sed -e '${MODULES_SUBST}' $$F > $$F.prep"; \
 		        sed -e '${MODULES_SUBST}' $$F > $$F.prep; \
 			echo "${INSTALL_DATA} $$F.prep ${MODULES_DIR}/$$F"; \
-			${SUDO} ${INSTALL_DATA} $$F.prep ${MODULES_DIR}/$$F; \
+			${SUDO} ${INSTALL_DATA} $$F.prep ${DESTDIR}${MODULES_DIR}/$$F; \
 			rm -f $$F.prep; \
 		    done; \
 	    else \
 	        for F in ${MODULES}; do \
 	            echo "${INSTALL_DATA} $$F ${MODULES_DIR}"; \
-	            ${SUDO} ${INSTALL_DATA} $$F ${MODULES_DIR}; \
+	            ${SUDO} ${INSTALL_DATA} $$F ${DESTDIR}${MODULES_DIR}; \
 	        done; \
 	    fi; \
 	fi
@@ -88,11 +88,11 @@ install-perl:
         if [ "$$_share" != "" ]; then \
             if [ ! -d "${SHAREDIR}" ]; then \
                 echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
-                ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}; \
+                ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${SHAREDIR}; \
             fi; \
             for F in $$_share; do \
                 echo "${INSTALL_DATA} $$F ${SHAREDIR}"; \
-                ${SUDO} ${INSTALL_DATA} $$F ${SHAREDIR}; \
+                ${SUDO} ${INSTALL_DATA} $$F ${DESTDIR}${SHAREDIR}; \
             done; \
 	fi
 
@@ -100,19 +100,19 @@ deinstall-perl:
 	@if [ "${SCRIPTS}" != "" ]; then \
 	    for F in ${SCRIPTS}; do \
 	        echo "${DEINSTALL_PROG} ${BINDIR}/$$F"; \
-	        ${SUDO} ${DEINSTALL_PROG} ${BINDIR}/$$F; \
+	        ${SUDO} ${DEINSTALL_PROG} ${DESTDIR}${BINDIR}/$$F; \
 	    done; \
 	fi
 	@if [ "${MODULES}" != "" ]; then \
 	    for F in ${MODULES}; do \
 	        echo "${DEINSTALL_DATA} ${MODULES_DIR}/$$F"; \
-	        ${SUDO} ${DEINSTALL_DATA} ${MODULES_DIR}/$$F; \
+	        ${SUDO} ${DEINSTALL_DATA} ${DESTDIR}${MODULES_DIR}/$$F; \
 	    done; \
 	fi
 	@if [ "${SHARE}" != "" ]; then \
 	    for F in ${SHARE}; do \
 	        echo "${DEINSTALL_DATA} ${SHAREDIR}/$$F"; \
-	        ${SUDO} ${DEINSTALL_DATA} ${SHAREDIR}/$$F; \
+	        ${SUDO} ${DEINSTALL_DATA} ${DESTDIR}${SHAREDIR}/$$F; \
 	    done; \
 	fi
 

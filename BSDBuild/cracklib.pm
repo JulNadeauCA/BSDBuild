@@ -36,7 +36,7 @@ sub Test
 
 	MkDefine('CRACKLIB_CFLAGS', '');
 	foreach my $dir (@dirs) {
-		MkIf("-f \"$dir/include/packer.h\"");
+		MkIf("-f \"$dir/include/crack.h\"");
 			MkDefine('CRACKLIB_CFLAGS', "-I$dir/include");
 			MkDefine('CRACKLIB_LIBS', "-L$dir/lib -lcrack");
 		MkEndif;
@@ -47,9 +47,9 @@ sub Test
 		MkCompileC('HAVE_CRACKLIB', '${CRACKLIB_CFLAGS}', '${CRACKLIB_LIBS}',
 		    << 'EOF');
 #include <stdio.h>
-#include <packer.h>
+#include <crack.h>
 int main(int argc, char *argv[]) {
-	char *msg = (char *)FascistCheck("foobar", "/path");
+	const char *msg = (const char *)FascistCheck("foobar", "/path");
 	return (msg != NULL);
 }
 EOF

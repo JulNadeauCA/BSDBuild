@@ -100,7 +100,12 @@ EOF
 			if (grep { $_ eq $subdir } @subdirConfig) {
 				next;
 			}
-			print "dopackage(\"$subdir\")\n";
+			if ($subdir =~ /^\$\{SUBDIR_(\w+)\}$/) {
+				my $subdiropt = lc($1);
+				print "dopackage(\"$subdiropt\")\n";
+			} else {
+				print "dopackage(\"$subdir\")\n";
+			}
 		}
 	}
 }

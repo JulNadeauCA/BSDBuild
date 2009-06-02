@@ -101,8 +101,7 @@ EOF
 				next;
 			}
 			if ($subdir =~ /^\$\{SUBDIR_(\w+)\}$/) {
-				my $subdiropt = lc($1);
-				print "dopackage(\"$subdiropt\")\n";
+				print "dopackage(\"$1\")\n";
 			} else {
 				print "dopackage(\"$subdir\")\n";
 			}

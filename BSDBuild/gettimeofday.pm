@@ -39,10 +39,24 @@ main(int argc, char *argv[])
 EOF
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd/) {
+		MkDefine('HAVE_GETTIMEOFDAY', 'yes');
+		MkSaveDefine('HAVE_GETTIMEOFDAY');
+	} else {
+		MkSaveUndef('HAVE_GETTIMEOFDAY');
+	}
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'gettimeofday'} = \&Test;
 	$DEPS{'gettimeofday'} = 'cc';
+	$EMUL{'gettimeofday'} = \&Emul;
 	$DESCR{'gettimeofday'} = 'the gettimeofday() function';
 }
 

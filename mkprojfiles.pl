@@ -1,4 +1,4 @@
-#!/usr/bin/perl -I%PREFIX%/share/bsdbuild
+#!/usr/bin/perl -I/usr/local/share/bsdbuild
 #
 # Copyright (c) 2008 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
@@ -28,8 +28,7 @@
 # Read a BSDBuild Makefile on standard input and output the Premake script
 # which will be used by <build.proj.mk> to generate IDE project files.
 # 
-# Premake project information is obtained from assignments to the standard
-# BSDBuild variables:
+# The following BSDBuild variables are recognized:
 #
 #	SUBDIR		-> Recurse using Premake dopackage()
 #	PROJECT		-> Premake project name
@@ -51,29 +50,10 @@
 
 use BSDBuild::Core;
 
-my @lines = ();
-my $line = '';
 my $projFlav = '';
-
-my $libName = undef;
-my $progName = undef;
-my $progGUI = 0;
-
-my $libShared = 0;
-my $libStatic = 1;
-
-my @subdirs = ();
-my @subdirConfig = ();
-my @srcs = ();
-my @cflags = ();
-my @libs = ();
-
-my $project = '';
-my $projGUID = '';
-my $pkgGUID = '';
-my $pkgLinks = '';
-
+my $Error = '';
 my %linkFn = ();
+my %V = ();
 
 sub Version
 {
@@ -86,25 +66,19 @@ EOF
 sub DoProject
 {
 	print << "EOF";
-project.name = "$project"
+project.name = "$V{'PROJECT'}"
 EOF
-	if ($projGUID) {
-		print "project.guid = \"$projGUID\"\n";
+	if (exists($V{'PROJECT_GUID'}) && $V{'PROJECT_GUID'}) {
+		print "project.guid = \"$V{'PROJECT_GUID'}\"\n";
 	}
-	if (@subdirs) {
+	if (exists($V{'SUBDIR'})) {
+		my @subdirs = split(' ', $V{'SUBDIR'});
 		foreach my $subdir (@subdirs) {
 			if ($subdir =~ /^\s*(.+)\*$/) { $subdir = $1; }
 			unless ($subdir) {
 				next;
 			}
-			if (grep { $_ eq $subdir } @subdirConfig) {
-				next;
-			}
-			if ($subdir =~ /^\$\{SUBDIR_(\w+)\}$/) {
-				print "dopackage(\"$1\")\n";
-			} else {
-				print "dopackage(\"$subdir\")\n";
-			}
+			print "dopackage(\"$subdir\")\n";
 		}
 	}
 }
@@ -123,8 +97,10 @@ package.name = "$name"
 package.kind = "$kind"
 package.language = "$lang"
 EOF
-	if ($pkgGUID) {
-		print "package.guid = \"$pkgGUID\"\n";
+	if (exists($V{'PROG_GUID'}) && $V{'PROG_GUID'}) {
+		print "package.guid = \"$V{'PROG_GUID'}\"\n";
+	} elsif (exists($V{'LIB_GUID'}) && $V{'LIB_GUID'}) {
+		print "package.guid = \"$V{'LIB_GUID'}\"\n";
 	}
 	if ($ENV{'PROJFLAVOR'}) {
 		$projFlav = $ENV{'PROJFLAVOR'};
@@ -134,8 +110,15 @@ EOF
 			print "dofile(\"$incl\")\n";
 		}
 	}
-	if ($pkgLinks) {
-		foreach my $ln (split(' ', $pkgLinks)) {
+
+	my $links = '';
+	if (exists($V{'PROG_LINKS'}) && $V{'PROG_LINKS'}) {
+		$links = $V{'PROG_LINKS'};
+	} elsif (exists($V{'LIB_LINKS'}) && $V{'LIB_LINKS'}) {
+		$links = $V{'LIB_LINKS'};
+	}
+	if ($links) {
+		foreach my $ln (split(' ', $links)) {
 			my $handled = 0;
 			foreach my $fn (values %linkFn) {
 				if (&$fn($ln)) { $handled++; }
@@ -145,16 +128,17 @@ EOF
 			}
 		}
 	}
-	if (@srcs) {
+	if (exists($V{'SRCS'}) && $V{'SRCS'}) {
 		print 'package.files = {', "\n";
-		foreach my $src (@srcs) {
+		foreach my $src (split(' ', $V{'SRCS'})) {
 			if ($src =~ /^\s*(.+)\*$/) { $src = $1; }
 			next unless $src;
 			print "\t\"$src\",\n";
 		}
 		print '}', "\n";
 	}
-	if (@cflags) {
+	if (exists($V{'CFLAGS'}) && $V{'CFLAGS'}) {
+		my @cflags = split(' ', $V{'CFLAGS'});
 		foreach my $cflag (@cflags) {
 			my $handled = 0;
 			if ($cflag =~ /^-I\s*([\w\-\.\/]+)\s*$/) {
@@ -180,7 +164,8 @@ EOF
 			#}
 		}
 	}
-	if (@libs) {
+	if (exists($V{'LIBS'}) && $V{'LIBS'}) {
+		my @libs = split(' ', $V{'LIBS'});
 		foreach my $lib (@libs) {
 			my $handled = 0;
 			if ($lib =~ /^\${([\w\-\.]+)}$/) { $lib = $1; }
@@ -195,6 +180,123 @@ EOF
 			#}
 		}
 	}
+}
+
+sub ParseMakefile ($)
+{
+	my $file = shift;
+	my @lines = ();
+	my $line = '';
+	my $incl;
+
+	unless (open($incl, $file)) {
+		$Error = "$file: $!";
+		return (0);
+	}
+
+	# Parse the Makefile looking for specific variables.
+	foreach $_ (<$incl>) {
+		chop;
+
+		if (/^(.+)\\$/) {			# Expansion
+			$line .= $1;
+		} else {				# New line
+			if ($line) {
+				push @lines, $line . $_;
+				$line = '';
+			} else {
+				push @lines, $_;
+			}
+		}
+	}
+	foreach $_ (@lines) {
+		if (/^\s*#/) { next; }
+		if (/^\t/) { next; }
+
+		s/\$\{(\w+)\}/$V{$1}/g;
+
+		if (/^\s*(\w+)\s*=\s*"(.+)"$/ ||
+		    /^\s*(\w+)\s*=\s*(.+)$/) {
+			$V{$1} = $2;
+			print STDERR "$1 => \"$V{$1}\"\n";
+		} elsif (/^\s*(\w+)\s*\+=\s*"(.+)"$/ ||
+		         /^\s*(\w+)\s*\+=\s*(.+)$/) {
+			if (exists($V{$1}) && $V{$1} ne '') {
+				$V{$1} .= ' '.$2;
+			} else {
+				$V{$1} = $2;
+			}
+			print STDERR "$1 => \"$V{$1}\" (app)\n";
+		}
+
+		if (/^\s*include\s+(.+)$/) {
+			my $incl = $1;
+			if (!ParseMakefile($incl)) {
+				$Error = "($incl): $Error";
+				return (0);
+			}
+		}
+	}
+	close($incl);
+	return (1);
+}
+
+if (!ParseMakefile('-')) {
+	print STDERR "$Error\n";
+	exit(1);
+}
+if (exists($V{'PROJECT'}) && $V{'PROJECT'}) {
+	DoProject();
+}
+
+my $packLang = 'c';
+my %langs = ();
+
+if (exists($V{'SRCS'}) && $V{'SRCS'}) {
+	foreach my $src (split(' ', $V{'SRCS'})) {
+		if ($src =~ /\.c$/i) { $langs{'c'} = 1; }
+		elsif ($src =~ /\.(cc|cpp)$/i) { $langs{'c++'} = 1; }
+		elsif ($src =~ /\.cs$/i) { $langs{'c#'} = 1; }
+	}
+}
+if (exists($langs{'c'})) {
+	if (exists($langs{'c++'})) {
+ 	   	print STDERR "*\n".
+		             "* WARNING: Package contains both C and C++\n".
+			     "* source files.\n".
+			     "*\n";
+		$packLang = 'c++';
+	} elsif (exists($langs{'c#'})) {
+ 	   	print STDERR "*\n".
+		             "* WARNING: Package contains both C and C#\n".
+			     "* source files.\n".
+			     "*\n";
+		$packLang = 'c#';
+	}
+} elsif (exists($langs{'c++'})) {
+	$packLang = 'c++';
+} elsif (exists($langs{'c#'})) {
+	$packLang = 'c#';
+}
+print STDERR "* Using package language: $packLang\n";
+
+if (exists($V{'LIB'}) && $V{'LIB'}) {
+	if (exists($V{'LIB_SHARED'}) &&
+	    uc($V{'LIB_SHARED'}) eq 'YES') {
+		DoPackage($V{'LIB'}.'_static', 'lib', $packLang);
+		DoPackage($V{'LIB'}, 'dll', $packLang);
+	} else {
+		DoPackage($V{'LIB'}, 'lib', $packLang);
+	}
+} elsif (exists($V{'PROG'}) && $V{'PROG'}) {
+	if (exists($V{'PROG_TYPE'}) && uc($V{'PROG_TYPE'}) eq 'GUI') {
+		DoPackage($V{'PROG'}, 'winexe', $packLang);
+	} else {
+		DoPackage($V{'PROG'}, 'exe', $packLang);
+	}
+} else {
+	print STDERR "Unable to determine package kind\n";
+	exit (0);
 }
 
 # $EmulFoo is required by some tests.
@@ -234,132 +336,3 @@ print << 'EOF';
 --
 EOF
 
-# Parse the Makefile looking for specific variables.
-foreach $_ (<STDIN>) {
-	chop;
-
-	if (/^(.+)\\$/) {			# Expansion
-		$line .= $1;
-	} else {				# New line
-		if ($line) {
-			push @lines, $line . $_;
-			$line = '';
-		} else {
-			push @lines, $_;
-		}
-	}
-}
-foreach $_ (@lines) {
-	if (/^\s*PROJECT\s*=\s*\"*\s*([\w\-\.]+)\s*\"*\s*$/) {
-		$project = $1;
-	}
-	elsif (/^\s*PROJECT_GUID\s*=\s*\"*\s*([\w\-\.]+)\s*\"*\s*$/) {
-		$projGUID = $1;
-	}
-	elsif (/^\s*LIB\s*=\s*([\w\-\.]+)\s*$/) {
-		$libName = $1;
-	}
-	elsif (/^\s*LIB_GUID\s*=\s*\"*\s*([\w\-\.]+)\s*\"*\s*$/) {
-		$pkgGUID = $1;
-	}
-	elsif (/^\s*LIB_LINKS\s*=\s*\"*\s*([\w\-\.\s]+)\s*\"*\s*$/) {
-		$pkgLinks = $1;
-	}
-	elsif (/^\s*PROG\s*=\s*([\w\-\.]+)\s*$/) {
-		$progName = $1;
-	}
-	elsif (/^\s*PROG_GUID\s*=\s*\"*\s*([\w\-\.]+)\s*\"*\s*$/) {
-		$pkgGUID = $1;
-	}
-	elsif (/^\s*PROG_LINKS\s*=\s*\"*\s*([\w\-\.\s]+)\s*\"*\s*$/) {
-		$pkgLinks = $1;
-	}
-	elsif (/^\s*PROG_TYPE\s*=\s*\"*\s*([\w]+)\s*\"*\s*$/) {
-		if ($1 =~ /gui/i)	{ $progGUI = 1; }
-		else			{ $progGUI = 0; }
-	}
-	elsif (/^\s*LIB_SHARED\s*=\s*([\w]+)\s*$/) {
-		if ($1 =~ /yes/i)	{ $libShared = 1; }
-		else			{ $libShared = 0; }
-	}
-	elsif (/^\s*LIB_STATIC\s*=\s*([\w]+)\s*$/) {
-		if ($1 =~ /yes/i)	{ $libStatic = 1; }
-		else			{ $libStatic = 0; }
-	}
-	elsif (/^\s*SUBDIR\s*=\s*(.+)\s*$/) {
-		@subdirs = split(/\s/, $1);
-	}
-	elsif (/^\s*SUBDIR\s*\+=\s*(.+)\s*$/) {
-		push @subdirs, split(/\s/, $1);
-	}
-	elsif (/^\s*SUBDIR_CONFIG\s*=\s*(.+)\s*$/) {
-		@subdirConfig = split(/\s/, $1);
-	}
-	elsif (/^\s*SUBDIR_CONFIG\s*\+=\s*(.+)\s*$/) {
-		push @subdirConfig, split(/\s/, $1);
-	}
-	elsif (/^\s*SRCS\s*=\s*(.+)\s*$/) {
-		@srcs = split(/\s/, $1);
-	}
-	elsif (/^\s*SRCS\s*\+=\s*(.+)\s*$/) {
-		push @srcs, split(/\s/, $1);
-	}
-	elsif (/^\s*CFLAGS\s*=\s*(.+)\s*$/) {
-		@cflags = split(/\s/, $1);
-	}
-	elsif (/^\s*CFLAGS\s*\+=\s*(.+)\s*$/) {
-		push @cflags, split(/\s/, $1);
-	}
-	elsif (/^\s*LIBS\s*=\s*(.+)\s*$/) {
-		@libs = split(/\s/, $1);
-	}
-	elsif (/^\s*LIBS\s*\+=\s*(.+)\s*$/) {
-		push @libs, split(/\s/, $1);
-	}
-}
-if ($project) {
-	DoProject();
-}
-
-my $packLang = 'c';
-my %langs = ();
-foreach my $src (@srcs) {
-	if ($src =~ /\.c$/i) { $langs{'c'} = 1; }
-	elsif ($src =~ /\.(cc|cpp)$/i) { $langs{'c++'} = 1; }
-	elsif ($src =~ /\.cs$/i) { $langs{'c#'} = 1; }
-}
-if (exists($langs{'c'})) {
-	if (exists($langs{'c++'})) {
- 	   	print STDERR "*\n".
-		             "* WARNING: Package contains both C and C++\n".
-			     "* source files.\n".
-			     "*\n";
-		$packLang = 'c++';
-	} elsif (exists($langs{'c#'})) {
- 	   	print STDERR "*\n".
-		             "* WARNING: Package contains both C and C#\n".
-			     "* source files.\n".
-			     "*\n";
-		$packLang = 'c#';
-	}
-} elsif (exists($langs{'c++'})) {
-	$packLang = 'c++';
-} elsif (exists($langs{'c#'})) {
-	$packLang = 'c#';
-}
-print STDERR "* Using package language: $packLang\n";
-
-if ($libName) {
-	if ($libShared)	{
-		DoPackage($libName.'_static', 'lib', $packLang);
-		DoPackage($libName, 'dll', $packLang);
-	} else {
-		DoPackage($libName, 'lib', $packLang);
-	}
-} elsif ($progName) {
-	if ($progGUI)	{ DoPackage($progName, 'winexe', $packLang); }
-	else		{ DoPackage($progName, 'exe', $packLang); }
-} else {
-	#print STDERR "Unable to determine package kind\n";
-	exit (0);
-}

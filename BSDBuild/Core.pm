@@ -23,6 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+our $OutputLUA = 'configure.lua';
 our $LUA = undef;
 our $EmulOS = undef;
 our $EmulOSRel = undef;
@@ -278,7 +279,7 @@ sub MkSaveMK
 	foreach my $var (@_) {
 		print << "EOF";
 echo "$var=\$$var" >>Makefile.config
-echo "mdefs[\\"$var\\"] = \\"\$$var\\"" >>configure.lua
+echo "mdefs[\\"$var\\"] = \\"\$$var\\"" >>$OutputLUA
 EOF
 	}
 }
@@ -289,7 +290,7 @@ sub MkSaveUndef
 		my $include = 'config/'.lc($var).'.h';
 		print << "EOF";
 echo "#undef $var" >$include
-echo "hdefs[\\"$var\\"] = nil" >>configure.lua
+echo "hdefs[\\"$var\\"] = nil" >>$OutputLUA
 EOF
 	}
 }
@@ -302,7 +303,7 @@ sub MkSaveDefine
 echo "#ifndef $var" > $include
 echo "#define $var \\"\$$var\\"" >> $include
 echo "#endif" >> $include
-echo "hdefs[\\"$var\\"] = \\"\$$var\\"" >>configure.lua
+echo "hdefs[\\"$var\\"] = \\"\$$var\\"" >>$OutputLUA
 EOF
 	}
 }
@@ -758,7 +759,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR MkExecOutput MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkAppend MkIf MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders);
+    @EXPORT = qw($OutputLUA $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR MkExecOutput MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkAppend MkIf MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders);
 }
 
 ;1

@@ -248,6 +248,11 @@ EOF
 BEGIN
 {
 	$INSTALLDIR = '%PREFIX%/share/bsdbuild';
+	
+	GetOptions("emul-os=s" =>	\$EmulOS,
+	           "emul-osrel=s" =>	\$EmulOSRel,
+	           "emul-env=s" =>	\$EmulEnv,
+	           "output-lua=s" =>	\$OutputLUA);
 
 	print << 'EOF';
 #!/bin/sh
@@ -262,7 +267,7 @@ BEGIN
 #
 EOF
 
-	open($LUA, '>configure.lua');
+	open($LUA, ">$OutputLUA");
 	print { $LUA } << 'EOF';
 -- Public domain
 --
@@ -279,7 +284,7 @@ mdefs = {}
 EOF
 
 	print << 'EOF';
-# Copyright (c) 2001-2008 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2009 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -457,11 +462,6 @@ else
 fi
 
 EOF
-	
-	GetOptions("emul-os=s" =>	\$EmulOS,
-	           "emul-osrel=s" =>	\$EmulOSRel,
-	           "emul-env=s" =>	\$EmulEnv);
-
 	if ($EmulOS || $EmulEnv) {
 		print STDERR "Emulating OS: $EmulOS\n";
 		print STDERR "Emulating OS Release: \"$EmulOSRel\"\n";

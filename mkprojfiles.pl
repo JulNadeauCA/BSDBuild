@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/bsdbuild
 #
-# Copyright (c) 2008 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2008-2009 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -243,13 +243,23 @@ if (!ParseMakefile('-')) {
 	print STDERR "$Error\n";
 	exit(1);
 }
-if (exists($V{'PROJECT'}) && $V{'PROJECT'}) {
-	DoProject();
-}
 
+print << 'EOF';
+--
+-- Do not edit!
+-- This file was generated from Makefile by BSDbuild %VERSION%.
+--
+-- To regenerate this file, get the latest BSDbuild release from
+-- http://hypertriton.com/bsdbuild/, the latest Premake release
+-- (v3 series) from http://premake.sourceforge.net/, and execute:
+--
+--     $ make proj
+--
+EOF
+
+# Infer the package language from the contents of ${SRCS}.
 my $packLang = 'c';
 my %langs = ();
-
 if (exists($V{'SRCS'}) && $V{'SRCS'}) {
 	foreach my $src (split(' ', $V{'SRCS'})) {
 		if ($src =~ /\.c$/i) { $langs{'c'} = 1; }
@@ -276,33 +286,11 @@ if (exists($langs{'c'})) {
 } elsif (exists($langs{'c#'})) {
 	$packLang = 'c#';
 }
-print STDERR "* Using package language: $packLang\n";
 
-if (exists($V{'LIB'}) && $V{'LIB'}) {
-	if (exists($V{'LIB_SHARED'}) &&
-	    uc($V{'LIB_SHARED'}) eq 'YES') {
-		DoPackage($V{'LIB'}.'_static', 'lib', $packLang);
-		DoPackage($V{'LIB'}, 'dll', $packLang);
-	} else {
-		DoPackage($V{'LIB'}, 'lib', $packLang);
-	}
-} elsif (exists($V{'PROG'}) && $V{'PROG'}) {
-	if (exists($V{'PROG_TYPE'}) && uc($V{'PROG_TYPE'}) eq 'GUI') {
-		DoPackage($V{'PROG'}, 'winexe', $packLang);
-	} else {
-		DoPackage($V{'PROG'}, 'exe', $packLang);
-	}
-} else {
-	print STDERR "Unable to determine package kind\n";
-	exit (0);
-}
-
-# $EmulFoo is required by some tests.
+# Scan BSDBuild modules for LINK operations.
+$INSTALLDIR = '%PREFIX%/share/bsdbuild';
 $EmulEnv = $ENV{'PROJTARGET'};
 $EmulOS = $ENV{'PROJOS'};
-
-# Map the LINK routine of every module.
-$INSTALLDIR = '%PREFIX%/share/bsdbuild';
 if (opendir(DIR, $INSTALLDIR.'/BSDBuild')) {
 	foreach my $file (readdir(DIR)) {
 		my $path = $INSTALLDIR.'/BSDBuild/'.$file;
@@ -321,16 +309,26 @@ if (opendir(DIR, $INSTALLDIR.'/BSDBuild')) {
 	}
 	closedir(DIR);
 }
-print << 'EOF';
---
--- Do not edit!
--- This file was generated from Makefile by BSDbuild %VERSION%.
---
--- To regenerate this file, get the latest BSDbuild release from
--- http://hypertriton.com/bsdbuild/, the latest Premake release
--- (v3 series) from http://premake.sourceforge.net/, and execute:
---
---     $ make proj
---
-EOF
 
+# Process projects and packages.
+if (exists($V{'PROJECT'}) && $V{'PROJECT'}) {
+	DoProject();
+}
+if (exists($V{'LIB'}) && $V{'LIB'}) {
+	if (exists($V{'LIB_SHARED'}) &&
+	    uc($V{'LIB_SHARED'}) eq 'YES') {
+		DoPackage($V{'LIB'}.'_static', 'lib', $packLang);
+		DoPackage($V{'LIB'}, 'dll', $packLang);
+	} else {
+		DoPackage($V{'LIB'}, 'lib', $packLang);
+	}
+} elsif (exists($V{'PROG'}) && $V{'PROG'}) {
+	if (exists($V{'PROG_TYPE'}) && uc($V{'PROG_TYPE'}) eq 'GUI') {
+		DoPackage($V{'PROG'}, 'winexe', $packLang);
+	} else {
+		DoPackage($V{'PROG'}, 'exe', $packLang);
+	}
+} elsif (!exists($V{'PROJECT'}) || !$V{'PROJECT'}) {
+	print STDERR "None of ${PROJECT}, ${LIB} and ${PROG} are set.\n";
+	exit(1);
+}

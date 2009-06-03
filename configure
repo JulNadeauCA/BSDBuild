@@ -8,7 +8,7 @@
 #
 #     $ cat configure.in | mkconfigure > configure
 #
-# Copyright (c) 2001-2008 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2009 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -144,7 +144,7 @@ else
 fi
 
 if [ "${srcdir}" != "" ]; then
-	echo "concurrent build (source in ${srcdir})"
+	echo "* Separate build (source in ${srcdir})"
 	SRC=${srcdir}
 	perl ${SRC}/mk/mkconcurrent.pl ${SRC}
 	if [ $? != 0 ]; then
@@ -154,6 +154,9 @@ else
 	SRC=`pwd`
 fi
 BLD=`pwd`
+
+SRCDIR="${SRC}"
+BLDDIR="${BLD}"
 
 if [ "${testdir}" != "" ]; then
 	echo "Configure tests will be executed in ${testdir}"
@@ -204,7 +207,6 @@ echo "    --with-libtool            Specify path to libtool [use bundled]"
 echo "    --with-cygwin             Add cygwin dependencies under cygwin [no]"
 echo "    --enable-nls              Native Language Support [no]"
 echo "    --with-gettext            Use gettext tools [check]"
-echo "    --enable-debug            Include debugging code [no]"
 exit 1
 fi
 
@@ -280,16 +282,6 @@ else
 fi
 if [ "${with_docs}" = "no" ]; then
 	echo "NODOC=yes" >> Makefile.config
-fi
-
-# Process debug option.
-if [ "${enable_debug}" = "yes" ]; then
-	echo "LDFLAGS+=-g" >> Makefile.config
-	echo "#ifndef DEBUG" > config/debug.h
-	echo "#define DEBUG 1" >> config/debug.h
-	echo "#endif /* DEBUG */" >> config/debug.h
-else
-	echo "#undef DEBUG" > config/debug.h
 fi
 
 # Process NLS options.
@@ -421,10 +413,10 @@ echo "#endif /* SYSCONFDIR */" >> config/sysconfdir.h
 SHAREDIR="$PREFIX/share/bsdbuild"
 echo "SHAREDIR=$SHAREDIR" >>Makefile.config
 echo "mdefs[\"SHAREDIR\"] = \"$SHAREDIR\"" >>configure.lua
-VERSION="2.4"
+VERSION="2.5"
 echo "VERSION=$VERSION" >>Makefile.config
 echo "mdefs[\"VERSION\"] = \"$VERSION\"" >>configure.lua
-RELEASE="Alive in Strange Reality"
+RELEASE="Chatiment de la Rose"
 echo "RELEASE=$RELEASE" >>Makefile.config
 echo "mdefs[\"RELEASE\"] = \"$RELEASE\"" >>configure.lua
 echo "*"

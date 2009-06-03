@@ -218,7 +218,6 @@ sub ParseMakefile ($)
 		if (/^\s*(\w+)\s*=\s*"(.+)"$/ ||
 		    /^\s*(\w+)\s*=\s*(.+)$/) {
 			$V{$1} = $2;
-			print STDERR "$1 => \"$V{$1}\"\n";
 		} elsif (/^\s*(\w+)\s*\+=\s*"(.+)"$/ ||
 		         /^\s*(\w+)\s*\+=\s*(.+)$/) {
 			if (exists($V{$1}) && $V{$1} ne '') {
@@ -226,7 +225,6 @@ sub ParseMakefile ($)
 			} else {
 				$V{$1} = $2;
 			}
-			print STDERR "$1 => \"$V{$1}\" (app)\n";
 		}
 
 		if (/^\s*include\s+(.+)$/) {

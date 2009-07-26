@@ -88,7 +88,8 @@ SHARE=	Core.pm \
 	float_h.pm \
 	agar-math.pm \
 	percgi.pm \
-	gettimeofday.pm
+	gettimeofday.pm \
+	syslog.pm
 
 all:
 

@@ -39,7 +39,7 @@ sub Test
 		MkPrintN('checking whether PerCGI works...');
 		MkCompileC('HAVE_PERCGI', '${PERCGI_CFLAGS}', '${PERCGI_LIBS}',
 		           << 'EOF');
-#include <percgi/cgi.h>
+#include <libpercgi/cgi.h>
 
 int
 main(int argc, char *argv[])

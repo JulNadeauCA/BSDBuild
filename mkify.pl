@@ -197,59 +197,6 @@ foreach my $script (@Scripts) {
 }
 print STDERR ".\n";
 
-if (!-e 'configure.in' &&
-    open(CONFIN, '>configure.in')) {
-	print CONFIN << 'EOF';
-# Public domain
-#
-# Sample BSDbuild configure script source. Standard Bourne script fragments
-# and BSDBuild directives are both allowed. See mkconfigure(1) for details.
-#
-# To generate a configure script, use the command:
-#     $ cat configure.in |mkconfigure > configure
-#
-
-# Name and version of the application. HDEFINE() will write the value of
-# the variable to config/progname.h and config/version.h.
-HDEFINE(PROGNAME, "foo")
-HDEFINE(VERSION, "1.0-beta")
-
-# An optional codename for the current release.
-HDEFINE(RELEASE, "Foo")
-
-# We can insert arbitrary Bourne script.
-echo "Building release: ${RELEASE}"
-
-# Register a ./configure option named "--enable-warnings".
-REGISTER("--enable-warnings",   "Enable compiler warnings [default: no]")
-
-# Check for a suitable C compiler.
-CHECK(cc)
-
-# Add current directory to C include.
-C_INCDIR($SRC)
-# We could have also used:
-# MDEFINE(CFLAGS, "$CFLAGS -I$SRC")
-
-# Set our preferred -Wall switches.
-if [ "${enable_warnings}" = "yes" ]; then
-	# HAVE_GCC has been set by CHECK(cc).
-	if [ "${HAVE_GCC}" = "yes" ]; then
-		MDEFINE(CFLAGS, "$CFLAGS -Wall -Werror -Wmissing-prototypes")
-		MDEFINE(CFLAGS, "$CFLAGS -Wno-unused")
-	fi
-fi
-EOF
-	close(CONFIN);
-
-	system("$BINDIR/mkconfigure < configure.in > configure");
-	if ($? != 0) {
-		print STDERR "mkconfigure failed\n";
-		exit(1);
-	}
-	chmod(0755, 'configure') || print STDERR "chmod: $!\n";
-}
-
 if (!-e 'Makefile' &&
     open(MAKE, '>Makefile')) {
 	if ($type eq 'prog') {

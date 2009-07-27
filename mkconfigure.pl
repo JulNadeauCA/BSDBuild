@@ -99,17 +99,25 @@ if [ "\${includes}" = "link" ]; then
 		fi
 	fi
 else
+	if [ "\${PERL}" = "" ]; then
+		echo "*"
+		echo "* The --includes=yes option requires perl, but no perl"
+		echo "* interpreter was found. If perl is unavailable, please"
+		echo "* please rerun configure with --includes=link instead."
+		echo "*"
+		exit 1
+	fi
 	if [ ! -e "$dir/$subdir" ]; then
 		if [ "\${SRCDIR}" != "\${BLDDIR}" ]; then
 			\$ECHO_N "* Preprocessing includes (from \${SRCDIR})..."
-			(cd \${SRCDIR} && perl mk/gen-includes.pl "\${BLDDIR}/$dir/$subdir" 1>>\${BLDDIR}/config.log 2>&1)
+			(cd \${SRCDIR} && \${PERL} mk/gen-includes.pl "\${BLDDIR}/$dir/$subdir" 1>>\${BLDDIR}/config.log 2>&1)
 			cp -fR config $dir/$subdir
 		else
 			\$ECHO_N "* Preprocessing includes (in \${BLDDIR})...";
-			perl mk/gen-includes.pl "$dir/$subdir" 1>>config.log 2>&1
+			\${PERL} mk/gen-includes.pl "$dir/$subdir" 1>>config.log 2>&1
 		fi
 		if [ \$? != 0 ]; then
-			echo "perl mk/gen-includes.pl failed"
+			echo "\${PERL} mk/gen-includes.pl failed"
 			exit 1
 		fi
 		echo "done"
@@ -413,6 +421,16 @@ else
     ECHO_N="echo -n"
 fi
 
+PERL=""
+for path in `echo $PATH | sed 's/:/ /g'`; do
+	if [ -x "${path}" ]; then
+		if [ -e "${path}/perl" ]; then
+			PERL="${path}/perl"
+			break
+		fi
+	fi
+done
+
 if [ "${prefix}" != "" ]; then
     PREFIX="$prefix"
 else
@@ -420,9 +438,16 @@ else
 fi
 
 if [ "${srcdir}" != "" ]; then
+	if [ "${PERL}" = "" ]; then
+		echo "*"
+		echo "* Separate build (--srcdir) requires perl, but there is"
+		echo "* no perl interpreter to be found in your PATH."
+		echo "*"
+		exit 1
+	fi
 	echo "* Separate build (source in ${srcdir})"
 	SRC=${srcdir}
-	perl ${SRC}/mk/mkconcurrent.pl ${SRC}
+	${PERL} ${SRC}/mk/mkconcurrent.pl ${SRC}
 	if [ $? != 0 ]; then
 		exit 1;
 	fi
@@ -447,20 +472,28 @@ fi
 if [ "${includes}" = "" ]; then
 	includes="yes"
 fi
-if [ "${includes}" = "link" ]; then
+case "${includes}" in
+yes|no)
+	;;
+link)
 	if [ "${with_proj_generation}" ]; then
 		echo "Cannot use --includes=link with --with-proj-generation!"
 		exit 1
 	fi
-elif [ "${includes}" = "yes" ]; then
-	noop=1
-elif [ "${includes}" = "no" ]; then
-	noop=1
-else
+	;;
+*)
 	echo "Usage: --includes [yes|no|link]"
 	exit 1
-fi
+	;;
+esac
 
+if [ "${PERL}" != "" ]; then
+	${PERL} ${SRC}/mk/gen-dotdepend.pl
+else
+	echo "* Warning: No perl was found. Perl is required for automatic"
+	echo "* generation of .depend files. You may need to create empty"
+	echo "* .depend files where it is required."
+fi
 EOF
 	if ($EmulOS || $EmulEnv) {
 		print STDERR "Emulating OS: $EmulOS\n";

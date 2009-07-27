@@ -32,6 +32,7 @@
 	cleanfiles.pl
 	gen-declspecs.pl
 	gen-includes.pl
+	gen-dotdepend.pl
 	install-manpages.sh);
 		  
 @LibtoolFiles = qw(

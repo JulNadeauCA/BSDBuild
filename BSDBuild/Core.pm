@@ -202,8 +202,8 @@ sub Which
 	return << "EOF";
 $define=""
 for path in `echo \$PATH | sed 's/:/ /g'`; do
-	if [ -x "\${path}/$bin" ]; then
-		if [ -f "\${path}/$bin" ]; then
+	if [ -x "\${path}" ]; then
+		if [ -e "\${path}/$bin" ]; then
 			$define=`\${path}/$bin $args`
 			break
 		fi

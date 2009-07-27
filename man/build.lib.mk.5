@@ -200,6 +200,21 @@ See
 .Xr build.common.mk 5 .
 .It Ev INCL
 List of library header files.
+.It Ev CONFDIR
+System-wide configuration files will be installed into this directory.
+It is usually set relative to
+.Sq ${SYSCONFDIR} ,
+for example
+.Sq ${SYSCONFDIR}/MyLibrary .
+.It Ev CONF
+List of configuration files to install into
+.Dv ${CONFDIR}.
+Note that the
+.Ar install
+target will not override existing configuration files, instead it will
+output a
+.Dq The following configuration files have been preserved
+message.
 .It Ev CONF_OVERWRITE
 Overwrite any existing configuration file on installation.
 Default is "No".

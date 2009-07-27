@@ -30,17 +30,105 @@ sub Test
 	my ($ver) = @_;
 
 	print << 'EOF';
-DB4_PATH=""
-for path in / /usr /usr/local /opt; do
-	if [ -e "${path}/include/db4" ]; then
-		DB4_PATH=${path}
+DB4_CFLAGS=""
+DB4_LIBS=""
+DB4_VERSION=""
+for path in /usr /usr/local /opt; do
+	if [ -e "${path}/include/db4.7" ]; then
+		DB4_CFLAGS="-I${path}/include/db4.7"
+		DB4_VERSION="4.7"
+	elif [ -e "${path}/include/db4.6" ]; then
+		DB4_CFLAGS="-I${path}/include/db4.6"
+		DB4_VERSION="4.6"
+	elif [ -e "${path}/include/db4.5" ]; then
+		DB4_CFLAGS="-I${path}/include/db4.5"
+		DB4_VERSION="4.5"
+	elif [ -e "${path}/include/db4.4" ]; then
+		DB4_CFLAGS="-I${path}/include/db4.4"
+		DB4_VERSION="4.4"
+	elif [ -e "${path}/include/db4.3" ]; then
+		DB4_CFLAGS="-I${path}/include/db4.3"
+		DB4_VERSION="4.3"
+	elif [ -e "${path}/include/db4.2" ]; then
+		DB4_CFLAGS="-I${path}/include/db4.2"
+		DB4_VERSION="4.2"
+	elif [ -e "${path}/include/db47" ]; then
+		DB4_CFLAGS="-I${path}/include/db47"
+		DB4_VERSION="4.7"
+	elif [ -e "${path}/include/db46" ]; then
+		DB4_CFLAGS="-I${path}/include/db46"
+		DB4_VERSION="4.6"
+	elif [ -e "${path}/include/db45" ]; then
+		DB4_CFLAGS="-I${path}/include/db45"
+		DB4_VERSION="4.5"
+	elif [ -e "${path}/include/db44" ]; then
+		DB4_CFLAGS="-I${path}/include/db44"
+		DB4_VERSION="4.4"
+	elif [ -e "${path}/include/db43" ]; then
+		DB4_CFLAGS="-I${path}/include/db43"
+		DB4_VERSION="4.3"
+	elif [ -e "${path}/include/db42" ]; then
+		DB4_CFLAGS="-I${path}/include/db42"
+		DB4_VERSION="4.2"
+	elif [ -e "${path}/include/db4" ]; then
+		DB4_CFLAGS="-I${path}/include/db4"
+		DB4_VERSION="4"
 	fi
+	case "${DB4_VERSION}" in
+	4)
+		if [ -e "${path}/lib/db4" ]; then
+			DB4_LIBS="-L${path}/lib/db4 -ldb"
+		fi
+		;;
+	4.2)
+		if [ -e "${path}/lib/db42" ]; then
+			DB4_LIBS="-L${path}/lib/db42 -ldb"
+		elif [ -e "${path}/lib/libdb-4.2.so" ]; then
+			DB4_LIBS="-L${path}/lib -ldb-4.2"
+		fi
+		;;
+	4.3)
+		if [ -e "${path}/lib/db43" ]; then
+			DB4_LIBS="-L${path}/lib/db43 -ldb"
+		elif [ -e "${path}/lib/libdb-4.3.so" ]; then
+			DB4_LIBS="-L${path}/lib -ldb-4.3"
+		fi
+		;;
+	4.4)
+		if [ -e "${path}/lib/db44" ]; then
+			DB4_LIBS="-L${path}/lib/db44 -ldb"
+		elif [ -e "${path}/lib/libdb-4.4.so" ]; then
+			DB4_LIBS="-L${path}/lib -ldb-4.4"
+		fi
+		;;
+	4.5)
+		if [ -e "${path}/lib/db45" ]; then
+			DB4_LIBS="-L${path}/lib/db45 -ldb"
+		elif [ -e "${path}/lib/libdb-4.5.so" ]; then
+			DB4_LIBS="-L${path}/lib -ldb-4.5"
+		fi
+		;;
+	4.6)
+		if [ -e "${path}/lib/db46" ]; then
+			DB4_LIBS="-L${path}/lib/db46 -ldb"
+		elif [ -e "${path}/lib/libdb-4.6.so" ]; then
+			DB4_LIBS="-L${path}/lib -ldb-4.6"
+		fi
+		;;
+	4.7)
+		if [ -e "${path}/lib/db47" ]; then
+			DB4_LIBS="-L${path}/lib/db47 -ldb"
+		elif [ -e "${path}/lib/libdb-4.7.so" ]; then
+			DB4_LIBS="-L${path}/lib -ldb-4.7"
+		fi
+		;;
+	*)
+		;;
+	esac
 done
-DB4_CFLAGS="-I${DB4_PATH}/include/db4"
-DB4_LIBS="-L${DB4_PATH}/lib/db4 -ldb"
 EOF
-	MkIf('"${DB4_PATH}" != ""');
-		MkPrint('yes');
+	MkIf('"${DB4_VERSION}" != ""');
+		MkPrint('found ${DB4_VERSION}');
 		MkPrintN('checking whether DB4 works...');
 		MkCompileC('HAVE_DB4', '${DB4_CFLAGS}', '${DB4_LIBS}', << 'EOF');
 #include <db.h>
@@ -65,7 +153,7 @@ BEGIN
 {
 	$TESTS{'db4'} = \&Test;
 	$DEPS{'db4'} = 'cc';
-	$DESCR{'db4'} = 'Berkeley DB 4 (http://www.sleepycat.com)';
+	$DESCR{'db4'} = 'Berkeley DB 4.x';
 }
 
 ;1

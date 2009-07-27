@@ -486,10 +486,27 @@ link)
 	exit 1
 	;;
 esac
+EOF
 
-if [ "${srcdir}" = "" ]; then
-	if [ "${PERL}" != "" ]; then
-		${PERL} ${SRC}/mk/gen-dotdepend.pl .
+	print << "EOF";
+if [ "\${srcdir}" = "" ]; then
+	cat << EOT > configure.dep.pl
+EOF
+	my @code = ();
+	open(SCRIPT, "$INSTALLDIR/gen-dotdepend.pl") ||
+	    die "gen-dotdepend.pl: $!";
+	foreach my $s (<SCRIPT>) {
+		$s =~ s/\\/\\\\/g;
+		$s =~ s/\$/\\\$/g;
+		print $s;
+	}
+	close(SCRIPT);
+	print << "EOF";
+EOT
+	if [ "\${PERL}" != "" ]; then
+		echo "\${PERL} configure.dep.pl ."
+		\${PERL} configure.dep.pl .
+		rm -f configure.dep.pl
 	else
 		echo "* Warning: No perl was found. Perl is required for automatic"
 		echo "* generation of .depend files. You may need to create empty"

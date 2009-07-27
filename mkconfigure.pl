@@ -487,12 +487,14 @@ link)
 	;;
 esac
 
-if [ "${PERL}" != "" ]; then
-	${PERL} ${SRC}/mk/gen-dotdepend.pl
-else
-	echo "* Warning: No perl was found. Perl is required for automatic"
-	echo "* generation of .depend files. You may need to create empty"
-	echo "* .depend files where it is required."
+if [ "${srcdir}" = "" ]; then
+	if [ "${PERL}" != "" ]; then
+		${PERL} ${SRC}/mk/gen-dotdepend.pl .
+	else
+		echo "* Warning: No perl was found. Perl is required for automatic"
+		echo "* generation of .depend files. You may need to create empty"
+		echo "* .depend files where it is required."
+	fi
 fi
 EOF
 	if ($EmulOS || $EmulEnv) {

@@ -504,13 +504,14 @@ EOF
 	print << "EOF";
 EOT
 	if [ "\${PERL}" != "" ]; then
-		echo "\${PERL} configure.dep.pl ."
 		\${PERL} configure.dep.pl .
 		rm -f configure.dep.pl
 	else
+		echo "*"
 		echo "* Warning: No perl was found. Perl is required for automatic"
 		echo "* generation of .depend files. You may need to create empty"
 		echo "* .depend files where it is required."
+		echo "*"
 	fi
 fi
 EOF

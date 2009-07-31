@@ -108,7 +108,7 @@ clean: clean-subdir
 	rm -f ${SCRIPTS}
 
 configure: configure.in
-	cat configure.in | perl mkconfigure.pl > configure
+	cat configure.in | mkconfigure > configure
 	chmod 755 configure
 
 depend:

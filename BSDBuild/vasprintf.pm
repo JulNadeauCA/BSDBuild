@@ -1,7 +1,7 @@
 # $Csoft: vasprintf.pm,v 1.3 2003/10/01 09:24:19 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
+# Copyright (c) 2002-2009 CubeSoft Communications, Inc.
 # <http://www.csoft.org>
 # All rights reserved.
 #
@@ -27,10 +27,7 @@
 
 sub Test
 {
-	TryCompile 'HAVE_VASPRINTF', << 'EOF';
-#ifdef __linux__
-#define _GNU_SOURCE
-#endif
+	TryCompileFlagsC('HAVE_VASPRINTF', '-D_GNU_SOURCE', << 'EOF');
 #include <stdio.h>
 #include <stdarg.h>
 

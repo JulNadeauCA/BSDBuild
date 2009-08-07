@@ -27,10 +27,7 @@
 
 sub Test
 {
-	TryCompile 'HAVE_ASPRINTF', << 'EOF';
-#ifdef __linux__
-#define _GNU_SOURCE
-#endif
+	TryCompileFlagsC('HAVE_ASPRINTF', '-D_GNU_SOURCE', << 'EOF');
 #include <stdio.h>
 
 int

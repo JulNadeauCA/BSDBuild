@@ -89,7 +89,8 @@ SHARE=	Core.pm \
 	agar-math.pm \
 	percgi.pm \
 	gettimeofday.pm \
-	syslog.pm
+	syslog.pm \
+	glob.pm
 
 all:
 

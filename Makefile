@@ -115,7 +115,8 @@ depend:
 	# nothing
 
 release:
-	env VERSION="${VERSION}" RELEASE="${RELEASE}" sh mk/dist.sh stable
+	env VERSION=`perl get-version.pl` RELEASE="`perl get-release.pl`" \
+	  sh mk/dist.sh stable
 
 clean-release:
 	@(export VERSION=`perl get-version.pl`; \

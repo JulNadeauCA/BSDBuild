@@ -1,0 +1,14 @@
+
+Release Notes for BSDBuild 2.5 (Chatiment de la Rose)
+-----------------------------------------------------
+- Simplified project file generation; rewrite of mkprojfiles for proper
+  parsing of makefile variables, removed ${PROJINCLUDES}.
+- The ${DESTDIR} variable is now recognized. ${DESTDIR} is prepended to
+  installation targets at "make install", for the convenience of ports
+  systems with "fake" support.
+- Added FabBSD (http://fabbsd.org/) to target platforms.
+- New configure test: gettimeofday
+- New tests for compiler attributes: aligned, const, deprecated,
+  noreturn, pure, warn_unused_result.
+- Updated cracklib test for repackaged version.
+

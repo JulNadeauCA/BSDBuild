@@ -536,7 +536,7 @@ echo "#endif /* SYSCONFDIR */" >> config/sysconfdir.h
 SHAREDIR="$PREFIX/share/bsdbuild"
 echo "SHAREDIR=$SHAREDIR" >>Makefile.config
 echo "mdefs[\"SHAREDIR\"] = \"$SHAREDIR\"" >>configure.lua
-VERSION="2.5"
+VERSION="2.6"
 echo "VERSION=$VERSION" >>Makefile.config
 echo "mdefs[\"VERSION\"] = \"$VERSION\"" >>configure.lua
 RELEASE="Chatiment de la Rose"

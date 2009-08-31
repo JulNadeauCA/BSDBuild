@@ -1,0 +1,13 @@
+
+Release Notes for BSDBuild 2.6
+------------------------------
+- Implemented scanning of Makefiles for those requiring .depend files (from
+  ./configure). This eliminates the need for keeping annoying empty .depend
+  files on source code repositories.
+- Added ${CONF} and ${CONFDIR} support to <build.lib.mk>.
+- Added test for glob(3).
+- Added test for syslog(2).
+- Added test for Berkeley DB v4.
+- Fixed unsafe defines in asprintf() and vasprintf() tests.
+- Sync PerCGI test with latest version.
+

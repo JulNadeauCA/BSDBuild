@@ -40,6 +40,7 @@ sub Test
 
 	MkIf('"${GLIB_VERSION}" != ""');
 		# TODO: Test
+		MkTestVersion('glib', 'GLIB_VERSION', $ver);
 		MkSaveDefine('HAVE_GLIB', 'GLIB_CFLAGS', 'GLIB_LIBS');
 		MkSaveMK	('HAVE_GLIB', 'GLIB_CFLAGS', 'GLIB_LIBS');
 		MkPrint('yes');

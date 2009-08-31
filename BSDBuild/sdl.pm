@@ -67,6 +67,7 @@ EOF
 	
 	MkIf('"${SDL_VERSION}" != ""');
 		MkPrint('yes');
+		MkTestVersion('SDL', 'SDL_VERSION', $ver);
 		MkPrintN('checking whether SDL works...');
 		MkCompileC('HAVE_SDL', '${SDL_CFLAGS}', '${SDL_LIBS}', $testCode);
 		MkIf('"${HAVE_SDL}" != "no"');

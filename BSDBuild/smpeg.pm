@@ -37,6 +37,7 @@ sub Test
 
 	MkIf('"${SMPEG_VERSION}" != ""');
 		MkPrint('yes');
+		MkTestVersion('smpeg', 'SMPEG_VERSION', $ver);
 		MkSaveDefine('HAVE_SMPEG', 'SMPEG_CFLAGS', 'SMPEG_LIBS');
 		MkSaveMK	('HAVE_SMPEG', 'SMPEG_CFLAGS', 'SMPEG_LIBS');
 	MkElse;

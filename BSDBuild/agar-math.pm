@@ -31,6 +31,7 @@ sub Test
 	MkExecOutput('agar-math-config', '--version', 'AGAR_MATH_VERSION');
 	MkIf('"${AGAR_VERSION}" != "" -a "${AGAR_MATH_VERSION}" != ""');
 		MkPrint('yes');
+		MkTestVersion('Agar', 'AGAR_MATH_VERSION', $ver);
 		MkPrintN('checking whether Agar-Math works...');
 		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');

@@ -35,6 +35,7 @@ sub Test
 
 	MkIf('"${LIBIDN_VERSION}" != ""');
 		MkPrint('yes');
+		MkTestVersion('libidn', 'LIBIDN_VERSION', $ver);
 		MkPrintN('checking whether libidn works...');
 		MkCompileC('HAVE_LIBIDN', '${LIBIDN_CFLAGS}', '${LIBIDN_LIBS}',
 		           << 'EOF');

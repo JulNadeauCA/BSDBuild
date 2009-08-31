@@ -33,6 +33,7 @@ sub Test
 
 	MkIf('"${CGI_VERSION}" != ""');
 		MkPrint('yes');
+		MkTestVersion('Csoft-CGI', 'CGI_VERSION', $ver);
 		MkExecOutput('cgi-config', '--cflags', 'CGI_CFLAGS');
 		MkExecOutput('cgi-config', '--libs', 'CGI_LIBS');
         MkSaveMK('CGI_CFLAGS', 'CGI_LIBS');

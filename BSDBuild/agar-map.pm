@@ -33,6 +33,7 @@ sub Test
 	MkExecOutputUnique('agar-map-config', '--version', 'AGAR_MAP_VERSION');
 	MkIf('"${AGAR_VERSION}" != "" -a "${AGAR_MAP_VERSION}" != ""');
 		MkPrint('yes');
+		MkTestVersion('Agar', 'AGAR_MAP_VERSION', $ver);
 		MkPrintN('checking whether agar-map works...');
 		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');

@@ -34,6 +34,7 @@ sub Test
 	MkIf('"${AGAR_VERSION}" != "" -a "${AGAR_VG_VERSION}" != "" '.
 	     '-a "${AGAR_MATH_VERSION}" != "" -a "${EDACIOUS_VERSION}" != ""');
 		MkPrint('yes');
+		MkTestVersion('Edacious', 'EDACIOUS_VERSION', $ver);
 		MkPrintN('checking whether Edacious works...');
 		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');

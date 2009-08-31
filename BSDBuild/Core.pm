@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2002-2007 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2002-2009 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -364,6 +364,118 @@ sub EndTestHeaders
 {
 	MkDefine('TEST_CFLAGS', '${TEST_CFLAGS_ORIG}');
 	MkDefine('TEST_HEADERS', '');
+}
+
+sub MkTestVersion
+{
+	my ($name, $verDef, $ver) = @_;
+	if ($ver =~ /^\?(.+)$/) {
+		$nofail = 1;
+		$ver = $1;
+	} else {
+		$nofail = 0;
+	}
+
+	my @verSpec = split(/\./, $ver);
+	if (@verSpec >= 3) {
+		#
+		# Test for x.y.z
+		#
+		print << "EOF";
+MK_VERSION_MAJOR=`echo "\$$verDef" |sed 's/\\([0-9]*\\).\\([0-9]*\\).\\([0-9]*\\).*/\\1/'`;
+MK_VERSION_MINOR=`echo "\$$verDef" |sed 's/\\([0-9]*\\).\\([0-9]*\\).\\([0-9]*\\).*/\\2/'`;
+MK_VERSION_MICRO=`echo "\$$verDef" |sed 's/\\([0-9]*\\).\\([0-9]*\\).\\([0-9]*\\).*/\\3/'`;
+MK_VERSION_OK="no"
+if [ \$MK_VERSION_MAJOR -gt $verSpec[0] ]; then
+	MK_VERSION_OK="yes";
+elif [ \$MK_VERSION_MAJOR -eq $verSpec[0] ]; then
+	if [ "\$MK_VERSION_MINOR" = "" ]; then
+		MK_VERSION_OK="yes"
+	else
+		if [ \$MK_VERSION_MINOR -gt $verSpec[1] ]; then
+			MK_VERSION_OK="yes";
+		elif [ \$MK_VERSION_MINOR -eq $verSpec[1] ]; then
+			if [ "\$MK_VERSION_MICRO" = "" ]; then
+				MK_VERSION_OK="yes"
+			else
+				if [ \$MK_VERSION_MICRO -ge $verSpec[2] ]; then
+					MK_VERSION_OK="yes"
+				fi
+			fi
+		fi
+	fi
+fi
+EOF
+		if (!$nofail) {
+			print << "EOF";
+if [ "\$MK_VERSION_OK" != "yes" ]; then
+	echo "*"
+	echo "* Found $name version \$MK_VERSION_MAJOR.\$MK_VERSION_MINOR.\$MK_VERSION_MICRO."
+	echo "* This software requires at least version $ver."
+	echo "* Please upgrade $name and try again."
+	echo "*"
+	exit 1
+fi
+EOF
+		}
+	} elsif (@verSpec >= 2) {
+		#
+		# Test for x.y
+		#
+		print << "EOF";
+MK_VERSION_MAJOR=`echo "\$$verDef" |sed 's/\\([0-9]*\\).\\([0-9]*\\).\\([0-9]*\\).*/\\1/'`;
+MK_VERSION_MINOR=`echo "\$$verDef" |sed 's/\\([0-9]*\\).\\([0-9]*\\).\\([0-9]*\\).*/\\2/'`;
+MK_VERSION_OK="no"
+if [ \$MK_VERSION_MAJOR -gt $verSpec[0] ]; then
+	MK_VERSION_OK="yes";
+elif [ \$MK_VERSION_MAJOR -eq $verSpec[0] ]; then
+	if [ "\$MK_VERSION_MINOR" = "" ]; then
+		MK_VERSION_OK="yes"
+	else
+		if [ \$MK_VERSION_MINOR -ge $verSpec[1] ]; then
+			MK_VERSION_OK="yes"
+		fi
+	fi
+fi
+EOF
+		if (!$nofail) {
+			print << "EOF";
+if [ "\$MK_VERSION_OK" != "yes" ]; then
+	echo "*"
+	echo "* Found $name version \$MK_VERSION_MAJOR.\$MK_VERSION_MINOR."
+	echo "* This software requires at least version $ver."
+	echo "* Please upgrade $name and try again."
+	echo "*"
+	exit 1
+fi
+EOF
+		}
+	} elsif (@verSpec >= 1) {
+		#
+		# Test for x
+		#
+		print << "EOF";
+MK_VERSION_MAJOR=`echo "\$$verDef" |sed 's/\\([0-9]*\\).\\([0-9]*\\).\\([0-9]*\\).*/\\1/'`;
+MK_VERSION_OK="no"
+if [ \$MK_VERSION_MAJOR -gt $verSpec[0] ]; then
+	MK_VERSION_OK="yes";
+elif [ \$MK_VERSION_MAJOR -ge $verSpec[0] ]; then
+	MK_VERSION_OK="yes";
+fi
+EOF
+		if (!$nofail) {
+			print << "EOF";
+if [ "\$MK_VERSION_OK" != "yes" ]; then
+	echo "*"
+	echo "* Found $name version \$MK_VERSION_MAJOR."
+	echo "* This software requires at least version $ver."
+	echo "* Please upgrade $name and try again."
+	echo "*"
+	exit 1
+fi
+EOF
+		}
+	}
 }
 
 sub DetectHeaderC
@@ -759,7 +871,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($OutputLUA $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR MkExecOutput MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkAppend MkIf MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders);
+    @EXPORT = qw($OutputLUA $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR MkExecOutput MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkAppend MkIf MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveUndef MkPrint MkPrintN PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion);
 }
 
 ;1

@@ -33,6 +33,7 @@ sub Test
 	MkExecOutputUnique('agar-rg-config', '--version', 'AGAR_RG_VERSION');
 	MkIf('"${AGAR_VERSION}" != "" -a "${AGAR_RG_VERSION}" != ""');
 		MkPrint('yes');
+		MkTestVersion('Agar', 'AGAR_RG_VERSION', $ver);
 		MkPrintN('checking whether agar-rg works...');
 		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');

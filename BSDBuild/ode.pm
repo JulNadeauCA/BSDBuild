@@ -33,6 +33,7 @@ sub Test
 	
 	MkIf('"${ODE_VERSION}" != ""');
 		MkPrint('yes');
+		MkTestVersion('ODE', 'ODE_VERSION', $ver);
 		MkPrintN('checking whether ODE works...');
 		MkCompileC('HAVE_ODE', '${ODE_CFLAGS}', '${ODE_LIBS}', << 'EOF');
 #include <ode/ode.h>

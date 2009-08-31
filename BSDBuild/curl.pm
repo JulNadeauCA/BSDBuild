@@ -31,6 +31,7 @@ sub Test
 
 	MkIf('"${CURL_VERSION}" != ""');
 		MkPrint('yes');
+		MkTestVersion('curl', 'CURL_VERSION', $ver);
 		MkExecOutput('curl-config', '--cflags', 'CURL_CFLAGS');
 		MkExecOutput('curl-config', '--libs', 'CURL_LIBS');
         MkSaveMK('CURL_CFLAGS', 'CURL_LIBS');

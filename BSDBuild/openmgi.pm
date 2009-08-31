@@ -33,6 +33,7 @@ sub Test
 
 	MkIf('"${OPENMGI_VERSION}" != ""');
 		MkPrint('yes');
+		MkTestVersion('OpenMGI', 'OPENMGI_VERSION', $ver);
 		MkPrintN('checking whether libopenmgi works...');
 		MkCompileC('HAVE_OPENMGI', '${OPENMGI_CFLAGS}', '${OPENMGI_LIBS}',
 	               << 'EOF');

@@ -32,6 +32,7 @@ sub Test
 	MkExecOutputUnique('freesg-config', '--version', 'FREESG_VERSION');
 	MkIf('"${AGAR_VERSION}" != "" -a "${FREESG_VERSION}" != ""');
 		MkPrint('yes');
+		MkTestVersion('FreeSG', 'FREESG_VERSION', $ver);
 		MkPrintN('checking whether FreeSG works...');
 		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');

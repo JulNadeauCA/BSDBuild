@@ -31,6 +31,7 @@ sub Test
 	
 	MkExecOutputUnique('agar-config', '--version', 'AGAR_VERSION');
 	MkExecOutputUnique('agar-vg-config', '--version', 'AGAR_VG_VERSION');
+	MkTestVersion('Agar', 'AGAR_VG_VERSION', $ver);
 	MkIf('"${AGAR_VERSION}" != "" -a "${AGAR_VG_VERSION}" != ""');
 		MkPrint('yes');
 		MkPrintN('checking whether agar-vg works...');

@@ -1,7 +1,7 @@
 # $Csoft: agar.pm,v 1.7 2005/09/27 00:29:42 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2007 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2009 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,7 @@ sub Test
 		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');
 		MkExecOutput('agar-dev-config', '--cflags', 'AGAR_DEV_CFLAGS');
 		MkExecOutput('agar-dev-config', '--libs', 'AGAR_DEV_LIBS');
+		MkTestVersion('Agar', 'AGAR_DEV_VERSION', $ver);
 		MkCompileC('HAVE_AGAR_DEV',
 		    '${AGAR_DEV_CFLAGS} ${AGAR_CFLAGS}',
 		    '${AGAR_DEV_LIBS} ${AGAR_LIBS}',

@@ -129,6 +129,7 @@ done
 EOF
 	MkIf('"${DB4_VERSION}" != ""');
 		MkPrint('found ${DB4_VERSION}');
+		MkTestVersion('Berkeley DB', 'DB4_VERSION', $ver);
 		MkPrintN('checking whether DB4 works...');
 		MkCompileC('HAVE_DB4', '${DB4_CFLAGS}', '${DB4_LIBS}', << 'EOF');
 #include <db.h>

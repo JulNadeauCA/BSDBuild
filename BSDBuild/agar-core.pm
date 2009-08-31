@@ -38,6 +38,10 @@ sub Test
 	    MkPrint('no');
 		MkSaveUndef('AGAR_CORE_CFLAGS', 'AGAR_CORE_LIBS');
 	MkEndif;
+	
+	if ($ver) {
+		MkTestVersion('Agar', 'AGAR_CORE_VERSION', $ver);
+	}
 
 	MkPrintN('checking whether Agar-Core works...');
 	MkCompileC('HAVE_AGAR_CORE', '${AGAR_CORE_CFLAGS}', '${AGAR_CORE_LIBS}',

@@ -31,6 +31,7 @@ sub Test
 
 	MkIf('"${PERCGI_VERSION}" != ""');
 		MkPrint('yes');
+		MkTestVersion('PerCGI', 'PERCGI_VERSION', $ver);
 		MkExecOutput('percgi-config', '--cflags', 'PERCGI_CFLAGS');
 		MkExecOutput('percgi-config', '--libs', 'PERCGI_LIBS');
         MkSaveMK('PERCGI_CFLAGS', 'PERCGI_LIBS');

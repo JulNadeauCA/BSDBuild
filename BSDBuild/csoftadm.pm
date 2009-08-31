@@ -35,6 +35,7 @@ sub Test
 
 	MkIf('"${CSOFTADM_VERSION}" != ""');
 		MkPrint('yes');
+		MkTestVersion('Csoftadm', 'CSOFTADM_VERSION', $ver);
 		MkPrintN('checking whether csoftadm works...');
 		MkCompileC('HAVE_CSOFTADM', '${CSOFTADM_CFLAGS}', '${CSOFTADM_LIBS}',
 	               << 'EOF');

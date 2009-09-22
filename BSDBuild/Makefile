@@ -90,7 +90,8 @@ SHARE=	Core.pm \
 	percgi.pm \
 	gettimeofday.pm \
 	syslog.pm \
-	glob.pm
+	glob.pm \
+	glx.pm
 
 all:
 

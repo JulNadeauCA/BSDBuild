@@ -91,7 +91,8 @@ SHARE=	Core.pm \
 	gettimeofday.pm \
 	syslog.pm \
 	glob.pm \
-	glx.pm
+	glx.pm \
+	png.pm
 
 all:
 

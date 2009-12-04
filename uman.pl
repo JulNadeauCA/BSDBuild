@@ -13,12 +13,6 @@ if (!defined($ENV{'UMANPATH'})) {
 
 # Search these directories for manual page source.
 @SRC_DIRS = split(':', $ENV{'UMANPATH'});
-(
-	$ENV{'HOME'}.'/src/agar',
-	$ENV{'HOME'}.'/src/freesg',
-	$ENV{'HOME'}.'/src/cadtools',
-	$ENV{'HOME'}.'/src/edacious'
-);
 
 # Formatting engine
 $NROFF = 'nroff -Tascii -mandoc';

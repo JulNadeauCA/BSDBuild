@@ -105,6 +105,13 @@ This results in the
 flag being added to the compiler command line, but it is also interpreted
 by
 .Xr build.proj.mk 5 .
+.It Ev C_INCDIR_CONFIG(dir)
+(C-style compilers only) Specify a target directory for configure-script
+generated include files.
+By default, the files are written to
+.Pa ./config .
+This directive can be invoked multiple times to specify extra directories
+into which those files will be copied.
 .It Ev C_INCPREP(dir)
 (C-style compilers only) Specify a single directory to contain include files.
 The configure script will provide the user with the option of generating
@@ -128,8 +135,6 @@ Request extra compiler warnings.
 The exact meaning is compiler specific.
 .It Ev C_FATAL_WARNINGS
 Request that compilation fail if warnings are encountered.
-.It Ev C_NO_SECURE_WARNINGS
-Request that warnings about use of deprecated or obsolete APIs be silenced.
 .El
 .\" .Sh ENVIRONMENT
 .\" .Sh FILES

@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/bsdbuild
 #
-# Copyright (c) 2001-2008 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2009 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,6 +26,23 @@
 use BSDBuild::Core;
 use Getopt::Long;
 
+my %Macros = (
+	'mdefine'		=> \&mdefine,
+	'hdefine'		=> \&hdefine,
+	'hundef'		=> \&hundef,
+	'c_define'		=> \&c_define,
+	'c_incdir'		=> \&c_incdir,
+	'c_incprep'		=> \&c_incprep,
+	'c_libdir'		=> \&c_libdir,
+	'c_option'		=> \&c_option,
+	'ld_option'		=> \&ld_option,
+	'c_extra_warnings'	=> \&c_extra_warnings,
+	'c_fatal_warnings'	=> \&c_fatal_warnings,
+	'c_no_secure_warnings'	=> \&c_no_secure_warnings,
+	'c_incdir_config'	=> \&c_incdir_config,
+);
+
+# Make environment define
 sub mdefine
 {
 	my ($def, $val) = @_;
@@ -35,6 +52,7 @@ sub mdefine
 	MkSaveMK($def);
 }
 
+# C header define
 sub hdefine
 {
 	my ($def, $val) = @_;
@@ -44,12 +62,14 @@ sub hdefine
 	MkSaveDefine($def);
 }
 
+# C header undef
 sub hundef
 {
 	my $def = shift;
 	MkSaveUndef($def);
 }
 
+# C/C++ define
 sub c_define
 {
 	my $def = shift;
@@ -61,6 +81,7 @@ sub c_define
 	print {$LUA} "table.insert(package.defines,{\"$def\"})\n";
 }
 
+# C/C++ include directory
 sub c_incdir
 {
 	my $dir = shift;
@@ -82,6 +103,7 @@ sub c_incdir
 	print {$LUA} "table.insert(package.includepaths,{\"$dir\"})\n";
 }
 
+# Include file preprocessing
 sub c_incprep
 {
 	my $dir = shift;
@@ -111,6 +133,7 @@ else
 		if [ "\${SRCDIR}" != "\${BLDDIR}" ]; then
 			\$ECHO_N "* Preprocessing includes (from \${SRCDIR})..."
 			(cd \${SRCDIR} && \${PERL} mk/gen-includes.pl "\${BLDDIR}/$dir/$subdir" 1>>\${BLDDIR}/config.log 2>&1)
+			echo "cp -fR config $dir/$subdir"
 			cp -fR config $dir/$subdir
 		else
 			\$ECHO_N "* Preprocessing includes (in \${BLDDIR})...";
@@ -128,6 +151,7 @@ fi
 EOF
 }
 
+# C/C++ library directory
 sub c_libdir
 {
 	my $dir = shift;
@@ -140,16 +164,19 @@ sub c_libdir
 	print {$LUA} "table.insert(package.libpaths,{\"$dir\"})\n";
 }
 
+# Extra compiler warnings
 sub c_extra_warnings
 {
 	print {$LUA} 'table.insert(package.buildflags,{"extra-warnings"})'."\n";
 }
 
+# Fatal warnings
 sub c_fatal_warnings
 {
 	print {$LUA} 'table.insert(package.buildflags,{"extra-warnings"})'."\n";
 }
 
+# Disable _CRT_SECURE warnings (win32)
 sub c_no_secure_warnings
 {
 	print {$LUA} << "EOF";
@@ -160,6 +187,7 @@ end
 EOF
 }
 
+# C compiler option
 sub c_option
 {
 	my $opt = shift;
@@ -170,6 +198,7 @@ sub c_option
 	MkSaveMK('CXXFLAGS');
 }
 
+# Linker option
 sub ld_option
 {
 	my $opt = shift;
@@ -177,6 +206,28 @@ sub ld_option
 	MkDefine('LDFLAGS', '$LDFLAGS'.$opt);
 	MkSaveMK('LDFLAGS');
 }
+
+# BSDBuild target ./config include directory.
+sub c_incdir_config
+{
+	my $dir = shift;
+	my @dirtoks = split('/', $dir);
+	pop(@dirtoks);
+	$dirparent = join('/', @dirtoks);
+
+	print << "EOF";
+if [ "\${includes}" != "link" ]; then
+	if [ -e "$dirparent" ]; then
+		echo "cp -fR config $dir"
+		cp -fR config "$dir"
+	fi
+fi
+EOF
+}
+
+#
+# End macros
+#
 
 sub Register
 {
@@ -253,16 +304,18 @@ exit 1
 EOF
 }
 
-BEGIN
-{
-	$INSTALLDIR = '%PREFIX%/share/bsdbuild';
-	
-	GetOptions("emul-os=s" =>	\$EmulOS,
-	           "emul-osrel=s" =>	\$EmulOSRel,
-	           "emul-env=s" =>	\$EmulEnv,
-	           "output-lua=s" =>	\$OutputLUA);
+#
+# BEGIN
+#
 
-	print << 'EOF';
+$INSTALLDIR = '%PREFIX%/share/bsdbuild';
+	
+GetOptions("emul-os=s" =>	\$EmulOS,
+           "emul-osrel=s" =>	\$EmulOSRel,
+           "emul-env=s" =>	\$EmulEnv,
+           "output-lua=s" =>	\$OutputLUA);
+
+print << 'EOF';
 #!/bin/sh
 #
 # Do not edit!
@@ -275,8 +328,8 @@ BEGIN
 #
 EOF
 
-	open($LUA, ">$OutputLUA");
-	print { $LUA } << 'EOF';
+open($LUA, ">$OutputLUA");
+print { $LUA } << 'EOF';
 -- Public domain
 --
 -- Do not edit!
@@ -291,7 +344,7 @@ hdefs = {}
 mdefs = {}
 EOF
 
-	print << 'EOF';
+print << 'EOF';
 # Copyright (c) 2001-2009 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
@@ -488,20 +541,19 @@ link)
 esac
 EOF
 
-	print << "EOF";
+print << "EOF";
 if [ "\${srcdir}" = "" ]; then
 	cat << EOT > configure.dep.pl
 EOF
-	my @code = ();
-	open(SCRIPT, "$INSTALLDIR/gen-dotdepend.pl") ||
-	    die "gen-dotdepend.pl: $!";
-	foreach my $s (<SCRIPT>) {
-		$s =~ s/\\/\\\\/g;
-		$s =~ s/\$/\\\$/g;
-		print $s;
-	}
-	close(SCRIPT);
-	print << "EOF";
+my @code = ();
+open(SCRIPT, "$INSTALLDIR/gen-dotdepend.pl") || die "gen-dotdepend.pl: $!";
+foreach my $s (<SCRIPT>) {
+	$s =~ s/\\/\\\\/g;
+	$s =~ s/\$/\\\$/g;
+	print $s;
+}
+close(SCRIPT);
+print << "EOF";
 EOT
 	if [ "\${PERL}" != "" ]; then
 		\${PERL} configure.dep.pl .
@@ -515,40 +567,40 @@ EOT
 	fi
 fi
 EOF
-	if ($EmulOS || $EmulEnv) {
-		print STDERR "Emulating OS: $EmulOS\n";
-		print STDERR "Emulating OS Release: \"$EmulOSRel\"\n";
-		print STDERR "Emulating Environment: \"$EmulEnv\"\n";
+if ($EmulOS || $EmulEnv) {
+	print STDERR "Emulating OS: $EmulOS\n";
+	print STDERR "Emulating OS Release: \"$EmulOSRel\"\n";
+	print STDERR "Emulating Environment: \"$EmulEnv\"\n";
+}
+
+my %done = ();
+my $registers = 1;
+while (<STDIN>) {
+	chop;
+	if (/^\s*#/) {
+	    next;
 	}
+	DIRECTIVE: foreach my $s (split(';')) {
+		if ($s =~ /([A-Z_]+)\((.*)\)/) {
+			my $cmd = lc($1);
+			my $argspec = $2;
+			my @args = ();
 
-	my %done = ();
-	my $registers = 1;
-	while (<STDIN>) {
-		chop;
-		if (/^\s*#/) {
-		    next;
-		}
-		DIRECTIVE: foreach my $s (split(';')) {
-			if ($s =~ /([A-Z_]+)\((.*)\)/) {
-				my $cmd = lc($1);
-				my $argspec = $2;
-				my @args = ();
+			foreach my $arg (split(',', $argspec)) {
+				$arg =~ s/^\s+//;
+				$arg =~ s/\s+$//;
+				push @args, $arg;
+			}
 
-				foreach my $arg (split(',', $argspec)) {
-					$arg =~ s/^\s+//;
-					$arg =~ s/\s+$//;
-					push @args, $arg;
-				}
-
-				if ($cmd eq 'register') {
-					Register(@args);
-				} else {
-					if ($registers) {
-						print << 'EOF';
+			if ($cmd eq 'register') {
+				Register(@args);
+			} else {
+				if ($registers) {
+					print << 'EOF';
 if [ "${help}" = "yes" ]; then
 EOF
-						Help();
-						print << 'EOF';
+					Help();
+					print << 'EOF';
 fi
 
 MACHINE=`uname -m 2>/dev/null` || MACHINE=unknown
@@ -752,92 +804,68 @@ echo "#define SYSCONFDIR \"${SYSCONFDIR}\"" >> config/sysconfdir.h
 echo "#endif /* SYSCONFDIR */" >> config/sysconfdir.h
 
 EOF
-						$registers = 0;
-					}
+					$registers = 0;
 				}
-				if ($cmd eq 'check' || $cmd eq 'require') {
-					my $t = shift(@args);
-					my $mod = "$INSTALLDIR/BSDBuild/$t.pm";
-					unless (-e $mod) {
-						print STDERR "$mod: $!\n";
-						exit (1);
-					}
-					do($mod);
-					if ($@) {
-						print STDERR $@;
-						exit (1);
-					}
-					if (exists($DEPS{$t})) {
-						foreach my $dep (split(',',
-						                 $DEPS{$t})) {
-							if (!exists(
-							    $done{$dep})) {
-								print STDERR
-								    "$t ".
-								    "depends ".
-								    "on: ".
-								    $dep.
-								    "\n";
-								exit(1);
-							}
-						}
-					}
-		
-					my $c;
-					if ($EmulOS) {
-						unless (exists($EMUL{$t}) &&
-						        defined($EMUL{$t})) {
-#							print STDERR
-#							    "Ignoring: $t\n";
-							next DIRECTIVE;
-						}
-						$c = $EMUL{$t};
-						@args = ($EmulOS, $EmulOSRel,
-						         '');
-					} else {
-						$c = $TESTS{$t};
-						unless ($c) {
-							die "Bad test: $t";
-						}
-					}
-					print STDERR "+ $t: $DESCR{$t}\n";
-					MkPrintN("checking for $DESCR{$t}...");
-					&$c(@args);
-					if ($EmulOS) {
-						MkPrintN("ok\n");
-					}
-					$done{$t} = 1;
-				} elsif ($cmd eq 'mdefine') {
-					mdefine(@args);
-				} elsif ($cmd eq 'hdefine') {
-					hdefine(@args);
-				} elsif ($cmd eq 'hundef') {
-					hundef(@args);
-				} elsif ($cmd eq 'c_define') {
-					c_define(@args);
-				} elsif ($cmd eq 'c_incdir') {
-					c_incdir(@args);
-				} elsif ($cmd eq 'c_incprep') {
-					c_incprep(@args);
-				} elsif ($cmd eq 'c_libdir') {
-					c_libdir(@args);
-				} elsif ($cmd eq 'c_option') {
-					c_option(@args);
-				} elsif ($cmd eq 'ld_option') {
-					ld_option(@args);
-				} elsif ($cmd eq 'c_extra_warnings') {
-					c_extra_warnings(@args);
-				} elsif ($cmd eq 'c_fatal_warnings') {
-					c_fatal_warnings(@args);
-				} elsif ($cmd eq 'c_no_secure_warnings') {
-					c_no_secure_warnings(@args);
-				} elsif ($cmd eq 'exit') {
-					print "exit $args[0]\n";
-				}
-			} else {
-				print $s, "\n";
 			}
+			if ($cmd eq 'check' || $cmd eq 'require') {
+				my $t = shift(@args);
+				my $mod = "$INSTALLDIR/BSDBuild/$t.pm";
+				unless (-e $mod) {
+					print STDERR "$mod: $!\n";
+					exit (1);
+				}
+				do($mod);
+				if ($@) {
+					print STDERR $@;
+					exit (1);
+				}
+				if (exists($DEPS{$t})) {
+					foreach my $dep (split(',',
+					                 $DEPS{$t})) {
+						if (!exists(
+						    $done{$dep})) {
+							print STDERR
+							    "$t ".
+							    "depends ".
+							    "on: ".
+							    $dep.
+							    "\n";
+							exit(1);
+						}
+					}
+				}
+	
+				my $c;
+				if ($EmulOS) {
+					unless (exists($EMUL{$t}) &&
+					        defined($EMUL{$t})) {
+#						print STDERR
+#						    "Ignoring: $t\n";
+						next DIRECTIVE;
+					}
+					$c = $EMUL{$t};
+					@args = ($EmulOS, $EmulOSRel,
+					         '');
+				} else {
+					$c = $TESTS{$t};
+					unless ($c) {
+						die "Bad test: $t";
+					}
+				}
+				print STDERR "+ $t: $DESCR{$t}\n";
+				MkPrintN("checking for $DESCR{$t}...");
+				&$c(@args);
+				if ($EmulOS) {
+					MkPrintN("ok\n");
+				}
+				$done{$t} = 1;
+			} else {
+				if (exists($Macros{$cmd})) {
+					&{$Macros{$cmd}}(@args);
+				}
+			}
+		} else {
+			print $s, "\n";
 		}
 	}
 }
-

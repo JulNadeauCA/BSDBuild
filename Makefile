@@ -3,10 +3,16 @@ include ${TOP}/Makefile.config
 
 PROJECT=bsdbuild
 
+SUBDIR=	BSDBuild \
+	ManReader \
+	man
+
 SCRIPTS=mkconfigure \
 	mkprojfiles \
 	mkify \
-	h2mandoc
+	h2mandoc \
+	man2wiki \
+	uman
 
 SHARE=	hstrip.pl mkdep mkconcurrent.pl manlinks.pl cmpfiles.pl cleanfiles.pl \
 	gen-includes.pl gen-declspecs.pl get-version.pl get-release.pl \
@@ -16,8 +22,6 @@ SHARE=	hstrip.pl mkdep mkconcurrent.pl manlinks.pl cmpfiles.pl cleanfiles.pl \
 	build.po.mk build.doc.mk build.den.mk build.proj.mk
 	
 LTFILES=config.guess config.sub configure configure.in ltconfig ltmain.sh
-
-SUBDIR=	BSDBuild man
 
 all: all-subdir ${SCRIPTS}
 
@@ -39,6 +43,16 @@ mkify: mkify.pl
 h2mandoc: h2mandoc.pl
 	sed -e s,%VERSION%,${VERSION}, \
 	    h2mandoc.pl > h2mandoc
+
+man2wiki: man2wiki.pl
+	sed -e s,%PREFIX%,${PREFIX}, \
+	    -e s,%VERSION%,${VERSION}, \
+	    man2wiki.pl > man2wiki
+
+uman: uman.pl
+	sed -e s,%PREFIX%,${PREFIX}, \
+	    -e s,%VERSION%,${VERSION}, \
+	    uman.pl > uman
 
 install: install-subdir
 	@if [ ! -d "${SHAREDIR}" ]; then \

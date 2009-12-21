@@ -216,11 +216,9 @@ sub c_incdir_config
 	$dirparent = join('/', @dirtoks);
 
 	print << "EOF";
-if [ "\${includes}" != "link" ]; then
-	if [ -e "$dirparent" ]; then
-		echo "cp -fR config $dir"
-		cp -fR config "$dir"
-	fi
+if [ -e "$dirparent" ]; then
+	echo "cp -fR config $dir"
+	cp -fR config "$dir"
 fi
 EOF
 }

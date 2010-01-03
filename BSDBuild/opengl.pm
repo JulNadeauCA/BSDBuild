@@ -34,6 +34,7 @@ my @include_dirs = (
 	'/usr/local/include/X11R6',
 	'/usr/X11/include',
 	'/usr/X11R6/include',
+	'/usr/local/include',
 );
 
 my @lib_dirs = (
@@ -41,6 +42,7 @@ my @lib_dirs = (
 	'/usr/local/X11R6/lib',
 	'/usr/X11/lib',
 	'/usr/X11R6/lib',
+	'/usr/local/lib',
 );
 
 sub Test

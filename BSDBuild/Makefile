@@ -92,7 +92,8 @@ SHARE=	Core.pm \
 	syslog.pm \
 	glob.pm \
 	glx.pm \
-	png.pm
+	png.pm \
+	alsa.pm
 
 all:
 

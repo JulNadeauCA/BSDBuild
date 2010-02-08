@@ -72,7 +72,7 @@ sub Emul
 
 BEGIN
 {
-	$DESCR{'wgl'} = 'WGL';
+	$DESCR{'wgl'} = 'the WGL interface';
 	$TESTS{'wgl'} = \&Test;
 	$EMUL{'wgl'} = \&Emul;
 	$LINK{'wgl'} = \&Link;

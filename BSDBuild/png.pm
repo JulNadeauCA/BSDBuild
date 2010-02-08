@@ -45,7 +45,7 @@ EOF
 	
 	MkExecOutput('libpng-config', '--version', 'PNG_VERSION');
 	MkExecOutput('libpng-config', '--cflags', 'PNG_CFLAGS');
-	MkExecOutput('libpng-config', '--libs', 'PNG_LIBS');
+	MkExecOutput('libpng-config', '--L_opts', 'PNG_LIBS');
 	
 	MkIf('"${PNG_VERSION}" != ""');
 		MkPrint('yes');

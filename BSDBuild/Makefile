@@ -93,7 +93,8 @@ SHARE=	Core.pm \
 	glob.pm \
 	glx.pm \
 	png.pm \
-	alsa.pm
+	alsa.pm \
+	wgl.pm
 
 all:
 

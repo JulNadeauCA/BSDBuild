@@ -84,6 +84,12 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
+	if ($os eq 'windows') {
+		MkDefine('HAVE_PNG', 'no');
+		MkSaveUndef('HAVE_PNG', 'PNG_CFLAGS', 'PNG_LIBS');
+		MkSaveMK('PNG_CFLAGS', 'PNG_LIBS');
+		return (1);
+	}
 	if ($os eq 'darwin') {
 		MkDefine('PNG_CFLAGS', '-I/opt/local/include/libpng12 -I/opt/local/include '.
 		                       '-I/usr/local/include/libpng12 -I/usr/local/include '.
@@ -91,9 +97,6 @@ sub Emul
 		                       '-D_GNU_SOURCE=1 -D_THREAD_SAFE');
 		MkDefine('PNG_LIBS', '-L/usr/lib -L/opt/local/lib -L/usr/local/lib '.
 		                     '-lpng12');
-	} elsif ($os eq 'windows') {
-		MkDefine('PNG_CFLAGS', '');
-		MkDefine('PNG_LIBS', 'png');
 	} else {
 		MkDefine('PNG_CFLAGS', '-I/usr/include/libpng12 -I/usr/include '.
 		                       '-I/usr/local/include/libpng12 '.

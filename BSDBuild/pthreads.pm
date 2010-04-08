@@ -89,6 +89,7 @@ sub SearchIncludes ($)
 	foreach my $dir (@include_dirs) {
 		MkIf qq{-f "$dir/pthread.h"};
 			MkDefine('PTHREADS_CFLAGS', "-I$dir");
+			MkBreak;
 		MkEndif;
 	}
 }
@@ -101,6 +102,7 @@ sub SearchLibs ($)
 		foreach my $file (@lib_files) {
 			MkIf qq{-f "$dir/lib$file.a"};
 				MkDefine($def, "-L$dir -l$file");
+				MkBreak;
 			MkEndif;
 		}
 	}

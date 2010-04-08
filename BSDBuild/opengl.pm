@@ -1,8 +1,7 @@
 # $Csoft: opengl.pm,v 1.5 2004/03/10 16:33:36 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2002-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -67,11 +66,12 @@ EOF
 	foreach my $dir (@include_dirs) {
 		MkIf qq{-d "$dir/GL"};
 			MkDefine('GL_CFLAGS', "-I$dir");
+			MkBreak;
 		MkEndif;
 	}
 	foreach my $dir (@lib_dirs) {
 		MkIf qq{-d "$dir"};
-			MkDefine('GL_LIBS', "-L$dir");
+			MkDefine('GL_LIBS', "\${GL_LIBS} -L$dir");
 		MkEndif;
 	}
 	MkPrint('yes');

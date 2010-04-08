@@ -90,6 +90,7 @@ EOF
 			MkIf("-e $pfx/include/iconv.h");
 			    MkDefine('ICONV_CFLAGS', "-I$pfx/include");
 			    MkDefine('ICONV_LIBS', "-L$pfx/lib -liconv");
+				MkBreak;
 			MkEndif;
 		}
 		MkCompileC('HAVE_ICONV', '${ICONV_CFLAGS} -Wno-cast-qual',

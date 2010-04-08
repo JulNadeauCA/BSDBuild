@@ -51,6 +51,7 @@ sub Test
 		foreach my $dir (@include_dirs) {
 			MkIf qq{-d "$dir/GL/glu.h"};
 				MkDefine('GLU_CFLAGS', "-I$dir");
+				MkBreak;
 			MkEndif;
 		}
 		MkAppend('GLU_LIBS', '-lGLU');

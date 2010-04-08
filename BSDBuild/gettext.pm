@@ -56,6 +56,7 @@ EOF
 			MkIf("-e $pfx/include/libintl.h");
 			    MkDefine('GETTEXT_CFLAGS', "-I$pfx/include");
 			    MkDefine('GETTEXT_LIBS', "-L$pfx/lib -lintl");
+				MkBreak;
 			MkEndif;
 		}
 		MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}',
@@ -71,6 +72,7 @@ EOF
 					    "\${GETTEXT_CFLAGS} -I$pfx/include");
 				    MkDefine('GETTEXT_LIBS',
 					    "\${GETTEXT_LIBS} -L$pfx/lib -liconv");
+					MkBreak;
 				MkEndif;
 			}
 			MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}',

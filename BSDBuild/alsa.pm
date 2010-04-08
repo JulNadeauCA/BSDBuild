@@ -43,12 +43,12 @@ sub Test
 
 	foreach my $dir (@include_dirs) {
 		MkIf qq{-d "$dir/alsa"};
-			MkDefine('ALSA_CFLAGS', "-I$dir");
+			MkDefine('ALSA_CFLAGS', "\${ALSA_CFLAGS} -I$dir");
 		MkEndif;
 	}
 	foreach my $dir (@lib_dirs) {
 		MkIf qq{-d "$dir"};
-			MkDefine('ALSA_LIBS', "-L$dir -lasound");
+			MkDefine('ALSA_LIBS', "\${ALSA_LIBS} -L$dir -lasound");
 		MkEndif;
 	}
 	MkPrint('yes');

@@ -43,7 +43,7 @@ sub Test
 
 	foreach my $dir (@include_dirs) {
 		MkIf qq{-d "$dir/Cg"};
-			MkDefine('CG_CFLAGS', "-I$dir");
+			MkDefine('CG_CFLAGS', "\${CG_CFLAGS} -I$dir");
 		MkEndif;
 	}
 

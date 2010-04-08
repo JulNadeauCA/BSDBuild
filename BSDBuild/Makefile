@@ -94,7 +94,8 @@ SHARE=	Core.pm \
 	glx.pm \
 	png.pm \
 	alsa.pm \
-	wgl.pm
+	wgl.pm \
+	mgid.pm
 
 all:
 

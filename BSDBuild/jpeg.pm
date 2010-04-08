@@ -42,7 +42,6 @@ sub Test
 		MkIf("-f \"$dir/include/jpeglib.h\"");
 			MkDefine('JPEG_CFLAGS', "-I$dir/include");
 			MkDefine('JPEG_LIBS', "-L$dir/lib -ljpeg");
-			MkBreak;
 		MkEndif;
 	}
 	MkIf('"${JPEG_CFLAGS}" != ""');

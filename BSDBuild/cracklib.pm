@@ -39,7 +39,6 @@ sub Test
 		MkIf("-f \"$dir/include/crack.h\"");
 			MkDefine('CRACKLIB_CFLAGS', "-I$dir/include");
 			MkDefine('CRACKLIB_LIBS', "-L$dir/lib -lcrack");
-			MkBreak;
 		MkEndif;
 	}
 	MkIf('"${CRACKLIB_CFLAGS}" != ""');

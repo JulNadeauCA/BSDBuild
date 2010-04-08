@@ -41,7 +41,6 @@ sub Test
 		MkIf("-e $dir/include/fcgi_stdio.h");
 			MkDefine('FASTCGI_CFLAGS', "-I$dir/include");
 		    MkDefine('FASTCGI_LIBS', "-L$dir/lib -lfcgi");
-			MkBreak;
 		MkEndif;
 	}
 	MkIf('"${FASTCGI_LIBS}" != ""');

@@ -66,7 +66,6 @@ EOF
 	foreach my $dir (@include_dirs) {
 		MkIf qq{-d "$dir/GL"};
 			MkDefine('GL_CFLAGS', "-I$dir");
-			MkBreak;
 		MkEndif;
 	}
 	foreach my $dir (@lib_dirs) {

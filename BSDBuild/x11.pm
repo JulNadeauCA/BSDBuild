@@ -51,7 +51,6 @@ sub Test
 	foreach my $dir (@include_dirs) {
 		MkIf("-d $dir/X11");
 		    MkDefine('X11_CFLAGS', "-I$dir");
-			MkBreak;
 		MkEndif;
 	}
 	foreach my $dir (@lib_dirs) {

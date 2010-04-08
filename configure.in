@@ -1,7 +1,7 @@
 # Public domain
 
 MDEFINE(SHAREDIR, "$PREFIX/share/bsdbuild")
-MDEFINE(VERSION, "2.7-beta")
+MDEFINE(VERSION, "2.7")
 MDEFINE(RELEASE, "Horrific Prophecy")
 
 echo "*"

@@ -95,7 +95,8 @@ SHARE=	Core.pm \
 	png.pm \
 	alsa.pm \
 	wgl.pm \
-	mgid.pm
+	mgid.pm \
+	select.pm
 
 all:
 

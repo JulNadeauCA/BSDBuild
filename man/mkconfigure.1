@@ -51,7 +51,7 @@ code fragments that will be copied verbatim to the configure script.
 .Nm
 directives are case-insensitive.
 The following directives are recognized:
-.Bl -tag -width "REGISTER_SECTION(string) "
+.Bl -tag -width "CONFIG_SCRIPT(name,cflags,libs) "
 .It Ev PACKAGE(name)
 Short name for the software package.
 .It Ev VERSION(string)
@@ -143,6 +143,18 @@ Request extra compiler warnings.
 The exact meaning is compiler specific.
 .It Ev C_FATAL_WARNINGS
 Request that compilation fail if warnings are encountered.
+.It Ev CONFIG_SCRIPT(name,cflags,libs)
+Generate a standard "foo-config" script.
+.Fa name
+specifies the name of the script,
+.Fa cflags
+defines the
+.Sq --cflags
+output and
+.Fa libs
+the
+.Sq --libs
+output.
 .El
 .\" .Sh ENVIRONMENT
 .\" .Sh FILES

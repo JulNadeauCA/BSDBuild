@@ -49,7 +49,39 @@ my %Fns = (
 	'c_fatal_warnings'	=> \&c_fatal_warnings,
 	'c_no_secure_warnings'	=> \&c_no_secure_warnings,
 	'c_incdir_config'	=> \&c_incdir_config,
+	'config_script'		=> \&config_script,
 );
+
+# Specify software package name
+sub package
+{
+	my ($val) = @_;
+
+	if ($val =~ /^"(.+)"$/) { $val = $1; }
+	MkDefine('PACKAGE', $val);
+}
+
+# Specify software package version
+sub version
+{
+	my ($val) = @_;
+
+	if ($val =~ /^"(.+)"$/) { $val = $1; }
+	MkDefine('VERSION', $val);
+}
+
+# Specify software package release name
+sub release
+{
+	my ($val) = @_;
+
+	if ($val =~ /^"(.+)"$/) { $val = $1; }
+	MkDefine('RELEASE', $val);
+}
+
+# Register a configure option (no-op as script directive)
+sub register { }
+sub register_section { }
 
 # Execute one of the standard BSDBuild tests.
 sub test
@@ -297,36 +329,88 @@ fi
 EOF
 }
 
-# Specify software package name
-sub package
+# Generate a "foo-config" style script.
+sub config_script
 {
-	my ($val) = @_;
+	my ($out, $cflags, $libs) = @_;
+	my $out = shift;
 
-	if ($val =~ /^"(.+)"$/) { $val = $1; }
-	MkDefine('PACKAGE', $val);
+	if ($cflags =~ /^"(.+)"$/) { $cflags = $1; }
+	if ($libs =~ /^"(.+)"$/) { $libs = $1; }
+	print "config_script_out=\"$out\"\n";
+	print "config_script_cflags=\"$cflags\"\n";
+	print "config_script_libs=\"$libs\"\n";
+	print << 'EOF';
+cat << EOT > $config_script_out
+#!/bin/sh
+# Generated for ${PACKAGE} by BSDBuild %VERSION%.
+# <http://bsdbuild.hypertriton.com>
+
+prefix="${PREFIX}"
+exec_prefix="${EXEC_PREFIX}"
+exec_prefix_set="no"
+libdir="${LIBDIR}"
+
+usage="\
+Usage: $config_script_out [--prefix[=DIR]] [--exec-prefix[=DIR]] [--version] [--cflags] [--libs]"
+
+if test \$# -eq 0; then
+	echo "\${usage}" 1>&2
+	exit 1
+fi
+
+while test \$# -gt 0; do
+	case "\$1" in
+	-*=*)
+		optarg=\`echo "\$1" | LC_ALL="C" sed 's/[-_a-zA-Z0-9]*=//'\`
+		;;
+	*)
+		optarg=
+		;;
+	esac
+
+	case \$1 in
+	--prefix=*)
+		prefix=\$optarg
+		if test \$exec_prefix_set = no ; then
+			exec_prefix=\$optarg
+		fi
+		;;
+	--prefix)
+		echo "\$prefix"
+		;;
+	--exec-prefix=*)
+		exec_prefix=\$optarg
+		exec_prefix_set=yes
+		;;
+	--exec-prefix)
+		echo "\$exec_prefix"
+		;;
+	--version)
+		echo "${VERSION}"
+		;;
+	--cflags)
+		echo "$config_script_cflags"
+		;;
+	--libs | --static-libs)
+		if test x"\${prefix}" != x"/usr" ; then
+			libdirs="-L/usr/lib64"
+		else
+			libdirs=""
+		fi
+		echo "\$libdirs $config_script_libs"
+		;;
+	*)
+		echo "\${usage}" 1>&2
+		exit 1
+		;;
+	esac
+	shift
+done
+EOT
+
+EOF
 }
-
-# Specify software package version
-sub version
-{
-	my ($val) = @_;
-
-	if ($val =~ /^"(.+)"$/) { $val = $1; }
-	MkDefine('VERSION', $val);
-}
-
-# Specify software package release name
-sub release
-{
-	my ($val) = @_;
-
-	if ($val =~ /^"(.+)"$/) { $val = $1; }
-	MkDefine('RELEASE', $val);
-}
-
-# Register a configure option (no-op as script directive)
-sub register { }
-sub register_section { }
 
 #
 # End macros

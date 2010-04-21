@@ -1,0 +1,13 @@
+
+Release Notes for BSDBuild 2.8
+------------------------------
+- Improved Cygnus/GNU compatibility for configure scripts.
+- Added PACKAGE(), VERSION() and RELEASE() as standard directives.
+- Improved configure --help output; items are now sorted; added
+  REGISTER_SECTION() directives.
+- Fixed inclusion of -lpng in libpng test.
+- Many code cleanups in mkconfigure(1); added --verbose option.
+- Use the standard GNU config.guess.
+- Implement CONFIG_SCRIPT() directive in mkconfigure(1), to generate
+  standard "foo-config" style scripts.
+

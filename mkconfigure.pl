@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/bsdbuild
 #
-# Copyright (c) 2001-2009 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,16 @@
 use BSDBuild::Core;
 use Getopt::Long;
 
-my %Macros = (
+my $Verbose = 0;
+my %Fns = (
+	'package'		=> \&package,
+	'version'		=> \&version,
+	'release'		=> \&release,
+	'register'		=> \&register,
+	'register_section'	=> \&register_section,
+	'test'			=> \&test,
+	'check'			=> \&test,		# <2.8 compat
+	'require'		=> \&test_require,
 	'mdefine'		=> \&mdefine,
 	'hdefine'		=> \&hdefine,
 	'hundef'		=> \&hundef,
@@ -42,6 +51,70 @@ my %Macros = (
 	'c_incdir_config'	=> \&c_incdir_config,
 );
 
+# Execute one of the standard BSDBuild tests.
+sub test
+{
+	my ($t) = @_;
+	my $mod = "$INSTALLDIR/BSDBuild/$t.pm";
+
+	unless (-e $mod) {
+		print STDERR "$mod: $!\n";
+		exit (1);
+	}
+	do($mod);
+	if ($@) {
+		print STDERR $@;
+		exit (1);
+	}
+	if (exists($DEPS{$t})) {
+		foreach my $dep (split(',', $DEPS{$t})) {
+			if (!exists($done{$dep})) {
+				print STDERR "$t depends on: $dep\n";
+				exit(1);
+			}
+		}
+	}
+	my $c;
+	if ($EmulOS) {
+		unless (exists($EMUL{$t}) &&
+		        defined($EMUL{$t})) {
+#			print STDERR "Ignoring: $t\n";
+			next DIRECTIVE;
+		}
+		$c = $EMUL{$t};
+		@args = ($EmulOS, $EmulOSRel, '');
+	} else {
+		$c = $TESTS{$t};
+		unless ($c) {
+			die "Bad test: $t";
+		}
+	}
+	if ($Verbose) {
+		print STDERR "Add test: $t ($DESCR{$t})\n";
+	}
+	MkPrintN("checking for $DESCR{$t}...");
+	&$c(@args);
+	if ($EmulOS) {
+		MkPrintN("ok\n");
+	}
+	$done{$t} = 1;
+}
+
+# Execute one of the standard BSDBuild tests, abort if the test fails.
+sub test_require
+{
+	my ($t) = @_;
+	my $def = 'HAVE_'.uc($t);
+
+	test(@_);
+	MkIf "${\$def} != \"yes\"";
+		MkPrint('* ');
+		MkPrint("* This software requires $t");
+		MkPrint('* ');
+		MkFail('A dependency is missing');
+	MkEndif;
+}
+
 # Make environment define
 sub mdefine
 {
@@ -52,7 +125,7 @@ sub mdefine
 	MkSaveMK($def);
 }
 
-# C header define
+# Header define
 sub hdefine
 {
 	my ($def, $val) = @_;
@@ -62,7 +135,7 @@ sub hdefine
 	MkSaveDefine($def);
 }
 
-# C header undef
+# Header undef
 sub hundef
 {
 	my $def = shift;
@@ -129,24 +202,25 @@ else
 		echo "*"
 		exit 1
 	fi
-	if [ ! -e "$dir/$subdir" ]; then
-		if [ "\${SRCDIR}" != "\${BLDDIR}" ]; then
-			\$ECHO_N "* Preprocessing includes (from \${SRCDIR})..."
-			(cd \${SRCDIR} && \${PERL} mk/gen-includes.pl "\${BLDDIR}/$dir/$subdir" 1>>\${BLDDIR}/config.log 2>&1)
-			echo "cp -fR config $dir/$subdir"
-			cp -fR config $dir/$subdir
-		else
-			\$ECHO_N "* Preprocessing includes (in \${BLDDIR})...";
-			\${PERL} mk/gen-includes.pl "$dir/$subdir" 1>>config.log 2>&1
-		fi
-		if [ \$? != 0 ]; then
-			echo "\${PERL} mk/gen-includes.pl failed"
-			exit 1
-		fi
-		echo "done"
-	else
-		echo "* Using existing includes"
+	if [ -e "$dir/$subdir" ]; then
+		echo "* Removing existing includes directory"
+		echo "rm -fR $dir/$subdir"
+		rm -fR "$dir/$subdir"
 	fi
+	if [ "\${SRCDIR}" != "\${BLDDIR}" ]; then
+		\$ECHO_N "* Preprocessing includes (from \${SRCDIR})..."
+		(cd \${SRCDIR} && \${PERL} mk/gen-includes.pl "\${BLDDIR}/$dir/$subdir" 1>>\${BLDDIR}/config.log 2>&1)
+		echo "cp -fR config $dir/$subdir"
+		cp -fR config $dir/$subdir
+	else
+		\$ECHO_N "* Preprocessing includes (in \${BLDDIR})...";
+		\${PERL} mk/gen-includes.pl "$dir/$subdir" 1>>config.log 2>&1
+	fi
+	if [ \$? != 0 ]; then
+		echo "\${PERL} mk/gen-includes.pl failed"
+		exit 1
+	fi
+	echo "done"
 fi
 EOF
 }
@@ -223,6 +297,37 @@ fi
 EOF
 }
 
+# Specify software package name
+sub package
+{
+	my ($val) = @_;
+
+	if ($val =~ /^"(.+)"$/) { $val = $1; }
+	MkDefine('PACKAGE', $val);
+}
+
+# Specify software package version
+sub version
+{
+	my ($val) = @_;
+
+	if ($val =~ /^"(.+)"$/) { $val = $1; }
+	MkDefine('VERSION', $val);
+}
+
+# Specify software package release name
+sub release
+{
+	my ($val) = @_;
+
+	if ($val =~ /^"(.+)"$/) { $val = $1; }
+	MkDefine('RELEASE', $val);
+}
+
+# Register a configure option (no-op as script directive)
+sub register { }
+sub register_section { }
+
 #
 # End macros
 #
@@ -239,65 +344,109 @@ sub Register
 	push @HELP, "echo \"    $darg $descr\"";
 }
 
+sub RegisterSection
+{
+	my ($s) = @_;
+	$s =~ /\"(.*)\"/;
+	$s = $1;
+	push @HELP, "echo \"\"";
+	push @HELP, "echo \"$s\"";
+}
+
 sub Help
 {
-    my $prefix_opt = pack('A' x 25, split('', '--prefix'));
-    my $sysconfdir_opt = pack('A' x 25, split('', '--sysconfdir'));
-    my $bindir_opt = pack('A' x 25, split('', '--bindir'));
-    my $libdir_opt = pack('A' x 25, split('', '--libdir'));
-    my $sharedir_opt = pack('A' x 25, split('', '--sharedir'));
-    my $localedir_opt = pack('A' x 25, split('', '--localedir'));
-    my $mandir_opt = pack('A' x 25, split('', '--mandir'));
-    my $infodir_opt = pack('A' x 25, split('', '--infodir'));
-    my $srcdir_opt = pack('A' x 25, split('', '--srcdir'));
-    my $testdir_opt = pack('A' x 25, split('', '--testdir'));
+	my %stdOpts = (
+		'--srcdir=p' =>		'Source directory for concurrent build',
+		'--build=s' =>		'Host environment for build',
+		'--host=s' =>		'Cross-compile for target environment',
+		'--prefix=p' =>		'Installation base (MI files)',
+		'--exec-prefix=p' =>	'Installation base (MD files)',
+		'--sysconfdir=p' =>	'System configuration files',
+		'--bindir=p' =>		'Executables (for common users)',
+		'--sbindir=p' =>	'Executables (for administrator)',
+		'--libdir=p' =>		'System libraries',
+		'--libexecdir=p' =>	'Executables (for programs)',
+		'--datadir=p' =>	'Data files (for programs)',
+		'--localedir=p' =>	'Multi-language support locales',
+		'--mandir=p' =>		'Manual page documentation',
+		'--infodir=p' =>	'Texinfo documentation',
+		'--testdir=p' =>	'Execute ./configure tests in directory',
+		'--cache=p' =>		'Cache ./configure results in directory',
+		'--includes=s' =>	'Preprocess C headers (yes|no|link)',
+		
+		'--enable-nls' =>	'Multi-language support',
+		'--with-gettext' =>	'Use gettext for multi-language',
+		'--with-libtool' =>	'Specify path to libtool',
+		'--with-cygwin' =>	'Use Cygwin compatibility layer',
+		'--with-manpages' =>	'Generate Unix manual pages',
+		'--with-manlinks' =>	'Add manual entries for every function',
+		'--with-ctags' =>	'Generate ctags(1) tag files',
+		'--with-docs' =>	'Generate printable documentation',
+	);
+	my %stdDefaults = (
+		'--srcdir=p' =>		'.',
+		'--build=s' =>		'auto-detect',
+		'--host=s' =>		'BUILD',
+		'--prefix=p' =>		'/usr/local',
+		'--exec-prefix=p' =>	'PREFIX',
+		'--sysconfdir=p' =>	'PREFIX/etc',
+		'--bindir=p' =>		'PREFIX/bin',
+		'--sbindir=p' =>	'PREFIX/sbin',
+		'--libdir=p' =>		'PREFIX/lib',
+		'--libexecdir=p' =>	'PREFIX/libexec',
+		'--datadir=p' =>	'PREFIX/share',
+		'--localedir=p' =>	'SHAREDIR/locale',
+		'--mandir=p' =>		'PREFIX/man',
+		'--infodir=p' =>	'SHAREDIR/info',
+		'--testdir=p' =>	'.',
+		'--cache=p' =>		'none',
+		'--includes=s' =>	'yes',
 
-    my $cache_opt = pack('A' x 25, split('', '--cache'));
-    my $includes_opt = pack('A' x 25, split('', '--includes'));
-
-    my $nls_opt = pack('A' x 25, split('', '--enable-nls'));
-    my $gettext_opt = pack('A' x 25, split('', '--with-gettext'));
-    my $libtool_opt = pack('A' x 25, split('', '--with-libtool'));
-    my $cygwin_opt = pack('A' x 25, split('', '--with-cygwin'));
-    my $manpages_opt = pack('A' x 25, split('', '--with-manpages'));
-    my $manlinks_opt = pack('A' x 25, split('', '--with-manlinks'));
-    my $ctags_opt = pack('A' x 25, split('', '--with-ctags'));
-    my $docs_opt = pack('A' x 25, split('', '--with-docs'));
+		'--enable-nls' =>	'no',
+		'--with-gettext' =>	'auto-detect',
+		'--with-libtool' =>	'auto-detect',
+		'--with-cygwin' =>	'no',
+		'--with-manpages' =>	'yes',
+		'--with-manlinks' =>	'no',
+		'--with-ctags' =>	'no',
+		'--with-docs' =>	'no',
+	);
     
-    my $regs = join("\n",
-        "echo \"    $prefix_opt Installation prefix [/usr/local]\"",
-        "echo \"    $sysconfdir_opt System-wide configuration prefix [/etc]\"",
-        "echo \"    $bindir_opt Executable directory [\$PREFIX/bin]\"",
-        "echo \"    $libdir_opt Library directory [\$PREFIX/lib]\"",
-        "echo \"    $sharedir_opt Share directory [\$PREFIX/share]\"",
-        "echo \"    $localedir_opt Locale directory [\$PREFIX/share/locale]\"",
-        "echo \"    $mandir_opt Manpage directory [\$PREFIX/share/man]\"",
-        "echo \"    $infodir_opt Info directory [\$PREFIX/share/info]\"",
-        "echo \"    $srcdir_opt Source tree for concurrent build [.]\"",
-        "echo \"    $testdir_opt Directory in which to execute tests [.]\"",
-        "echo \"    $cache_opt Cache directory for test results [none]\"",
-        "echo \"    $manpages_opt Manual pages (-mdoc) [yes]\"",
-        "echo \"    $manlinks_opt Manual pages links for functions [no]\"",
-        "echo \"    $ctags_opt Automatically generate tag files [no]\"",
-        "echo \"    $docs_opt Printable docs (-me/tbl/eqn/pic/refer) [no]\"",
-        "echo \"    $includes_opt Preprocess headers (yes|no|link) [yes]\"",
-        "echo \"    $libtool_opt Specify path to libtool [use bundled]\"",
-        "echo \"    $cygwin_opt Add cygwin dependencies under cygwin [no]\"",
-        "echo \"    $nls_opt Native Language Support [no]\"",
-        "echo \"    $gettext_opt Use gettext tools [check]\"",
-	@HELP);
-
-    print << "EOF";
-echo "Usage: ./configure [args]"
-$regs
-exit 1
+	print << 'EOF';
+echo "This configure script was generated by BSDBuild %VERSION%."
+echo "<http://bsdbuild.hypertriton.com/>"
+echo ""
+echo "Usage: ./configure [options]"
+echo ""
+echo "Standard build options:"
 EOF
+	foreach my $opt (sort keys %stdOpts) {
+		my ($optName, $optSpec) = split('=', $opt);
+
+		if (defined($optSpec) && $optSpec eq 'p') {
+			$optName = $optName.'=DIR';
+		} elsif (defined($optSpec) && $optSpec eq 's') {
+			$optName = $optName.'=STRING';
+		}
+		my $optFmt = pack('A' x 25, split('', $optName));
+		print 'echo "    '.$optFmt.' '.$stdOpts{$opt};
+		if (exists($stdDefaults{$opt})) {
+			print ' ['.$stdDefaults{$opt}.']';
+		}
+		print "\"\n";
+	}
+	print join("\n",@HELP),"\n";
+	print "exit 1\n";
 }
 
 sub Version
 {
     print << "EOF";
-echo "BSDbuild %VERSION%"
+if [ "${PACKAGE}" != "" ]; then
+	echo "BSDbuild %VERSION%, for ${PACKAGE} ${VERSION}"
+else
+	echo "BSDbuild %VERSION%"
+fi
 exit 1
 EOF
 }
@@ -308,10 +457,13 @@ EOF
 
 $INSTALLDIR = '%PREFIX%/share/bsdbuild';
 	
-GetOptions("emul-os=s" =>	\$EmulOS,
-           "emul-osrel=s" =>	\$EmulOSRel,
-           "emul-env=s" =>	\$EmulEnv,
-           "output-lua=s" =>	\$OutputLUA);
+my $res = GetOptions(
+	"verbose" =>		\$Verbose,
+	"emul-os=s" =>		\$EmulOS,
+	"emul-osrel=s" =>	\$EmulOSRel,
+	"emul-env=s" =>		\$EmulEnv,
+	"output-lua=s" =>	\$OutputLUA
+);
 
 print << 'EOF';
 #!/bin/sh
@@ -334,7 +486,7 @@ print { $LUA } << 'EOF';
 -- This file was generated from configure.in by BSDbuild %VERSION%.
 --
 -- To regenerate this file, get the latest BSDbuild release from
--- http://hypertriton.com/bsdbuild/, and use the command:
+-- http://bsdbuild.hypertriton.com/, and use the command:
 --
 --    $ cat configure.in | mkconfigure > configure
 --
@@ -342,8 +494,11 @@ hdefs = {}
 mdefs = {}
 EOF
 
+#
+# Initialize and parse for command-line options.
+#
 print << 'EOF';
-# Copyright (c) 2001-2009 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -366,6 +521,9 @@ print << 'EOF';
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+PACKAGE="Untitled"
+VERSION=""
+RELEASE=""
 
 optarg=
 for arg
@@ -380,8 +538,17 @@ do
 	esac
 
 	case "$arg" in
+	--host=*)
+	    host_arg=$optarg
+	    ;;
+	--target=*)
+	    target=$optarg
+	    ;;
 	--prefix=*)
 	    prefix=$optarg
+	    ;;
+	--exec-prefix=*)
+	    exec_prefix=$optarg
 	    ;;
 	--sysconfdir=*)
 	    sysconfdir=$optarg
@@ -392,8 +559,11 @@ do
 	--libdir=*)
 	    libdir=$optarg
 	    ;;
+	--datadir=*)
+	    datadir=$optarg
+	    ;;
 	--sharedir=*)
-	    sharedir=$optarg
+	    datadir=$optarg
 	    ;;
 	--localedir=*)
 	    localedir=$optarg
@@ -439,7 +609,10 @@ do
 	    eval "with_${option}=no"
 	    ;;
 	--help)
-	    help=yes
+	    show_help=yes
+	    ;;
+	--version)
+	    show_version=yes
 	    ;;
 	--srcdir=*)
 	    srcdir=$optarg
@@ -453,6 +626,12 @@ do
 	--includes=*)
 	    includes=$optarg
 	    ;;
+	--build=*)
+	    ;;
+	--cache-file=*)
+	    ;;
+	--config-cache | -C)
+	    ;;
 	*)
 	    echo "invalid argument: $arg"
 	    echo "try ./configure --help"
@@ -461,6 +640,21 @@ do
 	esac
 done
 
+if [ "${srcdir}" != "" ]; then
+	host=`sh ${srcdir}/mk/config.guess`
+else
+	host=`sh mk/config.guess`
+fi
+if [ $? != 0 ]; then
+	echo "config.guess failed"
+	exit 1
+fi
+EOF
+
+#
+# See if we can use "echo -n"
+#
+print << 'EOF';
 if [ -e "/bin/echo" ]; then
     /bin/echo -n ""
     if [ $? = 0 ]; then
@@ -471,7 +665,12 @@ if [ -e "/bin/echo" ]; then
 else
     ECHO_N="echo -n"
 fi
+EOF
 
+#
+# Check if perl is available.
+#
+print << 'EOF';
 PERL=""
 for path in `echo $PATH | sed 's/:/ /g'`; do
 	if [ -x "${path}" ]; then
@@ -481,13 +680,24 @@ for path in `echo $PATH | sed 's/:/ /g'`; do
 		fi
 	fi
 done
+EOF
 
+#
+# Sort out the installation, build and source directories. If build is
+# outside of the source directory, generate the required environment in
+# the working directory using mkconcurrent.pl.
+#
+print << 'EOF';
 if [ "${prefix}" != "" ]; then
     PREFIX="$prefix"
 else
     PREFIX="/usr/local"
 fi
-
+if [ "${exec_prefix}" != "" ]; then
+    EXEC_PREFIX="$exec_prefix"
+else
+    EXEC_PREFIX="${PREFIX}"
+fi
 if [ "${srcdir}" != "" ]; then
 	if [ "${PERL}" = "" ]; then
 		echo "*"
@@ -506,7 +716,6 @@ else
 	SRC=`pwd`
 fi
 BLD=`pwd`
-
 SRCDIR="${SRC}"
 BLDDIR="${BLD}"
 
@@ -519,7 +728,12 @@ if [ "${testdir}" != "" ]; then
 else
 	testdir="."
 fi
+EOF
 
+#
+# Check for the --includes option.
+#
+print << 'EOF';
 if [ "${includes}" = "" ]; then
 	includes="yes"
 fi
@@ -539,6 +753,12 @@ link)
 esac
 EOF
 
+#
+# Create empty ".depend" files, otherwise the initial "make depend" will
+# fail due to "include .depend" use in <build.prog.mk>, etc. We currently
+# rely on perl to do this properly (if perl is unavailable, empty .depend
+# files can still be created manually).
+#
 print << "EOF";
 if [ "\${srcdir}" = "" ]; then
 	cat << EOT > configure.dep.pl
@@ -565,57 +785,75 @@ EOT
 	fi
 fi
 EOF
-if ($EmulOS || $EmulEnv) {
-	print STDERR "Emulating OS: $EmulOS\n";
-	print STDERR "Emulating OS Release: \"$EmulOSRel\"\n";
-	print STDERR "Emulating Environment: \"$EmulEnv\"\n";
-}
 
+#
+# Now process the configure.in directives.
+#
 my %done = ();
 my $registers = 1;
-while (<STDIN>) {
-	chop;
+my @INPUT = ();
+
+chop(@INPUT = <STDIN>);
+
+#
+# First pass: scan for REGISTER() directives.
+#
+if ($Verbose) {
+	print STDERR "Scanning for REGISTER()\n";
+}
+foreach $_ (@INPUT) {
 	if (/^\s*#/) {
 	    next;
 	}
 	DIRECTIVE: foreach my $s (split(';')) {
-		if ($s =~ /([A-Z_]+)\((.*)\)/) {
-			my $cmd = lc($1);
-			my $argspec = $2;
-			my @args = ();
+		if ($s !~ /([A-Z_]+)\((.*)\)/) {
+			next DIRECTIVE;
+		}
+		my $cmd = lc($1);
+		my $argspec = $2;
+		my @args = ();
+		foreach my $arg (split(',', $argspec)) {
+			$arg =~ s/^\s+//;
+			$arg =~ s/\s+$//;
+			push @args, $arg;
+		}
+		if ($cmd eq 'register') {
+			Register(@args);
+		} elsif ($cmd eq 'register_section') {
+			RegisterSection(@args);
+		}
+	}
+}
 
-			foreach my $arg (split(',', $argspec)) {
-				$arg =~ s/^\s+//;
-				$arg =~ s/\s+$//;
-				push @args, $arg;
-			}
+#
+# Honor --help and --version.
+#
+MkIf '"${show_help}" = "yes"';
+	Help();
+MkEndif;
+MkIf '"${show_version}" = "yes"';
+	print 'echo "BSDBuild %VERSION%"',"\n";
+	print 'exit 0',"\n";
+MkEndif;
 
-			if ($cmd eq 'register') {
-				Register(@args);
-			} else {
-				if ($registers) {
-					print << 'EOF';
-if [ "${help}" = "yes" ]; then
-EOF
-					Help();
-					print << 'EOF';
+#
+# Output common code
+#
+print << 'EOF';
+echo "BSDBuild %VERSION% (host: $host)"
+
+if [ -e "Makefile.config" ]; then
+	echo "* Overwriting existing Makefile.config"
 fi
-
-MACHINE=`uname -m 2>/dev/null` || MACHINE=unknown
-OSRELEASE=`uname -r 2>/dev/null` || OSRELEASE=unknown
-SYSTEM=`uname -s 2>/dev/null` || SYSTEM=unknown
-HOST="$SYSTEM-$OSRELEASE-$MACHINE"
-
-echo "# File generated by configure script (BSDbuild %VERSION%)." > Makefile.config
-echo "# Host: ${HOST}" >> Makefile.config
+echo "# Generated by configure script (BSDbuild %VERSION%)." > Makefile.config
+echo "# On ${host}" >> Makefile.config
 echo "" >> Makefile.config
 echo "SRCDIR=${SRC}" >> Makefile.config
 echo "BLDDIR=${BLD}" >> Makefile.config
 
-echo "Host: $HOST"
-echo "Machine: $MACHINE" > config.log
-echo "Release: $OSRELEASE" >> config.log
-echo "System: $SYSTEM" >> config.log
+echo "Generated by configure script" > config.log
+echo "BSDBuild Version: %VERSION%" >> config.log
+echo "Host: $host" >> config.log
 
 for arg
 do
@@ -626,6 +864,8 @@ if [ -e "config" ]; then
 		echo "File ./config is in the way. Please remove it first."
 		exit 1;
 	else
+		echo "* Removing existing ./config/ directory."
+		echo "rm -fR config"
 		rm -fR config;
 	fi
 fi
@@ -723,147 +963,72 @@ LIBTOOL_BUNDLED="yes"
 LIBTOOL=\${TOP}/mk/libtool/libtool
 echo "LIBTOOL=${LIBTOOL}" >> Makefile.config
 
-#
-# Process the installation paths.
-#
+# An "env PREFIX=foo make install" should override ./configure --prefix.
 echo "PREFIX?=${PREFIX}" >> Makefile.config
-echo "#ifndef PREFIX" > config/prefix.h
-echo "#define PREFIX \"${PREFIX}\"" >> config/prefix.h
-echo "#endif /* PREFIX */" >> config/prefix.h
-
-if [ "${bindir}" != "" ]; then
-	BINDIR="${bindir}"
-else
-	BINDIR="${PREFIX}/bin"
-fi
-echo "BINDIR=${BINDIR}" >> Makefile.config
-echo "#ifndef BINDIR" > config/bindir.h
-echo "#define BINDIR \"${BINDIR}\"" >> config/bindir.h
-echo "#endif /* BINDIR */" >> config/bindir.h
-
-if [ "${libdir}" != "" ]; then
-	LIBDIR="${libdir}"
-else
-	LIBDIR="${PREFIX}/lib"
-fi
-echo "LIBDIR=${LIBDIR}" >> Makefile.config
-echo "#ifndef LIBDIR" > config/libdir.h
-echo "#define LIBDIR \"${LIBDIR}\"" >> config/libdir.h
-echo "#endif /* LIBDIR */" >> config/libdir.h
-
-if [ "${sharedir}" != "" ]; then
-	SHAREDIR="${sharedir}"
-else
-	SHAREDIR="${PREFIX}/share"
-fi
-echo "SHAREDIR=${SHAREDIR}" >> Makefile.config
-echo "#ifndef SHAREDIR" > config/sharedir.h
-echo "#define SHAREDIR \"${SHAREDIR}\"" >> config/sharedir.h
-echo "#endif /* SHAREDIR */" >> config/sharedir.h
-
-if [ "${localedir}" != "" ]; then
-	LOCALEDIR="${localedir}"
-else
-	LOCALEDIR="${SHAREDIR}/locale"
-fi
-echo "LOCALEDIR=${LOCALEDIR}" >> Makefile.config
-echo "#ifndef LOCALEDIR" > config/localedir.h
-echo "#define LOCALEDIR \"${LOCALEDIR}\"" >> config/localedir.h
-echo "#endif /* LOCALEDIR */" >> config/localedir.h
-
-if [ "${mandir}" != "" ]; then
-	MANDIR="${mandir}"
-else
-	MANDIR="${SHAREDIR}/man"
-fi
-echo "MANDIR=${MANDIR}" >> Makefile.config
-echo "#ifndef MANDIR" > config/mandir.h
-echo "#define MANDIR \"${MANDIR}\"" >> config/mandir.h
-echo "#endif /* MANDIR */" >> config/mandir.h
-
-if [ "${infodir}" != "" ]; then
-	INFODIR="${infodir}"
-else
-	INFODIR="${SHAREDIR}/info"
-fi
-echo "INFODIR=${INFODIR}" >> Makefile.config
-echo "#ifndef INFODIR" > config/infodir.h
-echo "#define INFODIR \"${INFODIR}\"" >> config/infodir.h
-echo "#endif /* INFODIR */" >> config/infodir.h
-
-if [ "${sysconfdir}" != "" ]; then
-	SYSCONFDIR="${sysconfdir}"
-else
-	SYSCONFDIR="${PREFIX}/etc"
-fi
-echo "SYSCONFDIR=${SYSCONFDIR}" >> Makefile.config
-echo "#ifndef SYSCONFDIR" > config/sysconfdir.h
-echo "#define SYSCONFDIR \"${SYSCONFDIR}\"" >> config/sysconfdir.h
-echo "#endif /* SYSCONFDIR */" >> config/sysconfdir.h
-
 EOF
-					$registers = 0;
-				}
-			}
-			if ($cmd eq 'check' || $cmd eq 'require') {
-				my $t = shift(@args);
-				my $mod = "$INSTALLDIR/BSDBuild/$t.pm";
-				unless (-e $mod) {
-					print STDERR "$mod: $!\n";
-					exit (1);
-				}
-				do($mod);
-				if ($@) {
-					print STDERR $@;
-					exit (1);
-				}
-				if (exists($DEPS{$t})) {
-					foreach my $dep (split(',',
-					                 $DEPS{$t})) {
-						if (!exists(
-						    $done{$dep})) {
-							print STDERR
-							    "$t ".
-							    "depends ".
-							    "on: ".
-							    $dep.
-							    "\n";
-							exit(1);
-						}
-					}
-				}
-	
-				my $c;
-				if ($EmulOS) {
-					unless (exists($EMUL{$t}) &&
-					        defined($EMUL{$t})) {
-#						print STDERR
-#						    "Ignoring: $t\n";
-						next DIRECTIVE;
-					}
-					$c = $EMUL{$t};
-					@args = ($EmulOS, $EmulOSRel,
-					         '');
-				} else {
-					$c = $TESTS{$t};
-					unless ($c) {
-						die "Bad test: $t";
-					}
-				}
-				print STDERR "+ $t: $DESCR{$t}\n";
-				MkPrintN("checking for $DESCR{$t}...");
-				&$c(@args);
-				if ($EmulOS) {
-					MkPrintN("ok\n");
-				}
-				$done{$t} = 1;
-			} else {
-				if (exists($Macros{$cmd})) {
-					&{$Macros{$cmd}}(@args);
-				}
-			}
-		} else {
+MkSaveDefine('PREFIX');
+
+#
+# Define and save the conventional installation paths.
+# 
+my %defPaths = (
+	'bindir' => '${PREFIX}/bin',
+	'sbindir' => '${PREFIX}/sbin',
+	'libexecdir' => '${PREFIX}/libexec',
+	'datadir' => '${PREFIX}/share',
+	'sharedir' => '${PREFIX}/share',
+	'sysconfdir' => '${PREFIX}/etc',
+	'libdir' => '${PREFIX}/lib',
+	'localstatedir' => '${PREFIX}/var',
+	'localedir' => '${SHAREDIR}/locale',
+	'mandir' => '${PREFIX}/man',		# (or ${SHAREDIR}/man)
+	'infodir' => '${SHAREDIR}/info',
+);
+foreach my $path (keys %defPaths) {
+	my $ucPath = uc($path);
+	print << "EOF";
+if [ "\${$path}" != "" ]; then
+	$ucPath="\${$path}"
+else
+	$ucPath="$defPaths{$path}"
+fi
+EOF
+	MkSaveDefine($ucPath);
+}
+
+#
+# Second pass: actually process the script.
+#
+if ($Verbose) {
+	print STDERR "Processing script\n";
+}
+foreach $_ (@INPUT) {
+	if (/^\s*#/) {
+	    next;
+	}
+	DIRECTIVE: foreach my $s (split(';')) {
+		if ($s !~ /([A-Z_]+)\((.*)\)/) {
 			print $s, "\n";
+			next DIRECTIVE;
 		}
+		my $cmd = lc($1);
+		my $argspec = $2;
+		my @args = ();
+		foreach my $arg (split(',', $argspec)) {
+			$arg =~ s/^\s+//;
+			$arg =~ s/\s+$//;
+			push @args, $arg;
+		}
+		if (!exists($Fns{$cmd})) {
+			print $s, "\n";
+			next DIRECTIVE;
+		}
+		&{$Fns{$cmd}}(@args);
 	}
 }
+
+#
+# Save version information.
+#
+MkSaveMK('PACKAGE', 'VERSION', 'RELEASE');
+MkSaveDefine('PACKAGE', 'VERSION', 'RELEASE');

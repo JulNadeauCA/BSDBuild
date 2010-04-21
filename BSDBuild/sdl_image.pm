@@ -1,8 +1,6 @@
-# $Csoft: sdl.pm,v 1.18 2004/09/12 14:21:11 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2005-2007 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2005-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,12 +30,17 @@ sub Test
 	MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
 	MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
 	MkExecOutput('sdl-config', '--static-libs', 'SDL_LIBS');
-	
-	# Mac OS X port
 	MkExecOutput('sdl-config', '--libs', 'SDL_LIBS_SHORT');
-	MkIf('"$SYSTEM" = "Darwin"');
-		MkDefine('SDL_LIBS', '$SDL_LIBS_SHORT');
-	MkEndif;
+
+	print << 'EOF';
+case "${host}" in
+*-*-darwin*)
+	SDL_LIBS="${SDL_LIBS_SHORT}"
+	;;
+*)
+	;;
+esac
+EOF
 
 	MkIf('"${SDL_VERSION}" != ""');
 		MkDefine('SDL_IMAGE_CFLAGS', '$SDL_CFLAGS');

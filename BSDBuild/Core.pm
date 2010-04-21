@@ -159,7 +159,7 @@ if [ "\${MK_CACHED}" = "No" ]; then
 					echo "yes."
 					echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)"
 					echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)" >> config.log
-					break;
+					break
 				fi
 				$define=`\${path}/$bin $args`
 				MK_EXEC_FOUND="Yes"

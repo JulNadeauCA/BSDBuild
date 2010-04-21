@@ -1,4 +1,3 @@
-# $Csoft: opengl.pm,v 1.5 2004/03/10 16:33:36 vedge Exp $
 # vim:ts=4
 #
 # Copyright (c) 2002-2010 Hypertriton, Inc. <http://hypertriton.com/>
@@ -74,21 +73,30 @@ EOF
 		MkEndif;
 	}
 	MkPrint('yes');
-
-	MkIf q{"$SYSTEM" = "Darwin"};
-		MkDefine('OPENGL_CFLAGS', '');
-		MkDefine('OPENGL_LIBS', '-framework OpenGL');
+	
+	print << 'EOF';
+case "$host" in
+powerpc-*-darwin*)
+	OPENGL_CFLAGS=""
+	OPENGL_LIBS="-framework OpenGL"
+	;;
+*-*-cygwin* | *-*-mingw32*)
+EOF
+	MkPrintN('checking whether -lopengl32 works...');
+	MkCompileC('HAVE_LIBOPENGL32', '${OPENGL_CFLAGS}', '-lopengl32', $code);
+	MkIf '"${HAVE_LIBOPENGL32}" = "yes"';
+		MkDefine('OPENGL_LIBS', '${GL_LIBS} -lopengl32');
 	MkElse;
-		MkDefine('OPENGL_CFLAGS', '${GL_CFLAGS}');
-		
-		MkPrintN('checking whether -lopengl32 works...');
-		MkCompileC('HAVE_LIBOPENGL32', '${OPENGL_CFLAGS}', '-lopengl32', $code);
-		MkIf '"${HAVE_LIBOPENGL32}" = "yes"';
-			MkDefine('OPENGL_LIBS', '${GL_LIBS} -lopengl32');
-		MkElse;
-			MkDefine('OPENGL_LIBS', '${GL_LIBS} -lGL');
-		MkEndif;
+		MkDefine('OPENGL_LIBS', '${GL_LIBS} -lGL');
 	MkEndif;
+print << "EOF";
+	;;
+*)
+	OPENGL_CFLAGS="${GL_CFLAGS}"
+	OPENGL_LIBS="-lGL"
+	;;
+esac
+EOF
 
 	MkPrintN('checking whether OpenGL works...');
 	MkCompileC('HAVE_OPENGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', $code);

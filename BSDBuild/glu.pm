@@ -39,22 +39,31 @@ my @include_dirs = (
 sub Test
 {
 	my ($ver) = @_;
-
-	MkIf q{"$SYSTEM" = "Darwin"};
-		# Assume -framework OpenGL was already included.
-		MkDefine('GLU_CFLAGS', '');
-		MkDefine('GLU_LIBS', '-framework GLUT');
-	MkElif q{-e "/usr/lib/w32api/libopengl32.a"};
-		MkDefine('GLU_LIBS', '-lglu32');
-	MkElse;
-		MkDefine('GLU_CFLAGS', '');
+	
+	print << 'EOF';
+case "$host" in
+*-*-darwin*)
+	GLU_CFLAGS=""
+	GLU_LIBS="-framework GLUT"
+	;;
+*-*-cygwin* | *-*-mingw32*)
+	GLU_CFLAGS=""
+	GLU_LIBS="-lglu32"
+	;;
+*)
+	GLU_CFLAGS=""
+EOF
 		foreach my $dir (@include_dirs) {
 			MkIf qq{-d "$dir/GL/glu.h"};
 				MkDefine('GLU_CFLAGS', "-I$dir");
+				print "break\n";
 			MkEndif;
 		}
-		MkAppend('GLU_LIBS', '-lGLU');
-	MkEndif;
+print << 'EOF';
+	GLU_LIBS="-lGLU"
+	;;
+esac
+EOF
 
 	MkCompileC('HAVE_GLU', '${OPENGL_CFLAGS} ${GLU_CFLAGS}',
 	                       '${OPENGL_LIBS} ${GLU_LIBS} ${MATH_LIBS}', << 'EOF');

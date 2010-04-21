@@ -1,5 +1,5 @@
 .\"
-.\" Copyright (c) 2007 Hypertriton, Inc. <http://www.hypertriton.com/>
+.\" Copyright (c) 2007-2010 Hypertriton, Inc. <http://www.hypertriton.com/>
 .\" All rights reserved.
 .\"
 .\" Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
 .Dt MKCONFIGURE 1
 .Os
 .ds vT BSDBuild Reference
-.ds oS BSDBuild 1.0
+.ds oS BSDBuild 2.8
 .Sh NAME
 .Nm mkconfigure
 .Nd Compile BSDBuild configure scripts
@@ -51,9 +51,15 @@ code fragments that will be copied verbatim to the configure script.
 .Nm
 directives are case-insensitive.
 The following directives are recognized:
-.Bl -tag -width "REGISTER(name,descr) "
+.Bl -tag -width "REGISTER_SECTION(string) "
+.It Ev PACKAGE(name)
+Short name for the software package.
+.It Ev VERSION(string)
+Specify software version.
+.It Ev RELEASE(string)
+Specify release name.
 .It Ev REGISTER(name,descr)
-Register a new configure script argument.
+Describe a configure script argument (for --help).
 The
 .Fa name
 argument is usually of the form
@@ -64,6 +70,8 @@ and
 .Fa descr
 is a description of the option (it is also customary to mention the default
 value of this option in the description).
+.It Ev REGISTER_SECTION(string)
+Describe a section of configure script arguments (for --help).
 .It Ev HDEFINE(opt,val)
 Define a C preprocessor style header option.
 .Fa opt

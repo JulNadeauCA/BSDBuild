@@ -1,8 +1,6 @@
-# $Csoft: opengl.pm,v 1.5 2004/03/10 16:33:36 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2005 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2005-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -206,13 +204,16 @@ sub TestPthreadsXOpenExt
 {
 	MkPrintN('checking for the X/Open Threads Extension...');
 
-	# Define _XOPEN_SOURCE=600 except under FreeBSD.
-	MkIf('"${SYSTEM}" = "FreeBSD"');
-		MkDefine('PTHREADS_XOPEN_CFLAGS', '');
-	MkElse;
-		MkDefine('PTHREADS_XOPEN_CFLAGS',
-		         '-U_XOPEN_SOURCE -D_XOPEN_SOURCE=600');
-	MkEndif;
+	print << 'EOF';
+case "${host}" in
+*-*-freebsd*)
+	PTHREADS_XOPEN_CFLAGS=""
+	;;
+*)
+	PTHREADS_XOPEN_CFLAGS="-U_XOPEN_SOURCE -D_XOPEN_SOURCE=600"
+	;;
+esac
+EOF
 
 	# Try the standard -lpthread
 	MkDefine('PTHREADS_XOPEN_LIBS', "-lpthread");

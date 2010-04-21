@@ -42,16 +42,21 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	
-	MkIf q{"$SYSTEM" = "Darwin"};
-		MkDefine('ALTIVEC_CFLAGS', '-faltivec -maltivec');
-		MkDefine('ALTIVEC_CHECK_CFLAGS', '-D_DARWIN_C_SOURCE');
-		MkSaveMK('ALTIVEC_CHECK_CFLAGS');
-	MkElse;
-		MkDefine('ALTIVEC_CFLAGS', '-mabi=altivec -maltivec');
-		MkDefine('ALTIVEC_CHECK_CFLAGS', '');
-		MkSaveMK('ALTIVEC_CHECK_CFLAGS');
-	MkEndif;
+
+	print << 'EOF';
+case "$host" in
+powerpc-*-darwin*)
+	ALTIVEC_CFLAGS="-faltivec -maltivec"
+	ALTIVEC_CHECK_CFLAGS="-D_DARWIN_C_SOURCE"
+	echo "ALTIVEC_CHECK_CFLAGS=${ALTIVEC_CHECK_CFLAGS}" >> Makefile.config
+	;;
+*)
+	ALTIVEC_CFLAGS="-mabi=altivec -maltivec"
+	ALTIVEC_CHECK_CFLAGS=""
+	echo "ALTIVEC_CHECK_CFLAGS=" >> Makefile.config
+	;;
+esac
+EOF
 
 	MkCompileC('HAVE_ALTIVEC', '${CFLAGS} ${ALTIVEC_CFLAGS}', '',
 	    '#include <altivec.h>'."\n".

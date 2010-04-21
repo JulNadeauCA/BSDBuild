@@ -1,8 +1,6 @@
-# $Csoft: opengl.pm,v 1.5 2004/03/10 16:33:36 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2005 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2005-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -47,18 +45,22 @@ sub Test
 		MkEndif;
 	}
 
-	MkIf q{"$SYSTEM" = "Darwin"};
-		MkDefine('CG_LIBS', '-F/System/Library/Frameworks -framework Cg');
-	MkElif q{"$SYSTEM" = "Linux"};
-		MkIf q{"$MACHINE" = "x86_64"};
-			MkDefine('CG_LIBS', '-L/usr/X11R6/lib64 -L/usr/lib64');
-		MkElse;
-			MkDefine('CG_LIBS', '-L/usr/X11R6/lib');
-		MkEndif;
-		MkAppend('CG_LIBS', '-lCgGL -lCg -lstdc++');
-	MkElse;
-		MkDefine('CG_LIBS', '-lCgGL -lCg -lstdc++');
-	MkEndif;
+	print << 'EOF';
+case "${host}" in
+*-*-darwin*)
+	CG_LIBS="-F/System/Library/Frameworks -framework Cg"
+	;;
+x86_64-*-linux*)
+	CG_LIBS="-L/usr/X11R6/lib64 -L/usr/lib64 -lCgGL -lCg -lstdc++"
+	;;
+*-*-linux*)
+	CG_LIBS="-L/usr/X11R6/lib -lCgGL -lCg -lstdc++"
+	;;
+*)
+	CG_LIBS="-lCgGL -lCg -lstdc++"
+	;;
+esac
+EOF
 	
 	MkCompileC('HAVE_CG', '${CG_CFLAGS} ${OPENGL_CFLAGS} ${PTHREADS_CFLAGS}',
 	                      '${CG_LIBS} ${OPENGL_LIBS} ${PTHREADS_LIBS}',

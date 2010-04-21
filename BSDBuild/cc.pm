@@ -89,7 +89,6 @@ echo "yes"
 rm -f conftest.c conftest$EXECSUFFIX
 TEST_CFLAGS=""
 EOF
-
 	MkPrintN('checking for compiler warning options...');
 	MkCompileC('HAVE_CC_WARNINGS', '-Wall -Werror', '', << 'EOF');
 int main(int argc, char *argv[]) { return (0); }
@@ -289,7 +288,6 @@ if [ "${MK_COMPILE_STATUS}" = "OK" ]; then
 		echo "* (Resulting binaries will not depend on Cygwin)"
 		echo "*"
 		CFLAGS="$CFLAGS -mno-cygwin"
-		echo "CFLAGS=$CFLAGS" >> Makefile.config
 	else
 		echo "*"
 		echo "* NOTE: Enabling Cygwin compatibility layer."
@@ -298,6 +296,9 @@ if [ "${MK_COMPILE_STATUS}" = "OK" ]; then
 	fi
 fi
 EOF
+
+	# Preserve ${CC} and ${CFLAGS}
+	MkSaveMK('CC', 'CFLAGS');
 }
 
 sub Emul

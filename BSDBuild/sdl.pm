@@ -1,7 +1,6 @@
-# $Csoft: sdl.pm,v 1.17 2004/03/10 16:33:36 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002-2007 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2002-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -43,28 +42,40 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-	
-	MkIf('"${SYSTEM}" = "Darwin"');
-		MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
-		MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
-		MkExecOutput('sdl-config', '--libs', 'SDL_LIBS');
-	MkElif('"${SYSTEM}" = "FreeBSD"');
-		# The FreeBSD packages installs `sdl11-config'.
-		MkExecOutput('sdl11-config', '--version', 'SDL_VERSION');
-		MkIf('"${SDL_VERSION}" != ""');
-			MkExecOutput('sdl11-config', '--cflags', 'SDL_CFLAGS');
-			MkExecOutput('sdl11-config', '--libs', 'SDL_LIBS');
-		MkElse;
-			MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
-			MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
-			MkExecOutput('sdl-config', '--libs', 'SDL_LIBS');
-		MkEndif;
+
+print << 'EOF';
+case "${host}" in
+*-*-darwin*)
+EOF
+	MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
+	MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
+	MkExecOutput('sdl-config', '--libs', 'SDL_LIBS');
+print << 'EOF';
+	;;
+*-*-freebsd*)
+EOF
+	# The FreeBSD packages installs `sdl11-config'.
+	MkExecOutput('sdl11-config', '--version', 'SDL_VERSION');
+	MkIf('"${SDL_VERSION}" != ""');
+		MkExecOutput('sdl11-config', '--cflags', 'SDL_CFLAGS');
+		MkExecOutput('sdl11-config', '--libs', 'SDL_LIBS');
 	MkElse;
 		MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
 		MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
 		MkExecOutput('sdl-config', '--libs', 'SDL_LIBS');
 	MkEndif;
-	
+print << 'EOF';
+	;;
+*)
+EOF
+	MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
+	MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
+	MkExecOutput('sdl-config', '--libs', 'SDL_LIBS');
+print << 'EOF';
+	;;
+esac
+EOF
+
 	MkIf('"${SDL_VERSION}" != ""');
 		MkPrint('yes');
 		MkTestVersion('SDL', 'SDL_VERSION', $ver);

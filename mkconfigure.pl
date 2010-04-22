@@ -59,6 +59,8 @@ sub package
 
 	if ($val =~ /^"(.+)"$/) { $val = $1; }
 	MkDefine('PACKAGE', $val);
+	MkSaveMK('PACKAGE');
+	MkSaveDefine('PACKAGE');
 }
 
 # Specify software package version
@@ -68,6 +70,8 @@ sub version
 
 	if ($val =~ /^"(.+)"$/) { $val = $1; }
 	MkDefine('VERSION', $val);
+	MkSaveMK('VERSION');
+	MkSaveDefine('VERSION');
 }
 
 # Specify software package release name
@@ -77,6 +81,8 @@ sub release
 
 	if ($val =~ /^"(.+)"$/) { $val = $1; }
 	MkDefine('RELEASE', $val);
+	MkSaveMK('RELEASE');
+	MkSaveDefine('RELEASE');
 }
 
 # Register a configure option (no-op as script directive)
@@ -1111,8 +1117,3 @@ foreach $_ (@INPUT) {
 	}
 }
 
-#
-# Save version information.
-#
-MkSaveMK('PACKAGE', 'VERSION', 'RELEASE');
-MkSaveDefine('PACKAGE', 'VERSION', 'RELEASE');

@@ -51,13 +51,40 @@ code fragments that will be copied verbatim to the configure script.
 .Nm
 directives are case-insensitive.
 The following directives are recognized:
-.Bl -tag -width "CONFIG_SCRIPT(name,cflags,libs) "
+.Bl -tag -width "CONFIG_SCRIPT(name[,args]) "
 .It Ev PACKAGE(name)
 Short name for the software package.
 .It Ev VERSION(string)
 Specify software version.
 .It Ev RELEASE(string)
 Specify release name.
+.It Ev CHECK(package[,version])
+Invoke one of the standard BSDBuild tests (see
+.Pa http://bsdbuild.hypertriton.com/tests.html
+for a list).
+Most tests will set the
+.Dv HAVE_FOO
+(where
+.Dv FOO
+is the package name in upper-case) variable to indicate the results
+of the test.
+C/C++ libraries also typically set
+.Dv FOO_CFLAGS
+and
+.Dv FOO_LIBS .
+.Pp
+If the
+.Fa version
+argument is specified, the version number is verified as well and
+.Dv MK_VERSION_OK
+is defined to
+.Sq yes
+if the versions are compatible.
+.It Ev REQUIRE(package[,version])
+Same as the
+.Ev CHECK
+directive, except that the configure script will fail if the package is
+either not found, or if the version is too old.
 .It Ev REGISTER(name,descr)
 Describe a configure script argument (for --help).
 The
@@ -143,16 +170,13 @@ Request extra compiler warnings.
 The exact meaning is compiler specific.
 .It Ev C_FATAL_WARNINGS
 Request that compilation fail if warnings are encountered.
-.It Ev CONFIG_SCRIPT(name,cflags,libs)
+.It Ev CONFIG_SCRIPT(name[,args])
 Generate a standard "foo-config" script.
 .Fa name
-specifies the name of the script,
-.Fa cflags
-defines the
+specifies the name of the script.
+For C/C++ style packages, the arguments are usually the
 .Sq --cflags
-output and
-.Fa libs
-the
+output, followed by the
 .Sq --libs
 output.
 .It Ev CONFIG_GUESS(path)

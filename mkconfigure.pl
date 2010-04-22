@@ -50,7 +50,10 @@ my %Fns = (
 	'c_no_secure_warnings'	=> \&c_no_secure_warnings,
 	'c_incdir_config'	=> \&c_incdir_config,
 	'config_script'		=> \&config_script,
+	'config_guess'		=> \&config_guess
 );
+my @Help = ();
+my $ConfigGuess = 'mk/config.guess';
 
 # Specify software package name
 sub package
@@ -85,9 +88,10 @@ sub release
 	MkSaveDefine('RELEASE');
 }
 
-# Register a configure option (no-op as script directive)
+# Directives used in first pass; no-ops as script directives
 sub register { }
 sub register_section { }
+sub config_guess { }
 
 # Execute one of the standard BSDBuild tests.
 sub test
@@ -339,8 +343,8 @@ EOF
 sub config_script
 {
 	my ($out, $cflags, $libs) = @_;
-	my $out = shift;
 
+	if ($out =~ /^"(.+)"$/) { $out = $1; }
 	if ($cflags =~ /^"(.+)"$/) { $cflags = $1; }
 	if ($libs =~ /^"(.+)"$/) { $libs = $1; }
 	print "config_script_out=\"$out\"\n";
@@ -414,7 +418,6 @@ while test \$# -gt 0; do
 	shift
 done
 EOT
-
 EOF
 }
 
@@ -422,7 +425,8 @@ EOF
 # End macros
 #
 
-sub Register
+# Process REGISTER() in first pass.
+sub pass1_register
 {
 	my ($arg, $descr) = @_;
 	$arg =~ /\"(.*)\"/;
@@ -431,16 +435,29 @@ sub Register
 	$descr = $1;
 
 	my $darg = pack('A' x 25, split('', $arg));
-	push @HELP, "echo \"    $darg $descr\"";
+	push @Help, "echo \"    $darg $descr\"";
 }
 
-sub RegisterSection
+# Process REGISTER_SECTION() in first pass.
+sub pass1_register_section
 {
 	my ($s) = @_;
 	$s =~ /\"(.*)\"/;
 	$s = $1;
-	push @HELP, "echo \"\"";
-	push @HELP, "echo \"$s\"";
+	push @Help, "echo \"\"";
+	push @Help, "echo \"$s\"";
+}
+
+# Process CONFIG_GUESS() in first pass.
+sub pass1_config_guess
+{
+	my ($s) = @_;
+
+	$s =~ /\"(.*)\"/;
+	$ConfigGuess = $1;
+	if ($Verbose) {
+		print STDERR "Using config.guess: $ConfigGuess\n";
+	}
 }
 
 sub Help
@@ -525,7 +542,7 @@ EOF
 		}
 		print "\"\n";
 	}
-	print join("\n",@HELP),"\n";
+	print join("\n",@Help),"\n";
 	print "exit 1\n";
 }
 
@@ -729,16 +746,6 @@ do
 	    ;;
 	esac
 done
-
-if [ "${srcdir}" != "" ]; then
-	host=`sh ${srcdir}/mk/config.guess`
-else
-	host=`sh mk/config.guess`
-fi
-if [ $? != 0 ]; then
-	echo "config.guess failed"
-	exit 1
-fi
 EOF
 
 #
@@ -886,10 +893,10 @@ my @INPUT = ();
 chop(@INPUT = <STDIN>);
 
 #
-# First pass: scan for REGISTER() directives.
+# First pass: scan for directives that will not be processed in order.
 #
 if ($Verbose) {
-	print STDERR "Scanning for REGISTER()\n";
+	print STDERR "First pass\n";
 }
 foreach $_ (@INPUT) {
 	if (/^\s*#/) {
@@ -899,7 +906,7 @@ foreach $_ (@INPUT) {
 		if ($s !~ /([A-Z_]+)\((.*)\)/) {
 			next DIRECTIVE;
 		}
-		my $cmd = lc($1);
+		my $cmd = uc($1);
 		my $argspec = $2;
 		my @args = ();
 		foreach my $arg (split(',', $argspec)) {
@@ -907,10 +914,12 @@ foreach $_ (@INPUT) {
 			$arg =~ s/\s+$//;
 			push @args, $arg;
 		}
-		if ($cmd eq 'register') {
-			Register(@args);
-		} elsif ($cmd eq 'register_section') {
-			RegisterSection(@args);
+		if ($cmd eq 'REGISTER') {
+			pass1_register(@args);
+		} elsif ($cmd eq 'REGISTER_SECTION') {
+			pass1_register_section(@args);
+		} elsif ($cmd eq 'CONFIG_GUESS') {
+			pass1_config_guess(@args);
 		}
 	}
 }
@@ -925,6 +934,21 @@ MkIf '"${show_version}" = "yes"';
 	print 'echo "BSDBuild %VERSION%"',"\n";
 	print 'exit 0',"\n";
 MkEndif;
+
+#
+# Guess system name from config.guess.
+#
+print << "EOF";
+if [ "\${srcdir}" != "" ]; then
+	host=`sh \${srcdir}/$ConfigGuess`
+else
+	host=`sh $ConfigGuess`
+fi
+if [ \$? != 0 ]; then
+	echo "$ConfigGuess failed"
+	exit 1
+fi
+EOF
 
 #
 # Output common code

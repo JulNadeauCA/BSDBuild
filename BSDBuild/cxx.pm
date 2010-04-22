@@ -1,7 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2007 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2002-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,12 +25,13 @@
 
 sub Test
 {
+	# Look for a C++ compiler.
 	print << 'EOF';
 if [ "$CXX" = "" ]; then
 	for i in `echo $PATH |sed 's/:/ /g'`; do
-		if [ -x "${i}/c++" ]; then
-			if [ -f "${i}/c++" ]; then
-				CXX="${i}/c++"
+		if [ -x "${i}/cxx" ]; then
+			if [ -f "${i}/cxx" ]; then
+				CXX="${i}/cxx"
 				break
 			fi
 		elif [ -x "${i}/gcc" ]; then
@@ -42,45 +42,100 @@ if [ "$CXX" = "" ]; then
 		fi
 	done
 	if [ "$CXX" = "" ]; then
-		echo "Could not find a C++ compiler, try setting CXX."
-		echo "CXX is unset and c++/gcc is not in PATH." >> config.log
-		exit 1
+		echo "*"
+		echo "* Unable to find a standard C++ compiler in PATH. You may need"
+		echo "* to set the CXX environment variable."
+		echo "*"
+		echo "Unable to find a C compiler in PATH." >> config.log
+		HAVE_CXX="no"
+		echo "no"
+	else
+		HAVE_CXX="yes"
+		echo "yes, ${CXX}"
+		echo "yes, ${CXX}" >> config.log
 	fi
+else
+	echo "using ${CXX}"
 fi
 
-cat << 'EOT' > cxx-test.c
-int
-main(int argc, char *argv[])
-{
-	return (0);
-}
+if [ "${HAVE_CXX}" = "yes" ]; then
+	$ECHO_N "checking whether the C++ compiler works..."
+	$ECHO_N "checking whether the C++ compiler works..." >> config.log
+	cat << 'EOT' > conftest.cc
+#include <iostream>
+int main(void) { std::cout << "Hello world!" << std::endl; return 0; }
 EOT
+	$CXX -o conftest conftest.cc -lstdc++ 2>>config.log
+	if [ $? != 0 ]; then
+	    echo "no, the test failed to compile"
+	    echo "no, the test failed to compile" >> config.log
+		HAVE_CXX="no"
+	else
+		echo "yes"
+		echo "yes" >> config.log
+		HAVE_CXX="yes"
+	fi
 
-$CXX -o cxx-test cxx-test.c 2>>config.log
-if [ $? != 0 ]; then
-    echo "no"
-	echo "The test C++ program failed to compile."
-	rm -f cxx-test cxx-test.c
-    exit 1
+	if [ "${EXECSUFFIX}" = "" ]; then
+		EXECSUFFIX=""
+		for OUTFILE in conftest.exe conftest conftest.*; do
+			if [ -f $OUTFILE ]; then
+				case $OUTFILE in
+				*.c | *.cc | *.o | *.obj | *.bb | *.bbg | *.d | *.pdb | *.tds | *.xcoff | *.dSYM | *.xSYM )
+					;;
+				*.* )
+					EXECSUFFIX=`expr "$OUTFILE" : '[^.]*\(\..*\)'`
+					break ;;
+				* )
+					break ;;
+				esac;
+		    fi
+		done
+		if [ "$EXECSUFFIX" != "" ]; then
+			echo "Detected executable suffix: $EXECSUFFIX" >> config.log
+		fi
+		echo "EXECSUFFIX=$EXECSUFFIX" >> Makefile.config
+		echo "#ifndef EXECSUFFIX" > config/execsuffix.h
+		echo "#define EXECSUFFIX \"${EXECSUFFIX}\"" >> config/execsuffix.h
+		echo "#endif /* EXECSUFFIX */" >> config/execsuffix.h
+	fi
+	rm -f conftest.cc conftest$EXECSUFFIX
+	TEST_CXXFLAGS=""
 fi
-echo "yes"
-rm -f cxx-test cxx-test.c
-TEST_CXXFLAGS=""
 EOF
-	
-	MkPrintN('checking for c++ compiler warnings...');
-	MkCompileCXX('CXX_HAVE_WARNINGS', '-Wall -Werror', '', << 'EOF');
-int main(int argc, char *argv[]) { return (0); }
+
+	MkPrintN('checking for c++ compiler warning options...');
+	MkCompileCXX('HAVE_CXX_WARNINGS', '-Wall -Werror', '-lstdc++', << 'EOF');
+int main(void) { return (0); }
 EOF
-	MkIf('"${CXX_HAVE_WARNINGS}" = "yes"');
+	MkIf('"${HAVE_CXX_WARNINGS}" = "yes"');
 		MkDefine('TEST_CXXFLAGS', '-Wall -Werror');
 	MkEndif;
+	
+	MkPrintN('checking for gcc...');
+	MkCompileCXX('HAVE_GCC', '', '-lstdc++', << 'EOF');
+int main(void) {
+#if !defined(__GNUC__)
+# error "Not GCC"
+#endif
+	return (0);
+}
+EOF
 
-	MkPrintN('checking for __bounded__ attribute in c++...');
-	MkCompileCXX('CXX_HAVE_BOUNDED_ATTRIBUTE', '', '', << 'EOF');
+	MkPrintN('checking aligned attribute in c++...');
+	TryCompileFlagsCXX('HAVE_ALIGNED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
+int main(void)
+{
+	struct s1 { int x,y,z; } __attribute__ ((aligned(16)));
+	return (0);
+}
+EOF
+
+	MkPrintN('checking bounded attribute in c++...');
+	MkCompileCXX('HAVE_BOUNDED_ATTRIBUTE', '', '-lstdc++', << 'EOF');
 void foo(char *, int) __attribute__ ((__bounded__(__string__,1,2)));
 void foo(char *a, int c) { }
-int main(int argc, char *argv[])
+int main(void)
 {
 	char buf[32];
 	foo(buf, sizeof(buf));
@@ -88,8 +143,31 @@ int main(int argc, char *argv[])
 }
 EOF
 	
-	MkPrintN('checking for __format__ attribute in c++...');
-	MkCompileCXX('CXX_HAVE_FORMAT_ATTRIBUTE', '', '', << 'EOF');
+	MkPrintN('checking const attribute in c++...');
+	TryCompileFlagsCXX('HAVE_CONST_ATTRIBUTE', '', << 'EOF');
+int foo(int) __attribute__ ((const));
+int foo(int x) { return (x*x); }
+int main(void)
+{
+	int x = foo(1);
+	return (x);
+}
+EOF
+	
+	MkPrintN('checking deprecated attribute in c++...');
+	TryCompileFlagsCXX('HAVE_DEPRECATED_ATTRIBUTE', '', << 'EOF');
+void foo(void) __attribute__ ((deprecated));
+void foo(void) { }
+
+int main(void)
+{
+/*	foo(); */
+	return (0);
+}
+EOF
+	
+	MkPrintN('checking format attribute in c++...');
+	MkCompileCXX('HAVE_FORMAT_ATTRIBUTE', '', '-lstdc++', << 'EOF');
 #include <stdarg.h>
 void foo1(char *, ...)
      __attribute__((__format__ (printf, 1, 2)));
@@ -98,7 +176,7 @@ void foo2(char *, ...)
      __attribute__((__nonnull__ (1)));
 void foo1(char *a, ...) {}
 void foo2(char *a, ...) {}
-int main(int argc, char *argv[])
+int main(void)
 {
 	foo1("foo %s", "bar");
 	foo2("foo %d", 1);
@@ -106,43 +184,95 @@ int main(int argc, char *argv[])
 }
 EOF
 
-	MkPrintN('checking for __nonnull__ attribute in c++...');
-	TryCompileFlagsCXX('CXX_HAVE_NONNULL_ATTRIBUTE', '-Wall -Werror', << 'EOF');
+	MkPrintN('checking nonnull attribute in c++...');
+	TryCompileFlagsCXX('HAVE_NONNULL_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 void foo(char *) __attribute__((__nonnull__ (1)));
 void foo(char *a) { }
-int main(int argc, char *argv[])
+int main(void)
 {
 	foo("foo");
 	return (0);
 }
 EOF
-
-	MkPrintN('checking for __aligned__ attribute in c++...');
-	TryCompileFlagsCXX('CXX_HAVE_ALIGNED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
-int main(int argc, char *argv[])
+	
+	MkPrintN('checking noreturn attribute in c++...');
+	TryCompileFlagsCXX('HAVE_NORETURN_ATTRIBUTE', '', << 'EOF');
+#include <unistd.h>
+#include <stdlib.h>
+void foo(void) __attribute__ ((noreturn));
+void foo(void) { _exit(0); }
+int main(void)
 {
-	struct s1 { int x,y,z; } __attribute__ ((aligned(16)));
-	return (0);
+	foo();
 }
 EOF
-	
-	MkPrintN('checking for __packed__ attribute in c++...');
-	TryCompileFlagsCXX('CXX_HAVE_PACKED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
-int main(int argc, char *argv[])
+
+	MkPrintN('checking packed attribute in c++...');
+	TryCompileFlagsCXX('HAVE_PACKED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
+int main(void)
 {
 	struct s1 { char c; int x,y,z; } __attribute__ ((packed));
 	return (0);
 }
 EOF
 	
-	MkPrintN('checking for cygwin environment in c++...');
-	TryCompileFlagsCXX('CXX_HAVE_CYGWIN', '-mcygwin', << 'EOF');
+	MkPrintN('checking pure attribute in c++...');
+	TryCompileFlagsCXX('HAVE_PURE_ATTRIBUTE', '', << 'EOF');
+int foo(int) __attribute__ ((pure));
+int foo(int x) { return (x*x); }
+int main(void)
+{
+	int x = foo(1);
+	return (x);
+}
+EOF
+	
+	MkPrintN('checking warn_unused_result attribute in c++...');
+	TryCompileFlagsCXX('HAVE_WARN_UNUSED_RESULT_ATTRIBUTE', '', << 'EOF');
+int foo(void) __attribute__ ((warn_unused_result));
+int foo(void) { return (1); }
+int main(void)
+{
+	int rv = foo();
+	return (rv);
+}
+EOF
+	
+	# Check for long double type.
+	MkPrintN('checking for long double...');
+	TryCompile('HAVE_LONG_DOUBLE', << 'EOF');
+int
+main(void)
+{
+	long double ld = 0.1;
+
+	ld = 0;
+	return (0);
+}
+EOF
+	
+	# Check for long long type.
+	MkPrintN('checking for long long...');
+	TryCompile('HAVE_LONG_LONG', << 'EOF');
+int
+main(void)
+{
+	long long ll = 0.0;
+	unsigned long long ull = 0.0;
+	ll = 1.0;
+	ull = 1.0;
+	return (0);
+}
+EOF
+
+	MkPrintN('checking for cygwin environment...');
+	TryCompileFlagsCXX('HAVE_CYGWIN', '-mcygwin', << 'EOF');
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <windows.h>
 
 int
-main(int argc, char *argv[]) {
+main(void) {
 	struct stat sb;
 	DWORD rv;
 	rv = GetFileAttributes("foo");
@@ -153,24 +283,46 @@ EOF
 	print << 'EOF';
 if [ "${MK_COMPILE_STATUS}" = "OK" ]; then
 	if [ "${with_cygwin}" != "yes" ]; then
+		echo "*"
+		echo "* NOTE: Disabling Cygwin compatibility layer."
+		echo "* (Resulting binaries will not depend on Cygwin)"
+		echo "*"
 		CXXFLAGS="$CXXFLAGS -mno-cygwin"
-		echo "CXXFLAGS=$CXXFLAGS" >> Makefile.config
+	else
+		echo "*"
+		echo "* NOTE: Enabling Cygwin compatibility layer."
+		echo "* (Resulting binaries will depend on Cygwin)"
+		echo "*"
 	fi
 fi
 EOF
+
+	# Preserve ${CXX} and ${CXXFLAGS}
+	MkSaveMK('CXX', 'CXXFLAGS');
 }
 
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	MkSaveUndef('CXX_HAVE_BOUNDED_ATTRIBUTE');
-	MkSaveUndef('CXX_HAVE_FORMAT_ATTRIBUTE');
-	MkSaveUndef('CXX_HAVE_NONNULL_ATTRIBUTE');
-	MkSaveUndef('CXX_HAVE_ALIGNED_ATTRIBUTE');
-	MkSaveUndef('CXX_HAVE_PACKED_ATTRIBUTE');
+	MkDefine('HAVE_IEEE754', 'yes');
+	MkSaveDefine('HAVE_IEEE754');
 
-	MkSaveUndef('CXX_HAVE_CYGWIN');
+	MkSaveUndef('HAVE_ALIGNED_ATTRIBUTE');
+	MkSaveUndef('HAVE_BOUNDED_ATTRIBUTE');
+	MkSaveUndef('HAVE_CONST_ATTRIBUTE');
+	MkSaveUndef('HAVE_DEPRECATED_ATTRIBUTE');
+	MkSaveUndef('HAVE_FORMAT_ATTRIBUTE');
+	MkSaveUndef('HAVE_NONNULL_ATTRIBUTE');
+	MkSaveUndef('HAVE_NORETURN_ATTRIBUTE');
+	MkSaveUndef('HAVE_PACKED_ATTRIBUTE');
+	MkSaveUndef('HAVE_PURE_ATTRIBUTE');
+	MkSaveUndef('HAVE_WARN_UNUSED_RESULT_ATTRIBUTE');
+
+	MkSaveUndef('HAVE_LONG_DOUBLE');
+	MkSaveUndef('HAVE_LONG_LONG');
+	
+	MkSaveUndef('HAVE_CYGWIN');
 	return (1);
 }
 
@@ -178,7 +330,7 @@ BEGIN
 {
 	$TESTS{'cxx'} = \&Test;
 	$EMUL{'cxx'} = \&Emul;
-	$DESCR{'cxx'} = 'a usable C++ compiler';
+	$DESCR{'cxx'} = 'a C++ compiler';
 }
 
 ;1

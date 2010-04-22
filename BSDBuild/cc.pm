@@ -1,8 +1,6 @@
-# $Csoft: cc.pm,v 1.21 2004/01/25 04:03:15 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002, 2003, 2004 CubeSoft Communications
-# <http://www.csoft.org>
+# Copyright (c) 2002-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,7 +25,7 @@
 
 sub Test
 {
-	# Look for a compiler.
+	# Look for a C compiler.
 	print << 'EOF';
 if [ "$CC" = "" ]; then
 	for i in `echo $PATH |sed 's/:/ /g'`; do
@@ -44,51 +42,67 @@ if [ "$CC" = "" ]; then
 		fi
 	done
 	if [ "$CC" = "" ]; then
-		echo "Unable to find a C compiler in PATH. Please set your compiler"
-		echo "explicitely with the CC environment variable."
+		echo "*"
+		echo "* Unable to find a standard C compiler in PATH. You may need"
+		echo "* to set the CC environment variable."
+		echo "*"
 		echo "Unable to find a C compiler in PATH." >> config.log
-		exit 1
+		HAVE_CC="no"
+		echo "no"
+	else
+		HAVE_CC="yes"
+		echo "yes, ${CC}"
+		echo "yes, ${CC}" >> config.log
 	fi
+else
+	echo "using ${CC}"
 fi
 
-cat << 'EOT' > conftest.c
+if [ "${HAVE_CC}" = "yes" ]; then
+	$ECHO_N "checking whether the C compiler works..."
+	$ECHO_N "checking whether the C compiler works..." >> config.log
+	cat << 'EOT' > conftest.c
 int main(int argc, char *argv[]) { return (0); }
 EOT
+	$CC -o conftest conftest.c 2>>config.log
+	if [ $? != 0 ]; then
+	    echo "no, the test failed to compile"
+	    echo "no, the test failed to compile" >> config.log
+		HAVE_CC="no"
+	else
+		echo "yes"
+		echo "yes" >> config.log
+		HAVE_CC="yes"
+	fi
 
-$CC -o conftest conftest.c 2>>config.log
-if [ $? != 0 ]; then
-    echo "no"
-	echo "Test C program (conftest.c) failed to compile."
-	echo "Test C program (conftest.c) failed to compile." >> config.log
-    exit 1
+	if [ "${EXECSUFFIX}" = "" ]; then
+		EXECSUFFIX=""
+		for OUTFILE in conftest.exe conftest conftest.*; do
+			if [ -f $OUTFILE ]; then
+				case $OUTFILE in
+				*.c | *.o | *.obj | *.bb | *.bbg | *.d | *.pdb | *.tds | *.xcoff | *.dSYM | *.xSYM )
+					;;
+				*.* )
+					EXECSUFFIX=`expr "$OUTFILE" : '[^.]*\(\..*\)'`
+					break ;;
+				* )
+					break ;;
+				esac;
+		    fi
+		done
+		if [ "$EXECSUFFIX" != "" ]; then
+			echo "Detected executable suffix: $EXECSUFFIX" >> config.log
+		fi
+		echo "EXECSUFFIX=$EXECSUFFIX" >> Makefile.config
+		echo "#ifndef EXECSUFFIX" > config/execsuffix.h
+		echo "#define EXECSUFFIX \"${EXECSUFFIX}\"" >> config/execsuffix.h
+		echo "#endif /* EXECSUFFIX */" >> config/execsuffix.h
+	fi
+	rm -f conftest.c conftest$EXECSUFFIX
+	TEST_CFLAGS=""
 fi
-
-EXECSUFFIX=""
-for OUTFILE in conftest.exe conftest conftest.*; do
-	if [ -f $OUTFILE ]; then
-		case $OUTFILE in
-		*.c | *.o | *.obj | *.bb | *.bbg | *.d | *.pdb | *.tds | *.xcoff | *.dSYM | *.xSYM )
-			;;
-		*.* )
-			EXECSUFFIX=`expr "$OUTFILE" : '[^.]*\(\..*\)'`
-			break ;;
-		* )
-			break ;;
-		esac;
-    fi
-done
-if [ "$EXECSUFFIX" != "" ]; then
-	echo "Detected executable suffix: $EXECSUFFIX" >> config.log
-fi
-echo "EXECSUFFIX=$EXECSUFFIX" >> Makefile.config
-echo "#ifndef EXECSUFFIX" > config/execsuffix.h
-echo "#define EXECSUFFIX \"${EXECSUFFIX}\"" >> config/execsuffix.h
-echo "#endif /* EXECSUFFIX */" >> config/execsuffix.h
-
-echo "yes"
-rm -f conftest.c conftest$EXECSUFFIX
-TEST_CFLAGS=""
 EOF
+
 	MkPrintN('checking for compiler warning options...');
 	MkCompileC('HAVE_CC_WARNINGS', '-Wall -Werror', '', << 'EOF');
 int main(int argc, char *argv[]) { return (0); }
@@ -330,7 +344,7 @@ BEGIN
 {
 	$TESTS{'cc'} = \&Test;
 	$EMUL{'cc'} = \&Emul;
-	$DESCR{'cc'} = 'a usable C compiler';
+	$DESCR{'cc'} = 'a C compiler';
 }
 
 ;1

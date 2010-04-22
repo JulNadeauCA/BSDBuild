@@ -81,6 +81,9 @@ EOF
 	MkIf '"${HAVE_CG}" = "yes"';
 		MkSaveMK('CG_CFLAGS', 'CG_LIBS');
 		MkSaveDefine('CG_CFLAGS', 'CG_LIBS');
+	MkElse;
+		MkDefine('CG_CFLAGS', '');
+		MkDefine('CG_LIBS', '');
 	MkEndif;
 	return (0);
 }

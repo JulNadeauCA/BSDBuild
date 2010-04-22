@@ -29,12 +29,10 @@ SHARE=	Core.pm \
 	setlocale.pm \
 	gettext.pm \
 	fastcgi.pm \
-	csoftadm.pm \
 	arc4random.pm \
 	pctr.pm \
 	getpwuid.pm \
 	getuid.pm \
-	csoft-cgi.pm \
 	md5.pm \
 	sha1.pm \
 	rmd160.pm \
@@ -46,7 +44,6 @@ SHARE=	Core.pm \
 	agar-core.pm \
 	agar-rg.pm \
 	agar-vg.pm \
-	agar-map.pm \
 	agar-dev.pm \
 	cg.pm \
 	cracklib.pm \
@@ -75,7 +72,6 @@ SHARE=	Core.pm \
 	math_c99.pm \
 	getopt.pm \
 	byte_order.pm \
-	openmgi.pm \
 	iconv.pm \
 	curl.pm \
 	edacious.pm \

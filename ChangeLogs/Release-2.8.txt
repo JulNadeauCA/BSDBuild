@@ -7,7 +7,10 @@ Release Notes for BSDBuild 2.8
   REGISTER_SECTION() directives.
 - Fixed inclusion of -lpng in libpng test.
 - Many code cleanups in mkconfigure(1); added --verbose option.
-- Use the standard GNU config.guess.
+- Use the standard GNU config.guess; add --host/--target compatibility.
 - Implement CONFIG_SCRIPT() directive in mkconfigure(1), to generate
   standard "foo-config" style scripts.
+- Fix behavior of REQUIRE() directive to work as expected when minimum
+  versions are specified.
+- Run C++ compiler tests against -lstdc++.
 

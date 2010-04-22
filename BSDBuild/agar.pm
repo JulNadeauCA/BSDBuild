@@ -29,9 +29,10 @@ sub Test
 	my ($ver) = @_;
 	
 	MkExecOutputUnique('agar-config', '--version', 'AGAR_VERSION');
-	MkTestVersion('Agar', 'AGAR_VERSION', $ver);
 	MkIf('"${AGAR_VERSION}" != ""');
-		MkPrint('yes');
+		MkPrint('yes, found ${AGAR_VERSION}');
+		MkTestVersion('AGAR_VERSION', $ver);
+
 		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');
 		MkSaveMK('AGAR_CFLAGS', 'AGAR_LIBS');

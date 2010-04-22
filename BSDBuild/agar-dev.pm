@@ -28,16 +28,17 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	MkExecOutputUnique('agar-config', '--version', 'AGAR_VERSION');
 	MkExecOutputUnique('agar-dev-config', '--version', 'AGAR_DEV_VERSION');
-	MkIf('"${AGAR_VERSION}" != "" -a "${AGAR_DEV_VERSION}" != ""');
-		MkPrint('yes');
+	MkIf('"${AGAR_DEV_VERSION}" != ""');
+		MkPrint('yes, found ${AGAR_DEV_VERSION}');
+		MkTestVersion('AGAR_DEV_VERSION', $ver);
+
 		MkPrintN('checking whether agar-dev works...');
 		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');
 		MkExecOutput('agar-dev-config', '--cflags', 'AGAR_DEV_CFLAGS');
 		MkExecOutput('agar-dev-config', '--libs', 'AGAR_DEV_LIBS');
-		MkTestVersion('Agar', 'AGAR_DEV_VERSION', $ver);
+
 		MkCompileC('HAVE_AGAR_DEV',
 		    '${AGAR_DEV_CFLAGS} ${AGAR_CFLAGS}',
 		    '${AGAR_DEV_LIBS} ${AGAR_LIBS}',
@@ -103,7 +104,7 @@ sub Link
 
 BEGIN
 {
-	$DESCR{'agar-dev'} = 'agar-dev (http://hypertriton.com/agar-dev/)';
+	$DESCR{'agar-dev'} = 'agar-dev (http://libagar.org/)';
 	$DEPS{'agar-dev'} = 'cc,agar';
 	$TESTS{'agar-dev'} = \&Test;
 	$LINK{'agar-dev'} = \&Link;

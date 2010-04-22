@@ -34,8 +34,9 @@ sub Test
 	MkExecOutput('pkg-config', 'libidn --libs', 'LIBIDN_LIBS');
 
 	MkIf('"${LIBIDN_VERSION}" != ""');
-		MkPrint('yes');
-		MkTestVersion('libidn', 'LIBIDN_VERSION', $ver);
+		MkPrint('yes, found ${LIBIDN_VERSION}');
+		MkTestVersion('LIBIDN_VERSION', $ver);
+
 		MkPrintN('checking whether libidn works...');
 		MkCompileC('HAVE_LIBIDN', '${LIBIDN_CFLAGS}', '${LIBIDN_LIBS}',
 		           << 'EOF');

@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2007 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2007-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,9 @@ sub Test
 	
 	MkExecOutputUnique('agar-core-config', '--version', 'AGAR_CORE_VERSION');
 	MkIf('"${AGAR_CORE_VERSION}" != ""');
-		MkPrint('yes');
+		MkPrint('yes, found ${AGAR_CORE_VERSION}');
+		MkTestVersion('AGAR_CORE_VERSION', $ver);
+
 		MkExecOutput('agar-core-config', '--cflags', 'AGAR_CORE_CFLAGS');
 		MkExecOutput('agar-core-config', '--libs', 'AGAR_CORE_LIBS');
 		MkSaveMK('AGAR_CORE_CFLAGS', 'AGAR_CORE_LIBS');
@@ -38,10 +40,6 @@ sub Test
 	    MkPrint('no');
 		MkSaveUndef('AGAR_CORE_CFLAGS', 'AGAR_CORE_LIBS');
 	MkEndif;
-	
-	if ($ver) {
-		MkTestVersion('Agar', 'AGAR_CORE_VERSION', $ver);
-	}
 
 	MkPrintN('checking whether Agar-Core works...');
 	MkCompileC('HAVE_AGAR_CORE', '${AGAR_CORE_CFLAGS}', '${AGAR_CORE_LIBS}',

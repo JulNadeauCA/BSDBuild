@@ -39,11 +39,11 @@ sub Test
 	MkExecOutput('glib12-config', '--libs', 'glib12_libs');
 
 	MkIf('"${GLIB_VERSION}" != ""');
-		# TODO: Test
-		MkTestVersion('glib', 'GLIB_VERSION', $ver);
+		MkPrint('yes, found ${GLIB_VERSION}');
+		MkTestVersion('GLIB_VERSION', $ver);
+
 		MkSaveDefine('HAVE_GLIB', 'GLIB_CFLAGS', 'GLIB_LIBS');
 		MkSaveMK	('HAVE_GLIB', 'GLIB_CFLAGS', 'GLIB_LIBS');
-		MkPrint('yes');
 	MkElse;
 		MkIf('"${glib12_version}" != ""');
 			MkDefine	('GLIB_CFLAGS', '${glib12_cflags}');

@@ -368,14 +368,11 @@ sub EndTestHeaders
 
 sub MkTestVersion
 {
-	my ($name, $verDef, $ver) = @_;
-	if ($ver =~ /^\?(.+)$/) {
-		$nofail = 1;
-		$ver = $1;
-	} else {
-		$nofail = 0;
-	}
+	my ($verDef, $ver) = @_;
 
+	if (!defined($ver)) {
+		return;
+	}
 	my @verSpec = split(/\./, $ver);
 	if (@verSpec >= 3) {
 		#
@@ -406,18 +403,6 @@ elif [ \$MK_VERSION_MAJOR -eq $verSpec[0] ]; then
 	fi
 fi
 EOF
-		if (!$nofail) {
-			print << "EOF";
-if [ "\$MK_VERSION_OK" != "yes" ]; then
-	echo "*"
-	echo "* Found $name version \$MK_VERSION_MAJOR.\$MK_VERSION_MINOR.\$MK_VERSION_MICRO."
-	echo "* This software requires at least version $ver."
-	echo "* Please upgrade $name and try again."
-	echo "*"
-	exit 1
-fi
-EOF
-		}
 	} elsif (@verSpec >= 2) {
 		#
 		# Test for x.y
@@ -438,18 +423,6 @@ elif [ \$MK_VERSION_MAJOR -eq $verSpec[0] ]; then
 	fi
 fi
 EOF
-		if (!$nofail) {
-			print << "EOF";
-if [ "\$MK_VERSION_OK" != "yes" ]; then
-	echo "*"
-	echo "* Found $name version \$MK_VERSION_MAJOR.\$MK_VERSION_MINOR."
-	echo "* This software requires at least version $ver."
-	echo "* Please upgrade $name and try again."
-	echo "*"
-	exit 1
-fi
-EOF
-		}
 	} elsif (@verSpec >= 1) {
 		#
 		# Test for x
@@ -463,18 +436,6 @@ elif [ \$MK_VERSION_MAJOR -ge $verSpec[0] ]; then
 	MK_VERSION_OK="yes";
 fi
 EOF
-		if (!$nofail) {
-			print << "EOF";
-if [ "\$MK_VERSION_OK" != "yes" ]; then
-	echo "*"
-	echo "* Found $name version \$MK_VERSION_MAJOR."
-	echo "* This software requires at least version $ver."
-	echo "* Please upgrade $name and try again."
-	echo "*"
-	exit 1
-fi
-EOF
-		}
 	}
 }
 
@@ -708,8 +669,8 @@ if [ "\${MK_CACHED}" = "No" ]; then
 	cat << EOT > conftest.cpp
 $code
 EOT
-	echo "\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $flags -o \$testdir/conftest conftest.cpp" >>config.log
-	\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $flags -o \$testdir/conftest conftest.cpp 2>>config.log
+	echo "\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $flags -o \$testdir/conftest conftest.cpp -lstdc++" >>config.log
+	\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $flags -o \$testdir/conftest conftest.cpp -lstdc++ 2>>config.log
 	if [ \$? != 0 ]; then
 		echo "-> failed (\$?)" >> config.log
 		MK_COMPILE_STATUS="FAIL(\$?)"

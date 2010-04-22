@@ -32,8 +32,9 @@ sub Test
 	MkExecOutput('ode-config', '--libs', 'ODE_LIBS');
 	
 	MkIf('"${ODE_VERSION}" != ""');
-		MkPrint('yes');
-		MkTestVersion('ODE', 'ODE_VERSION', $ver);
+		MkPrint('yes, found ${ODE_VERSION}');
+		MkTestVersion('ODE_VERSION', $ver);
+
 		MkPrintN('checking whether ODE works...');
 		MkCompileC('HAVE_ODE', '${ODE_CFLAGS}', '${ODE_LIBS}', << 'EOF');
 #include <ode/ode.h>

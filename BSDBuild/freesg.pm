@@ -28,11 +28,11 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	MkExecOutputUnique('agar-config', '--version', 'AGAR_VERSION');
 	MkExecOutputUnique('freesg-config', '--version', 'FREESG_VERSION');
-	MkIf('"${AGAR_VERSION}" != "" -a "${FREESG_VERSION}" != ""');
-		MkPrint('yes');
-		MkTestVersion('FreeSG', 'FREESG_VERSION', $ver);
+	MkIf('"${FREESG_VERSION}" != ""');
+		MkPrint('yes, found ${FREESG_VERSION}');
+		MkTestVersion('FREESG_VERSION', $ver);
+
 		MkPrintN('checking whether FreeSG works...');
 		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');

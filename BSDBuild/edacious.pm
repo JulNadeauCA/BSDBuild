@@ -27,14 +27,11 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	MkExecOutputUnique('agar-config', '--version', 'AGAR_VERSION');
-	MkExecOutputUnique('agar-vg-config', '--version', 'AGAR_VG_VERSION');
-	MkExecOutputUnique('agar-math-config', '--version', 'AGAR_MATH_VERSION');
 	MkExecOutputUnique('edacious-config', '--version', 'EDACIOUS_VERSION');
-	MkIf('"${AGAR_VERSION}" != "" -a "${AGAR_VG_VERSION}" != "" '.
-	     '-a "${AGAR_MATH_VERSION}" != "" -a "${EDACIOUS_VERSION}" != ""');
-		MkPrint('yes');
-		MkTestVersion('Edacious', 'EDACIOUS_VERSION', $ver);
+	MkIf('"${EDACIOUS_VERSION}" != ""');
+		MkPrint('yes, found ${EDACIOUS_VERSION}');
+		MkTestVersion('EDACIOUS_VERSION', $ver);
+
 		MkPrintN('checking whether Edacious works...');
 		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');

@@ -96,7 +96,8 @@ sub config_guess { }
 # Execute one of the standard BSDBuild tests.
 sub test
 {
-	my ($t) = @_;
+	my @args = @_;
+	my ($t) = shift(@args);
 	my $mod = "$INSTALLDIR/BSDBuild/$t.pm";
 
 	unless (-e $mod) {
@@ -145,16 +146,31 @@ sub test
 # Execute one of the standard BSDBuild tests, abort if the test fails.
 sub test_require
 {
-	my ($t) = @_;
+	my ($t, $ver) = @_;
 	my $def = 'HAVE_'.uc($t);
 
 	test(@_);
-	MkIf "${\$def} != \"yes\"";
+	
+	if ($EmulOS) {
+		return;
+	}
+
+	MkIf "\"\$\{$def\}\" != \"yes\"";
 		MkPrint('* ');
-		MkPrint("* This software requires $t");
+		MkPrint("* This software requires $t installed on your system.");
 		MkPrint('* ');
-		MkFail('A dependency is missing');
+		MkFail('configure failed!');
 	MkEndif;
+
+	if ($ver) {
+		MkIf '"${MK_VERSION_OK}" != "yes"';
+			MkPrint('* ');
+			MkPrint("* This software requires $t version >= $ver,");
+			MkPrint("* please upgrade and try again.");
+			MkPrint('* ');
+			MkFail('configure failed!');
+		MkEndif;
+	}
 }
 
 # Make environment define
@@ -429,10 +445,9 @@ EOF
 sub pass1_register
 {
 	my ($arg, $descr) = @_;
-	$arg =~ /\"(.*)\"/;
-	$arg = $1;
-	$descr =~ /\"(.*)\"/;
-	$descr = $1;
+
+	if ($arg =~ /\"(.*)\"/) { $arg = $1; }
+	if ($descr =~ /\"(.*)\"/) { $descr = $1; }
 
 	my $darg = pack('A' x 25, split('', $arg));
 	push @Help, "echo \"    $darg $descr\"";
@@ -442,8 +457,8 @@ sub pass1_register
 sub pass1_register_section
 {
 	my ($s) = @_;
-	$s =~ /\"(.*)\"/;
-	$s = $1;
+
+	if ($s =~ /\"(.*)\"/) { $s = $1; }
 	push @Help, "echo \"\"";
 	push @Help, "echo \"$s\"";
 }
@@ -453,11 +468,11 @@ sub pass1_config_guess
 {
 	my ($s) = @_;
 
-	$s =~ /\"(.*)\"/;
-	$ConfigGuess = $1;
+	if ($s =~ /\"(.*)\"/) { $s = $1; }
 	if ($Verbose) {
-		print STDERR "Using config.guess: $ConfigGuess\n";
+		print STDERR "Using config.guess: $s\n";
 	}
+	$ConfigGuess = $s;
 }
 
 sub Help
@@ -939,14 +954,18 @@ MkEndif;
 # Guess system name from config.guess.
 #
 print << "EOF";
-if [ "\${srcdir}" != "" ]; then
-	host=`sh \${srcdir}/$ConfigGuess`
+if [ "\${host_arg}" != "" ]; then
+	host="\${host_arg}"
 else
-	host=`sh $ConfigGuess`
-fi
-if [ \$? != 0 ]; then
-	echo "$ConfigGuess failed"
-	exit 1
+	if [ "\${srcdir}" != "" ]; then
+		host=`sh \${srcdir}/$ConfigGuess`
+	else
+		host=`sh $ConfigGuess`
+	fi
+	if [ \$? != 0 ]; then
+		echo "$ConfigGuess failed"
+		exit 1
+	fi
 fi
 EOF
 

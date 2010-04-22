@@ -29,11 +29,11 @@ sub Test
 {
 	my ($ver) = @_;
 	
-	MkExecOutputUnique('agar-config', '--version', 'AGAR_VERSION');
 	MkExecOutputUnique('agar-vg-config', '--version', 'AGAR_VG_VERSION');
-	MkTestVersion('Agar', 'AGAR_VG_VERSION', $ver);
-	MkIf('"${AGAR_VERSION}" != "" -a "${AGAR_VG_VERSION}" != ""');
-		MkPrint('yes');
+	MkIf('"${AGAR_VG_VERSION}" != ""');
+		MkPrint('yes, found ${AGAR_VG_VERSION}');
+		MkTestVersion('AGAR_VG_VERSION', $ver);
+
 		MkPrintN('checking whether agar-vg works...');
 		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');

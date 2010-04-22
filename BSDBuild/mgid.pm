@@ -32,8 +32,9 @@ sub Test
 	MkExecOutput('mgid-config', '--libs', 'MGID_LIBS');
 
 	MkIf('"${MGID_VERSION}" != ""');
-		MkPrint('yes');
-		MkTestVersion('mgid', 'MGID_VERSION', $ver);
+		MkPrint('yes, found ${MGID_VERSION}');
+		MkTestVersion('MGID_VERSION', $ver);
+
 		MkPrintN('checking whether libmgid works...');
 		MkCompileC('HAVE_MGID', '${MGID_CFLAGS}', '${MGID_LIBS}',
 	               << 'EOF');

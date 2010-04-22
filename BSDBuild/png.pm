@@ -50,8 +50,9 @@ EOF
 	MkDefine('PNG_LIBS', '${PNG_LOPTS} ${PNG_LIBS}');
 
 	MkIf('"${PNG_VERSION}" != ""');
-		MkPrint('yes');
-		MkTestVersion('libpng', 'PNG_VERSION', $ver);
+		MkPrint('yes, found ${PNG_VERSION}');
+		MkTestVersion('PNG_VERSION', $ver);
+
 		MkPrintN('checking whether libpng works...');
 		MkCompileC('HAVE_PNG', '${PNG_CFLAGS}', '${PNG_LIBS}', $testCode);
 		MkIf('"${HAVE_PNG}" != "no"');

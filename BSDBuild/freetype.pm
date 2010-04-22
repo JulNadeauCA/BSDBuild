@@ -39,8 +39,9 @@ sub Test
 	MkEndif;
 
 	MkIf('"${FREETYPE_VERSION}" != ""');
-		MkPrint('yes');
-		MkTestVersion('FreeType', 'FREETYPE_VERSION', $ver);
+		MkPrint('yes, found ${FREETYPE_VERSION}');
+		MkTestVersion('FREETYPE_VERSION', $ver);
+
 		MkPrintN('checking whether FreeType works...');
 		MkCompileC('HAVE_FREETYPE', '${FREETYPE_CFLAGS}', '${FREETYPE_LIBS}',
 		           << 'EOF');

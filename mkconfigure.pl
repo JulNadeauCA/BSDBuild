@@ -365,6 +365,10 @@ sub config_script
 	print "config_script_cflags=\"$cflags\"\n";
 	print "config_script_libs=\"$libs\"\n";
 	print << 'EOF';
+if [ -d "$config_script_out" ]; then
+	echo "rm -fR $config_script_out"
+	rm -fR $config_script_out
+fi
 cat << EOT > $config_script_out
 #!/bin/sh
 # Generated for ${PACKAGE} by BSDBuild %VERSION%.

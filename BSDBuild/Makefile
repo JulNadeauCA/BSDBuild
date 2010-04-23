@@ -89,7 +89,8 @@ SHARE=	Core.pm \
 	alsa.pm \
 	wgl.pm \
 	mgid.pm \
-	select.pm
+	select.pm \
+	sndfile.pm
 
 all:
 

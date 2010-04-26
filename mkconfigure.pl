@@ -365,9 +365,16 @@ sub config_script
 	print "config_script_cflags=\"$cflags\"\n";
 	print "config_script_libs=\"$libs\"\n";
 	print << 'EOF';
+# Avoid breakage with existing trees compiled before BSDBuild 2.8.
 if [ -d "$config_script_out" ]; then
 	echo "rm -fR $config_script_out"
 	rm -fR $config_script_out
+fi
+if [ "${SRC}" != "" ]; then
+	if [ -d "${SRC}/$config_script_out" ]; then
+		echo "rm -fR ${SRC}/$config_script_out"
+		rm -fR ${SRC}/$config_script_out
+	fi
 fi
 cat << EOT > $config_script_out
 #!/bin/sh

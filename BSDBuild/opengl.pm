@@ -89,11 +89,11 @@ EOF
 	MkElse;
 		MkDefine('OPENGL_LIBS', '${GL_LIBS} -lGL');
 	MkEndif;
-print << "EOF";
+print << 'EOF';
 	;;
 *)
 	OPENGL_CFLAGS="${GL_CFLAGS}"
-	OPENGL_LIBS="-lGL"
+	OPENGL_LIBS="${GL_LIBS} -lGL"
 	;;
 esac
 EOF

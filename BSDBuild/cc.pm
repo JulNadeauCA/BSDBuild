@@ -55,6 +55,7 @@ if [ "$CC" = "" ]; then
 		echo "yes, ${CC}" >> config.log
 	fi
 else
+	HAVE_CC="yes"
 	echo "using ${CC}"
 fi
 

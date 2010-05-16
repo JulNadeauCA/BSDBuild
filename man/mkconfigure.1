@@ -184,6 +184,18 @@ Specify an alternate path to
 .Pa config.guess
 (default is
 .Pa mk/config.guess ) .
+.It Ev CHECK_HEADER(header[, ...])
+Check whether one or more header files are available under the current
+C/C++ compiler settings.
+If a header file such as
+.Pa sys/foo.h
+is found,
+.Dv HAVE_SYS_FOO_H
+is defined.
+.It Ev CHECK_HEADER_OPTS(cflags, libs, header[, ...])
+Same function as
+.Ev CHECK_HEADER() ,
+except that the headers are tested using the provided CFLAGS and LIBS.
 .El
 .\" .Sh ENVIRONMENT
 .\" .Sh FILES

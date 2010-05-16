@@ -50,7 +50,9 @@ my %Fns = (
 	'c_no_secure_warnings'	=> \&c_no_secure_warnings,
 	'c_incdir_config'	=> \&c_incdir_config,
 	'config_script'		=> \&config_script,
-	'config_guess'		=> \&config_guess
+	'config_guess'		=> \&config_guess,
+	'check_header'		=> \&check_header,
+	'check_header_opts'	=> \&check_header_opts,
 );
 my @Help = ();
 my $ConfigGuess = 'mk/config.guess';
@@ -92,6 +94,41 @@ sub release
 sub register { }
 sub register_section { }
 sub config_guess { }
+
+# Check for a header file
+sub check_header
+{
+	foreach my $hdrFile (@_) {
+		$hdrDef = uc($hdrFile);
+		$hdrDef =~ s/[\\\/\.]/_/g;
+		$hdrDef = 'HAVE_'.$hdrDef;
+
+		MkPrintN("checking for <$hdrFile> ($hdrDef)...");
+		MkCompileC $hdrDef, '', '', << "EOF";
+#include <$hdrFile>
+int main (int argc, char *argv[]) { return (0); }
+EOF
+	}
+}
+
+# Check for a header file, with specific CFLAGS/LIBS.
+sub check_header_opts
+{
+	my $cflags = shift;
+	my $libs = shift;
+
+	foreach my $hdrFile (@_) {
+		$hdrDef = uc($hdrFile);
+		$hdrDef =~ s/[\\\/\.]/_/g;
+		$hdrDef = 'HAVE_'.$hdrDef;
+
+		MkPrintN("checking for <$hdrFile>...");
+		MkCompileC $hdrDef, $cflags, $libs, << "EOF";
+#include <$hdrFile>
+int main (int argc, char *argv[]) { return (0); }
+EOF
+	}
+}
 
 # Execute one of the standard BSDBuild tests.
 sub test

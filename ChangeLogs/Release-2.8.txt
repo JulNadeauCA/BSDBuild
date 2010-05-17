@@ -13,4 +13,7 @@ Release Notes for BSDBuild 2.8
 - Fix behavior of REQUIRE() directive to work as expected when minimum
   versions are specified.
 - Run C++ compiler tests against -lstdc++.
+- Added standard directives CHECK_HEADER(), CHECK_HEADER_OPTS(),
+  CHECK_FUNC() and CHECK_FUNC_OPTS(); thanks rhaamo!
+- Added HDEFINE_UNQUOTED() variant; thanks rhaamo!
 

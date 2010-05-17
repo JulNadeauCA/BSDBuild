@@ -38,6 +38,7 @@ my %Fns = (
 	'require'		=> \&test_require,
 	'mdefine'		=> \&mdefine,
 	'hdefine'		=> \&hdefine,
+	'hdefine_unquoted'	=> \&hdefine_unquoted,
 	'hundef'		=> \&hundef,
 	'c_define'		=> \&c_define,
 	'c_incdir'		=> \&c_incdir,
@@ -53,6 +54,8 @@ my %Fns = (
 	'config_guess'		=> \&config_guess,
 	'check_header'		=> \&check_header,
 	'check_header_opts'	=> \&check_header_opts,
+	'check_func'		=> \&check_func,
+	'check_func_opts'	=> \&check_func_opts,
 );
 my @Help = ();
 my $ConfigGuess = 'mk/config.guess';
@@ -126,6 +129,83 @@ sub check_header_opts
 		MkCompileC $hdrDef, $cflags, $libs, << "EOF";
 #include <$hdrFile>
 int main (int argc, char *argv[]) { return (0); }
+EOF
+	}
+}
+
+# Check for a function
+sub check_func
+{
+	foreach my $funcList (@_) {
+	    $funcDef = uc($funcList);
+	    $funcDef =~ s/[\\\/\.]/_/g;
+	    $funcDef = 'HAVE_'.$funcDef;
+
+	    MkPrintN("checking for $funcList()...");
+	    MkDefine('TEST_CFLAGS', '-Wall');		# Avoid failing on "conflicting types blah"
+	    MkCompileC $funcDef, '', '', << "EOF";
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+
+#undef $funcList
+
+#ifdef __cplusplus
+extern "C"
+#endif
+
+char $funcList();
+#if defined __stub_$funcList || defined __stub___$funcList
+choke me
+#endif
+
+int main() {
+    return $funcList();
+    ;
+    return 0;
+}
+EOF
+	}
+}
+
+# Check for a function with CFLAGS and LIBS
+sub check_func_opts
+{
+    	my $cflags = shift;
+	my $libs = shift;
+
+	foreach my $funcList (@_) {
+	    $funcDef = uc($funcList);
+	    $funcDef =~ s/[\\\/\.]/_/g;
+	    $funcDef = 'HAVE_'.$funcDef;
+
+	    MkPrintN("checking for $funcList()...");
+	    MkDefine('TEST_CFLAGS', '-Wall');		# Avoid failing on "conflicting types blah"
+	    MkCompileC $funcDef, $cflags, $libs, << "EOF";
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+
+#undef $funcList
+
+#ifdef __cplusplus
+extern "C"
+#endif
+
+char $funcList();
+#if defined __stub_$funcList || defined __stub___$funcList
+choke me
+#endif
+
+int main() {
+    return $funcList();
+    ;
+    return 0;
+}
 EOF
 	}
 }
@@ -230,6 +310,15 @@ sub hdefine
 	MkSaveDefine($def);
 }
 
+# Header define unquoted
+sub hdefine_unquoted
+{
+	my ($def, $val) = @_;
+
+	if ($val =~ /^"(.+)"$/) { $val = $1; }
+	MkDefine($def, $val);
+	MkSaveDefineUnquoted($def);
+}
 # Header undef
 sub hundef
 {

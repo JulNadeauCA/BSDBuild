@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2001-2009 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2010 Hypertriton, Inc. <http://hypertriton.com/>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -156,7 +156,7 @@ install-www:
 			echo "${INSTALL_DATA_DIR} ${HTMLDIR}/m4"; \
 			${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${HTMLDIR}/m4; \
 		fi; \
-		(cd m4; for M4IN in `ls -1 *.m4`; do \
+		(cd ${BASEDIR}; for M4IN in `ls -1 *.m4`; do \
 			if [ -e "${HTMLDIR}/m4/$$M4IN" \
 			     -a "${HTML_OVERWRITE}" = "" ]; then \
 				echo "m4/$$M4IN: exists; preserving"; \
@@ -177,10 +177,10 @@ install-www:
 			echo "M4=${M4}" >> Makefile.prep; \
 			echo "XSLTPROC=${XSLTPROC}" >> Makefile.prep; \
 			echo "PERL=${PERL}" >> Makefile.prep; \
-			echo "BASEDIR=${BASEDIR}" >> Makefile.prep; \
+			echo "BASEDIR=m4" >> Makefile.prep; \
 			echo "TEMPLATE=${TEMPLATE}" >> Makefile.prep; \
 			echo "LANGUAGES=${LANGUAGES}" >> Makefile.prep; \
-			echo "XSL=${XSL}" >> Makefile.prep; \
+			echo "XSL=xsl" >> Makefile.prep; \
 			echo "include mk/build.www.mk" >> Makefile.prep; \
 			echo "${INSTALL_DATA} Makefile.prep \
 			    ${HTMLDIR}/Makefile"; \

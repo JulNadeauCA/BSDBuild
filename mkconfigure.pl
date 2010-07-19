@@ -636,6 +636,7 @@ sub Help
 		'--with-libtool' =>	'Specify path to libtool',
 		'--with-cygwin' =>	'Use Cygwin compatibility layer',
 		'--with-manpages' =>	'Generate Unix manual pages',
+		'--with-catman' =>	'Install cat files for manual pages',
 		'--with-manlinks' =>	'Add manual entries for every function',
 		'--with-ctags' =>	'Generate ctags(1) tag files',
 		'--with-docs' =>	'Generate printable documentation',
@@ -664,6 +665,7 @@ sub Help
 		'--with-libtool' =>	'auto-detect',
 		'--with-cygwin' =>	'no',
 		'--with-manpages' =>	'yes',
+		'--with-catman' =>	'auto-detect',
 		'--with-manlinks' =>	'no',
 		'--with-ctags' =>	'no',
 		'--with-docs' =>	'no',
@@ -1184,6 +1186,22 @@ if [ "${HAVE_MANDOC}" = "no" ]; then
 	echo "NOMANLINKS=yes" >> Makefile.config
 else
 	echo "HAVE_MANDOC=yes" >> Makefile.config
+	if [ "${with_catman}" = "no" ]; then
+		echo "NOCATMAN=yes" >> Makefile.config
+	else
+		if [ "${with_catman}" = "yes" ]; then
+			echo "NOCATMAN=no" >> Makefile.config
+		else
+			case "${host}" in
+			*-*-freebsd*)
+				echo "NOCATMAN=yes" >> Makefile.config
+				;;
+			*)
+				echo "NOCATMAN=no" >> Makefile.config
+				;;
+			esac
+		fi
+	fi
 	if [ "${with_manpages}" = "no" ]; then
 		echo "NOMAN=yes" >> Makefile.config
 		echo "NOMANLINKS=yes" >> Makefile.config

@@ -57,23 +57,23 @@ uman: uman.pl
 install: install-subdir
 	@if [ ! -d "${SHAREDIR}" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} "${SHAREDIR}"; \
+	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${SHAREDIR}"; \
 	fi
 	@if [ ! -d "${SHAREDIR}/libtool" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/libtool"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} "${SHAREDIR}/libtool"; \
+	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${SHAREDIR}/libtool"; \
 	fi
 	@for F in ${SHARE}; do \
 	    echo "${INSTALL_DATA} $$F ${SHAREDIR}"; \
-	    ${SUDO} ${INSTALL_DATA} $$F "${SHAREDIR}"; \
+	    ${SUDO} ${INSTALL_DATA} $$F "${DESTDIR}${SHAREDIR}"; \
 	done
 	@for F in ${LTFILES}; do \
 	    echo "${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool"; \
-	    ${SUDO} ${INSTALL_DATA} libtool/$$F "${SHAREDIR}/libtool"; \
+	    ${SUDO} ${INSTALL_DATA} libtool/$$F "${DESTDIR}${SHAREDIR}/libtool"; \
 	done
 	@for F in ${SCRIPTS}; do \
 	    echo "${INSTALL_PROG} $$F ${BINDIR}"; \
-	    ${SUDO} ${INSTALL_PROG} $$F "${BINDIR}"; \
+	    ${SUDO} ${INSTALL_PROG} $$F "${DESTDIR}${BINDIR}"; \
 	done
 
 install-links-subdir:
@@ -95,23 +95,23 @@ install-links-subdir:
 install-links: install-links-subdir
 	@if [ ! -d "${SHAREDIR}" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} "${SHAREDIR}"; \
+	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${SHAREDIR}"; \
 	fi
 	@if [ ! -d "${SHAREDIR}/libtool" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/libtool"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} "${SHAREDIR}/libtool"; \
+	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${SHAREDIR}/libtool"; \
 	fi
 	@for F in ${SHARE}; do \
 	    echo "ln -sf `pwd`/$$F ${SHAREDIR}/$$F"; \
-	    ${SUDO} ln -sf `pwd`/$$F "${SHAREDIR}/$$F"; \
+	    ${SUDO} ln -sf `pwd`/$$F "${DESTDIR}${SHAREDIR}/$$F"; \
 	done
 	@for F in ${LTFILES}; do \
 	    echo "${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool"; \
-	    ${SUDO} ${INSTALL_DATA} libtool/$$F "${SHAREDIR}/libtool"; \
+	    ${SUDO} ${INSTALL_DATA} libtool/$$F "${DESTDIR}${SHAREDIR}/libtool"; \
 	done
 	@for F in ${SCRIPTS}; do \
 	    echo "${INSTALL_PROG} $$F.pl ${BINDIR}/$$F"; \
-	    ${SUDO} ${INSTALL_PROG} $$F.pl "${BINDIR}"; \
+	    ${SUDO} ${INSTALL_PROG} $$F.pl "${DESTDIR}${BINDIR}"; \
 	done
 
 cleandir: cleandir-subdir

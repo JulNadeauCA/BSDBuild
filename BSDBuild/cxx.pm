@@ -280,22 +280,6 @@ main(void) {
 	return (0);
 }
 EOF
-	print << 'EOF';
-if [ "${MK_COMPILE_STATUS}" = "OK" ]; then
-	if [ "${with_cygwin}" != "yes" ]; then
-		echo "*"
-		echo "* NOTE: Disabling Cygwin compatibility layer."
-		echo "* (Resulting binaries will not depend on Cygwin)"
-		echo "*"
-		CXXFLAGS="$CXXFLAGS -mno-cygwin"
-	else
-		echo "*"
-		echo "* NOTE: Enabling Cygwin compatibility layer."
-		echo "* (Resulting binaries will depend on Cygwin)"
-		echo "*"
-	fi
-fi
-EOF
 
 	# Preserve ${CXX} and ${CXXFLAGS}
 	MkSaveMK('CXX', 'CXXFLAGS');

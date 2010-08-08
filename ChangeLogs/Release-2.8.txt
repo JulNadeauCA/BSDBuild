@@ -16,4 +16,6 @@ Release Notes for BSDBuild 2.8
 - Added standard directives CHECK_HEADER(), CHECK_HEADER_OPTS(),
   CHECK_FUNC() and CHECK_FUNC_OPTS(); thanks rhaamo!
 - Added HDEFINE_UNQUOTED() variant; thanks rhaamo!
+- Make ${SHOBJS} depend on ${LIBTOOL_COOKIE} in build.lib.mk. Fixes
+  concurrent make problems; thanks Bill Randle!
 

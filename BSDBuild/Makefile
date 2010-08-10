@@ -90,7 +90,8 @@ SHARE=	Core.pm \
 	wgl.pm \
 	mgid.pm \
 	select.pm \
-	sndfile.pm
+	sndfile.pm \
+	execvp.pm
 
 all:
 

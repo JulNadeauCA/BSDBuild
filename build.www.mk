@@ -31,8 +31,8 @@ M4FLAGS?=
 XSLTPROC?=	xsltproc
 PERL?=		perl
 ICONV?=		iconv
-BASEDIR?=	m4
-XSLDIR?=	xsl
+BASEDIR?=	${TOP}/m4
+XSLDIR?=	${TOP}/xsl
 TEMPLATE?=	csoft
 LANGUAGES?=	en fr
 DEF_LANGUAGE?=	en
@@ -61,7 +61,7 @@ depend: depend-subdir
 	@echo > $@.var
 	@for LANG in ${LANGUAGES}; do \
 	    echo -n " $$LANG"; \
-	    ${M4} ${M4FLAGS} -D__BASE_DIR=${BASEDIR} -D__FILE=$@ \
+	    ${M4} ${M4FLAGS} -D__BASE_DIR=${BASEDIR} -D__FILE=$@ -D__TEMPLATE=${TEMPLATE} \
 	        -D__LANG=$$LANG \
 	        ${BASEDIR}/${TEMPLATE}.m4 \
 		| ${PERL} ${TOP}/mk/hstrip.pl > $@.$$LANG.prep; \

@@ -23,23 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Test
-{
-	my ($ver, $pfx) = @_;
-
-	MkDefine('DSO_CFLAGS', '');
-	MkDefine('DSO_LIBS', '');
-
-	BeginTestHeaders();
-	DetectHeaderC('HAVE_DL_H', '<dl.h>');
-
-	MkIfNE($pfx, '');
-		MkDefine('DSO_LIBS', "-L$pfx -ldld");
-	MkElse;
-		MkDefine('DSO_LIBS', '-ldld');
-	MkEndif;
-
-	TryCompileFlagsC 'HAVE_SHL_LOAD', '${DSO_LIBS}', << 'EOF';
+my $testCode = << 'EOF';
 #ifdef HAVE_DL_H
 #include <dl.h>
 #endif
@@ -57,7 +41,29 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	MkSaveIfTrue('${HAVE_SHL_LOAD}', 'DSO_CFLAGS', 'DSO_LIBS');
+
+sub Test
+{
+	my ($ver, $pfx) = @_;
+
+	BeginTestHeaders();
+	DetectHeaderC('HAVE_DL_H', '<dl.h>');
+
+	MkIfNE($pfx, '');
+		MkDefine('SHL_LOAD_LIBS', "-L$pfx -ldld");
+	MkElse;
+		MkDefine('SHL_LOAD_LIBS', '-ldld');
+	MkEndif;
+
+	TryCompileFlagsC('HAVE_SHL_LOAD',
+	                 '${SHL_LOAD_LIBS}',
+					 $testCode);
+	MkIfTrue('${HAVE_SHL_LOAD}');
+		MkSave('HAVE_SHL_LOAD');
+		MkDefine('DSO_LIBS', '$DSO_LIBS $SHL_LOAD_LIBS');
+	MkElse;
+		MkSaveUndef('HAVE_SHL_LOAD');
+	MkEndif;
 	EndTestHeaders();
 }
 

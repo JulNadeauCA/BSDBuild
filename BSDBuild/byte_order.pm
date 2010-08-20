@@ -68,9 +68,9 @@ fi
 rm -f conftest.c
 
 _MK_BYTE_ORDER=""
-_MK_BYTE_ORDER_LESTRING="L   i   T   T   L   e   E   n   D"
-_MK_BYTE_ORDER_BESTRING="B   i   G   E   n   D   i   A   N"
-od -tc \$testdir/conftest\$EXECSUFFIX > \$testdir/conftest.dump
+_MK_BYTE_ORDER_LESTRING="LiTTLeEnD"
+_MK_BYTE_ORDER_BESTRING="BiGEnDiAN"
+od -tc \$testdir/conftest\$EXECSUFFIX | sed 's/ //g' > \$testdir/conftest.dump
 
 if grep "\$_MK_BYTE_ORDER_LESTRING" \$testdir/conftest.dump >/dev/null; then
 	_MK_BYTE_ORDER="LE"

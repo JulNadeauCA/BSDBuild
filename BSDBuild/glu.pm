@@ -23,15 +23,17 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-my @autoIncludeDirs = (
-	'/usr/include/X11',
-	'/usr/include/X11R6',
-	'/usr/local/X11/include',
-	'/usr/local/X11R6/include',
-	'/usr/local/include/X11',
-	'/usr/local/include/X11R6',
-	'/usr/X11/include',
-	'/usr/X11R6/include',
+my %autoIncludeDirs = (
+	'/usr/include'				=> '/usr/lib',
+	'/usr/local/include'		=> '/usr/local/lib',
+	'/usr/include/X11'			=> '/usr/lib/X11',
+	'/usr/include/X11R6'		=> '/usr/lib/X11R6',
+	'/usr/local/X11/include'	=> '/usr/local/X11/lib',
+	'/usr/local/X11R6/include'	=> '/usr/local/X11R6/lib',
+	'/usr/local/include/X11'	=> '/usr/local/lib/X11',
+	'/usr/local/include/X11R6'	=> '/usr/local/lib/X11R6',
+	'/usr/X11/include'			=> '/usr/X11/lib',
+	'/usr/X11R6/include'		=> '/usr/X11R6/lib',
 );
 
 sub Test
@@ -62,10 +64,11 @@ sub Test
 				MkDefine('GLU_LIBS', "-L$pfx/lib -lGLU");
 			MkEndif;
 		MkElse;
-			foreach my $dir (@autoIncludeDirs) {
+			foreach my $dir (keys %autoIncludeDirs) {
+				my $libDir = $autoIncludeDirs{$dir};
 				MkIfExists("$dir/GL/glu.h");
 					MkDefine('GLU_CFLAGS', "-I$dir");
-					MkDefine('GLU_LIBS', "-lGLU");
+					MkDefine('GLU_LIBS', "-L$libDir -lGLU");
 					MkBreak;
 				MkEndif;
 			}
@@ -88,10 +91,7 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-		MkSaveIfTrue('${HAVE_GLU}', 'GLU_CFLAGS', 'GLU_LIBS');
-	MkElse;
-		MkSaveUndef('GLU_CFLAGS', 'GLU_LIBS');
-	MkEndif;
+	MkSaveIfTrue('${HAVE_GLU}', 'GLU_CFLAGS', 'GLU_LIBS');
 	return (0);
 }
 

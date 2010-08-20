@@ -1,8 +1,6 @@
-# $Csoft: math.pm,v 1.3 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2002-2004 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,13 +25,17 @@
 
 sub Test
 {
-	my ($ver) = @_;
+	my ($ver, $pfx) = @_;
 
-	MkDefine('MATH_C99_LIBS', '-lm');
-	MkDefine('MATH_C99_CFLAGS', '');
-	MkCompileC('HAVE_MATH_C99', '${CFLAGS} ${MATH_C99_CFLAGS}',
-	           '${MATH_C99_LIBS}',
-	    << 'EOF');
+	MkIfNE($pfx, '');
+		MkDefine('MATH_C99_CFLAGS', "-I$pfx");
+		MkDefine('MATH_C99_LIBS', "-L$pfx -lm");
+	MkElse;
+		MkDefine('MATH_C99_CFLAGS', '');
+		MkDefine('MATH_C99_LIBS', '-lm');
+	MkEndif;
+
+	MkCompileC('HAVE_MATH_C99', '${CFLAGS} ${MATH_C99_CFLAGS}', '${MATH_C99_LIBS}', << 'EOF');
 #include <math.h>
 
 int
@@ -47,12 +49,7 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	MkIf('"${HAVE_MATH_C99}" = "yes"');
-	    MkSaveMK('MATH_C99_CFLAGS', 'MATH_C99_LIBS');
-		MkSaveDefine('MATH_C99_CFLAGS', 'MATH_C99_LIBS');
-	MkElse;
-		MkSaveUndef('MATH_C99_LIBS');
-	MkEndif;
+	MkSaveIfTrue('${HAVE_MATH_C99}', 'MATH_C99_CFLAGS', 'MATH_C99_LIBS');
 	return (0);
 }
 
@@ -70,8 +67,7 @@ sub Emul
 		MkDefine('MATH_C99_CFLAGS', '');
 		MkSaveUndef('HAVE_MATH_C99');
 	}
-	MkSaveDefine('MATH_C99_LIBS', 'MATH_C99_CFLAGS');
-	MkSaveMK('MATH_C99_LIBS', 'MATH_C99_CFLAGS');
+	MkSave('MATH_C99_LIBS', 'MATH_C99_CFLAGS');
 	return (1);
 }
 

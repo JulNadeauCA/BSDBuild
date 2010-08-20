@@ -1,8 +1,6 @@
-# $Csoft: agar.pm,v 1.7 2005/09/27 00:29:42 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2007 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2007 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,24 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Test
-{
-	my ($ver) = @_;
-	
-	MkExecOutputUnique('agar-rg-config', '--version', 'AGAR_RG_VERSION');
-	MkIf('"${AGAR_RG_VERSION}" != ""');
-		MkPrint('yes, found ${AGAR_RG_VERSION}');
-		MkTestVersion('AGAR_RG_VERSION', $ver);
-
-		MkPrintN('checking whether agar-rg works...');
-		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
-		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');
-		MkExecOutput('agar-rg-config', '--cflags', 'AGAR_RG_CFLAGS');
-		MkExecOutput('agar-rg-config', '--libs', 'AGAR_RG_LIBS');
-		MkCompileC('HAVE_AGAR_RG',
-		    '${AGAR_RG_CFLAGS} ${AGAR_CFLAGS}',
-		    '${AGAR_RG_LIBS} ${AGAR_LIBS}',
-		           << 'EOF');
+my $testCode = << 'EOF';
 #include <agar/core.h>
 #include <agar/gui.h>
 #include <agar/rg.h>
@@ -55,12 +36,26 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-		MkIf('"${HAVE_AGAR_RG}" != ""');
-			MkSaveMK('AGAR_RG_CFLAGS', 'AGAR_RG_LIBS');
-			MkSaveDefine('AGAR_RG_CFLAGS', 'AGAR_RG_LIBS');
-		MkEndif;
+
+sub Test
+{
+	my ($ver, $pfx) = @_;
+	
+	MkExecOutputPfx($pfx, 'agar-rg-config', '--version', 'AGAR_RG_VERSION');
+	MkIfNE('${AGAR_RG_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'AGAR_RG_VERSION');
+		MkPrintN('checking whether Agar-RG works...');
+		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
+		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
+		MkExecOutputPfx($pfx, 'agar-rg-config', '--cflags', 'AGAR_RG_CFLAGS');
+		MkExecOutputPfx($pfx, 'agar-rg-config', '--libs', 'AGAR_RG_LIBS');
+		MkCompileC('HAVE_AGAR_RG',
+		           '${AGAR_RG_CFLAGS} ${AGAR_CFLAGS}',
+		           '${AGAR_RG_LIBS} ${AGAR_LIBS}',
+				   $testCode);
+		MkSaveIfTrue('${HAVE_AGAR_RG}', 'AGAR_RG_CFLAGS', 'AGAR_RG_LIBS');
 	MkElse;
-		MkPrint('no');
+		MkNotFound($pfx);
 		MkSaveUndef('HAVE_AGAR_RG', 'AGAR_RG_CFLAGS', 'AGAR_RG_LIBS');
 	MkEndif;
 	return (0);
@@ -79,8 +74,7 @@ sub Emul
 		MkDefine('AGAR_RG_LIBS', '-L/usr/local/lib -lag_rg');
 	}
 	MkDefine('HAVE_AGAR_RG', 'yes');
-	MkSaveDefine('HAVE_AGAR_RG', 'AGAR_RG_CFLAGS', 'AGAR_RG_LIBS');
-	MkSaveMK('AGAR_RG_CFLAGS', 'AGAR_RG_LIBS');
+	MkSave('HAVE_AGAR_RG', 'AGAR_RG_CFLAGS', 'AGAR_RG_LIBS');
 	return (1);
 }
 

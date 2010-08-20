@@ -23,26 +23,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Test
-{
-	my ($ver) = @_;
-	
-	MkExecOutput('agar-math-config', '--version', 'AGAR_MATH_VERSION');
-	MkIf('"${AGAR_MATH_VERSION}" != ""');
-		MkPrint('yes, found ${AGAR_MATH_VERSION}');
-		MkTestVersion('AGAR_MATH_VERSION', $ver);
-
-		MkPrintN('checking whether Agar-Math works...');
-		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
-		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');
-		MkExecOutput('agar-math-config', '--cflags', 'AGAR_MATH_CFLAGS');
-		MkExecOutput('agar-math-config', '--libs', 'AGAR_MATH_LIBS');
-		MkCompileC('HAVE_AGAR_MATH',
-		    '${AGAR_MATH_CFLAGS} ${AGAR_CFLAGS}',
-		    '${AGAR_MATH_LIBS} ${AGAR_LIBS}',
-		           << 'EOF');
+my $testCode = << 'EOF';
 #include <agar/core.h>
 #include <agar/math.h>
+
 int main(int argc, char *argv[]) {
 	M_Matrix *A = M_New(2,2);
 	AG_InitCore("test", 0);
@@ -52,12 +36,26 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-		MkIf('"${HAVE_AGAR_MATH}" != ""');
-			MkSaveMK('AGAR_MATH_CFLAGS', 'AGAR_MATH_LIBS');
-			MkSaveDefine('AGAR_MATH_CFLAGS', 'AGAR_MATH_LIBS');
-		MkEndif;
+
+sub Test
+{
+	my ($ver, $pfx) = @_;
+	
+	MkExecOutputPfx($pfx, 'agar-math-config', '--version', 'AGAR_MATH_VERSION');
+	MkIfNE('${AGAR_MATH_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'AGAR_MATH_VERSION');
+		MkPrintN('checking whether Agar-Math works...');
+		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
+		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
+		MkExecOutputPfx($pfx, 'agar-math-config', '--cflags', 'AGAR_MATH_CFLAGS');
+		MkExecOutputPfx($pfx, 'agar-math-config', '--libs', 'AGAR_MATH_LIBS');
+		MkCompileC('HAVE_AGAR_MATH',
+		           '${AGAR_MATH_CFLAGS} ${AGAR_CFLAGS}',
+		           '${AGAR_MATH_LIBS} ${AGAR_LIBS}',
+				   $testCode);
+		MkSaveIfTrue('${HAVE_AGAR_MATH}', 'AGAR_MATH_CFLAGS', 'AGAR_MATH_LIBS');
 	MkElse;
-		MkPrint('no');
+		MkNotFound($pfx);
 		MkSaveUndef('HAVE_AGAR_MATH', 'AGAR_MATH_CFLAGS', 'AGAR_MATH_LIBS');
 	MkEndif;
 	return (0);
@@ -87,8 +85,7 @@ sub Emul
 		MkDefine('AGAR_MATH_LIBS', '-L/usr/local/lib -lag_math');
 	}
 	MkDefine('HAVE_AGAR_MATH', 'yes');
-	MkSaveDefine('HAVE_AGAR_MATH', 'AGAR_MATH_CFLAGS', 'AGAR_MATH_LIBS');
-	MkSaveMK('AGAR_MATH_CFLAGS', 'AGAR_MATH_LIBS');
+	MkSave('HAVE_AGAR_MATH', 'AGAR_MATH_CFLAGS', 'AGAR_MATH_LIBS');
 	return (1);
 }
 

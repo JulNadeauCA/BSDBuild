@@ -25,28 +25,27 @@
 
 sub Test
 {
-	my ($ver) = @_;
+	my ($ver, $pfx) = @_;
 	
-	MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
-	MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
-	MkExecOutput('sdl-config', '--static-libs', 'SDL_LIBS');
-	MkExecOutput('sdl-config', '--libs', 'SDL_LIBS_SHORT');
+	MkExecOutputPfx($pfx, 'sdl-config', '--version', 'SDL_VERSION');
+	MkExecOutputPfx($pfx, 'sdl-config', '--cflags', 'SDL_CFLAGS');
+	MkExecOutputPfx($pfx, 'sdl-config', '--static-libs', 'SDL_LIBS');
+	MkExecOutputPfx($pfx, 'sdl-config', '--libs', 'SDL_LIBS_SHORT');
 
-	print << 'EOF';
-case "${host}" in
-*-*-darwin*)
-	SDL_LIBS="${SDL_LIBS_SHORT}"
-	;;
-*)
-	;;
-esac
-EOF
+	MkCaseIn('${host}');
+	MkCaseBegin('*-*-darwin*');
+		MkDefine('SDL_LIBS', '${SDL_LIBS_SHORT}');
+		MkCaseEnd;
+	MkEsac;
 
-	MkIf('"${SDL_VERSION}" != ""');
+	MkIfNE('${SDL_VERSION}', '');
 		MkDefine('SDL_IMAGE_CFLAGS', '$SDL_CFLAGS');
-		MkDefine('SDL_IMAGE_LIBS', '-lSDL_image');
-		MkCompileC('HAVE_SDL_IMAGE', '${SDL_IMAGE_CFLAGS}', '${SDL_IMAGE_LIBS}',
-	               << 'EOF');
+		MkIfNE($pfx, '');
+			MkDefine('SDL_IMAGE_LIBS', "-L$pfx/lib -lSDL_image");
+		MkElse;
+			MkDefine('SDL_IMAGE_LIBS', '-lSDL_image');
+		MkEndif;
+		MkCompileC('HAVE_SDL_IMAGE', '${SDL_IMAGE_CFLAGS}', '${SDL_IMAGE_LIBS}', << 'EOF');
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -62,10 +61,7 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-		MkIf('"${HAVE_SDL_IMAGE}" != "no"');
-			MkSaveDefine('SDL_IMAGE_CFLAGS', 'SDL_IMAGE_LIBS');
-			MkSaveMK	('SDL_IMAGE_CFLAGS', 'SDL_IMAGE_LIBS');
-		MkEndif;
+		MkSaveIfTrue('${HAVE_SDL_IMAGE}', 'SDL_IMAGE_CFLAGS', 'SDL_IMAGE_LIBS');
 	MkElse;
 		MkPrint('no');
 		MkSaveUndef('HAVE_SDL_IMAGE');

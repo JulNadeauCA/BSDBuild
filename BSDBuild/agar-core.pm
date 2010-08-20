@@ -23,27 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Test
-{
-	my ($ver) = @_;
-	
-	MkExecOutputUnique('agar-core-config', '--version', 'AGAR_CORE_VERSION');
-	MkIf('"${AGAR_CORE_VERSION}" != ""');
-		MkPrint('yes, found ${AGAR_CORE_VERSION}');
-		MkTestVersion('AGAR_CORE_VERSION', $ver);
-
-		MkExecOutput('agar-core-config', '--cflags', 'AGAR_CORE_CFLAGS');
-		MkExecOutput('agar-core-config', '--libs', 'AGAR_CORE_LIBS');
-		MkSaveMK('AGAR_CORE_CFLAGS', 'AGAR_CORE_LIBS');
-		MkSaveDefine('AGAR_CORE_CFLAGS', 'AGAR_CORE_LIBS');
-	MkElse;
-	    MkPrint('no');
-		MkSaveUndef('AGAR_CORE_CFLAGS', 'AGAR_CORE_LIBS');
-	MkEndif;
-
-	MkPrintN('checking whether Agar-Core works...');
-	MkCompileC('HAVE_AGAR_CORE', '${AGAR_CORE_CFLAGS}', '${AGAR_CORE_LIBS}',
-	    << 'EOF');
+my $testCode = << 'EOF';
 #include <agar/core.h>
 
 AG_ObjectClass FooClass = {
@@ -70,6 +50,25 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
+
+sub Test
+{
+	my ($ver, $pfx) = @_;
+	
+	MkExecOutputPfx($pfx, 'agar-core-config', '--version', 'AGAR_CORE_VERSION');
+	MkIfNE('${AGAR_CORE_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'AGAR_CORE_VERSION');
+		MkPrintN('checking whether Agar-Core works...');
+		MkExecOutputPfx($pfx, 'agar-core-config', '--cflags', 'AGAR_CORE_CFLAGS');
+		MkExecOutputPfx($pfx, 'agar-core-config', '--libs', 'AGAR_CORE_LIBS');
+		MkCompileC('HAVE_AGAR_CORE',
+		           '${AGAR_CORE_CFLAGS}', '${AGAR_CORE_LIBS}',
+				   $testCode);
+		MkSaveIfTrue('${HAVE_AGAR_CORE}', 'AGAR_CORE_CFLAGS', 'AGAR_CORE_LIBS');
+	MkElse;
+	    MkNotFound($pfx);
+		MkSaveUndef('AGAR_CORE_CFLAGS', 'AGAR_CORE_LIBS');
+	MkEndif;
 	return (0);
 }
 
@@ -97,8 +96,7 @@ sub Emul
 		MkDefine('AGAR_CORE_LIBS', '-L/usr/local/lib -lag_core -lpthread ');
 	}
 	MkDefine('HAVE_AGAR_CORE', 'yes');
-	MkSaveDefine('HAVE_AGAR_CORE', 'AGAR_CORE_CFLAGS', 'AGAR_CORE_LIBS');
-	MkSaveMK('AGAR_CORE_CFLAGS', 'AGAR_CORE_LIBS');
+	MkSave('HAVE_AGAR_CORE', 'AGAR_CORE_CFLAGS', 'AGAR_CORE_LIBS');
 	return (1);
 }
 

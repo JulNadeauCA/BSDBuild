@@ -1,8 +1,6 @@
-# $Csoft: gettext.pm,v 1.6 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2003-2007 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2003-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,16 +23,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-my @prefixes = (
+my @autoPrefixDirs = (
 	'/usr',
 	'/usr/local',
 	'/opt',
 	'/opt/local',
 );
-
-sub Test
-{
-	my $test = << "EOF";
+my $testCode = << "EOF";
 #include <libintl.h>
 int main(int argc, char *argv[])
 {
@@ -46,43 +41,54 @@ int main(int argc, char *argv[])
 	return (0);
 }
 EOF
+
+sub Test
+{
+	my ($ver, $pfx) = @_;
+
 	MkDefine('GETTEXT_CFLAGS', '');
 	MkDefine('GETTEXT_LIBS', '');
 
-	MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}', $test);
-	MkIf('"${HAVE_GETTEXT}" = "no"');
+	MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}', $testCode);
+	MkIfFalse('${HAVE_GETTEXT}');
 		MkPrintN('checking whether gettext requires -lintl...');
-		foreach my $pfx (@prefixes) {
-			MkIf("-e $pfx/include/libintl.h");
+		MkIfNE($pfx, '');
+			MkIfExists("$pfx/include/libintl.h");
 			    MkDefine('GETTEXT_CFLAGS', "-I$pfx/include");
 			    MkDefine('GETTEXT_LIBS', "-L$pfx/lib -lintl");
 			MkEndif;
-		}
-		MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}',
-		    $test);
-		MkIf('"${HAVE_GETTEXT}" = "yes"');
-			MkSaveDefine('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
-			MkSaveMK('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
 		MkElse;
-			MkPrintN('checking whether -lintl requires -liconv...');
-			foreach my $pfx (@prefixes) {
-				MkIf("-e $pfx/include/iconv.h");
-				    MkDefine('GETTEXT_CFLAGS',
-					    "\${GETTEXT_CFLAGS} -I$pfx/include");
-				    MkDefine('GETTEXT_LIBS',
-					    "\${GETTEXT_LIBS} -L$pfx/lib -liconv");
+			foreach my $dir ($pfx, @autoPrefixDirs) {
+				MkIfExists("$dir/include/libintl.h");
+				    MkDefine('GETTEXT_CFLAGS', "-I$dir/include");
+				    MkDefine('GETTEXT_LIBS', "-L$dir/lib -lintl");
 				MkEndif;
 			}
-			MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}',
-			    $test);
-			MkIf('"${HAVE_GETTEXT}" != ""');
-				MkSaveDefine('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
-				MkSaveMK('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
+		MkEndif;
+
+		MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}', $testCode);
+		MkIfTrue('${HAVE_GETTEXT}');
+			MkSave('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
+		MkElse;
+			MkPrintN('checking whether -lintl requires -liconv...');
+			MkIfNE($pfx, '');
+				MkIfExists("$pfx/include/iconv.h");
+				    MkDefine('GETTEXT_CFLAGS', "\${GETTEXT_CFLAGS} -I$pfx/include");
+				    MkDefine('GETTEXT_LIBS', "\${GETTEXT_LIBS} -L$pfx/lib -liconv");
+				MkEndif;
+			MkElse;
+				foreach my $dir ($pfx, @autoPrefixDirs) {
+					MkIfExists("$dir/include/iconv.h");
+					    MkDefine('GETTEXT_CFLAGS', "\${GETTEXT_CFLAGS} -I$dir/include");
+					    MkDefine('GETTEXT_LIBS', "\${GETTEXT_LIBS} -L$dir/lib -liconv");
+					MkEndif;
+				}
 			MkEndif;
+			MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}', $testCode);
+			MkSaveIfTrue('${HAVE_GETTEXT}', 'GETTEXT_CFLAGS', 'GETTEXT_LIBS');
 		MkEndif;
 	MkElse;
-			MkSaveDefine('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
-			MkSaveMK('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
+		MkSaveUndef('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
 	MkEndif;
 }
 

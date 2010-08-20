@@ -25,14 +25,13 @@
 
 use BSDBuild::Core;
 
-sub Test
-{
-	my ($ver) = @_;
-	my $testCode = << 'EOF';
+my $testCode = << 'EOF';
 #include <stdio.h>
 #include <SDL.h>
+
 int main(int argc, char *argv[]) {
 	SDL_Surface *su;
+
 	if (SDL_Init(SDL_INIT_TIMER|SDL_INIT_NOPARACHUTE) != 0) {
 		return (1);
 	}
@@ -43,62 +42,50 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
-print << 'EOF';
-case "${host}" in
-*-*-darwin*)
-EOF
-	MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
-	MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
-	MkExecOutput('sdl-config', '--libs', 'SDL_LIBS');
-print << 'EOF';
-	;;
-*-*-freebsd*)
-EOF
-	# The FreeBSD packages installs `sdl11-config'.
-	MkExecOutput('sdl11-config', '--version', 'SDL_VERSION');
-	MkIf('"${SDL_VERSION}" != ""');
-		MkExecOutput('sdl11-config', '--cflags', 'SDL_CFLAGS');
-		MkExecOutput('sdl11-config', '--libs', 'SDL_LIBS');
+sub Test
+{
+	my ($ver, $pfx) = @_;
+
+	MkIfNE($pfx, '');
+		MkExecOutputPfx($pfx, 'sdl-config', '--version', 'SDL_VERSION');
+		MkExecOutputPfx($pfx, 'sdl-config', '--cflags', 'SDL_CFLAGS');
+		MkExecOutputPfx($pfx, 'sdl-config', '--libs', 'SDL_LIBS');
 	MkElse;
-		MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
-		MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
-		MkExecOutput('sdl-config', '--libs', 'SDL_LIBS');
+		MkCaseIn('${host}');
+		MkCaseBegin('*-*-freebsd*');
+			MkExecOutput('sdl11-config', '--version', 'SDL_VERSION');
+			MkIfNE('${SDL_VERSION}', '');
+				MkExecOutput('sdl11-config', '--cflags', 'SDL_CFLAGS');
+				MkExecOutput('sdl11-config', '--libs', 'SDL_LIBS');
+			MkElse;
+				MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
+				MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
+				MkExecOutput('sdl-config', '--libs', 'SDL_LIBS');
+			MkEndif;
+			MkCaseEnd;
+		MkCaseBegin('*');
+			MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
+			MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
+			MkExecOutput('sdl-config', '--libs', 'SDL_LIBS');
+			MkCaseEnd;
+		MkEsac;
 	MkEndif;
-print << 'EOF';
-	;;
-*)
-EOF
-	MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
-	MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
-	MkExecOutput('sdl-config', '--libs', 'SDL_LIBS');
-print << 'EOF';
-	;;
-esac
-EOF
 
-	MkIf('"${SDL_VERSION}" != ""');
-		MkPrint('yes, found ${SDL_VERSION}');
-		MkTestVersion('SDL_VERSION', $ver);
-
+	MkIfNE('${SDL_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'SDL_VERSION');
 		MkPrintN('checking whether SDL works...');
 		MkCompileC('HAVE_SDL', '${SDL_CFLAGS}', '${SDL_LIBS}', $testCode);
-		MkIf('"${HAVE_SDL}" != "no"');
-			MkSaveMK('SDL_CFLAGS', 'SDL_LIBS');
-			MkSaveDefine('SDL_CFLAGS', 'SDL_LIBS');
+		MkIfTrue('${HAVE_SDL}');
+			MkSave('SDL_CFLAGS', 'SDL_LIBS');
 		MkElse;
 			MkPrintN('checking whether SDL works (with X11 libs)...');
 			MkAppend('SDL_LIBS', '-L/usr/X11R6/lib -lX11 -lXext -lXrandr '.
 			                     '-lXrender');
 			MkCompileC('HAVE_SDL', '${SDL_CFLAGS}', '${SDL_LIBS}', $testCode);
-			MkIf('"${HAVE_SDL}" != "no"');
-				MkSaveMK('SDL_CFLAGS', 'SDL_LIBS');
-				MkSaveDefine('SDL_CFLAGS', 'SDL_LIBS');
-			MkElse;
-				MkSaveUndef('SDL_CFLAGS', 'SDL_LIBS');
-			MkEndif;
+			MkSaveIfTrue('${HAVE_SDL}', 'SDL_CFLAGS', 'SDL_LIBS');
 		MkEndif;
 	MkElse;
-		MkPrint('no');
+		MkNotFound($pfx);
 		MkSaveUndef('HAVE_SDL', 'SDL_CFLAGS', 'SDL_LIBS');
 	MkEndif;
 	return (0);
@@ -143,9 +130,8 @@ sub Emul
 		                       '-D_GNU_SOURCE=1 -D_REENTRANT');
 		MkDefine('SDL_LIBS', '-lSDL -lpthread');
 	}
-	MkDefine('HAVE_SDL', 'yes');
-	MkSaveDefine('HAVE_SDL', 'SDL_CFLAGS', 'SDL_LIBS');
-	MkSaveMK('SDL_CFLAGS', 'SDL_LIBS');
+	MkSetTrue('HAVE_SDL');
+	MkSave('HAVE_SDL', 'SDL_CFLAGS', 'SDL_LIBS');
 	return (1);
 }
 

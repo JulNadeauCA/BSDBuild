@@ -1,8 +1,6 @@
-# $Csoft: glib.pm,v 1.9 2003/10/01 09:24:19 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002-2007 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2002-2007 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,33 +25,33 @@
 
 sub Test
 {
-	my ($ver) = @_;
+	my ($ver, $pfx) = @_;
 	
-	MkExecOutput('glib-config', '--version', 'GLIB_VERSION');
-	MkExecOutput('glib-config', '--cflags', 'GLIB_CFLAGS');
-	MkExecOutput('glib-config', '--libs', 'GLIB_LIBS');
+	MkExecOutputPfx($pfx, 'glib-config', '--version', 'GLIB_VERSION');
+	MkExecOutputPfx($pfx, 'glib-config', '--cflags', 'GLIB_CFLAGS');
+	MkExecOutputPfx($pfx, 'glib-config', '--libs', 'GLIB_LIBS');
+	
+	MkCaseIn('${host}');
+	MkCaseBegin('*-*-freebsd*');
+		MkExecOutputPfx($pfx, 'glib12-config', '--version', 'glib12_version');
+		MkExecOutputPfx($pfx, 'glib12-config', '--cflags', 'glib12_cflags');
+		MkExecOutputPfx($pfx, 'glib12-config', '--libs', 'glib12_libs');
+		MkCaseEnd;
+	MkEsac;
 
-	# Hack for FreeBSD port
-	MkExecOutput('glib12-config', '--version', 'glib12_version');
-	MkExecOutput('glib12-config', '--cflags', 'glib12_cflags');
-	MkExecOutput('glib12-config', '--libs', 'glib12_libs');
-
-	MkIf('"${GLIB_VERSION}" != ""');
-		MkPrint('yes, found ${GLIB_VERSION}');
-		MkTestVersion('GLIB_VERSION', $ver);
-
-		MkSaveDefine('HAVE_GLIB', 'GLIB_CFLAGS', 'GLIB_LIBS');
-		MkSaveMK	('HAVE_GLIB', 'GLIB_CFLAGS', 'GLIB_LIBS');
+	MkIfNE('${GLIB_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'GLIB_VERSION');
+		MkSave('HAVE_GLIB', 'GLIB_CFLAGS', 'GLIB_LIBS');
 	MkElse;
-		MkIf('"${glib12_version}" != ""');
-			MkDefine	('GLIB_CFLAGS', '${glib12_cflags}');
-			MkDefine	('GLIB_LIBS', '${glib12_libs}');
-			MkSaveDefine('HAVE_GLIB', 'GLIB_CFLAGS', 'GLIB_LIBS');
-			MkSaveMK	('HAVE_GLIB', 'GLIB_CFLAGS', 'GLIB_LIBS');
+		MkIfNE('${glib12_version}', '');
+			MkFoundVer($pfx, $ver, 'glib12_version');
+			MkDefine('GLIB_CFLAGS', '${glib12_cflags}');
+			MkDefine('GLIB_LIBS', '${glib12_libs}');
+			MkSave('HAVE_GLIB', 'GLIB_CFLAGS', 'GLIB_LIBS');
 			MkPrint('yes');
 		MkElse;
-			MkSaveUndef	('HAVE_GLIB');
-			MkPrint('no');
+			MkNotFound($pfx);
+			MkSaveUndef('HAVE_GLIB');
 		MkEndif;
 	MkEndif;
 	return (0);

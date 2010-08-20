@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2009 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2009-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,10 +25,7 @@
 
 use BSDBuild::Core;
 
-sub Test
-{
-	my ($ver) = @_;
-	my $testCode = << 'EOF';
+my $testCode = << 'EOF';
 #include <stdio.h>
 #include <png.h>
 
@@ -42,25 +39,25 @@ int main(int argc, char *argv[])
 	return (0);
 }
 EOF
+
+sub Test
+{
+	my ($ver, $pfx) = @_;
 	
-	MkExecOutput('libpng-config', '--version', 'PNG_VERSION');
-	MkExecOutput('libpng-config', '--cflags', 'PNG_CFLAGS');
-	MkExecOutput('libpng-config', '--L_opts', 'PNG_LOPTS');
-	MkExecOutput('libpng-config', '--libs', 'PNG_LIBS');
+	MkExecOutputPfx($pfx, 'libpng-config', '--version', 'PNG_VERSION');
+	MkExecOutputPfx($pfx, 'libpng-config', '--cflags', 'PNG_CFLAGS');
+	MkExecOutputPfx($pfx, 'libpng-config', '--L_opts', 'PNG_LOPTS');
+	MkExecOutputPfx($pfx, 'libpng-config', '--libs', 'PNG_LIBS');
 	MkDefine('PNG_LIBS', '${PNG_LOPTS} ${PNG_LIBS}');
-
-	MkIf('"${PNG_VERSION}" != ""');
-		MkPrint('yes, found ${PNG_VERSION}');
-		MkTestVersion('PNG_VERSION', $ver);
-
+	MkIfNE('${PNG_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'PNG_VERSION');
 		MkPrintN('checking whether libpng works...');
-		MkCompileC('HAVE_PNG', '${PNG_CFLAGS}', '${PNG_LIBS}', $testCode);
-		MkIf('"${HAVE_PNG}" != "no"');
-			MkSaveMK('PNG_CFLAGS', 'PNG_LIBS');
-			MkSaveDefine('PNG_CFLAGS', 'PNG_LIBS');
-		MkEndif;
+		MkCompileC('HAVE_PNG',
+		           '${PNG_CFLAGS}', '${PNG_LIBS}',
+				   $testCode);
+		MkSaveIfTrue('${HAVE_PNG}', 'PNG_CFLAGS', 'PNG_LIBS');
 	MkElse;
-		MkPrint('no');
+		MkNotFound($pfx);
 		MkSaveUndef('HAVE_PNG', 'PNG_CFLAGS', 'PNG_LIBS');
 	MkEndif;
 	return (0);
@@ -109,8 +106,7 @@ sub Emul
 		MkDefine('PNG_LIBS', '-lpng12 -lpthread');
 	}
 	MkDefine('HAVE_PNG', 'yes');
-	MkSaveDefine('HAVE_PNG', 'PNG_CFLAGS', 'PNG_LIBS');
-	MkSaveMK('PNG_CFLAGS', 'PNG_LIBS');
+	MkSave('HAVE_PNG', 'PNG_CFLAGS', 'PNG_LIBS');
 	return (1);
 }
 

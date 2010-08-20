@@ -23,11 +23,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Test
-{
-	my ($ver) = @_;
-	my $code = << 'EOF';
+my $testCode = << 'EOF';
 #include <windows.h>
+
 int main(int argc, char *argv[]) {
 	HWND hwnd;
 	HDC hdc;
@@ -43,7 +41,12 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-	MkCompileC('HAVE_WGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', $code);
+
+sub Test
+{
+	my ($ver) = @_;
+
+	MkCompileC('HAVE_WGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', $testCode);
 	return (0);
 }
 

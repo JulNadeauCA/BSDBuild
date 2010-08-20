@@ -1,8 +1,6 @@
-# $Csoft: sdl.pm,v 1.17 2004/03/10 16:33:36 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2002-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,15 +23,28 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+my $testCode = << 'EOF';
+#include <db.h>
+
+int main(int argc, char *argv[]) {
+	DB *db;
+	db_create(&db, NULL, 0);
+	return (0);
+}
+EOF
+
 sub Test
 {
-	my ($ver) = @_;
+	my ($ver, $pfx) = @_;
 
-	print << 'EOF';
+	print << "EOF";
 DB4_CFLAGS=""
 DB4_LIBS=""
 DB4_VERSION=""
-for path in /usr /usr/local /opt; do
+
+for path in $pfx /usr /usr/local /opt; do
+EOF
+	print << 'EOF';
 	if [ -e "${path}/include/db4.7" ]; then
 		DB4_CFLAGS="-I${path}/include/db4.7 -I${path}/include"
 		DB4_VERSION="4.7"
@@ -127,25 +138,14 @@ for path in /usr /usr/local /opt; do
 	esac
 done
 EOF
-	MkIf('"${DB4_VERSION}" != ""');
-		MkPrint('yes, found ${DB4_VERSION}');
-		MkTestVersion('DB4_VERSION', $ver);
 
+	MkIfNE('${DB4_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'DB4_VERSION');
 		MkPrintN('checking whether DB4 works...');
-		MkCompileC('HAVE_DB4', '${DB4_CFLAGS}', '${DB4_LIBS}', << 'EOF');
-#include <db.h>
-int main(int argc, char *argv[]) {
-	DB *db;
-	db_create(&db, NULL, 0);
-	return (0);
-}
-EOF
-		MkIf('"${HAVE_DB4}" != ""');
-			MkSaveMK('DB4_CFLAGS', 'DB4_LIBS');
-			MkSaveDefine('DB4_CFLAGS', 'DB4_LIBS');
-		MkEndif;
+		MkCompileC('HAVE_DB4', '${DB4_CFLAGS}', '${DB4_LIBS}', $testCode);
+		MkSaveIfTrue('${HAVE_DB4}', 'DB4_CFLAGS', 'DB4_LIBS');
 	MkElse;
-		MkPrint('no');
+		MkNotFound($pfx);
 		MkSaveUndef('HAVE_DB4');
 	MkEndif;
 	return (0);

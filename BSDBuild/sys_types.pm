@@ -1,8 +1,6 @@
-# $Csoft: opengl.pm,v 1.5 2004/03/10 16:33:36 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2005 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2005 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +33,7 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-	MkIf('"${_MK_HAVE_SYS_TYPES_H}" = "yes"');
+	MkIfTrue('${_MK_HAVE_SYS_TYPES_H}');
 		MkPrintN('checking for 64-bit types...');
 		MkCompileC('HAVE_64BIT', '', '', << 'EOF');
 #include <sys/types.h>

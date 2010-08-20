@@ -23,17 +23,15 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-my @include_dirs = (
+my @autoIncludeDirs = (
 	'/usr/include/pthreads',
 	'/usr/local/include',
 	'/usr/local/include/pthreads',
 );
-
-my @lib_dirs = (
+my @autoLibDirs = (
 	'/usr/local/lib',
 );
-
-my @lib_files = (
+my @autoLibFiles = (
 	'pthread',
 	'pthreadGC1',
 	'pthreadGC1d',
@@ -45,7 +43,7 @@ my @lib_files = (
 	'pthreadGCE2d',
 );
 
-my $test_std = << 'EOF';
+my $testCodeStd = << 'EOF';
 #include <pthread.h>
 #include <signal.h>
 
@@ -66,7 +64,7 @@ int main(int argc, char *argv[])
 }
 EOF
 
-my $test_xopen = << 'EOF';
+my $testCodeXopen = << 'EOF';
 #include <pthread.h>
 #include <signal.h>
 
@@ -80,24 +78,24 @@ int main(int argc, char *argv[])
 }
 EOF
 
-sub SearchIncludes ($)
+sub SearchIncludes ($$)
 {
-	my $def = shift;
+	my ($pfx, $def) = @_;
 
-	foreach my $dir (@include_dirs) {
-		MkIf qq{-f "$dir/pthread.h"};
+	foreach my $dir ("$pfx/lib", @autoIncludeDirs) {
+		MkIfExists("$dir/pthread.h");
 			MkDefine('PTHREADS_CFLAGS', "-I$dir");
 		MkEndif;
 	}
 }
 
-sub SearchLibs ($)
+sub SearchLibs ($$)
 {
-	my $def = shift;
+	my ($pfx, $def) = @_;
 
-	foreach my $dir (@lib_dirs) {
-		foreach my $file (@lib_files) {
-			MkIf qq{-f "$dir/lib$file.a"};
+	foreach my $dir ("$pfx/lib", @autoLibDirs) {
+		foreach my $file (@autoLibFiles) {
+			MkIfExists("$dir/lib$file.a");
 				MkDefine($def, "-L$dir -l$file");
 			MkEndif;
 		}
@@ -106,14 +104,19 @@ sub SearchLibs ($)
 
 sub TestPthreadsStd
 {
-	MkDefine('PTHREADS_CFLAGS', '');
-	MkDefine('PTHREADS_LIBS', "-lpthread");
+	my ($ver, $pfx) = @_;
+
+	MkIfNE($pfx, '');
+		MkDefine('PTHREADS_CFLAGS', "-I$pfx/include");
+		MkDefine('PTHREADS_LIBS', "-L$pfx/lib -lpthread");
+	MkElse;
+		MkDefine('PTHREADS_CFLAGS', '');
+		MkDefine('PTHREADS_LIBS', "-lpthread");
+	MkEndif;
 
 	# Try the standard -lpthread.
-	MkCompileC('HAVE_PTHREADS',
-	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}',
-	    $test_std);
-	MkIf('"${HAVE_PTHREADS}" = "yes"');
+	MkCompileC('HAVE_PTHREADS', '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', $testCodeStd);
+	MkIfTrue('${HAVE_PTHREADS}');
 		MkDefine('CFLAGS', '${CFLAGS} ${PTHREADS_CFLAGS}');
 		MkSaveMK('CFLAGS', 'PTHREADS_CFLAGS', 'PTHREADS_LIBS');
 		MkSaveDefine('PTHREADS_CFLAGS', 'PTHREADS_LIBS');
@@ -121,9 +124,7 @@ sub TestPthreadsStd
 		# Fallback to -pthread.
 		MkPrintN('checking for -pthread...');
 		MkDefine('PTHREADS_LIBS', '-pthread');
-		MkCompileC('HAVE_PTHREADS',
-		    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}',
-			$test_std);
+		MkCompileC('HAVE_PTHREADS', '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', $testCodeStd);
 		MkIf('"${HAVE_PTHREADS}" = "yes"');
 			MkDefine('CFLAGS', '${CFLAGS} ${PTHREADS_CFLAGS}');
 			MkSaveMK('CFLAGS', 'PTHREADS_CFLAGS','PTHREADS_LIBS');
@@ -133,11 +134,11 @@ sub TestPthreadsStd
 			MkDefine('PTHREADS_CFLAGS', '');
 			MkDefine('PTHREADS_LIBS', '');
 			MkPrintN('checking for -pthread (common paths)...');
-			SearchIncludes('PTHREADS_CFLAGS');
-			SearchLibs('PTHREADS_LIBS');
+			SearchIncludes($pfx, 'PTHREADS_CFLAGS');
+			SearchLibs($pfx, 'PTHREADS_LIBS');
 			MkCompileC('HAVE_PTHREADS',
 			    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}',
-				$test_std);
+				$testCodeStd);
 			MkIf('"${HAVE_PTHREADS}" = "yes"');
 				MkDefine('CFLAGS', '${CFLAGS} ${PTHREADS_CFLAGS}');
 				MkSaveMK('CFLAGS', 'PTHREADS_CFLAGS', 'PTHREADS_LIBS');
@@ -168,7 +169,7 @@ int main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	MkIf('"${HAVE_PTHREAD_MUTEX_RECURSIVE}" = "yes"');
+	MkIfTrue('${HAVE_PTHREAD_MUTEX_RECURSIVE}');
 		MkSaveDefine('HAVE_PTHREAD_MUTEX_RECURSIVE');
 	MkElse;
 		MkSaveUndef('HAVE_PTHREAD_MUTEX_RECURSIVE');
@@ -192,7 +193,7 @@ int main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	MkIf('"${HAVE_PTHREAD_MUTEX_RECURSIVE_NP}" = "yes"');
+	MkIfTrue('${HAVE_PTHREAD_MUTEX_RECURSIVE_NP}');
 		MkSaveDefine('HAVE_PTHREAD_MUTEX_RECURSIVE_NP');
 	MkElse;
 		MkSaveUndef('HAVE_PTHREAD_MUTEX_RECURSIVE_NP');
@@ -202,25 +203,28 @@ EOF
 
 sub TestPthreadsXOpenExt
 {
+	my ($ver, $pfx) = @_;
+
 	MkPrintN('checking for the X/Open Threads Extension...');
 
-	print << 'EOF';
-case "${host}" in
-*-*-freebsd*)
-	PTHREADS_XOPEN_CFLAGS=""
-	;;
-*)
-	PTHREADS_XOPEN_CFLAGS="-U_XOPEN_SOURCE -D_XOPEN_SOURCE=600"
-	;;
-esac
-EOF
+	MkCaseIn('${host}');
+	MkCaseBegin('*-*-freebsd*');
+		MkDefine('PTHREADS_XOPEN_CFLAGS', '');
+		MkCaseEnd;
+	MkCaseBegin('*');
+		MkDefine('PTHREADS_XOPEN_CFLAGS', '-U_XOPEN_SOURCE -D_XOPEN_SOURCE=600');
+		MkCaseEnd;
+	MkEsac;
 
 	# Try the standard -lpthread
-	MkDefine('PTHREADS_XOPEN_LIBS', "-lpthread");
-	MkCompileC('HAVE_PTHREADS_XOPEN',
-	    '${PTHREADS_XOPEN_CFLAGS}', '${PTHREADS_XOPEN_LIBS}',
-		$test_xopen);
-	MkIf('"${HAVE_PTHREADS_XOPEN}" = "yes"');
+	MkIfNE($pfx, '');
+		MkDefine('PTHREADS_XOPEN_LIBS', "-L$pfx/lib -lpthread");
+	MkElse;
+		MkDefine('PTHREADS_XOPEN_LIBS', "-lpthread");
+	MkEndif;
+
+	MkCompileC('HAVE_PTHREADS_XOPEN', '${PTHREADS_XOPEN_CFLAGS}', '${PTHREADS_XOPEN_LIBS}', $testCodeXopen);
+	MkIfTrue('${HAVE_PTHREADS_XOPEN}');
 		MkSaveMK('PTHREADS_XOPEN_CFLAGS', 'PTHREADS_XOPEN_LIBS');
 		MkSaveDefine('HAVE_PTHREADS_XOPEN');
 		MkSaveDefine('PTHREADS_XOPEN_CFLAGS', 'PTHREADS_XOPEN_LIBS');
@@ -228,12 +232,12 @@ EOF
 		# Fallback to scanning libraries and includes.
 		MkDefine('PTHREADS_XOPEN_LIBS', '');
 		MkPrintN('checking for the X/Open Threads Extension (common paths)...');
-		SearchLibs('PTHREADS_XOPEN_LIBS');
-		SearchIncludes('PTHREADS_XOPEN_CFLAGS');
+		SearchLibs($pfx, 'PTHREADS_XOPEN_LIBS');
+		SearchIncludes($pfx, 'PTHREADS_XOPEN_CFLAGS');
 		MkCompileC('HAVE_PTHREADS_XOPEN',
 		    '${PTHREADS_XOPEN_CFLAGS}', '${PTHREADS_XOPEN_LIBS}',
-			$test_xopen);
-		MkIf('"${HAVE_PTHREADS_XOPEN}" = "yes"');
+			$testCodeXopen);
+		MkIfTrue('${HAVE_PTHREADS_XOPEN}');
 			MkSaveMK('PTHREADS_XOPEN_CFLAGS', 'PTHREADS_XOPEN_LIBS');
 			MkSaveDefine('HAVE_PTHREADS_XOPEN');
 			MkSaveDefine('PTHREADS_XOPEN_CFLAGS', 'PTHREADS_XOPEN_LIBS');
@@ -246,8 +250,8 @@ EOF
 
 sub TestPthreads
 {
-	TestPthreadsStd();
-	TestPthreadsXOpenExt();
+	TestPthreadsStd(@_);
+	TestPthreadsXOpenExt(@_);
 	TestPthreadMutexRecursive();
 	return (0);
 }

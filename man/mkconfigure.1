@@ -51,17 +51,15 @@ code fragments that will be copied verbatim to the configure script.
 .Nm
 directives are case-insensitive.
 The following directives are recognized:
-.Bl -tag -width "CONFIG_SCRIPT(name[,args]) "
+.Bl -tag -width "REQUIRE(package[,version[,prefix]]) "
 .It Ev PACKAGE(name)
 Short name for the software package.
 .It Ev VERSION(string)
 Specify software version.
 .It Ev RELEASE(string)
 Specify release name.
-.It Ev CHECK(package[,version])
-Invoke one of the standard BSDBuild tests (see
-.Pa http://bsdbuild.hypertriton.com/tests.html
-for a list).
+.It Ev CHECK(package[,version[,prefix]])
+Invoke one of the standard BSDBuild tests (see the BSDBuild website for a list).
 Most tests will set the
 .Dv HAVE_FOO
 (where
@@ -73,14 +71,27 @@ C/C++ libraries also typically set
 and
 .Dv FOO_LIBS .
 .Pp
-If the
+If the optional
 .Fa version
 argument is specified, the version number is verified as well and
 .Dv MK_VERSION_OK
 is defined to
 .Sq yes
 if the versions are compatible.
-.It Ev REQUIRE(package[,version])
+A version argument of 0 indicates that no version checking should be done.
+.Pp
+If the optional
+.Fa prefix
+argument is defined, the test will look for the package only under the
+specified prefix, and the test will fail if it cannot be found under it.
+This is typically set to
+.Sq ${prefix_foo},
+which returns the value in
+.Sq --enable-foo=VALUE
+or
+.Sq --with-foo=VALUE
+options.
+.It Ev REQUIRE(package[,version[,prefix]])
 Same as the
 .Ev CHECK
 directive, except that the configure script will fail if the package is

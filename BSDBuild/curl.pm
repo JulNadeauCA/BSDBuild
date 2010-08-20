@@ -25,20 +25,15 @@
 
 sub Test
 {
-	my ($ver) = @_;
+	my ($ver, $pfx) = @_;
 	
-	MkExecOutput('curl-config', '--version', 'CURL_VERSION');
+	MkExecOutputPfx($pfx, 'curl-config', '--version', 'CURL_VERSION');
 
-	MkIf('"${CURL_VERSION}" != ""');
-		MkPrint('yes, found ${CURL_VERSION}');
-		MkTestVersion('CURL_VERSION', $ver);
-
-		MkExecOutput('curl-config', '--cflags', 'CURL_CFLAGS');
-		MkExecOutput('curl-config', '--libs', 'CURL_LIBS');
-        MkSaveMK('CURL_CFLAGS', 'CURL_LIBS');
-        MkSaveDefine('CURL_CFLAGS', 'CURL_LIBS');
-
+	MkIfNE('${CURL_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'CURL_VERSION');
 		MkPrintN('checking whether libcurl works...');
+		MkExecOutputPfx($pfx, 'curl-config', '--cflags', 'CURL_CFLAGS');
+		MkExecOutputPfx($pfx, 'curl-config', '--libs', 'CURL_LIBS');
 		MkCompileC('HAVE_CURL', '${CURL_CFLAGS}', '${CURL_LIBS}', << 'EOF');
 #include <curl/curl.h>
 
@@ -52,8 +47,9 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
+		MkSaveIfTrue('${HAVE_CURL}', 'CURL_CFLAGS', 'CURL_LIBS');
 	MkElse;
-		MkPrint('no');
+		MkNotFound($pfx);
 	    MkSaveUndef('HAVE_CURL', 'CURL_CFLAGS', 'CURL_LIBS');
 	MkEndif;
 	return (0);

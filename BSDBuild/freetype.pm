@@ -1,8 +1,6 @@
-# $Csoft: freetype.pm,v 1.12 2004/03/10 16:33:36 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002-2007 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2002-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,26 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Test
-{
-	my ($ver) = @_;
-
-	MkExecOutput('freetype-config', '--version', 'FREETYPE_VERSION');
-	MkExecOutput('freetype-config', '--cflags', 'FREETYPE_CFLAGS');
-	MkExecOutput('freetype-config', '--libs', 'FREETYPE_LIBS');
-
-	# XXX IRIX package hack.
-	MkIf('-d /usr/freeware/include');
-		MkAppend('FREETYPE_CFLAGS', '-I/usr/freeware/include');
-	MkEndif;
-
-	MkIf('"${FREETYPE_VERSION}" != ""');
-		MkPrint('yes, found ${FREETYPE_VERSION}');
-		MkTestVersion('FREETYPE_VERSION', $ver);
-
-		MkPrintN('checking whether FreeType works...');
-		MkCompileC('HAVE_FREETYPE', '${FREETYPE_CFLAGS}', '${FREETYPE_LIBS}',
-		           << 'EOF');
+my $testCode = << 'EOF';
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_OUTLINE_H
@@ -58,15 +37,33 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-		MkIf('"${HAVE_FREETYPE}" = "yes"');
-	    	MkSaveDefine('FREETYPE_CFLAGS', 'FREETYPE_LIBS');
-			MkSaveMK	('FREETYPE_CFLAGS', 'FREETYPE_LIBS');
-		MkElse;
-	    	MkSaveUndef	('FREETYPE_CFLAGS', 'FREETYPE_LIBS');
+
+sub Test
+{
+	my ($ver, $pfx) = @_;
+
+	MkExecOutputPfx($pfx, 'freetype-config', '--version', 'FREETYPE_VERSION');
+	MkExecOutputPfx($pfx, 'freetype-config', '--cflags', 'FREETYPE_CFLAGS');
+	MkExecOutputPfx($pfx, 'freetype-config', '--libs', 'FREETYPE_LIBS');
+	
+	MkCaseIn('${host}');
+	MkCaseBegin('*-*-irix*');
+		MkIfExists('/usr/freeware/include');
+			MkAppend('FREETYPE_CFLAGS', '-I/usr/freeware/include');
 		MkEndif;
+		MkCaseEnd;
+	MkEsac;
+
+	MkIfNE('${FREETYPE_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'FREETYPE_VERSION');
+		MkPrintN('checking whether FreeType works...');
+		MkCompileC('HAVE_FREETYPE',
+		           '${FREETYPE_CFLAGS}',
+				   '${FREETYPE_LIBS}', $testCode);
+		MkSaveIfTrue('${HAVE_FREETYPE}', 'FREETYPE_CFLAGS', 'FREETYPE_LIBS');
 	MkElse;
+		MkNotFound($pfx);
 	    MkSaveUndef('HAVE_FREETYPE');
-		MkPrint('no');
 	MkEndif;
 	return (0);
 }
@@ -112,8 +109,7 @@ sub Emul
 		                          '-lfreetype -lz');
 	}
 	MkDefine('HAVE_FREETYPE', 'yes');
-	MkSaveDefine('HAVE_FREETYPE', 'FREETYPE_CFLAGS', 'FREETYPE_LIBS');
-	MkSaveMK('FREETYPE_CFLAGS', 'FREETYPE_LIBS');
+	MkSave('HAVE_FREETYPE', 'FREETYPE_CFLAGS', 'FREETYPE_LIBS');
 	return (1);
 }
 

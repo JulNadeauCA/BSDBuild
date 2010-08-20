@@ -23,48 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-my @include_dirs = (
-	'/usr/include',
-	'/usr/local/include',
-	'/usr/Cg/include',
-	'/usr/local/Cg/include',
-	'/usr/X11R6/include',
-	'/usr/X11R6/Cg/include',
-);
-
-sub Test
-{
-	my ($ver) = @_;
-
-	MkDefine('CG_CFLAGS', '');
-	MkDefine('CG_LIBS', '');
-
-	foreach my $dir (@include_dirs) {
-		MkIf qq{-d "$dir/Cg"};
-			MkDefine('CG_CFLAGS', "\${CG_CFLAGS} -I$dir");
-		MkEndif;
-	}
-
-	print << 'EOF';
-case "${host}" in
-*-*-darwin*)
-	CG_LIBS="-F/System/Library/Frameworks -framework Cg"
-	;;
-x86_64-*-linux*)
-	CG_LIBS="-L/usr/X11R6/lib64 -L/usr/lib64 -lCgGL -lCg -lstdc++"
-	;;
-*-*-linux*)
-	CG_LIBS="-L/usr/X11R6/lib -lCgGL -lCg -lstdc++"
-	;;
-*)
-	CG_LIBS="-lCgGL -lCg -lstdc++"
-	;;
-esac
-EOF
-	
-	MkCompileC('HAVE_CG', '${CG_CFLAGS} ${OPENGL_CFLAGS} ${PTHREADS_CFLAGS}',
-	                      '${CG_LIBS} ${OPENGL_LIBS} ${PTHREADS_LIBS}',
-						  << 'EOF');
+my $testCode = << 'EOF';
 #include <Cg/cg.h>
 #include <Cg/cgGL.h>
 
@@ -77,14 +36,52 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
+my @autoIncludeDirs = (
+	'/usr/include',
+	'/usr/local/include',
+	'/usr/Cg/include',
+	'/usr/local/Cg/include',
+	'/usr/X11R6/include',
+	'/usr/X11R6/Cg/include',
+);
 
-	MkIf '"${HAVE_CG}" = "yes"';
-		MkSaveMK('CG_CFLAGS', 'CG_LIBS');
-		MkSaveDefine('CG_CFLAGS', 'CG_LIBS');
+sub Test
+{
+	my ($ver, $pfx) = @_;
+
+	MkDefine('CG_CFLAGS', '');
+	MkDefine('CG_LIBS', '');
+
+	MkIfNE($pfx, '');
+		MkDefine('CG_CFLAGS', "-I$pfx/include");
+		MkDefine('CG_LIBS', "-L$pfx/lib -lCgGL -lCg -lstdc++");
 	MkElse;
-		MkDefine('CG_CFLAGS', '');
-		MkDefine('CG_LIBS', '');
+		foreach my $dir (@autoIncludeDirs) {
+			MkIfExists("$dir/Cg");
+				MkDefine('CG_CFLAGS', "\${CG_CFLAGS} -I$dir");
+			MkEndif;
+		}
+		MkCaseIn('${host}');
+		MkCaseBegin('*-*-darwin*');
+			MkDefine('CG_LIBS', "-F/System/Library/Frameworks -framework Cg");
+			MkCaseEnd();
+		MkCaseBegin('x86_64-*-linux*');
+			MkDefine('CG_LIBS', "-L/usr/X11R6/lib64 -L/usr/lib64 -lCgGL -lCg -lstdc++");
+			MkCaseEnd();
+		MkCaseBegin('*-*-linux*');
+			MkDefine('CG_LIBS', "-L/usr/X11R6/lib -lCgGL -lCg -lstdc++");
+			MkCaseEnd();
+		MkCaseBegin('*');
+			MkDefine('CG_LIBS', "-lCgGL -lCg -lstdc++");
+			MkCaseEnd();
+		MkEsac;
 	MkEndif;
+
+	MkCompileC('HAVE_CG',
+	           '${CG_CFLAGS} ${OPENGL_CFLAGS} ${PTHREADS_CFLAGS}',
+	           '${CG_LIBS} ${OPENGL_LIBS} ${PTHREADS_LIBS}',
+	           $testCode);
+	MkSaveIfTrue('${HAVE_CG}', 'CG_CFLAGS', 'CG_LIBS');
 	return (0);
 }
 

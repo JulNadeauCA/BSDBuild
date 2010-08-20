@@ -23,22 +23,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Test
-{
-	my ($ver) = @_;
-	
-	MkExecOutput('mgid-config', '--version', 'MGID_VERSION');
-	MkExecOutput('mgid-config', '--cflags', 'MGID_CFLAGS');
-	MkExecOutput('mgid-config', '--libs', 'MGID_LIBS');
-
-	MkIf('"${MGID_VERSION}" != ""');
-		MkPrint('yes, found ${MGID_VERSION}');
-		MkTestVersion('MGID_VERSION', $ver);
-
-		MkPrintN('checking whether libmgid works...');
-		MkCompileC('HAVE_MGID', '${MGID_CFLAGS}', '${MGID_LIBS}',
-	               << 'EOF');
+my $testCode = << 'EOF';
 #include <mgid/mgid.h>
+
 int main(int argc, char *argv[]) {
 	int rv;
 	rv = MGI_Init(0);
@@ -46,12 +33,23 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-		MkIf('"${HAVE_MGID}" != "no"');
-			MkSaveDefine('MGID_CFLAGS', 'MGID_LIBS');
-			MkSaveMK	('MGID_CFLAGS', 'MGID_LIBS');
-		MkEndif;
+
+sub Test
+{
+	my ($ver, $pfx) = @_;
+	
+	MkExecOutputPfx($pfx, 'mgid-config', '--version', 'MGID_VERSION');
+	MkExecOutputPfx($pfx, 'mgid-config', '--cflags', 'MGID_CFLAGS');
+	MkExecOutputPfx($pfx, 'mgid-config', '--libs', 'MGID_LIBS');
+	MkIfNE('${MGID_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'MGID_VERSION');
+		MkPrintN('checking whether libmgid works...');
+		MkCompileC('HAVE_MGID',
+		           '${MGID_CFLAGS}', '${MGID_LIBS}',
+				   $testCode);
+		MkSaveIfTrue('${HAVE_MGID}', 'MGID_CFLAGS', 'MGID_LIBS');
 	MkElse;
-		MkPrint('no');
+		MkNotFound($pfx);
 		MkSaveUndef('HAVE_MGID');
 	MkEndif;
 	return (0);

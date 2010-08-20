@@ -1,7 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2008 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2008 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -24,7 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-my $test = << 'EOF';
+my $testCode = << 'EOF';
 #define _XOPEN_SOURCE 600
 #include <stdlib.h>
 int
@@ -41,9 +40,9 @@ EOF
 
 sub Test
 {
-	MkIf '"${HAVE_LONG_DOUBLE}" = "yes"';
-		MkIf '"${HAVE_CYGWIN}" = "no"';
-			TryCompile('_MK_HAVE_STRTOLD', $test);
+	MkIfTrue('${HAVE_LONG_DOUBLE}');
+		MkIfFalse('${HAVE_CYGWIN}');
+			TryCompile('_MK_HAVE_STRTOLD', $testCode);
 		MkElse;
 			MkDefine('_MK_HAVE_STRTOLD', 'no');
 			MkSaveUndef('_MK_HAVE_STRTOLD');

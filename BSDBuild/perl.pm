@@ -1,8 +1,6 @@
-# $Csoft: sdl.pm,v 1.17 2004/03/10 16:33:36 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2006 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2006-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,12 +25,12 @@
 
 sub Test
 {
-	my ($ver) = @_;
+	my ($ver, $pfx) = @_;
 	
-	MkExecOutput('perl', '-MExtUtils::Embed -e ccopts', 'PERL_CFLAGS');
-	MkExecOutput('perl', '-MExtUtils::Embed -e ldopts', 'PERL_LIBS');
+	MkExecOutputPfx($pfx, 'perl', '-MExtUtils::Embed -e ccopts', 'PERL_CFLAGS');
+	MkExecOutputPfx($pfx, 'perl', '-MExtUtils::Embed -e ldopts', 'PERL_LIBS');
 	
-	MkIf('"${PERL_LIBS}" != ""');
+	MkIfNE('${PERL_LIBS}', '');
 		MkPrint('yes');
 		MkPrintN('checking whether libperl works...');
 		MkCompileC('HAVE_PERL', '${PERL_CFLAGS}', '${PERL_LIBS}', << 'EOF');
@@ -61,10 +59,7 @@ main(int argc, char **argv, char **env)
 	return (0);
 }
 EOF
-		MkIf('"${HAVE_PERL}" != ""');
-			MkSaveMK('PERL_CFLAGS', 'PERL_LIBS');
-			MkSaveDefine('PERL_CFLAGS', 'PERL_LIBS');
-		MkEndif;
+		MkSaveIfTrue('${HAVE_PERL}', 'PERL_CFLAGS', 'PERL_LIBS');
 	MkElse;
 		MkPrint('no');
 		MkSaveUndef('HAVE_PERL');

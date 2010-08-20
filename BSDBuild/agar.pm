@@ -1,7 +1,6 @@
-# $Csoft: agar.pm,v 1.7 2005/09/27 00:29:42 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2009 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2009-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -24,26 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Test
-{
-	my ($ver) = @_;
-	
-	MkExecOutputUnique('agar-config', '--version', 'AGAR_VERSION');
-	MkIf('"${AGAR_VERSION}" != ""');
-		MkPrint('yes, found ${AGAR_VERSION}');
-		MkTestVersion('AGAR_VERSION', $ver);
-
-		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
-		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');
-		MkSaveMK('AGAR_CFLAGS', 'AGAR_LIBS');
-		MkSaveDefine('AGAR_CFLAGS', 'AGAR_LIBS');
-	MkElse;
-	    MkPrint('no');
-		MkSaveUndef('AGAR_CFLAGS', 'AGAR_LIBS');
-	MkEndif;
-
-	MkPrintN('checking whether Agar works...');
-	MkCompileC('HAVE_AGAR', '${AGAR_CFLAGS}', '${AGAR_LIBS}', << 'EOF');
+my $testCode = << 'EOF';
 #include <agar/core.h>
 #include <agar/gui.h>
 
@@ -57,6 +37,25 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
+
+sub Test
+{
+	my ($ver) = @_;
+	
+	MkExecOutputUnique('agar-config', '--version', 'AGAR_VERSION');
+	MkIfNE('${AGAR_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'AGAR_VERSION');
+		MkPrintN('checking whether Agar works...');
+		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
+		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');
+		MkCompileC('HAVE_AGAR',
+		           '${AGAR_CFLAGS}', '${AGAR_LIBS}',
+				   $testCode);
+		MkSaveIfTrue('${HAVE_AGAR}', 'AGAR_CFLAGS', 'AGAR_LIBS');
+	MkElse;
+	    MkNotFound($pfx);
+		MkSaveUndef('AGAR_CFLAGS', 'AGAR_LIBS');
+	MkEndif;
 	return (0);
 }
 
@@ -87,8 +86,7 @@ sub Emul
 							  '-lGL -lm');
 	}
 	MkDefine('HAVE_AGAR', 'yes');
-	MkSaveDefine('HAVE_AGAR', 'AGAR_CFLAGS', 'AGAR_LIBS');
-	MkSaveMK('AGAR_CFLAGS', 'AGAR_LIBS');
+	MkSave('HAVE_AGAR', 'AGAR_CFLAGS', 'AGAR_LIBS');
 	return (1);
 }
 

@@ -25,13 +25,21 @@
 
 sub Test
 {
+	my ($ver, $pfx) = @_;
+
 	MkDefine('DSO_CFLAGS', '');
 	MkDefine('DSO_LIBS', '');
 
 	BeginTestHeaders();
-	DetectHeaderC('HAVE_DL_H',		'<dl.h>');
-	
-	TryCompileFlagsC 'HAVE_SHL_LOAD', '-ldld', << 'EOF';
+	DetectHeaderC('HAVE_DL_H', '<dl.h>');
+
+	MkIfNE($pfx, '');
+		MkDefine('DSO_LIBS', "-L$pfx -ldld");
+	MkElse;
+		MkDefine('DSO_LIBS', '-ldld');
+	MkEndif;
+
+	TryCompileFlagsC 'HAVE_SHL_LOAD', '${DSO_LIBS}', << 'EOF';
 #ifdef HAVE_DL_H
 #include <dl.h>
 #endif
@@ -49,15 +57,8 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	MkIf('"${HAVE_SHL_LOAD}" = "yes"');
-		MkDefine('DSO_CFLAGS', '');
-		MkDefine('DSO_LIBS', '-ldld');
-	MkEndif;
-
+	MkSaveIfTrue('${HAVE_SHL_LOAD}', 'DSO_CFLAGS', 'DSO_LIBS');
 	EndTestHeaders();
-	
-	MkSaveMK('DSO_CFLAGS', 'DSO_LIBS');
-	MkSaveDefine('DSO_CFLAGS', 'DSO_LIBS');
 }
 
 sub Emul
@@ -68,8 +69,7 @@ sub Emul
 	MkSaveUndef('HAVE_SHL_LOAD');
 	MkDefine('DSO_CFLAGS', '');
 	MkDefine('DSO_LIBS', '');
-	MkSaveMK('DSO_CFLAGS', 'DSO_LIBS');
-	MkSaveDefine('DSO_CFLAGS', 'DSO_LIBS');
+	MkSave('DSO_CFLAGS', 'DSO_LIBS');
 	return (1);
 }
 

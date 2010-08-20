@@ -1,8 +1,6 @@
-# $Csoft: arc4random.pm,v 1.1 2004/01/01 00:33:41 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2003, 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2003-2004 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without

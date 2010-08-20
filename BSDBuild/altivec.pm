@@ -61,17 +61,15 @@ EOF
 	MkCompileC('HAVE_ALTIVEC', '${CFLAGS} ${ALTIVEC_CFLAGS}', '',
 	    '#include <altivec.h>'."\n".
 		$testCode);
-	MkIf('"${HAVE_ALTIVEC}" = "yes"');
+	MkIfTrue('${HAVE_ALTIVEC}');
 	    MkSaveMK('ALTIVEC_CFLAGS');
 		MkDefine('HAVE_ALTIVEC_H');
 		MkSaveDefine('ALTIVEC_CFLAGS', 'HAVE_ALTIVEC_H');
 	MkElse;
 		MkPrintN('checking for AltiVec (without <altivec.h>)...');
-		MkCompileC('HAVE_ALTIVEC', '${CFLAGS} ${ALTIVEC_CFLAGS}', '',
-		    $testCode);
-		MkIf('"${HAVE_ALTIVEC}" = "yes"');
-	   		MkSaveMK('ALTIVEC_CFLAGS');
-			MkSaveDefine('ALTIVEC_CFLAGS');
+		MkCompileC('HAVE_ALTIVEC', '${CFLAGS} ${ALTIVEC_CFLAGS}', '', $testCode);
+		MkIfTrue('${HAVE_ALTIVEC}');
+	   		MkSave('ALTIVEC_CFLAGS');
 		MkElse;
 			MkSaveUndef('ALTIVEC_CFLAGS');
 			MkDefine('ALTIVEC_CFLAGS', '');
@@ -96,8 +94,7 @@ sub Emul
 		MkDefine('ALTIVEC_CFLAGS', '');
 	}
 	MkSaveUndef('HAVE_ALTIVEC_H');
-	MkSaveMK('ALTIVEC_CFLAGS');
-	MkSaveDefine('ALTIVEC_CFLAGS');
+	MkSave('ALTIVEC_CFLAGS');
 	return (1);
 }
 

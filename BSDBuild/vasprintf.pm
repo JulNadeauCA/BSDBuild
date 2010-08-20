@@ -1,8 +1,6 @@
-# $Csoft: vasprintf.pm,v 1.3 2003/10/01 09:24:19 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002-2009 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2002-2009 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without

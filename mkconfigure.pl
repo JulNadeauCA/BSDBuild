@@ -295,7 +295,7 @@ sub mdefine
 {
 	my ($def, $val) = @_;
 	
-	if ($val =~ /^"(.+)"$/) { $val = $1; }
+	if ($val =~ /^"(.*)"$/) { $val = $1; }
 	MkDefine($def, $val);
 	MkSaveMK($def);
 }
@@ -305,7 +305,7 @@ sub hdefine
 {
 	my ($def, $val) = @_;
 
-	if ($val =~ /^"(.+)"$/) { $val = $1; }
+	if ($val =~ /^"(.*)"$/) { $val = $1; }
 	MkDefine($def, $val);
 	MkSaveDefine($def);
 }
@@ -840,6 +840,7 @@ do
 	    case "$arg" in
 	        *=*)
 	            eval "enable_${option}='$optarg'"
+	            eval "prefix_${option}='$optarg'"
 		    ;;
 		*)
 	            eval "enable_${option}=yes"
@@ -857,6 +858,7 @@ do
 	    case "$arg" in
 	        *=*)
 	            eval "with_${option}='$optarg'"
+	            eval "prefix_${option}='$optarg'"
 		    ;;
 		*)
 	            eval "with_${option}=yes"

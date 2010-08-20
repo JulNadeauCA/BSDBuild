@@ -24,36 +24,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-my @include_dirs = (
-	'/usr/include',
-	'/usr/local/include'
-);
-
-my @lib_dirs = (
-	'/usr/lib',
-	'/usr/local/lib'
-);
-
-sub Test
-{
-	my ($ver) = @_;
-
-	MkDefine('ALSA_CFLAGS', '');
-	MkDefine('ALSA_LIBS', '');
-
-	foreach my $dir (@include_dirs) {
-		MkIf qq{-d "$dir/alsa"};
-			MkDefine('ALSA_CFLAGS', "\${ALSA_CFLAGS} -I$dir");
-		MkEndif;
-	}
-	foreach my $dir (@lib_dirs) {
-		MkIf qq{-d "$dir"};
-			MkDefine('ALSA_LIBS', "\${ALSA_LIBS} -L$dir -lasound");
-		MkEndif;
-	}
-	MkPrint('yes');
-	
-	my $code = << 'EOF';
+my $testCode = << 'EOF';
 #include <alsa/asoundlib.h>
 int main(int argc, char *argv[]) {
 	int rv;
@@ -62,13 +33,50 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-	MkPrintN('checking whether ALSA works...');
-	MkCompileC('HAVE_ALSA', '${ALSA_CFLAGS}', '${ALSA_LIBS}', $code);
-	MkIf '"${HAVE_ALSA}" = "yes"';
-		MkSaveMK('ALSA_CFLAGS', 'ALSA_LIBS');
-		MkSaveDefine('ALSA_CFLAGS', 'ALSA_LIBS');
+my @autoIncludeDirs = (
+	'/usr/include',
+	'/usr/local/include'
+);
+
+my @autoLibDirs = (
+	'/usr/lib',
+	'/usr/local/lib'
+);
+
+sub Test
+{
+	my ($ver, $pfx) = @_;
+
+	MkDefine('ALSA_CFLAGS', '');
+	MkDefine('ALSA_LIBS', '');
+
+	MkIfNE($pfx, '');
+		MkIfExists("$pfx/include/alsa");
+			MkDefine('ALSA_CFLAGS', "-I$pfx/include");
+		MkEndif;
+		MkIfExists("$pfx/lib");
+			MkDefine('ALSA_LIBS', "-L$pfx/lib -lasound");
+		MkEndif;
 	MkElse;
-		MkSaveUndef('ALSA_CFLAGS', 'ALSA_LIBS');
+		foreach my $dir (@autoIncludeDirs) {
+			MkIfExists("$dir/alsa");
+				MkDefine('ALSA_CFLAGS', "\${ALSA_CFLAGS} -I$dir");
+			MkEndif;
+		}
+		foreach my $dir (@autoLibDirs) {
+			MkIfExists($dir);
+				MkDefine('ALSA_LIBS', "\${ALSA_LIBS} -L$dir -lasound");
+			MkEndif;
+		}
+	MkEndif;
+
+	MkIfNE('${ALSA_LIBS}', '');
+		MkPrint('yes');
+		MkPrintN('checking whether ALSA works...');
+		MkCompileC('HAVE_ALSA', '${ALSA_CFLAGS}', '${ALSA_LIBS}', $testCode);
+		MkSaveIfTrue('${HAVE_ALSA}', 'ALSA_CFLAGS', 'ALSA_LIBS');
+	MkElse;
+		MkPrint('no');
 	MkEndif;
 	return (0);
 }
@@ -97,8 +105,7 @@ sub Emul
 	MkDefine('ALSA_CFLAGS', '-I/usr/local/include');
 	MkDefine('ALSA_LIBS', '-lasound');
 	MkDefine('HAVE_ALSA', 'yes');
-	MkSaveDefine('HAVE_ALSA', 'ALSA_CFLAGS', 'ALSA_LIBS');
-	MkSaveMK('ALSA_CFLAGS', 'ALSA_LIBS');
+	MkSave('HAVE_ALSA', 'ALSA_CFLAGS', 'ALSA_LIBS');
 	return (1);
 }
 

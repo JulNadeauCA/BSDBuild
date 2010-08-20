@@ -1,7 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2007 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2007-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -24,24 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Test
-{
-	my ($ver) = @_;
-	
-	MkExecOutputUnique('freesg-config', '--version', 'FREESG_VERSION');
-	MkIf('"${FREESG_VERSION}" != ""');
-		MkPrint('yes, found ${FREESG_VERSION}');
-		MkTestVersion('FREESG_VERSION', $ver);
-
-		MkPrintN('checking whether FreeSG works...');
-		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
-		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');
-		MkExecOutput('freesg-config', '--cflags', 'FREESG_CFLAGS');
-		MkExecOutput('freesg-config', '--libs', 'FREESG_LIBS');
-		MkCompileC('HAVE_FREESG',
-		    '${FREESG_CFLAGS} ${AGAR_CFLAGS}',
-		    '${FREESG_LIBS} ${AGAR_LIBS}',
-		           << 'EOF');
+my $testCode = << 'EOF';
 #include <agar/core.h>
 #include <agar/gui.h>
 #include <freesg/sg.h>
@@ -52,12 +34,26 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-		MkIf('"${HAVE_FREESG}" != ""');
-			MkSaveMK('FREESG_CFLAGS', 'FREESG_LIBS');
-			MkSaveDefine('FREESG_CFLAGS', 'FREESG_LIBS');
-		MkEndif;
+
+sub Test
+{
+	my ($ver, $pfx) = @_;
+	
+	MkExecOutputPfx($pfx, 'freesg-config', '--version', 'FREESG_VERSION');
+	MkIfNE('${FREESG_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'FREESG_VERSION');
+		MkPrintN('checking whether FreeSG works...');
+		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
+		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
+		MkExecOutputPfx($pfx, 'freesg-config', '--cflags', 'FREESG_CFLAGS');
+		MkExecOutputPfx($pfx, 'freesg-config', '--libs', 'FREESG_LIBS');
+		MkCompileC('HAVE_FREESG',
+		           '${FREESG_CFLAGS} ${AGAR_CFLAGS}',
+		           '${FREESG_LIBS} ${AGAR_LIBS}',
+		           $testCode);
+		MkSaveIfTrue('${HAVE_FREESG}', 'FREESG_CFLAGS', 'FREESG_LIBS');
 	MkElse;
-		MkPrint('no');
+		MkNotFound($pfx);
 		MkSaveUndef('HAVE_FREESG', 'FREESG_CFLAGS', 'FREESG_LIBS');
 	MkEndif;
 	return (0);
@@ -87,8 +83,7 @@ sub Emul
 		MkDefine('FREESG_LIBS', '-L/usr/local/lib -lfreesg_pe -lfreesg -lGLU');
 	}
 	MkDefine('HAVE_FREESG', 'yes');
-	MkSaveDefine('HAVE_FREESG', 'FREESG_CFLAGS', 'FREESG_LIBS');
-	MkSaveMK('FREESG_CFLAGS', 'FREESG_LIBS');
+	MkSave('HAVE_FREESG', 'FREESG_CFLAGS', 'FREESG_LIBS');
 	return (1);
 }
 

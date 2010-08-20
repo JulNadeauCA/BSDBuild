@@ -25,24 +25,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Test
-{
-	my ($ver) = @_;
-	
-	MkExecOutputUnique('agar-vg-config', '--version', 'AGAR_VG_VERSION');
-	MkIf('"${AGAR_VG_VERSION}" != ""');
-		MkPrint('yes, found ${AGAR_VG_VERSION}');
-		MkTestVersion('AGAR_VG_VERSION', $ver);
-
-		MkPrintN('checking whether agar-vg works...');
-		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
-		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');
-		MkExecOutput('agar-vg-config', '--cflags', 'AGAR_VG_CFLAGS');
-		MkExecOutput('agar-vg-config', '--libs', 'AGAR_VG_LIBS');
-		MkCompileC('HAVE_AGAR_VG',
-		    '${AGAR_VG_CFLAGS} ${AGAR_CFLAGS}',
-		    '${AGAR_VG_LIBS} ${AGAR_LIBS}',
-		           << 'EOF');
+my $testCode = << 'EOF';
 #include <agar/core.h>
 #include <agar/vg.h>
 
@@ -52,12 +35,26 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-		MkIf('"${HAVE_AGAR_VG}" != ""');
-			MkSaveMK('AGAR_VG_CFLAGS', 'AGAR_VG_LIBS');
-			MkSaveDefine('AGAR_VG_CFLAGS', 'AGAR_VG_LIBS');
-		MkEndif;
+
+sub Test
+{
+	my ($ver, $pfx) = @_;
+	
+	MkExecOutputPfx($pfx, 'agar-vg-config', '--version', 'AGAR_VG_VERSION');
+	MkIfNE('${AGAR_VG_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'AGAR_VG_VERSION');
+		MkPrintN('checking whether agar-vg works...');
+		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
+		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
+		MkExecOutputPfx($pfx, 'agar-vg-config', '--cflags', 'AGAR_VG_CFLAGS');
+		MkExecOutputPfx($pfx, 'agar-vg-config', '--libs', 'AGAR_VG_LIBS');
+		MkCompileC('HAVE_AGAR_VG',
+		           '${AGAR_VG_CFLAGS} ${AGAR_CFLAGS}',
+		           '${AGAR_VG_LIBS} ${AGAR_LIBS}',
+				   $testCode);
+		MkSaveIfTrue('${HAVE_AGAR_VG}', 'AGAR_VG_CFLAGS', 'AGAR_VG_LIBS');
 	MkElse;
-		MkPrint('no');
+		MkNotFound($pfx);
 		MkSaveUndef('HAVE_AGAR_VG', 'AGAR_VG_CFLAGS', 'AGAR_VG_LIBS');
 	MkEndif;
 	return (0);
@@ -76,8 +73,7 @@ sub Emul
 		MkDefine('AGAR_VG_LIBS', '-L/usr/local/lib -lag_vg');
 	}
 	MkDefine('HAVE_AGAR_VG', 'yes');
-	MkSaveDefine('HAVE_AGAR_VG', 'AGAR_VG_CFLAGS', 'AGAR_VG_LIBS');
-	MkSaveMK('AGAR_VG_CFLAGS', 'AGAR_VG_LIBS');
+	MkSave('HAVE_AGAR_VG', 'AGAR_VG_CFLAGS', 'AGAR_VG_LIBS');
 	return (1);
 }
 

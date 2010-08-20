@@ -1,8 +1,6 @@
-# $Csoft: glib.pm,v 1.9 2003/10/01 09:24:19 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2007 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2007-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,21 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Test
-{
-	my ($ver) = @_;
-	
-	MkExecOutput('pkg-config', 'libidn --version', 'LIBIDN_VERSION');
-	MkExecOutput('pkg-config', 'libidn --cflags', 'LIBIDN_CFLAGS');
-	MkExecOutput('pkg-config', 'libidn --libs', 'LIBIDN_LIBS');
-
-	MkIf('"${LIBIDN_VERSION}" != ""');
-		MkPrint('yes, found ${LIBIDN_VERSION}');
-		MkTestVersion('LIBIDN_VERSION', $ver);
-
-		MkPrintN('checking whether libidn works...');
-		MkCompileC('HAVE_LIBIDN', '${LIBIDN_CFLAGS}', '${LIBIDN_LIBS}',
-		           << 'EOF');
+my $testCode = << 'EOF';
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -49,18 +33,28 @@ sub Test
 int main(int argc, char *argv[]) {
 	char *buf = "foo.com", *p;
 	int rv;
-
 	rv = idna_to_unicode_lzlz(buf, &p, 0);
 	return ((rv == IDNA_SUCCESS) ? 0 : 1);
 }
 EOF
-		MkIf('"${HAVE_LIBIDN}" != ""');
-			MkSaveMK('LIBIDN_CFLAGS', 'LIBIDN_LIBS');
-			MkSaveDefine('LIBIDN_CFLAGS', 'LIBIDN_LIBS');
-		MkEndif;
+
+sub Test
+{
+	my ($ver, $pfx) = @_;
+	
+	MkExecPkgConfig($pfx, 'libidn', '--version', 'LIBIDN_VERSION');
+	MkExecPkgConfig($pfx, 'libidn', '--cflags', 'LIBIDN_CFLAGS');
+	MkExecPkgConfig($pfx, 'libidn', '--libs', 'LIBIDN_LIBS');
+	MkIfNE('${LIBIDN_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'LIBIDN_VERSION');
+		MkPrintN('checking whether libidn works...');
+		MkCompileC('HAVE_LIBIDN',
+		           '${LIBIDN_CFLAGS}', '${LIBIDN_LIBS}',
+				   $testCode);
+		MkSaveIfTrue('${HAVE_LIBIDN}', 'LIBIDN_CFLAGS', 'LIBIDN_LIBS');
 	MkElse;
-		MkPrint('no');
-		MkSaveUndef('HAVE_LIBIDN');
+		MkNotFound($pfx);
+		MkSaveUndef('HAVE_LIBIDN', 'LIBIDN_CFLAGS', 'LIBIDN_LIBS');
 	MkEndif;
 	return (0);
 }

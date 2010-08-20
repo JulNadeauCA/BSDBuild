@@ -1,8 +1,6 @@
-# $Csoft: jpeg.pm,v 1.4 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2002-2004 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-my @dirs = (
+my @autoPrefixDirs = (
 	'/usr/local',
 	'/usr/X11R6',
 	'/usr',
@@ -35,17 +33,25 @@ my @dirs = (
 
 sub Test
 {
-	my ($ver) = @_;
+	my ($ver, $pfx) = @_;
 
 	MkDefine('JPEG_CFLAGS', '');
-	foreach my $dir (@dirs) {
-		MkIf("-f \"$dir/include/jpeglib.h\"");
-			MkDefine('JPEG_CFLAGS', "-I$dir/include");
-			MkDefine('JPEG_LIBS', "-L$dir/lib -ljpeg");
+	MkIfNE($pfx, '');
+		MkIfExists("$pfx/include/jpeglib.h");
+			MkDefine('JPEG_CFLAGS', "-I$pfx/include");
+			MkDefine('JPEG_LIBS', "-L$pfx/lib -ljpeg");
 		MkEndif;
-	}
-	MkIf('"${JPEG_CFLAGS}" != ""');
-		MkPrint('ok');
+	MkElse;
+		foreach my $dir (@autoPrefixDirs) {
+			MkIfExists("$dir/include/jpeglib.h");
+				MkDefine('JPEG_CFLAGS', "-I$dir/include");
+				MkDefine('JPEG_LIBS', "-L$dir/lib -ljpeg");
+			MkEndif;
+		}
+	MkEndif;
+
+	MkIfNE('${JPEG_LIBS}', '');
+		MkPrint('yes');
 		MkPrintN('checking whether libjpeg works...');
 		MkCompileC('HAVE_JPEG', '${JPEG_CFLAGS}', '${JPEG_LIBS}', << 'EOF');
 #ifdef _WIN32
@@ -76,14 +82,9 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-		MkIf('"${HAVE_JPEG}" != ""');
-			MkSaveMK('JPEG_CFLAGS', 'JPEG_LIBS');
-			MkSaveDefine('JPEG_CFLAGS', 'JPEG_LIBS');
-		MkElse;
-			MkSaveUndef('JPEG_CFLAGS', 'JPEG_LIBS');
-		MkEndif;
+		MkSaveIfTrue('${HAVE_JPEG}', 'JPEG_CFLAGS', 'JPEG_LIBS');
 	MkElse;
-		MkSaveUndef('HAVE_JPEG');
+		MkSaveUndef('HAVE_JPEG', 'JPEG_CFLAGS', 'JPEG_LIBS');
 		MkPrint('no');
 	MkEndif;
 	return (0);
@@ -115,7 +116,7 @@ sub Emul
 	MkDefine('JPEG_LIBS', '');
 
 	MkSaveUndef('HAVE_JPEG');
-	MkSaveMK('JPEG_CFLAGS', 'JPEG_LIBS');
+	MkSave('JPEG_CFLAGS', 'JPEG_LIBS');
 	return (1);
 }
 

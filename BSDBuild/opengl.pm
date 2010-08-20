@@ -23,7 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-my @include_dirs = (
+my @autoIncludeDirs = (
 	'/usr/include/X11',
 	'/usr/include/X11R6',
 	'/usr/local/X11/include',
@@ -35,18 +35,15 @@ my @include_dirs = (
 	'/usr/local/include',
 );
 
-my @lib_dirs = (
+my @autoLibDirs = (
 	'/usr/local/X11/lib',
 	'/usr/local/X11R6/lib',
 	'/usr/X11/lib',
 	'/usr/X11R6/lib',
 	'/usr/local/lib',
 );
-
-sub Test
-{
-	my ($ver) = @_;
-	my $code = << 'EOF';
+	
+my $testCode = << 'EOF';
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
 #else
@@ -59,60 +56,70 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
+sub Test
+{
+	my ($ver, $pfx) = @_;
+
 	MkDefine('GL_CFLAGS', '');
 	MkDefine('GL_LIBS', '');
+	MkDefine('GL_FOUND', '');
 
-	foreach my $dir (@include_dirs) {
-		MkIf qq{-d "$dir/GL"};
-			MkDefine('GL_CFLAGS', "-I$dir");
+	MkIfNE($pfx, '');
+		MkIfExists("$pfx/include");
+			MkDefine('GL_CFLAGS', "-I$pfx/include");
+			MkDefine('GL_LIBS', "\${GL_LIBS} -L$pfx/lib");
+			MkSetTrue('GL_FOUND');
 		MkEndif;
-	}
-	foreach my $dir (@lib_dirs) {
-		MkIf qq{-d "$dir"};
-			MkDefine('GL_LIBS', "\${GL_LIBS} -L$dir");
-		MkEndif;
-	}
-	MkPrint('yes');
-	
-	print << 'EOF';
-case "$host" in
-powerpc-*-darwin*)
-	OPENGL_CFLAGS=""
-	OPENGL_LIBS="-framework OpenGL"
-	;;
-*-*-cygwin* | *-*-mingw32*)
-EOF
-	MkPrintN('checking whether -lopengl32 works...');
-	MkCompileC('HAVE_LIBOPENGL32', '${OPENGL_CFLAGS}', '-lopengl32', $code);
-	MkIf '"${HAVE_LIBOPENGL32}" = "yes"';
-		MkDefine('OPENGL_LIBS', '${GL_LIBS} -lopengl32');
 	MkElse;
-		MkDefine('OPENGL_LIBS', '${GL_LIBS} -lGL');
+		foreach my $dir (@autoIncludeDirs) {
+			MkIfExists("$dir/GL");
+				MkDefine('GL_CFLAGS', "-I$dir");
+				MkSetTrue('GL_FOUND');
+			MkEndif;
+		}
+		foreach my $dir (@autoLibDirs) {
+			MkIfExists($dir);
+				MkDefine('GL_LIBS', "\${GL_LIBS} -L$dir");
+				MkSetTrue('GL_FOUND');
+			MkEndif;
+		}
 	MkEndif;
-print << 'EOF';
-	;;
-*)
-	OPENGL_CFLAGS="${GL_CFLAGS}"
-	OPENGL_LIBS="${GL_LIBS} -lGL"
-	;;
-esac
-EOF
 
-	MkPrintN('checking whether OpenGL works...');
-	MkCompileC('HAVE_OPENGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', $code);
-	MkIf '"${HAVE_OPENGL}" = "yes"';
-		MkSaveMK('OPENGL_CFLAGS', 'OPENGL_LIBS');
-		MkSaveDefine('OPENGL_CFLAGS', 'OPENGL_LIBS');
-	MkElse;
-		MkPrintN('checking whether -lGL requires -lm...');
-		MkDefine('OPENGL_LIBS', '${OPENGL_LIBS} -lm');
-		MkCompileC('HAVE_OPENGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', $code);
-		MkIf '"${HAVE_OPENGL}" = "yes"';
-			MkSaveMK('OPENGL_CFLAGS', 'OPENGL_LIBS');
-			MkSaveDefine('OPENGL_CFLAGS', 'OPENGL_LIBS');
+	MkIfTrue('${GL_FOUND}');
+		MkPrint('yes');
+
+		MkCaseIn('${host}');
+		MkCaseBegin('*-*-darwin*');
+			MkDefine('OPENGL_CFLAGS', '');
+			MkDefine('OPENGL_LIBS', '-framework OpenGL');
+			MkCaseEnd;
+		MkCaseBegin('*-*-cygwin* | *-*-mingw32*');
+			MkPrintN('checking whether -lopengl32 works...');
+			MkCompileC('HAVE_LIBOPENGL32', '${OPENGL_CFLAGS}', '-lopengl32', $testCode);
+			MkIfTrue('${HAVE_LIBOPENGL32}');
+				MkDefine('OPENGL_LIBS', '${GL_LIBS} -lopengl32');
+			MkElse;
+				MkDefine('OPENGL_LIBS', '${GL_LIBS} -lGL');
+			MkEndif;
+			MkCaseEnd;
+		MkCaseBegin('*');
+			MkDefine('OPENGL_CFLAGS', '${GL_CFLAGS}');
+			MkDefine('OPENGL_LIBS', '${GL_LIBS} -lGL');
+			MkCaseEnd;
+		MkEsac;
+
+		MkPrintN('checking whether OpenGL works...');
+		MkCompileC('HAVE_OPENGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', $testCode);
+		MkIfTrue('${HAVE_OPENGL}');
+			MkSave('OPENGL_CFLAGS', 'OPENGL_LIBS');
 		MkElse;
-			MkSaveUndef('OPENGL_CFLAGS', 'OPENGL_LIBS');
+			MkPrintN('checking whether -lGL requires -lm...');
+			MkDefine('OPENGL_LIBS', '${OPENGL_LIBS} -lm');
+			MkCompileC('HAVE_OPENGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', $testCode);
+			MkSaveIfTrue('${HAVE_OPENGL}', 'OPENGL_CFLAGS', 'OPENGL_LIBS');
 		MkEndif;
+	MkElse;
+		MkPrint('no');
 	MkEndif;
 	return (0);
 }
@@ -152,9 +159,8 @@ sub Emul
 		MkDefine('OPENGL_CFLAGS', '-I/usr/X11R6/include');
 		MkDefine('OPENGL_LIBS', '-lGL');
 	}
-	MkDefine('HAVE_OPENGL', 'yes');
-	MkSaveDefine('HAVE_OPENGL', 'OPENGL_CFLAGS', 'OPENGL_LIBS');
-	MkSaveMK('OPENGL_CFLAGS', 'OPENGL_LIBS');
+	MkSetTrue('HAVE_OPENGL');
+	MkSave('HAVE_OPENGL', 'OPENGL_CFLAGS', 'OPENGL_LIBS');
 	return (1);
 }
 

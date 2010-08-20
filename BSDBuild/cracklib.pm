@@ -1,8 +1,7 @@
 # $Csoft: jpeg.pm,v 1.4 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2005 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2005 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,23 +24,31 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-my @dirs = (
+my @autoPrefixDirs = (
 	'/usr/local',
 	'/usr'
 );
 
 sub Test
 {
-	my ($ver) = @_;
+	my ($ver, $pfx) = @_;
 
 	MkDefine('CRACKLIB_CFLAGS', '');
-	foreach my $dir (@dirs) {
-		MkIf("-f \"$dir/include/crack.h\"");
-			MkDefine('CRACKLIB_CFLAGS', "-I$dir/include");
-			MkDefine('CRACKLIB_LIBS', "-L$dir/lib -lcrack");
-		MkEndif;
-	}
-	MkIf('"${CRACKLIB_CFLAGS}" != ""');
+	MkDefine('CRACKLIB_LIBS', '');
+
+	MkIfNE($pfx, '');
+		MkDefine('CRACKLIB_CFLAGS', "-I$pfx/include");
+		MkDefine('CRACKLIB_LIBS', "-L$pfx/lib -lcrack");
+	MkElse;
+		foreach my $dir (@autoPrefixDirs) {
+			MkIf("-f \"$dir/include/crack.h\"");
+				MkDefine('CRACKLIB_CFLAGS', "-I$dir/include");
+				MkDefine('CRACKLIB_LIBS', "-L$dir/lib -lcrack");
+			MkEndif;
+		}
+	MkEndif;
+
+	MkIfNE('${CRACKLIB_LIBS}', '');
 		MkPrint('ok');
 		MkPrintN('checking whether cracklib works...');
 		MkCompileC('HAVE_CRACKLIB', '${CRACKLIB_CFLAGS}', '${CRACKLIB_LIBS}',
@@ -53,12 +60,7 @@ int main(int argc, char *argv[]) {
 	return (msg != NULL);
 }
 EOF
-		MkIf('"${HAVE_CRACKLIB}" != ""');
-			MkSaveMK('CRACKLIB_CFLAGS', 'CRACKLIB_LIBS');
-			MkSaveDefine('CRACKLIB_CFLAGS', 'CRACKLIB_LIBS');
-		MkElse;
-			MkSaveUndef('CRACKLIB_CFLAGS', 'CRACKLIB_LIBS');
-		MkEndif;
+		MkSaveIfTrue('${HAVE_CRACKLIB}', 'CRACKLIB_CFLAGS', 'CRACKLIB_LIBS');
 	MkElse;
 		MkSaveUndef('HAVE_CRACKLIB');
 		MkPrint('no');

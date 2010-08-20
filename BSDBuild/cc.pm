@@ -108,7 +108,7 @@ EOF
 	MkCompileC('HAVE_CC_WARNINGS', '-Wall -Werror', '', << 'EOF');
 int main(int argc, char *argv[]) { return (0); }
 EOF
-	MkIf('"${HAVE_CC_WARNINGS}" = "yes"');
+	MkIfTrue('${HAVE_CC_WARNINGS}');
 		MkDefine('TEST_CFLAGS', '-Wall -Werror');
 	MkEndif;
 	

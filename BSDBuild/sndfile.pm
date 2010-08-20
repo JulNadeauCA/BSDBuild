@@ -23,20 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Test
-{
-	my ($ver) = @_;
-	
-	MkExecOutput('pkg-config', 'sndfile --version', 'SNDFILE_VERSION');
-	MkExecOutput('pkg-config', 'sndfile --cflags', 'SNDFILE_CFLAGS');
-	MkExecOutput('pkg-config', 'sndfile --libs', 'SNDFILE_LIBS');
-	
-	MkIf('"${SNDFILE_VERSION}" != ""');
-		MkPrint('yes, found ${SNDFILE_VERSION}');
-		MkTestVersion('SNDFILE_VERSION', $ver);
-
-		MkPrintN('checking whether libsndfile works...');
-		MkCompileC('HAVE_SNDFILE', '${SNDFILE_CFLAGS}', '${SNDFILE_LIBS}', << 'EOF');
+my $testCode = << 'EOF';
 #include <stdio.h>
 #include <sndfile.h>
 
@@ -50,12 +37,23 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-		MkIf('"${HAVE_SNDFILE}" != "no"');
-			MkSaveMK('SNDFILE_CFLAGS', 'SNDFILE_LIBS');
-			MkSaveDefine('SNDFILE_CFLAGS', 'SNDFILE_LIBS');
-		MkEndif;
+
+sub Test
+{
+	my ($ver, $pfx) = @_;
+	
+	MkExecPkgConfig($pfx, 'sndfile', '--version', 'SNDFILE_VERSION');
+	MkExecPkgConfig($pfx, 'sndfile', '--cflags', 'SNDFILE_CFLAGS');
+	MkExecPkgConfig($pfx, 'sndfile', '--libs', 'SNDFILE_LIBS');
+	MkIfNE('${SNDFILE_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'SNDFILE_VERSION');
+		MkPrintN('checking whether libsndfile works...');
+		MkCompileC('HAVE_SNDFILE',
+		           '${SNDFILE_CFLAGS}', '${SNDFILE_LIBS}',
+				   $testCode);
+		MkSaveIfTrue('${HAVE_SNDFILE}', 'SNDFILE_CFLAGS', 'SNDFILE_LIBS');
 	MkElse;
-		MkPrint('no');
+		MkNotFound($pfx);
 		MkSaveUndef('HAVE_SNDFILE');
 	MkEndif;
 	return (0);

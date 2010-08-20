@@ -108,7 +108,7 @@ EOF
 	MkCompileCXX('HAVE_CXX_WARNINGS', '-Wall -Werror', '-lstdc++', << 'EOF');
 int main(void) { return (0); }
 EOF
-	MkIf('"${HAVE_CXX_WARNINGS}" = "yes"');
+	MkIfTrue('${HAVE_CXX_WARNINGS}');
 		MkDefine('TEST_CXXFLAGS', '-Wall -Werror');
 	MkEndif;
 	

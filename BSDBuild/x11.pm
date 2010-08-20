@@ -1,8 +1,6 @@
-# $Csoft: x11.pm,v 1.17 2004/01/03 04:13:30 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2002-2004 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-my @include_dirs = (
+my @autoIncludeDirs = (
 	'/usr/include/X11',
 	'/usr/include/X11R6',
 	'/usr/local/X11/include',
@@ -36,7 +34,7 @@ my @include_dirs = (
 	'/usr/X11R6/include',
 );
 
-my @lib_dirs = (
+my @autoLibDirs = (
 	'/usr/local/X11/lib',
 	'/usr/local/X11R6/lib',
 	'/usr/X11/lib',
@@ -45,19 +43,30 @@ my @lib_dirs = (
 
 sub Test
 {
+	my ($ver, $pfx) = @_;
+
 	MkDefine('X11_CFLAGS', '');
 	MkDefine('X11_LIBS', '');
 
-	foreach my $dir (@include_dirs) {
-		MkIf("-d $dir/X11");
-		    MkDefine('X11_CFLAGS', "-I$dir");
+	MkIfNE($pfx, '');
+		MkIfExists("$pfx/include/X11");
+		    MkDefine('X11_CFLAGS', "-I$pfx/include");
 		MkEndif;
-	}
-	foreach my $dir (@lib_dirs) {
-		MkIf("-d $dir");
-		    MkDefine('X11_LIBS', "\${X11_LIBS} -L$dir");
+		MkIfExists("$pfx/lib");
+		    MkDefine('X11_LIBS', "-L$pfx/lib");
 		MkEndif;
-	}
+	MkElse;
+		foreach my $dir (@autoIncludeDirs) {
+			MkIfExists("$dir/X11");
+			    MkDefine('X11_CFLAGS', "-I$dir");
+			MkEndif;
+		}
+		foreach my $dir (@autoLibDirs) {
+			MkIfExists($dir);
+			    MkDefine('X11_LIBS', "\${X11_LIBS} -L$dir");
+			MkEndif;
+		}
+	MkEndif;
 
 	MkCompileC('HAVE_X11', '${X11_CFLAGS}', '${X11_LIBS} -lX11', << 'EOF');
 #include <X11/Xlib.h>
@@ -69,13 +78,7 @@ int main(int argc, char *argv[])
 	return (0);
 }
 EOF
-
-	MkIf('"${HAVE_X11}" != ""');
-		MkSaveDefine('X11_CFLAGS', 'X11_LIBS');
-		MkSaveMK	('X11_CFLAGS', 'X11_LIBS');
-	MkElse;
-		MkSaveUndef	('X11_CFLAGS', 'X11_LIBS');
-	MkEndif;
+	MkSaveIfTrue('${HAVE_X11}', 'X11_CFLAGS', 'X11_LIBS');
 }
 
 sub Emul

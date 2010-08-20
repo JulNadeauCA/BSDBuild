@@ -1,8 +1,6 @@
-# $Csoft: math.pm,v 1.3 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2002-2004 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,12 +25,17 @@
 
 sub Test
 {
-	my ($ver) = @_;
+	my ($ver, $pfx) = @_;
 
-	MkDefine('MATH_LIBS', '-lm');
-	MkDefine('MATH_CFLAGS', '');
-	MkCompileC('HAVE_MATH', '${CFLAGS} ${MATH_CFLAGS}', '${MATH_LIBS}',
-	    << 'EOF');
+	MkIfNE($pfx, '');
+		MkDefine('MATH_CFLAGS', "-I$pfx");
+		MkDefine('MATH_LIBS', "-L$pfx -lm");
+	MkElse;
+		MkDefine('MATH_CFLAGS', '');
+		MkDefine('MATH_LIBS', '-lm');
+	MkEndif;
+
+	MkCompileC('HAVE_MATH', '${CFLAGS} ${MATH_CFLAGS}', '${MATH_LIBS}', << 'EOF');
 #include <math.h>
 
 int
@@ -43,12 +46,7 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	MkIf('"${HAVE_MATH}" = "yes"');
-	    MkSaveMK('MATH_CFLAGS', 'MATH_LIBS');
-		MkSaveDefine('MATH_CFLAGS', 'MATH_LIBS');
-	MkElse;
-		MkSaveUndef('MATH_LIBS');
-	MkEndif;
+	MkSaveIfTrue('${HAVE_MATH}', 'MATH_CFLAGS', 'MATH_LIBS');
 	return (0);
 }
 
@@ -67,8 +65,7 @@ sub Emul
 		MkDefine('MATH_CFLAGS', '');
 		MkSaveUndef('HAVE_MATH');
 	}
-	MkSaveDefine('MATH_LIBS', 'MATH_CFLAGS');
-	MkSaveMK('MATH_LIBS', 'MATH_CFLAGS');
+	MkSave('MATH_LIBS', 'MATH_CFLAGS');
 	return (1);
 }
 

@@ -1,8 +1,6 @@
-# $Csoft: sha1.pm,v 1.1 2005/04/25 04:34:14 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2005 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2005 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without

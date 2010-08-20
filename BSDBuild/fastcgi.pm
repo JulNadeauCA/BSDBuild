@@ -1,8 +1,6 @@
-# $Csoft: fastcgi.pm,v 1.3 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2002-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,29 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-my @prefixes = (
-	'/usr/local',
-	'/usr',
-	'/opt/local',
-	'/opt',
-);
-
-sub Test
-{
-	MkDefine('FASTCGI_CFLAGS', '');
-	MkDefine('FASTCGI_LIBS', '');
-
-	foreach my $dir (@prefixes) {
-		MkIf("-e $dir/include/fcgi_stdio.h");
-			MkDefine('FASTCGI_CFLAGS', "-I$dir/include");
-		    MkDefine('FASTCGI_LIBS', "-L$dir/lib -lfcgi");
-		MkEndif;
-	}
-	MkIf('"${FASTCGI_LIBS}" != ""');
-		MkPrint('yes');
-		MkPrintN('checking whether fastcgi works...');
-		MkCompileC('HAVE_FASTCGI', '${FASTCGI_CFLAGS}', '${FASTCGI_LIBS}',
-	           << 'EOF');
+my $testCode = << 'EOF';
 #include <fcgi_stdio.h>
 
 int
@@ -57,14 +33,42 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
+
+my @autoPrefixes = (
+	'/usr/local',
+	'/usr',
+	'/opt/local',
+	'/opt',
+);
+
+sub Test
+{
+	my ($ver, $pfx) = @_;
+
+	MkDefine('FASTCGI_CFLAGS', '');
+	MkDefine('FASTCGI_LIBS', '');
+
+	MkIfNE($pfx, '');
+			MkIfExists("$pfx/include/fcgi_stdio.h");
+				MkDefine('FASTCGI_CFLAGS', "-I$pfx/include");
+			    MkDefine('FASTCGI_LIBS', "-L$pfx/lib -lfcgi");
+			MkEndif;
 	MkElse;
-		MkPrint('no');
+		foreach my $dir (@autoPrefixes) {
+			MkIfExists("$dir/include/fcgi_stdio.h");
+				MkDefine('FASTCGI_CFLAGS', "-I$dir/include");
+			    MkDefine('FASTCGI_LIBS', "-L$dir/lib -lfcgi");
+			MkEndif;
+		}
 	MkEndif;
 
-	MkIf('"${HAVE_FASTCGI}" = "yes"');
-		MkSaveMK('FASTCGI_CFLAGS', 'FASTCGI_LIBS');
-		MkSaveDefine('FASTCGI_CFLAGS', 'FASTCGI_LIBS');
+	MkIfNE('${FASTCGI_LIBS}', '');
+		MkPrint('yes');
+		MkPrintN('checking whether fastcgi works...');
+		MkCompileC('HAVE_FASTCGI', '${FASTCGI_CFLAGS}', '${FASTCGI_LIBS}', $testCode);
+		MkSaveIfTrue('${HAVE_FASTCGI}', 'FASTCGI_CFLAGS', 'FASTCGI_LIBS');
 	MkElse;
+		MkPrint('no');
 		MkSaveUndef('HAVE_FASTCGI', 'FASTCGI_CFLAGS', 'FASTCGI_LIBS');
 	MkEndif;
 }

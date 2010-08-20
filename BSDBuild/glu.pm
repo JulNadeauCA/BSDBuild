@@ -1,8 +1,6 @@
-# $Csoft: opengl.pm,v 1.5 2004/03/10 16:33:36 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2007 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2007 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-my @include_dirs = (
+my @autoIncludeDirs = (
 	'/usr/include/X11',
 	'/usr/include/X11R6',
 	'/usr/local/X11/include',
@@ -38,32 +36,42 @@ my @include_dirs = (
 
 sub Test
 {
-	my ($ver) = @_;
+	my ($ver, $pfx) = @_;
 	
-	print << 'EOF';
-case "$host" in
-*-*-darwin*)
-	GLU_CFLAGS=""
-	GLU_LIBS="-framework GLUT"
-	;;
-*-*-cygwin* | *-*-mingw32*)
-	GLU_CFLAGS=""
-	GLU_LIBS="-lglu32"
-	;;
-*)
-	GLU_CFLAGS=""
-EOF
-		foreach my $dir (@include_dirs) {
-			MkIf qq{-d "$dir/GL/glu.h"};
-				MkDefine('GLU_CFLAGS', "-I$dir");
-				print "break\n";
+	MkDefine('GLU_CFLAGS', '');
+	MkDefine('GLU_LIBS', '');
+	
+	MkCaseIn('${host}');
+	MkCaseBegin('*-*-darwin*');
+		MkDefine('GLU_CFLAGS', '');
+		MkDefine('GLU_LIBS', '-framework GLUT');
+		MkCaseEnd;
+	MkCaseBegin('*-*-cygwin* | *-*-mingw32*');
+		MkIfNE($pfx, '');
+			MkDefine('GLU_CFLAGS', "-I$pfx/include");
+			MkDefine('GLU_LIBS', "-L$pfx/lib -lglu32");
+		MkElse;
+			MkDefine('GLU_CFLAGS', '');
+			MkDefine('GLU_LIBS', '-lglu32');
+		MkEndif;
+		MkCaseEnd;
+	MkCaseBegin('*');
+		MkIfNE($pfx, '');
+			MkIfExists("$pfx/include/GL/glu.h");
+				MkDefine('GLU_CFLAGS', "-I$pfx/include");
+				MkDefine('GLU_LIBS', "-L$pfx/lib -lGLU");
 			MkEndif;
-		}
-print << 'EOF';
-	GLU_LIBS="-lGLU"
-	;;
-esac
-EOF
+		MkElse;
+			foreach my $dir (@autoIncludeDirs) {
+				MkIfExists("$dir/GL/glu.h");
+					MkDefine('GLU_CFLAGS', "-I$dir");
+					MkDefine('GLU_LIBS', "-lGLU");
+					MkBreak;
+				MkEndif;
+			}
+		MkEndif;
+		MkCaseEnd;
+	MkEsac;
 
 	MkCompileC('HAVE_GLU', '${OPENGL_CFLAGS} ${GLU_CFLAGS}',
 	                       '${OPENGL_LIBS} ${GLU_LIBS} ${MATH_LIBS}', << 'EOF');
@@ -80,10 +88,7 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-
-	MkIf '"${HAVE_GLU}" = "yes"';
-		MkSaveMK('GLU_CFLAGS', 'GLU_LIBS');
-		MkSaveDefine('GLU_CFLAGS', 'GLU_LIBS');
+		MkSaveIfTrue('${HAVE_GLU}', 'GLU_CFLAGS', 'GLU_LIBS');
 	MkElse;
 		MkSaveUndef('GLU_CFLAGS', 'GLU_LIBS');
 	MkEndif;
@@ -126,8 +131,7 @@ sub Emul
 		MkDefine('GLU_LIBS', '-lGLU');
 	}
 	MkDefine('HAVE_GLU', 'yes');
-	MkSaveDefine('HAVE_GLU', 'GLU_CFLAGS', 'GLU_LIBS');
-	MkSaveMK('GLU_CFLAGS', 'GLU_LIBS');
+	MkSave('HAVE_GLU', 'GLU_CFLAGS', 'GLU_LIBS');
 	return (1);
 }
 

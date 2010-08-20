@@ -46,7 +46,7 @@ main(int argc, char *argv[])
 }
 EOF
 
-	MkIf('"${HAVE_DYLD}" = "Yes"');
+	MkIfTrue('${HAVE_DYLD}');
 		MkPrint('checking for NSLINKMODULE_OPTION_RETURN_ON_ERROR');
 		TryCompile 'HAVE_DYLD_RETURN_ON_ERROR', << 'EOF';
 #ifdef HAVE_MACH_O_DYLD_H
@@ -79,8 +79,7 @@ EOF
 
 	EndTestHeaders();
 	
-	MkSaveMK('DSO_CFLAGS', 'DSO_LIBS');
-	MkSaveDefine('DSO_CFLAGS', 'DSO_LIBS');
+	MkSave('DSO_CFLAGS', 'DSO_LIBS');
 }
 
 sub Emul
@@ -93,8 +92,7 @@ sub Emul
 
 	MkDefine('DSO_CFLAGS', '');
 	MkDefine('DSO_LIBS', '');
-	MkSaveMK('DSO_CFLAGS', 'DSO_LIBS');
-	MkSaveDefine('DSO_CFLAGS', 'DSO_LIBS');
+	MkSave('DSO_CFLAGS', 'DSO_LIBS');
 	return (1);
 }
 

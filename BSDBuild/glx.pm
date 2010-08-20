@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2009 Hypertriton Inc. <http://hypertriton.com/>
+# Copyright (c) 2009-2010 Hypertriton Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -23,20 +23,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-my @include_dirs = (
-	'/usr/include/X11',
-	'/usr/include/X11R6',
-	'/usr/local/X11/include',
-	'/usr/local/X11R6/include',
-	'/usr/local/include/X11',
-	'/usr/local/include/X11R6',
-	'/usr/X11/include',
-	'/usr/X11R6/include',
-);
-
 sub Test
 {
-	my ($ver) = @_;
+	my ($ver, $pfx) = @_;
 	
 	MkDefine('GLX_CFLAGS', '${OPENGL_CFLAGS} ${X11_CFLAGS}');
 	MkDefine('GLX_LIBS', '${OPENGL_LIBS} ${X11_LIBS}');
@@ -67,13 +56,7 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-
-	MkIf '"${HAVE_GLX}" = "yes"';
-		MkSaveMK('GLX_CFLAGS', 'GLX_LIBS');
-		MkSaveDefine('GLX_CFLAGS', 'GLX_LIBS');
-	MkElse;
-		MkSaveUndef('GLX_CFLAGS', 'GLX_LIBS');
-	MkEndif;
+	MkSaveIfTrue('${HAVE_GLX}', 'GLX_CFLAGS', 'GLX_LIBS');
 	return (0);
 }
 
@@ -105,8 +88,7 @@ sub Emul
 	MkDefine('GLX_CFLAGS', '-I/usr/X11R6/include');
 	MkDefine('GLX_LIBS', '-lX11 -lGL');
 	MkDefine('HAVE_GLX', 'yes');
-	MkSaveDefine('HAVE_GLX', 'GLX_CFLAGS', 'GLX_LIBS');
-	MkSaveMK('GLX_CFLAGS', 'GLX_LIBS');
+	MkSave('HAVE_GLX', 'GLX_CFLAGS', 'GLX_LIBS');
 	return (1);
 }
 

@@ -33,10 +33,42 @@ our $EmulEnv = undef;
 #
 # Bourne instructions.
 #
+sub MkBreak { print "break\n"; }
 sub MkIf { print 'if [ ',shift,' ]; then',"\n"; }
 sub MkElif { print 'elif [ ',shift,' ]; then',"\n"; }
 sub MkElse { print 'else',"\n"; }
 sub MkEndif { print 'fi;',"\n"; }
+sub MkIfCmp
+{
+	my ($a, $test, $b) = @_;
+	print 'if [ "', $a, '" '.$test.' "'.$b.'" ]; then', "\n";
+}
+sub MkIfEQ
+{
+	my ($a, $b) = @_;
+	$b = '' unless defined($b);
+	print 'if [ "', $a, '" = "'.$b.'" ]; then', "\n";
+}
+sub MkIfNE
+{
+	my ($a, $b) = @_;
+	$a = '' unless defined($a);
+	print 'if [ "', $a, '" != "'.$b.'" ]; then', "\n";
+}
+sub MkIfTrue { my $var = shift; MkIfEQ($var, 'yes'); }
+sub MkIfFalse { my $var = shift; MkIfEQ($var, 'no'); }
+sub MkIfTest
+{
+	my ($test, $a) = @_;
+	print 'if [ '.$test.' "'.$a.'" ]; then', "\n";
+}
+sub MkIfExists { my $file = shift; MkIfTest('-e ', $file); }
+sub MkIfFile { my $file = shift; MkIfTest('-f ', $file); }
+sub MkIfDir { my $file = shift; MkIfTest('-d ', $file); }
+sub MkCaseIn { my $case = shift; print 'case "'.$case.'" in',"\n"; }
+sub MkEsac { print "esac\n"; }
+sub MkCaseBegin { my $case = shift; print $case.')',"\n"; }
+sub MkCaseEnd { print ";;\n"; }
 
 #
 # Premake instructions
@@ -113,18 +145,84 @@ fi
 if [ "\${MK_CACHED}" = "No" ]; then
 	$define=""
 	for path in `echo \$PATH | sed 's/:/ /g'`; do
-		if [ -x "\${path}/$bin" ]; then
-			if [ -f "\${path}/$bin" ]; then
-				$define=`\${path}/$bin $args`
-				MK_EXEC_FOUND="Yes"
-				break
-			fi
+		if [ -e "\${path}/$bin" ]; then
+			$define=`\${path}/$bin $args`
+			MK_EXEC_FOUND="Yes"
+			break
 		fi
 	done
 	if [ "\${cache}" != "" ]; then
 		echo "\$$define" > \${cache}/exec-$define
 		echo \$MK_EXEC_FOUND > \${cache}/exec-found-$define
 	fi
+fi
+EOF
+}
+
+# Variant of MkExecOutput() accepting a prefix argument.
+# If prefix is empty, fallback to autodetection.
+sub MkExecOutputPfx
+{
+	my ($pfx, $bin, $args, $define) = @_;
+
+	print << "EOF";
+MK_EXEC_FOUND="No"
+
+if [ "$pfx" != "" ]; then
+	if [ -e "$pfx/bin/$bin" ]; then
+		$define=`$pfx/bin/$bin $args`
+		MK_EXEC_FOUND="Yes"
+	fi
+else
+	MK_CACHED="No"
+	if [ "\${cache}" != "" ]; then
+		if [ -e "\${cache}/exec-$define" ]; then
+			$define=`cat \${cache}/exec-$define`
+			MK_EXEC_FOUND=`cat \${cache}/exec-found-$define`
+			MK_CACHED="Yes"
+		fi
+	fi
+	if [ "\${MK_CACHED}" = "No" ]; then
+		$define=""
+		for path in `echo \$PATH | sed 's/:/ /g'`; do
+			if [ -e "\${path}/$bin" ]; then
+				$define=`\${path}/$bin $args`
+				MK_EXEC_FOUND="Yes"
+				break
+			fi
+		done
+		if [ "\${cache}" != "" ]; then
+			echo "\$$define" > \${cache}/exec-$define
+			echo \$MK_EXEC_FOUND > \${cache}/exec-found-$define
+		fi
+	fi
+fi
+EOF
+}
+
+# Variant of MkExecOutputPfx() for pkg-config.
+sub MkExecPkgConfig
+{
+	my ($pfx, $pkg, $args, $define) = @_;
+
+	print << "EOF";
+if [ "$pfx" != "" ]; then
+	MK_EXEC_PKGPREFIX=`pkg-config --variable=prefix $pkg`
+	if [ "\$MK_EXEC_PKGPREFIX" != "$pfx" ]; then
+		echo " "
+		echo "* "
+		echo "* ERROR: According to pkg-config, $pkg is installed in prefix: "
+		echo "* \$MK_EXEC_PKGPREFIX, but the prefix ($pfx) was specified."
+		echo "* "
+		echo "* Please re-run ./configure again with the correct $pkg prefix"
+		echo "* (or specify no prefix at all to enable auto-detection)."
+		echo "* "
+		exit 1
+	else
+		$define=`pkg-config $pkg $args`
+	fi
+else
+	$define=`pkg-config $pkg $args`
 fi
 EOF
 }
@@ -153,18 +251,16 @@ fi
 if [ "\${MK_CACHED}" = "No" ]; then
 	$define=""
 	for path in `echo \$PATH | sed 's/:/ /g'`; do
-		if [ -x "\${path}/$bin" ]; then
-			if [ -f "\${path}/$bin" ]; then
-				if [ "\$MK_EXEC_FOUND" = "Yes" ]; then
-					echo "yes."
-					echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)"
-					echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)" >> config.log
-					break
-				fi
-				$define=`\${path}/$bin $args`
-				MK_EXEC_FOUND="Yes"
-				MK_EXEC_FOUND_PATH="\${path}/$bin"
+		if [ -e "\${path}/$bin" ]; then
+			if [ "\$MK_EXEC_FOUND" = "Yes" ]; then
+				echo "yes."
+				echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)"
+				echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)" >> config.log
+				break
 			fi
+			$define=`\${path}/$bin $args`
+			MK_EXEC_FOUND="Yes"
+			MK_EXEC_FOUND_PATH="\${path}/$bin"
 		fi
 	done
 	if [ "\${cache}" != "" ]; then
@@ -202,11 +298,9 @@ sub Which
 	return << "EOF";
 $define=""
 for path in `echo \$PATH | sed 's/:/ /g'`; do
-	if [ -x "\${path}" ]; then
-		if [ -e "\${path}/$bin" ]; then
-			$define=`\${path}/$bin $args`
-			break
-		fi
+	if [ -e "\${path}/$bin" ]; then
+		$define=`\${path}/$bin $args`
+		break
 	fi
 done
 EOF
@@ -216,6 +310,18 @@ sub MkDefine
 {
 	my ($arg, $val) = @_;
 	print "$arg=\"$val\"\n";
+}
+
+sub MkSetTrue
+{
+	my ($arg) = @_;
+	print "$arg=\"yes\"\n";
+}
+
+sub MkSetFalse
+{
+	my ($arg) = @_;
+	print "$arg=\"no\"\n";
 }
 
 sub MkAppend
@@ -244,6 +350,29 @@ sub MkPrintN
 \$ECHO_N "$msg"
 \$ECHO_N "$msg" >> config.log
 EOF
+}
+
+sub MkFoundVer
+{
+	my ($pfx, $ver, $verDefn) = @_;
+
+	MkIfNE($pfx, '');
+		MkPrint("yes (\$$verDefn in $pfx)");
+	MkElse;
+		MkPrint("yes (\$$verDefn)");
+	MkEndif;
+	MkTestVersion($verDefn, $ver);
+}
+
+sub MkNotFound
+{
+	my $pfx = shift;
+
+	MkIfNE($pfx, '');
+		MkPrint("no (not in $pfx)");
+	MkElse;
+		MkPrint("no");
+	MkEndif;
 }
 
 sub Log
@@ -321,6 +450,30 @@ EOF
 	}
 }
 
+sub MkSave
+{
+	foreach my $var (@_) {
+		MkSaveMK($var);
+		MkSaveDefine($var);
+	}
+}
+
+sub MkSaveIfTrue
+{
+	my $cond = shift(@_);
+
+	MkIfTrue($cond);
+		foreach my $var (@_) {
+			MkSaveMK($var);
+			MkSaveDefine($var);
+		}
+	MkElse;
+		foreach my $var (@_) {
+			MkSaveUndef($var);
+		}
+	MkEndif;
+}
+
 sub TryCompile
 {
 	my ($define, $code) = @_;
@@ -350,11 +503,11 @@ EOF
 
 	MkIf('"${MK_COMPILE_STATUS}" = "OK"');
 		MkPrint('yes');
-		MkDefine($define, 'yes');
+		MkSetTrue($define);
 		MkSaveDefine($define);
 	MkElse;
 		MkPrint('no');
-		MkDefine($define, 'no');
+		MkSetFalse($define);
 		MkSaveUndef($define);
 	MkEndif;
 	
@@ -383,7 +536,7 @@ sub MkTestVersion
 {
 	my ($verDef, $ver) = @_;
 
-	if (!defined($ver)) {
+	if (!defined($ver) || !$ver) {
 		return;
 	}
 	my @verSpec = split(/\./, $ver);
@@ -476,13 +629,13 @@ fi
 rm -f conftest.c $testdir/conftest$EXECSUFFIX
 EOF
 	MkIf('"${MK_COMPILE_STATUS}" = "OK"');
-		MkDefine($def, 'yes');
+		MkSetTrue($def);
 		MkSaveDefine($def);
 		MkIf('"${TEST_HEADERS}" = "Yes"');
 			MkDefine('TEST_CFLAGS', "\${TEST_CFLAGS} -D$def");
 		MkEndif;
 	MkElse;
-		MkDefine($def, 'no');
+		MkSetFalse($def);
 		MkSaveUndef($def);
 	MkEndif;
 }
@@ -491,7 +644,7 @@ sub MkSaveCompileSuccess ($)
 {
 	my $define = shift;
 		
-	MkDefine($define, 'yes');
+	MkSetTrue($define);
 	MkSaveMK($define);
 	MkSaveDefine($define);
 }
@@ -500,7 +653,7 @@ sub MkSaveCompileFailed ($)
 {
 	my $define = shift;
 		
-	MkDefine($define, 'no');
+	MkSetFalse($define);
 	MkSaveMK($define);
 	MkSaveUndef($define);
 }
@@ -845,7 +998,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($OutputLUA $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR MkExecOutput MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkAppend MkIf MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkPrint MkPrintN PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion);
+    @EXPORT = qw($OutputLUA $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSetTrue MkSetFalse MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkPrint MkPrintN MkFoundVer MkNotFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion);
 }
 
 ;1

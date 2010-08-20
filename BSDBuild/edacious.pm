@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2008 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2008-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -23,31 +23,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Test
-{
-	my ($ver) = @_;
-	
-	MkExecOutputUnique('edacious-config', '--version', 'EDACIOUS_VERSION');
-	MkIf('"${EDACIOUS_VERSION}" != ""');
-		MkPrint('yes, found ${EDACIOUS_VERSION}');
-		MkTestVersion('EDACIOUS_VERSION', $ver);
-
-		MkPrintN('checking whether Edacious works...');
-		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
-		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');
-		MkExecOutput('agar-vg-config', '--cflags', 'AGAR_VG_CFLAGS');
-		MkExecOutput('agar-vg-config', '--libs', 'AGAR_VG_LIBS');
-		MkExecOutput('agar-math-config', '--cflags', 'AGAR_MATH_CFLAGS');
-		MkExecOutput('agar-math-config', '--libs', 'AGAR_MATH_LIBS');
-		MkExecOutput('edacious-config', '--cflags', 'EDACIOUS_CFLAGS');
-		MkExecOutput('edacious-config', '--libs', 'EDACIOUS_LIBS');
-		MkCompileC('HAVE_EDACIOUS',
-		    '${EDACIOUS_CFLAGS} ${AGAR_MATH_CFLAGS} ${AGAR_VG_CFLAGS} '.
-			'${AGAR_CFLAGS}',
-		    '${EDACIOUS_LIBS} ${AGAR_MATH_LIBS} ${AGAR_VG_LIBS} '.
-			'${AGAR_LIBS}',
-		           << 'EOF');
+my $testCode = << 'EOF';
 #include <edacious/core.h>
+
 int main(int argc, char *argv[]) {
 	ES_Circuit *ckt;
 	ckt = ES_CircuitNew(NULL, "foo");
@@ -55,12 +33,32 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-		MkIf('"${HAVE_EDACIOUS}" != ""');
-			MkSaveMK('EDACIOUS_CFLAGS', 'EDACIOUS_LIBS');
-			MkSaveDefine('EDACIOUS_CFLAGS', 'EDACIOUS_LIBS');
-		MkEndif;
+
+sub Test
+{
+	my ($ver, $pfx) = @_;
+	
+	MkExecOutputPfx($pfx, 'edacious-config', '--version', 'EDACIOUS_VERSION');
+	MkIfNE('${EDACIOUS_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'EDACIOUS_VERSION');
+		MkPrintN('checking whether Edacious works...');
+		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
+		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
+		MkExecOutputPfx($pfx, 'agar-vg-config', '--cflags', 'AGAR_VG_CFLAGS');
+		MkExecOutputPfx($pfx, 'agar-vg-config', '--libs', 'AGAR_VG_LIBS');
+		MkExecOutputPfx($pfx, 'agar-math-config', '--cflags', 'AGAR_MATH_CFLAGS');
+		MkExecOutputPfx($pfx, 'agar-math-config', '--libs', 'AGAR_MATH_LIBS');
+		MkExecOutputPfx($pfx, 'edacious-config', '--cflags', 'EDACIOUS_CFLAGS');
+		MkExecOutputPfx($pfx, 'edacious-config', '--libs', 'EDACIOUS_LIBS');
+		MkCompileC('HAVE_EDACIOUS',
+		           '${EDACIOUS_CFLAGS} ${AGAR_MATH_CFLAGS} ${AGAR_VG_CFLAGS} '.
+		           '${AGAR_CFLAGS}',
+		           '${EDACIOUS_LIBS} ${AGAR_MATH_LIBS} ${AGAR_VG_LIBS} '.
+		           '${AGAR_LIBS}',
+		           $testCode);
+		MkSaveIfTrue('${HAVE_EDACIOUS}', 'EDACIOUS_CFLAGS', 'EDACIOUS_LIBS');
 	MkElse;
-		MkPrint('no');
+		MkNotFound($pfx);
 		MkSaveUndef('HAVE_EDACIOUS', 'EDACIOUS_CFLAGS', 'EDACIOUS_LIBS');
 	MkEndif;
 	return (0);
@@ -91,8 +89,7 @@ sub Emul
 		MkDefine('EDACIOUS_LIBS', '-L/usr/local/lib -les_core');
 	}
 	MkDefine('HAVE_EDACIOUS', 'yes');
-	MkSaveDefine('HAVE_EDACIOUS', 'EDACIOUS_CFLAGS', 'EDACIOUS_LIBS');
-	MkSaveMK('EDACIOUS_CFLAGS', 'EDACIOUS_LIBS');
+	MkSave('HAVE_EDACIOUS', 'EDACIOUS_CFLAGS', 'EDACIOUS_LIBS');
 	return (1);
 }
 

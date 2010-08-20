@@ -1,7 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2007 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2007 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,6 +25,8 @@
 
 sub Test
 {
+	# XXX XXX TODO cross-compiling
+
 	MkPrint('');
 	MkPrintN('checking for BIG_ENDIAN...');
 	MkCompileAndRunC('_MK_BIG_ENDIAN', '', '', << 'EOF');
@@ -41,7 +42,7 @@ main(int argc, char *argv[])
 #endif
 }
 EOF
-	MkIf('"${_MK_BIG_ENDIAN}" = "yes"');
+	MkIfTrue('${_MK_BIG_ENDIAN}');
 		MkDefine('_MK_LITTLE_ENDIAN', 'no');
 		MkSaveUndef('_MK_LITTLE_ENDIAN');
 	MkElse;
@@ -59,7 +60,7 @@ main(int argc, char *argv[])
 #endif
 }
 EOF
-		MkIf('"${_MK_LITTLE_ENDIAN}" = "yes"');
+		MkIfTrue('${_MK_LITTLE_ENDIAN}');
 			MkDefine('_MK_BIG_ENDIAN', 'no');
 			MkSaveUndef('_MK_BIG_ENDIAN');
 		MkElse;
@@ -76,10 +77,10 @@ main(int argc, char *argv[])
 	return (u.c[sizeof (long) - 1] == 1);
 }
 EOF
-			MkIf('"${MK_COMPILE_STATUS}" != "OK"');
+			MkIfNE('${MK_COMPILE_STATUS}', 'OK');
 				MkFail('Unable to determine byte order');
 			MkEndif;
-			MkIf('"${_MK_LITTLE_ENDIAN}" = "no"');
+			MkIfFalse('${_MK_LITTLE_ENDIAN}');
 				MkDefine('_MK_BIG_ENDIAN', 'yes');
 				MkSaveDefine('_MK_BIG_ENDIAN');
 			MkEndif;

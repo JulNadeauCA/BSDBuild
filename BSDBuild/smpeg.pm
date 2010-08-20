@@ -1,8 +1,6 @@
-# $Csoft: smpeg.pm,v 1.12 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2002, 2003, 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2002-2004 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,23 +25,20 @@
 
 sub Test
 {
-	my ($ver) = @_;
+	my ($ver, $pfx) = @_;
 	
-	MkExecOutput('smpeg-config', '--version', 'SMPEG_VERSION');
-	MkExecOutput('smpeg-config', '--cflags', 'SMPEG_CFLAGS');
-	MkExecOutput('smpeg-config', '--libs', 'SMPEG_LIBS');
+	MkExecOutputPfx($pfx, 'smpeg-config', '--version', 'SMPEG_VERSION');
+	MkExecOutputPfx($pfx, 'smpeg-config', '--cflags', 'SMPEG_CFLAGS');
+	MkExecOutputPfx($pfx, 'smpeg-config', '--libs', 'SMPEG_LIBS');
 
 	# TODO Test
 
-	MkIf('"${SMPEG_VERSION}" != ""');
-		MkPrint('yes, found ${SMPEG_VERSION}');
-		MkTestVersion('SMPEG_VERSION', $ver);
-
-		MkSaveDefine('HAVE_SMPEG', 'SMPEG_CFLAGS', 'SMPEG_LIBS');
-		MkSaveMK	('HAVE_SMPEG', 'SMPEG_CFLAGS', 'SMPEG_LIBS');
+	MkIfNE('${SMPEG_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'SMPEG_VERSION');
+		MkSaveIfTrue('${HAVE_SMPEG}', 'SMPEG_CFLAGS', 'SMPEG_LIBS');
 	MkElse;
-		MkPrint('no');
-		MkSaveUndef	('HAVE_SMPEG');
+		MkNotFound($pfx);
+		MkSaveUndef('HAVE_SMPEG');
 	MkEndif;
 	return (0);
 }

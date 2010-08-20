@@ -23,9 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Test
-{
-	my $code = << 'EOF';
+my $testCode = << 'EOF';
 #ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
 #endif
@@ -42,25 +40,25 @@ main(int argc, char *argv[])
 }
 EOF
 
+sub Test
+{
 	MkDefine('DSO_CFLAGS', '');
 	MkDefine('DSO_LIBS', '');
 
 	BeginTestHeaders();
 	DetectHeaderC('HAVE_DLFCN_H',	'<dlfcn.h>');
-	TryCompile('HAVE_DLOPEN', $code);
-	MkIf('"${HAVE_DLOPEN}" != "yes"');
+	TryCompile('HAVE_DLOPEN', $testCode);
+	MkIfFalse('${HAVE_DLOPEN}');
 		MkPrintN('checking for dlopen() in -ldl...');
-		TryCompileFlagsC('HAVE_DLOPEN', '-ldl', $code);
-		MkIf('"${HAVE_DLOPEN}" = "yes"');
+		TryCompileFlagsC('HAVE_DLOPEN', '-ldl', $testCode);
+		MkIfTrue('${HAVE_DLOPEN}');
 			MkDefine('DSO_CFLAGS', '');
 			MkDefine('DSO_LIBS', '-ldl');
 		MkEndif;
 	MkEndif;
-	
 	EndTestHeaders();
 
-	MkSaveMK('DSO_CFLAGS', 'DSO_LIBS');
-	MkSaveDefine('DSO_CFLAGS', 'DSO_LIBS');
+	MkSave('DSO_CFLAGS', 'DSO_LIBS');
 }
 
 sub Emul
@@ -77,8 +75,7 @@ sub Emul
 	}
 	MkDefine('DSO_CFLAGS', '');
 	MkDefine('DSO_LIBS', '');
-	MkSaveMK('DSO_CFLAGS', 'DSO_LIBS');
-	MkSaveDefine('DSO_CFLAGS', 'DSO_LIBS');
+	MkSave('DSO_CFLAGS', 'DSO_LIBS');
 	return (1);
 }
 

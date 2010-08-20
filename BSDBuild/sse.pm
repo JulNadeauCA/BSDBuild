@@ -28,8 +28,8 @@ sub Test
 	my ($ver) = @_;
 
 	MkDefine('SSE_CFLAGS', '-msse');
-	MkCompileAndRunC('HAVE_SSE', '${CFLAGS} ${SSE_CFLAGS}', '',
-	    << 'EOF');
+	# XXX cross compiling
+	MkCompileAndRunC('HAVE_SSE', '${CFLAGS} ${SSE_CFLAGS}', '', << 'EOF');
 #include <xmmintrin.h>
 #include <stdio.h>
 
@@ -90,7 +90,7 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	MkIf('"${HAVE_SSE}" = "yes"');
+	MkIfTrue('${HAVE_SSE}');
 		MkSaveDefine('SSE_CFLAGS');
 	MkElse;
 		MkSaveUndef('SSE_CFLAGS');
@@ -119,7 +119,7 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	MkIf('"${HAVE_SSE2}" = "yes"');
+	MkIfTrue('${HAVE_SSE2}');
 		MkSaveDefine('SSE2_CFLAGS');
 	MkElse;
 		MkSaveUndef('SSE2_CFLAGS');
@@ -150,7 +150,7 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	MkIf('"${HAVE_SSE3}" = "yes"');
+	MkIfTrue('${HAVE_SSE3}');
 		MkSaveDefine('SSE3_CFLAGS');
 	MkElse;
 		MkSaveUndef('SSE3_CFLAGS');

@@ -616,6 +616,7 @@ sub Help
 		'--srcdir=p' =>		'Source directory for concurrent build',
 		'--build=s' =>		'Host environment for build',
 		'--host=s' =>		'Cross-compile for target environment',
+#		'--byte-order=s' =>	'Byte order for target environment (LE|BE)',
 		'--prefix=p' =>		'Installation base (MI files)',
 		'--exec-prefix=p' =>	'Installation base (MD files)',
 		'--sysconfdir=p' =>	'System configuration files',
@@ -644,6 +645,7 @@ sub Help
 		'--srcdir=p' =>		'.',
 		'--build=s' =>		'auto-detect',
 		'--host=s' =>		'BUILD',
+#		'--byte-order=s' =>	'auto-detect',
 		'--prefix=p' =>		'/usr/local',
 		'--exec-prefix=p' =>	'PREFIX',
 		'--sysconfdir=p' =>	'PREFIX/etc',
@@ -803,6 +805,9 @@ do
 	    ;;
 	--target=*)
 	    target=$optarg
+	    ;;
+	--byte-order=*)
+	    byte_order=$optarg
 	    ;;
 	--prefix=*)
 	    prefix=$optarg

@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2007 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2007-2010 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -23,68 +23,90 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Test
-{
-	# XXX XXX TODO cross-compiling
-
-	MkPrint('');
-	MkPrintN('checking for BIG_ENDIAN...');
-	MkCompileAndRunC('_MK_BIG_ENDIAN', '', '', << 'EOF');
+my $testCode = << 'EOF';
 #include <sys/types.h>
 #include <sys/param.h>
 int
 main(int argc, char *argv[])
 {
 #if BYTE_ORDER == BIG_ENDIAN
-	return (0);
+	static volatile char *bo = "BiGEnDiANBiGEnDiANBiGEnDiANBiGEnDiANBiGEnDiANBiGEnDiANBiGEnDiANBiGEnDiANBiGEnDiANBiGEnDiANBiGEnDiANBiGEnDiANBiGEnDiANBiGEnDiANBiGEnDiANBiGEnDiANBiGEnDiANBiGEnDiANBiGEnDiANBiGEnDiAN";
 #else
-	return (1);
+	static volatile char *bo = "LiTTLeEnDiANLiTTLeEnDiANLiTTLeEnDiANLiTTLeEnDiANLiTTLeEnDiANLiTTLeEnDiANLiTTLeEnDiANLiTTLeEnDiANLiTTLeEnDiANLiTTLeEnDiANLiTTLeEnDiANLiTTLeEnDiANLiTTLeEnDiANLiTTLeEnDiANLiTTLeEnDiAN";
 #endif
+	int c = 0;
+	volatile char *p = bo;
+	while (*p != '\0') { c *= (int)*p; }
+	return (c>123?c:456);
 }
 EOF
-	MkIfTrue('${_MK_BIG_ENDIAN}');
-		MkDefine('_MK_LITTLE_ENDIAN', 'no');
-		MkSaveUndef('_MK_LITTLE_ENDIAN');
-	MkElse;
-		MkPrintN('checking for LITTLE_ENDIAN...');
-		MkCompileAndRunC('_MK_LITTLE_ENDIAN', '', '', << 'EOF');
-#include <sys/types.h>
-#include <sys/param.h>
-int
-main(int argc, char *argv[])
+
+sub Test
 {
-#if BYTE_ORDER == LITTLE_ENDIAN
-	return (0);
-#else
-	return (1);
-#endif
-}
-EOF
-		MkIfTrue('${_MK_LITTLE_ENDIAN}');
-			MkDefine('_MK_BIG_ENDIAN', 'no');
-			MkSaveUndef('_MK_BIG_ENDIAN');
+	MkIfNE('${byte_order}', '');
+		MkIfEQ('${byte_order}', 'LE');
+			MkDefine('_MK_BYTE_ORDER', 'LE');
 		MkElse;
-			MkPrintN('checking for little endian byte order...');
-			MkCompileAndRunC('_MK_LITTLE_ENDIAN', '', '', << 'EOF');
-int
-main(int argc, char *argv[])
-{
-	union {
-		long l;
-		char c[sizeof (long)];
-	} u;
-	u.l = 1;
-	return (u.c[sizeof (long) - 1] == 1);
-}
-EOF
-			MkIfNE('${MK_COMPILE_STATUS}', 'OK');
-				MkFail('Unable to determine byte order');
-			MkEndif;
-			MkIfFalse('${_MK_LITTLE_ENDIAN}');
-				MkDefine('_MK_BIG_ENDIAN', 'yes');
-				MkSaveDefine('_MK_BIG_ENDIAN');
+			MkIfEQ('${byte_order}', 'BE');
+				MkDefine('_MK_BYTE_ORDER', 'BE');
+			MkElse;
+				MkFail('Usage: --byte-order=[LE|BE]');
 			MkEndif;
 		MkEndif;
+	MkElse;
+		print << "EOF";
+cat << EOT > conftest.c
+$testCode
+EOT
+echo "\$CC \$CFLAGS $cflags -o \$testdir/conftest conftest.c" >>config.log
+\$CC \$CFLAGS $cflags -o \$testdir/conftest conftest.c 2>>config.log
+if [ \$? != 0 ]; then
+	echo "Failed to compile test program for byte order (\$?)"
+	echo "Failed to compile test program for byte order (\$?)" >> config.log
+	exit 1
+fi
+rm -f conftest.c
+
+_MK_BYTE_ORDER=""
+_MK_BYTE_ORDER_LESTRING="L   i   T   T   L   e   E   n   D"
+_MK_BYTE_ORDER_BESTRING="B   i   G   E   n   D   i   A   N"
+od -tc \$testdir/conftest\$EXECSUFFIX > \$testdir/conftest.dump
+
+if grep "\$_MK_BYTE_ORDER_LESTRING" \$testdir/conftest.dump >/dev/null; then
+	_MK_BYTE_ORDER="LE"
+	if grep "\$_MK_BYTE_ORDER_BESTRING" \$testdir/conftest.dump >/dev/null; then
+		echo "*"
+		echo "* Unable to auto-determine host byte order. Please re-run ./configure"
+		echo "* with --byte-order=LE or --byte-order=BE."
+		echo "*"
+		exit 1
+	fi
+else
+	if grep "\$_MK_BYTE_ORDER_BESTRING" \$testdir/conftest.dump >/dev/null; then
+		_MK_BYTE_ORDER="BE"
+		if grep "\$_MK_BYTE_ORDER_LESTRING" \$testdir/conftest.dump >/dev/null; then
+			echo "*"
+			echo "* Unable to auto-determine host byte order. Please re-run ./configure"
+			echo "* with --byte-order=LE or --byte-order=BE."
+			echo "*"
+			exit 1
+		fi
+	fi
+fi
+rm -f conftest.c \$testdir/conftest$EXECSUFFIX \$testdir/conftest.dump
+EOF
+	MkEndif;
+	
+	MkIfEQ('$_MK_BYTE_ORDER', 'LE');
+		MkPrint('little-endian');
+		MkDefine('_MK_LITTLE_ENDIAN', 'yes');
+		MkSaveDefine('_MK_LITTLE_ENDIAN');
+		MkSaveUndef('_MK_BIG_ENDIAN');
+	MkElse;
+		MkPrint('big-endian');
+		MkDefine('_MK_BIG_ENDIAN', 'yes');
+		MkSaveDefine('_MK_BIG_ENDIAN');
+		MkSaveUndef('_MK_LITTLE_ENDIAN');
 	MkEndif;
 }
 

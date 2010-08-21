@@ -470,6 +470,7 @@ sub MkSaveIfTrue
 	MkElse;
 		foreach my $var (@_) {
 			MkSaveUndef($var);
+			MkDefine($var, '');
 		}
 	MkEndif;
 }

@@ -35,6 +35,7 @@ int main(int argc, char *argv[]) {
 	    CW_USEDEFAULT, 0,0, NULL, NULL, GetModuleHandle(NULL), NULL);
 	hdc = GetDC(hwnd);
 	hglrc = wglCreateContext(hdc);
+	SwapBuffers(hdc);
 	wglDeleteContext(hglrc);
 	ReleaseDC(hwnd, hdc);
 	DestroyWindow(hwnd);
@@ -46,7 +47,15 @@ sub Test
 {
 	my ($ver) = @_;
 
-	MkCompileC('HAVE_WGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', $testCode);
+	MkCompileC('HAVE_WGL',
+	           '${OPENGL_CFLAGS}',
+			   '${OPENGL_LIBS} -lgdi32',
+	           $testCode);
+	MkIfTrue('${HAVE_WGL}');
+		MkDefine('OPENGL_LIBS', '${OPENGL_LIBS} -lgdi32');
+		MkSave('OPENGL_LIBS');
+	MkEndif;
+
 	return (0);
 }
 

@@ -361,7 +361,13 @@ sub MkFoundVer
 	MkElse;
 		MkPrint("yes (\$$verDefn)");
 	MkEndif;
-	MkTestVersion($verDefn, $ver);
+
+	MkIfNE($ver, '');
+		MkTestVersion($verDefn, $ver);
+		MkIfNE('${MK_VERSION_OK}', 'yes');
+			MkFail("Version $ver or greater is required (found \$$verDefn)");
+		MkEndif;
+	MkEndif;
 }
 
 sub MkNotFound

@@ -23,6 +23,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+our $OutputHeaderFile = undef;
+our $OutputHeaderDir = 'config';
 our $OutputLUA = 'configure.lua';
 our $LUA = undef;
 our $EmulOS = undef;
@@ -422,35 +424,66 @@ EOF
 sub MkSaveUndef
 {
 	foreach my $var (@_) {
-		my $include = 'config/'.lc($var).'.h';
-		print << "EOF";
-echo "#undef $var" >$include
+		if ($OutputHeaderFile) {
+			print "echo \"#undef $var\" >>$OutputHeaderFile\n";
+		}
+		if ($OutputHeaderDir) {
+			my $include = $OutputHeaderDir.'/'.lc($var).'.h';
+			print "echo \"#undef $var\" >$include\n";
+		}
+		if ($OutputLUA) {
+			print << "EOF";
 echo "hdefs[\\"$var\\"] = nil" >>$OutputLUA
 EOF
+		}
 	}
 }
 
 sub MkSaveDefine
 {
 	foreach my $var (@_) {
-		my $include = 'config/'.lc($var).'.h';
-		print << "EOF";
+		if ($OutputHeaderFile) {
+			print << "EOF";
+echo "#ifndef $var" >> $OutputHeaderFile
+echo "#define $var \\"\$$var\\"" >> $OutputHeaderFile
+echo "#endif" >> $OutputHeaderFile
+EOF
+		}
+		if ($OutputHeaderDir) {
+			my $include = $OutputHeaderDir.'/'.lc($var).'.h';
+			print << "EOF";
 echo "#ifndef $var" > $include
 echo "#define $var \\"\$$var\\"" >> $include
 echo "#endif" >> $include
+EOF
+		}
+		if ($OutputLUA) {
+			print << "EOF";
 echo "hdefs[\\"$var\\"] = \\"\$$var\\"" >>$OutputLUA
 EOF
+		}
 	}
 }
 
 sub MkSaveDefineUnquoted
 {
 	foreach my $var (@_) {
-		my $include = 'config/'.lc($var).'.h';
-		print << "EOF";
+		if ($OutputHeaderFile) {
+			print << "EOF";
+echo "#ifndef $var" >> $OutputHeaderFile
+echo "#define $var \$$var" >> $OutputHeaderFile
+echo "#endif" >> $OutputHeaderFile
+EOF
+		}
+		if ($OutputHeaderDir) {
+			my $include = $OutputHeaderDir.'/'.lc($var).'.h';
+			print << "EOF";
 echo "#ifndef $var" > $include
 echo "#define $var \$$var" >> $include
 echo "#endif" >> $include
+EOF
+		}
+		print << "EOF";
 echo "hdefs[\\"$var\\"] = \$$var" >>$OutputLUA
 EOF
 	}
@@ -669,8 +702,7 @@ sub MkSaveCompileFailed ($)
 # Compile and run a test C program. If the program returns a non-zero
 # exit code, the test fails.
 #
-# Sets $define to "yes" or "no" and saves it to both Makefile.config and
-# ./config/.
+# Sets $define to "yes" or "no" and saves it to both MK and C defines.
 #
 sub MkCompileAndRunC
 {
@@ -729,8 +761,7 @@ EOF
 # Compile and run a test C++ program. If the program returns a non-zero
 # exit code, the test fails.
 #
-# Sets $define to "yes" or "no" and saves it to both Makefile.config and
-# ./config/.
+# Sets $define to "yes" or "no" and saves it to both MK and C defines.
 #
 sub MkCompileAndRunCXX
 {
@@ -871,8 +902,7 @@ EOF
 # Compile a test C program. If compilation fails, the test fails. The
 # test program is never executed.
 #
-# Sets $define to "yes" or "no" and saves it to both Makefile.config and
-# ./config/.
+# Sets $define to "yes" or "no" and saves it to both MK and C defines.
 #
 sub MkCompileC
 {
@@ -922,8 +952,7 @@ EOF
 # Compile a test C++ program. If compilation fails, the test fails. The
 # test program is never executed.
 #
-# Sets $define to "yes" or "no" and saves it to both Makefile.config and
-# ./config/.
+# Sets $define to "yes" or "no" and saves it to both MK and C defines.
 #
 sub MkCompileCXX
 {
@@ -971,8 +1000,7 @@ EOF
 #
 # Run a test Perl script.
 #
-# Sets $define to "yes" or "no" and saves it to both Makefile.config
-# and ./config/.
+# Sets $define to "yes" or "no" and saves it to both MK and C defines.
 #
 sub MkRunPerl
 {
@@ -1005,7 +1033,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($OutputLUA $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSetTrue MkSetFalse MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkPrint MkPrintN MkFoundVer MkNotFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion);
+    @EXPORT = qw($OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSetTrue MkSetFalse MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkPrint MkPrintN MkFoundVer MkNotFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion);
 }
 
 ;1

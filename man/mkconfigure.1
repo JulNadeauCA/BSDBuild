@@ -156,17 +156,33 @@ flag being added to the compiler command line, but it is also interpreted
 by
 .Xr build.proj.mk 5 .
 .It Ev C_INCDIR_CONFIG(dir)
-(C-style compilers only) Specify a target directory for configure-script
-generated include files.
-By default, the files are written to
-.Pa ./config .
-This directive can be invoked multiple times to specify extra directories
-into which those files will be copied.
+(C-style compilers only) Specify a target directory for individual include
+files with configure-script generated statements (i.e.,
+.Dv HAVE_FOO
+is written to
+.Pa have_foo.h
+in the specified directory).
+Pass an empty argument to disable.
+By default,
+.Pa ./config
+is used.
+This directive should be only called once, and may be placed anywhere in
+configure.in.
+.It Ev C_INCLUDE_CONFIG(file)
+(C-style compilers only) Specify a monolithic C include file which will
+contain configure-script generated statements (i.e.,
+.Dv HAVE_FOO
+defines).
+Pass an empty argument to disable (default).
+This directive should be only called once, and may be placed anywhere in
+configure.in.
 .It Ev C_INCPREP(dir)
-(C-style compilers only) Specify a single directory to contain include files.
-The configure script will provide the user with the option of generating
-preprocessed header files into this directory, or replace it by a symlink
-to the source directory.
+(C-style compilers only) Specify absolute path to directory which will
+contain include files.
+The configure script provides the user with the option of either generating
+preprocessed header files into this directory (--includes=yes, the default),
+or create a set of symbolic links to the original include files in the
+source directory (--includes=link).
 .It Ev C_OPTION
 Provide a gcc-style compiler option, such as
 .Ar -Wall ,

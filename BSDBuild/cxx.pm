@@ -26,6 +26,8 @@
 sub Test
 {
 	# Look for a C++ compiler.
+	# XXX duplicated code between cc/cxx
+
 	print << 'EOF';
 if [ "$CXX" = "" ]; then
 	for i in `echo $PATH |sed 's/:/ /g'`; do
@@ -94,10 +96,11 @@ EOT
 		if [ "$EXECSUFFIX" != "" ]; then
 			echo "Detected executable suffix: $EXECSUFFIX" >> config.log
 		fi
-		echo "EXECSUFFIX=$EXECSUFFIX" >> Makefile.config
-		echo "#ifndef EXECSUFFIX" > config/execsuffix.h
-		echo "#define EXECSUFFIX \"${EXECSUFFIX}\"" >> config/execsuffix.h
-		echo "#endif /* EXECSUFFIX */" >> config/execsuffix.h
+EOF
+	MkSaveMK('EXECSUFFIX');
+	MkSaveDefine('EXECSUFFIX');
+
+print << 'EOF';
 	fi
 	rm -f conftest.cc conftest$EXECSUFFIX
 	TEST_CXXFLAGS=""

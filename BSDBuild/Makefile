@@ -1,6 +1,7 @@
 TOP=..
 
 SHARE=	Core.pm \
+	Builtins.pm \
 	cc.pm \
 	cxx.pm \
 	glib.pm \

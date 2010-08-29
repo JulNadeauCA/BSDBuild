@@ -33,6 +33,7 @@
 	cleanfiles.pl
 	gen-declspecs.pl
 	gen-includes.pl
+	gen-includelinks.pl
 	gen-dotdepend.pl
 	install-manpages.sh);
 		  

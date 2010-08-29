@@ -24,6 +24,7 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 use BSDBuild::Core;
+use BSDBuild::Builtins;
 use Getopt::Long;
 
 my $Verbose = 0;
@@ -50,6 +51,7 @@ my %Fns = (
 	'c_fatal_warnings'	=> \&c_fatal_warnings,
 	'c_no_secure_warnings'	=> \&c_no_secure_warnings,
 	'c_incdir_config'	=> \&c_incdir_config,
+	'c_include_config'	=> \&c_include_config,
 	'config_script'		=> \&config_script,
 	'config_guess'		=> \&config_guess,
 	'check_header'		=> \&check_header,
@@ -97,6 +99,8 @@ sub release
 sub register { }
 sub register_section { }
 sub config_guess { }
+sub c_incdir_config { }
+sub c_include_config { }
 
 # Check for a header file
 sub check_header
@@ -364,19 +368,23 @@ sub c_incdir
 sub c_incprep
 {
 	my $dir = shift;
-	my $subdir = shift;
 
 	print << "EOF";
-if [ ! -e "$dir" ]; then mkdir "$dir"; fi
+if [ ! -e "$dir" ]; then
+	mkdir -p "$dir"
+fi
 if [ "\${includes}" = "link" ]; then
-	echo "* Not preprocessing includes"
-	if [ ! -e "$dir/$subdir" ]; then
-		if [ "\${SRCDIR}" != "\${BLDDIR}" ]; then
-			ln -s "\$SRC" "$dir/$subdir"
-		else
-			ln -s "\$BLD" "$dir/$subdir"
-		fi
+	\$ECHO_N "* Linking C include files..."
+	if [ "\${SRCDIR}" != "\${BLDDIR}" ]; then
+		(cd \${SRCDIR} && \${PERL} mk/gen-includelinks.pl "\${SRCDIR}" "$dir" 1>>\${BLDDIR}/config.log 2>&1)
+	else
+		\${PERL} mk/gen-includelinks.pl "\${SRCDIR}" "$dir" 1>>config.log 2>&1
 	fi
+	if [ \$? != 0 ]; then
+		echo "\${PERL} mk/gen-includelinks.pl failed"
+		exit 1
+	fi
+	echo "done"
 else
 	if [ "\${PERL}" = "" ]; then
 		echo "*"
@@ -386,17 +394,11 @@ else
 		echo "*"
 		exit 1
 	fi
-	if [ -e "$dir/$subdir" ]; then
-		echo "* Overwriting existing includes/ directory"
-		rm -fR "$dir/$subdir"
-	fi
+	\$ECHO_N "* Preprocessing C include files..."
 	if [ "\${SRCDIR}" != "\${BLDDIR}" ]; then
-		\$ECHO_N "* Preprocessing includes (from \${SRCDIR})..."
-		(cd \${SRCDIR} && \${PERL} mk/gen-includes.pl "\${BLDDIR}/$dir/$subdir" 1>>\${BLDDIR}/config.log 2>&1)
-		cp -fR config $dir/$subdir
+		(cd \${SRCDIR} && \${PERL} mk/gen-includes.pl "$dir" 1>>\${BLDDIR}/config.log 2>&1)
 	else
-		\$ECHO_N "* Preprocessing includes (in \${BLDDIR})...";
-		\${PERL} mk/gen-includes.pl "$dir/$subdir" 1>>config.log 2>&1
+		\${PERL} mk/gen-includes.pl "$dir" 1>>config.log 2>&1
 	fi
 	if [ \$? != 0 ]; then
 		echo "\${PERL} mk/gen-includes.pl failed"
@@ -461,22 +463,6 @@ sub ld_option
 
 	MkDefine('LDFLAGS', '$LDFLAGS'.$opt);
 	MkSaveMK('LDFLAGS');
-}
-
-# BSDBuild target ./config include directory.
-sub c_incdir_config
-{
-	my $dir = shift;
-	my @dirtoks = split('/', $dir);
-	pop(@dirtoks);
-	$dirparent = join('/', @dirtoks);
-
-	print << "EOF";
-if [ -e "$dirparent" ]; then
-	echo "cp -fR config $dir"
-	cp -fR config "$dir"
-fi
-EOF
 }
 
 # Generate a "foo-config" style script.
@@ -610,6 +596,36 @@ sub pass1_config_guess
 	$ConfigGuess = $s;
 }
 
+# Specify target ./config include directory.
+sub pass1_c_incdir_config
+{
+	my $dir = shift;
+
+	if ($dir) {
+		$OutputHeaderDir = $dir;
+	} else {
+		$OutputHeaderDir = undef;
+	}
+}
+
+# Specify target monolithic config header file.
+sub pass1_c_include_config
+{
+	my $file = shift;
+
+	if ($file) {
+		print << "EOF";
+if [ -e "$file" ]; then
+	echo "* Overwriting $file"
+	rm -f "$file"
+fi
+EOF
+		$OutputHeaderFile = $file;
+	} else {
+		$OutputHeaderFile = undef;
+	}
+}
+
 sub Help
 {
 	my %stdOpts = (
@@ -702,9 +718,9 @@ sub Version
 {
     print << "EOF";
 if [ "${PACKAGE}" != "" ]; then
-	echo "BSDbuild %VERSION%, for ${PACKAGE} ${VERSION}"
+	echo "BSDBuild %VERSION%, for ${PACKAGE} ${VERSION}"
 else
-	echo "BSDbuild %VERSION%"
+	echo "BSDBuild %VERSION%"
 fi
 exit 1
 EOF
@@ -728,9 +744,9 @@ print << 'EOF';
 #!/bin/sh
 #
 # Do not edit!
-# This file was generated from configure.in by BSDbuild %VERSION%.
+# This file was generated from configure.in by BSDBuild %VERSION%.
 #
-# To regenerate this file, get the latest BSDbuild release from
+# To regenerate this file, get the latest BSDBuild release from
 # http://hypertriton.com/bsdbuild/, and use the command:
 #
 #     $ cat configure.in | mkconfigure > configure
@@ -742,9 +758,9 @@ print { $LUA } << 'EOF';
 -- Public domain
 --
 -- Do not edit!
--- This file was generated from configure.in by BSDbuild %VERSION%.
+-- This file was generated from configure.in by BSDBuild %VERSION%.
 --
--- To regenerate this file, get the latest BSDbuild release from
+-- To regenerate this file, get the latest BSDBuild release from
 -- http://bsdbuild.hypertriton.com/, and use the command:
 --
 --    $ cat configure.in | mkconfigure > configure
@@ -1078,6 +1094,10 @@ foreach $_ (@INPUT) {
 			pass1_register_section(@args);
 		} elsif ($cmd eq 'CONFIG_GUESS') {
 			pass1_config_guess(@args);
+		} elsif ($cmd eq 'C_INCDIR_CONFIG') {
+			pass1_c_incdir_config(@args);
+		} elsif ($cmd eq 'C_INCLUDE_CONFIG') {
+			pass1_c_include_config(@args);
 		}
 	}
 }
@@ -1132,7 +1152,7 @@ echo "BSDBuild %VERSION% (host: $host)"
 if [ -e "Makefile.config" ]; then
 	echo "* Overwriting existing Makefile.config"
 fi
-echo "# Generated by configure script (BSDbuild %VERSION%)." > Makefile.config
+echo "# Generated by configure script (BSDBuild %VERSION%)." > Makefile.config
 echo "" >> Makefile.config
 echo "BUILD=${build}" >> Makefile.config
 echo "HOST=${host}" >> Makefile.config
@@ -1148,129 +1168,41 @@ for arg
 do
 	echo "Argument: $arg" >> config.log
 done
-if [ -e "config" ]; then
-	if [ -f "config" ]; then
-		echo "File ./config is in the way. Please remove it first."
-		exit 1;
-	else
-		echo "* Removing existing ./config/ directory."
-		echo "rm -fR config"
-		rm -fR config;
-	fi
+EOF
+
+if ($OutputHeaderFile) {
+	print << "EOF";
+if [ -e "$OutputHeaderFile" ]; then
+	echo "* Overwriting $OutputHeaderFile file"
 fi
-mkdir config
-if [ $? != 0 ]; then
-	echo "Could not create ./config/ directory."
+echo "/* Generated by configure script (BSDBuild %VERSION%). */" > $OutputHeaderFile
+EOF
+}
+if ($OutputHeaderDir) {
+	print << "EOF";
+if [ -e "$OutputHeaderDir" ]; then
+	echo "* Overwriting $OutputHeaderDir directory"
+	rm -fR "$OutputHeaderDir"
+fi
+mkdir -p "$OutputHeaderDir"
+if [ \$? != 0 ]; then
+	echo "Could not create $OutputHeaderDir directory."
 	exit 1
 fi
+EOF
+}
 
-# Process built-in documentation options.
-HAVE_MANDOC="no"
-NROFF=""
-for path in `echo $PATH | sed 's/:/ /g'`; do
-	if [ -x "${path}/nroff" ]; then
-		NROFF="${path}/nroff"
-	fi
-done
-if [ "${NROFF}" != "" ]; then
-	echo | ${NROFF} -Tmandoc >/dev/null
-	if [ "$?" = "0" ]; then
-		HAVE_MANDOC="yes"
-	fi
-fi
-if [ "${HAVE_MANDOC}" = "no" ]; then
-	if [ "${with_manpages}" = "yes" ]; then
-		echo "*"
-		echo "* --with-manpages was requested, but either the nroff(1)"
-		echo "* utility or the mdoc(7) macro package was not found."
-		echo "*"
-		exit 1
-	fi
-	echo "HAVE_MANDOC=no" >> Makefile.config
-	echo "NOMAN=yes" >> Makefile.config
-	echo "NOMANLINKS=yes" >> Makefile.config
-else
-	echo "HAVE_MANDOC=yes" >> Makefile.config
-	if [ "${with_catman}" = "no" ]; then
-		echo "NOCATMAN=yes" >> Makefile.config
-	else
-		if [ "${with_catman}" = "yes" ]; then
-			echo "NOCATMAN=no" >> Makefile.config
-		else
-			case "${host}" in
-			*-*-freebsd*)
-				echo "NOCATMAN=yes" >> Makefile.config
-				;;
-			*)
-				echo "NOCATMAN=no" >> Makefile.config
-				;;
-			esac
-		fi
-	fi
-	if [ "${with_manpages}" = "no" ]; then
-		echo "NOMAN=yes" >> Makefile.config
-		echo "NOMANLINKS=yes" >> Makefile.config
-	else
-		if [ "${with_manlinks}" != "yes" ]; then
-			echo "NOMANLINKS=yes" >> Makefile.config
-		fi
-	fi
-fi
-if [ "${with_docs}" = "no" ]; then
-	echo "NODOC=yes" >> Makefile.config
-fi
-
-# Process NLS options.
-if [ "${enable_nls}" = "yes" ]; then
-	ENABLE_NLS="yes"
-	echo "#ifndef ENABLE_NLS" > config/enable_nls.h
-	echo "#define ENABLE_NLS 1" >> config/enable_nls.h
-	echo "#endif /* ENABLE_NLS */" >> config/enable_nls.h
-	msgfmt=""
-	for path in `echo $PATH | sed 's/:/ /g'`; do
-		if [ -x "${path}/msgfmt" ]; then
-			msgfmt=${path}/msgfmt
-		fi
-	done
-	if [ "${msgfmt}" != "" ]; then
-		HAVE_GETTEXT="yes"
-	else
-		HAVE_GETTEXT="no"
-	fi
-else
-	ENABLE_NLS="no"
-	HAVE_GETTEXT="no"
-	echo "#undef ENABLE_NLS" > config/enable_nls.h
-fi
-echo "ENABLE_NLS=${ENABLE_NLS}" >> Makefile.config
-echo "HAVE_GETTEXT=${HAVE_GETTEXT}" >> Makefile.config
-
-# Process ctags option.
-CTAGS=""
-if [ "${with_ctags}" = "yes" ]; then
-	for path in `echo $PATH | sed 's/:/ /g'`; do
-		if [ -x "${path}/ectags" ]; then
-			CTAGS="${path}/ectags"
-		fi
-	done
-	if [ "${CTAGS}" = "" ]; then
-		for path in `echo $PATH | sed 's/:/ /g'`; do
-			if [ -x "${path}/ctags" ]; then
-				CTAGS="${path}/ctags"
-			fi
-		done
-	fi
-fi
-echo "CTAGS=${CTAGS}" >> Makefile.config
-
-# Default to bundled libtool.
-LIBTOOL_BUNDLED="yes"
-LIBTOOL=\${TOP}/mk/libtool/libtool
-echo "LIBTOOL=${LIBTOOL}" >> Makefile.config
+# Process standard built-in options.
+BuiltinDoc();
+BuiltinNLS();
+BuiltinCtags();
+BuiltinLibtool();
 
 # An "env PREFIX=foo make install" should override ./configure --prefix.
+print << 'EOF';
 echo "PREFIX?=${PREFIX}" >> Makefile.config
 EOF
+
 MkSaveDefine('PREFIX');
 
 #

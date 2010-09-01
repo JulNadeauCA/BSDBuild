@@ -41,9 +41,13 @@ MKDEPS=		build.www.mk build.subdir.mk build.common.mk hstrip.pl
 CLEANFILES?=
 HTMLDIR?=	none
 HTML?=
-
+CSS?=
+CSS_TEMPLATE?=	style
 HTML_OVERWRITE?=	No
 HTML_INSTSOURCE?=	Yes
+
+DTD?=		<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"  \
+		"http://www.w3.org/TR/html4/loose.dtd">
 
 all: ${HTML} all-subdir
 clean: clean-www clean-subdir
@@ -53,7 +57,16 @@ deinstall: deinstall-subdir
 regress: regress-subdir
 depend: depend-subdir
 
-.SUFFIXES: .html .htm .jpg .jpeg .png .gif .m4
+.SUFFIXES: .html .htm .jpg .jpeg .png .gif .m4 .css .css-in
+
+.css-in.css:
+	@cp -f $< ${BASEDIR}/base.css
+	@echo -n "$@:"
+	${M4} ${M4FLAGS} -D__BASE_DIR=${BASEDIR} -D__FILE=$@ \
+	    -D__LANG=$$LANG \
+	    ${BASEDIR}/${CSS_TEMPLATE}.m4 \
+	    | ${PERL} ${TOP}/mk/hstrip.pl > $@
+	@rm -f ${BASEDIR}/base.css
 
 .htm.html:
 	@cp -f $< ${BASEDIR}/base.htm
@@ -65,8 +78,9 @@ depend: depend-subdir
 	        -D__LANG=$$LANG \
 	        ${BASEDIR}/${TEMPLATE}.m4 \
 		| ${PERL} ${TOP}/mk/hstrip.pl > $@.$$LANG.prep; \
+	    echo '${DTD}' > $@.$$LANG.utf-8; \
             ${XSLTPROC} --html --nonet --stringparam lang $$LANG ${XSL} \
-	        $@.$$LANG.prep > $@.$$LANG.utf-8 2>/dev/null; \
+	        $@.$$LANG.prep >> $@.$$LANG.utf-8 2>/dev/null; \
 	    rm -f $@.$$LANG.prep; \
 	    case "$$LANG" in \
 	    en) \

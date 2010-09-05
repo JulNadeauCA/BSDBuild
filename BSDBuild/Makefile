@@ -92,7 +92,8 @@ SHARE=	Core.pm \
 	mgid.pm \
 	select.pm \
 	sndfile.pm \
-	execvp.pm
+	execvp.pm \
+	libbsd.pm
 
 all:
 

@@ -17,7 +17,7 @@ sub Test
 {
 	my ($ver, $pfx) = @_;
 	
-	MkExecPkgConfig($pfx, 'libbsd', '--version', 'LIBBSD_VERSION');
+	MkExecPkgConfig($pfx, 'libbsd', '--modversion', 'LIBBSD_VERSION');
 	MkExecPkgConfig($pfx, 'libbsd', '--cflags', 'LIBBSD_CFLAGS');
 	MkExecPkgConfig($pfx, 'libbsd', '--libs', 'LIBBSD_LIBS');
 	MkIfNE('${LIBBSD_VERSION}', '');

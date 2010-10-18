@@ -42,7 +42,7 @@ sub Test
 {
 	my ($ver, $pfx) = @_;
 	
-	MkExecPkgConfig($pfx, 'sndfile', '--version', 'SNDFILE_VERSION');
+	MkExecPkgConfig($pfx, 'sndfile', '--modversion', 'SNDFILE_VERSION');
 	MkExecPkgConfig($pfx, 'sndfile', '--cflags', 'SNDFILE_CFLAGS');
 	MkExecPkgConfig($pfx, 'sndfile', '--libs', 'SNDFILE_LIBS');
 	MkIfNE('${SNDFILE_VERSION}', '');

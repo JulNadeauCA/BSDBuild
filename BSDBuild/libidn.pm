@@ -42,7 +42,7 @@ sub Test
 {
 	my ($ver, $pfx) = @_;
 	
-	MkExecPkgConfig($pfx, 'libidn', '--version', 'LIBIDN_VERSION');
+	MkExecPkgConfig($pfx, 'libidn', '--modversion', 'LIBIDN_VERSION');
 	MkExecPkgConfig($pfx, 'libidn', '--cflags', 'LIBIDN_CFLAGS');
 	MkExecPkgConfig($pfx, 'libidn', '--libs', 'LIBIDN_LIBS');
 	MkIfNE('${LIBIDN_VERSION}', '');

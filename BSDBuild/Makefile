@@ -5,6 +5,7 @@ SHARE=	Core.pm \
 	cc.pm \
 	cxx.pm \
 	glib.pm \
+	glib2.pm \
 	sdl.pm \
 	sdl_image.pm \
 	smpeg.pm \

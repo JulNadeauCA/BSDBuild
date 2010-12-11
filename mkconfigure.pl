@@ -1243,8 +1243,10 @@ foreach $_ (@INPUT) {
 	if (/^\s*#/) {
 	    next;
 	}
+	s/\;\;/\\{caseclose}/g;
 	DIRECTIVE: foreach my $s (split(';')) {
 		if ($s !~ /([A-Z_]+)\((.*)\)/) {
+			$s =~ s/\\{caseclose\}/;;/g;
 			print $s, "\n";
 			next DIRECTIVE;
 		}

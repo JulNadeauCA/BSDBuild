@@ -18,4 +18,5 @@ Release Notes for BSDBuild 2.8
 - Added HDEFINE_UNQUOTED() variant; thanks rhaamo!
 - Make ${SHOBJS} depend on ${LIBTOOL_COOKIE} in build.lib.mk. Fixes
   concurrent make problems; thanks Bill Randle!
+- Added standard configure option --without-catman.
 

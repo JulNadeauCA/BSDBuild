@@ -95,7 +95,8 @@ SHARE=	Core.pm \
 	sndfile.pm \
 	execvp.pm \
 	libbsd.pm \
-	clock_gettime.pm
+	clock_gettime.pm \
+	clock_win32.pm
 
 all:
 

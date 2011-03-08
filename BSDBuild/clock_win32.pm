@@ -46,11 +46,9 @@ EOF
 
 sub Test
 {
-	MkDefine('CLOCK_CFLAGS', '');
-	MkDefine('CLOCK_LIBS', '');
-
-	MkCompileC('HAVE_CLOCK_WIN32', '${CLOCK_CFLAGS}', '-lwinmm', $testCode);
+	MkCompileC('HAVE_CLOCK_WIN32', '', '-lwinmm', $testCode);
 	MkIfTrue('${HAVE_CLOCK_WIN32}');
+		MkDefine('CLOCK_CFLAGS', '');
 		MkDefine('CLOCK_LIBS', '-lwinmm');
 		MkSaveDefine('HAVE_CLOCK_WIN32', 'CLOCK_CFLAGS', 'CLOCK_LIBS');
 		MkSaveMK('CLOCK_CFLAGS', 'CLOCK_LIBS');

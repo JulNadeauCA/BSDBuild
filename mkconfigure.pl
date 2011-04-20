@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/bsdbuild
 #
-# Copyright (c) 2001-2010 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2011 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,7 @@ my %Fns = (
 	'test'			=> \&test,
 	'check'			=> \&test,		# <2.8 compat
 	'require'		=> \&test_require,
+	'test_dir'		=> \&test_dir,
 	'mdefine'		=> \&mdefine,
 	'hdefine'		=> \&hdefine,
 	'hdefine_unquoted'	=> \&hdefine_unquoted,
@@ -59,8 +60,11 @@ my %Fns = (
 	'check_func'		=> \&check_func,
 	'check_func_opts'	=> \&check_func_opts,
 );
+
+$INSTALLDIR = '%PREFIX%/share/bsdbuild';
 my @Help = ();
 my $ConfigGuess = 'mk/config.guess';
+my @TestDirs = ("$INSTALLDIR/BSDBuild");
 
 # Specify software package name
 sub package
@@ -214,15 +218,34 @@ EOF
 	}
 }
 
+# Add a directory containing extra test modules.
+sub test_dir
+{
+	foreach my $dir (@_) {
+		unless (-e $dir) {
+			print STDERR "TEST_DIR $dir: $!; ignoring\n";
+			next;
+		}
+		push @TestDirs, $dir;
+	}
+}
+
 # Execute one of the standard BSDBuild tests.
 sub test
 {
 	my @args = @_;
 	my ($t) = shift(@args);
-	my $mod = "$INSTALLDIR/BSDBuild/$t.pm";
+	my $mod = undef;
 
-	unless (-e $mod) {
-		print STDERR "$mod: $!\n";
+	foreach my $dir (@TestDirs) {
+		my $path = $dir.'/'.$t.'.pm';
+		if (-e $path) {
+			$mod = $path;
+			last;
+		}
+	}
+	if (!defined($mod)) {
+		print STDERR "No such test module: $t\n";
 		exit (1);
 	}
 	do($mod);
@@ -730,8 +753,6 @@ EOF
 # BEGIN
 #
 
-$INSTALLDIR = '%PREFIX%/share/bsdbuild';
-	
 my $res = GetOptions(
 	"verbose" =>		\$Verbose,
 	"emul-os=s" =>		\$EmulOS,

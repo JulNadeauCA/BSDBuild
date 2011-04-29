@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2002-2007 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2002-2011 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -23,7 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 my $testCode = << 'EOF';
-#include <glib-2.0/glib.h>
+#include <glib.h>
 int main(int argc, char *argv[]) {
   void *slist = g_slist_alloc();
   g_slist_free(slist);

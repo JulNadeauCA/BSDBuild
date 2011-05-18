@@ -794,7 +794,7 @@ EOF
 # Initialize and parse for command-line options.
 #
 print << 'EOF';
-# Copyright (c) 2001-2010 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2011 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -968,6 +968,21 @@ for path in `echo $PATH | sed 's/:/ /g'`; do
 	if [ -x "${path}" ]; then
 		if [ -e "${path}/perl" ]; then
 			PERL="${path}/perl"
+			break
+		fi
+	fi
+done
+EOF
+
+#
+# Check if pkgconfig is available.
+#
+print << 'EOF';
+PKGCONFIG=""
+for path in `echo $PATH | sed 's/:/ /g'`; do
+	if [ -x "${path}" ]; then
+		if [ -e "${path}/pkg-config" ]; then
+			PKGCONFIG="${path}/pkg-config"
 			break
 		fi
 	fi

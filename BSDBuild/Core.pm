@@ -202,6 +202,11 @@ fi
 EOF
 }
 
+sub MkIfPkgConfig
+{
+	print 'if [ "${PKGCONFIG}" != "" ]; then', "\n";
+}
+
 # Variant of MkExecOutputPfx() for pkg-config.
 sub MkExecPkgConfig
 {
@@ -209,7 +214,7 @@ sub MkExecPkgConfig
 
 	print << "EOF";
 if [ "$pfx" != "" ]; then
-	MK_EXEC_PKGPREFIX=`pkg-config --variable=prefix $pkg`
+	MK_EXEC_PKGPREFIX=`\$PKGCONFIG --variable=prefix $pkg`
 	if [ "\$MK_EXEC_PKGPREFIX" != "$pfx" ]; then
 		echo " "
 		echo "* "
@@ -221,10 +226,10 @@ if [ "$pfx" != "" ]; then
 		echo "* "
 		exit 1
 	else
-		$define=`pkg-config $pkg $args`
+		$define=`\$PKGCONFIG $pkg $args`
 	fi
 else
-	$define=`pkg-config $pkg $args`
+	$define=`\$PKGCONFIG $pkg $args`
 fi
 EOF
 }

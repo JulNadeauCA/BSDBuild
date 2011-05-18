@@ -98,7 +98,8 @@ SHARE=	Core.pm \
 	libbsd.pm \
 	clock_gettime.pm \
 	clock_win32.pm \
-	sdl_ttf.pm
+	sdl_ttf.pm \
+	xinerama.pm
 
 all:
 

@@ -45,27 +45,33 @@ sub Test
 {
 	my ($ver, $pfx) = @_;
 
-	MkDefine('X11_CFLAGS', '');
-	MkDefine('X11_LIBS', '');
-
-	MkIfNE($pfx, '');
-		MkIfExists("$pfx/include/X11");
-		    MkDefine('X11_CFLAGS', "-I$pfx/include");
-		MkEndif;
-		MkIfExists("$pfx/lib");
-		    MkDefine('X11_LIBS', "-L$pfx/lib");
-		MkEndif;
+	MkIfPkgConfig('x11');
+		MkExecPkgConfig($pfx, 'x11', '--modversion', 'X11_VERSION');
+		MkExecPkgConfig($pfx, 'x11', '--cflags', 'X11_CFLAGS');
+		MkExecPkgConfig($pfx, 'x11', '--libs', 'X11_LIBS');
 	MkElse;
-		foreach my $dir (@autoIncludeDirs) {
-			MkIfExists("$dir/X11");
-			    MkDefine('X11_CFLAGS', "-I$dir");
+		MkDefine('X11_CFLAGS', '');
+		MkDefine('X11_LIBS', '');
+		MkIfNE($pfx, '');
+			MkIfExists("$pfx/include/X11");
+			    MkDefine('X11_CFLAGS', "-I$pfx/include");
 			MkEndif;
-		}
-		foreach my $dir (@autoLibDirs) {
-			MkIfExists($dir);
-			    MkDefine('X11_LIBS', "\${X11_LIBS} -L$dir");
+			MkIfExists("$pfx/lib");
+			    MkDefine('X11_LIBS', "-L$pfx/lib");
 			MkEndif;
-		}
+		MkElse;
+			MkPrint("WARNING: You should probably use --with-x=prefix");
+			foreach my $dir (@autoIncludeDirs) {
+				MkIfExists("$dir/X11");
+				    MkDefine('X11_CFLAGS', "-I$dir");
+				MkEndif;
+			}
+			foreach my $dir (@autoLibDirs) {
+				MkIfExists($dir);
+				    MkDefine('X11_LIBS', "\${X11_LIBS} -L$dir");
+				MkEndif;
+			}
+		MkEndif;
 	MkEndif;
 
 	MkCompileC('HAVE_X11', '${X11_CFLAGS}', '${X11_LIBS} -lX11', << 'EOF');

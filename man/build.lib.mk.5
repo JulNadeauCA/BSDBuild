@@ -80,19 +80,18 @@ Platform-specific transforms will be applied to the name.
 Target installation directory for libraries
 (usually set by configure).
 .It Ev LIB_INSTALL
-If set to
-.Sq Yes ,
-the
+If set to Yes, the
 .Ar install
 target will install the library files, otherwise it will be a no-op.
-Defaults to
-.Sq No .
+Defaults to No.
 .It Ev LIB_SHARED
-If set to
-.Sq Yes ,
-a shared library will be built.
-Default is
-.Sq No .
+If set to Yes, a shared library will be built.
+Default is No.
+.It Ev LIB_MODULE
+If set to Yes, a
+.Xr dlopen 3
+compatible module will be built.
+Default is No.
 .It Ev LIB_GUID
 A Global Unique Identifier (GUID) for the library.
 Exact interpretation is platform-specific.
@@ -105,14 +104,10 @@ Extra object files to use in generating the library.
 .It Ev LIBS
 Other libtool-generated libraries (*.la) to include in this library.
 .It Ev USE_LIBTOOL
-If set to
-.Sq Yes ,
-use
+If set to Yes, use
 .Xr libtool 1
 to build the libraries.
-If set to
-.Sq No ,
-generate the library using the traditional method involving
+If set to No, generate the library using the traditional method involving
 .Xr ar 1 ,
 .Xr ranlib 1 ,
 and
@@ -121,25 +116,22 @@ and
 Path to GNU
 .Xr libtool 1 .
 Defaults to the bundled libtool,
-.Sq ${TOP}/mk/libtool/libtool .
+.Pa ${TOP}/mk/libtool/libtool .
 .It Ev LTCONFIG_LOG
 When using libtool, the output of the
 .Pa ltconfig
 script will be saved to this file.
 Defaults to
-.Sq ./config.log .
+.Pa ./config.log .
 .It Ev CC
 Compiler for C, C++ and Objective C sources.
-Defaults to
-.Sq cc .
+Defaults to the CC environment variable, or "cc".
 .It Ev CFLAGS
 Compiler flags for C sources.
-Defaults to
-.Sq -O2 -g .
+Defaults to the CFLAGS environment variable.
 .It Ev CXXFLAGS
 Compiler flags for C++ sources.
-Defaults to
-.Sq .
+Defaults to the CXXFLAGS environment variable.
 .It Ev OBJCFLAGS
 Compiler flags for Objective C sources.
 Defaults to

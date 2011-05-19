@@ -142,8 +142,25 @@ sub BuiltinLibtool
 {
 	# Default to bundled libtool
 	print << 'EOF';
-LIBTOOL_BUNDLED="yes"
-LIBTOOL=\${TOP}/mk/libtool/libtool
+if [ "${prefix_libtool}" != "" ]; then
+	LIBTOOL_BUNDLED="no"
+	LIBTOOL="${prefix_libtool}"
+else
+	LIBTOOL=""
+	for path in `echo $PATH | sed 's/:/ /g'`; do
+		if [ -x "${path}/libtool" ]; then
+			LIBTOOL="${path}/libtool"
+			break
+		fi
+	done
+	if [ "${LIBTOOL}" = "" ]; then
+		LIBTOOL_BUNDLED="yes"
+		LIBTOOL=\${TOP}/mk/libtool/libtool
+	else
+		LIBTOOL_BUNDLED="no"
+	fi
+fi
+echo "LIBTOOL_BUNDLED=${LIBTOOL_BUNDLED}" >> Makefile.config
 echo "LIBTOOL=${LIBTOOL}" >> Makefile.config
 EOF
 }

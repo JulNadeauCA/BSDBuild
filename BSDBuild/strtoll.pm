@@ -36,7 +36,7 @@ main(int argc, char *argv[])
 	char *foo = "1234";
 
 	lli = strtoll(foo, &ep, 10);
-	return (0);
+	return (lli != 0);
 }
 EOF
 }

@@ -135,9 +135,8 @@ main(int argc, char *argv[])
 {
 	float f = 1.5;
 	double d = 2.5;
-	f = 0;
-	d = 0;
-	return (0);
+
+	return (f == 1.0 || d == 1.0);
 }
 EOF
 	
@@ -265,8 +264,7 @@ main(int argc, char *argv[])
 {
 	long double ld = 0.1;
 
-	ld = 0;
-	return (0);
+	return (ld == 1.0);
 }
 EOF
 	
@@ -276,11 +274,10 @@ EOF
 int
 main(int argc, char *argv[])
 {
-	long long ll = 0.0;
-	unsigned long long ull = 0.0;
-	ll = 1.0;
-	ull = 1.0;
-	return (0);
+	long long ll = -1;
+	unsigned long long ull = 1;
+
+	return (ll != -1 || ull != 1);
 }
 EOF
 

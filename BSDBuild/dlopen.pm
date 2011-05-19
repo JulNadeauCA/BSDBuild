@@ -24,6 +24,7 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 my $testCode = << 'EOF';
+#include <string.h>
 #ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
 #endif
@@ -36,7 +37,7 @@ main(int argc, char *argv[])
 	handle = dlopen("foo.so", 0);
 	error = dlerror();
 	(void)dlsym(handle, "foo");
-	return (0);
+	return (error != NULL);
 }
 EOF
 

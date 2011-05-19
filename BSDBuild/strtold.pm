@@ -34,7 +34,7 @@ main(int argc, char *argv[])
 	char *foo = "1234";
 
 	ld = strtold(foo, &ep);
-	return (0);
+	return (ld != 1234.0);
 }
 EOF
 

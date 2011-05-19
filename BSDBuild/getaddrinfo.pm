@@ -27,6 +27,7 @@
 sub Test
 {
 	TryCompile 'HAVE_GETADDRINFO', << 'EOF';
+#include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -44,7 +45,7 @@ main(int argc, char *argv[])
 	rv = getaddrinfo("hostname", "port", &hints, &res0);
 	s = gai_strerror(rv);
 	freeaddrinfo(res0);
-	return (0);
+	return (s != NULL);
 }
 EOF
 }

@@ -32,10 +32,8 @@ sub Test
 int
 main(int argc, char *argv[])
 {
-	uid_t uid;
-
-	uid = getuid();
-	return (0);
+	uid_t uid = getuid();
+	return (uid != 0);
 }
 EOF
 }

@@ -24,6 +24,7 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 my $testCode = << 'EOF';
+#include <string.h>
 #ifdef HAVE_DL_H
 #include <dl.h>
 #endif
@@ -38,7 +39,7 @@ main(int argc, char *argv[])
 	(void)shl_findsym((shl_t *)&handle, "foo", TYPE_PROCEDURE, p);
 	(void)shl_findsym((shl_t *)&handle, "foo", TYPE_DATA, p);
 	shl_unload((shl_t)handle);
-	return (0);
+	return (handle != NULL);
 }
 EOF
 

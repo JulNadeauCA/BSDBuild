@@ -38,7 +38,7 @@ main(int argc, char *argv[])
 	uid_t uid = 0;
 
 	pwd = getpwuid(uid);
-	return (0);
+	return (pwd != NULL);
 }
 EOF
 }

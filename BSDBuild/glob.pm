@@ -26,6 +26,7 @@
 sub Test
 {
 	TryCompile 'HAVE_GLOB', << 'EOF';
+#include <string.h>
 #include <glob.h>
 #include <stdio.h>
 
@@ -34,11 +35,11 @@ main(int argc, char *argv[])
 {
 	glob_t gl;
 	int rv, i;
-	char *s;
+	char *s = NULL;
 
 	rv = glob("~/foo", GLOB_TILDE, NULL, &gl);
 	for (i = 0; i < gl.gl_pathc; i++) { s = gl.gl_pathv[i]; }
-	return (0);
+	return (rv != 0 && s != NULL);
 }
 EOF
 }

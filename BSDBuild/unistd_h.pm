@@ -29,12 +29,9 @@ sub Test
 #include <unistd.h>
 #include <sys/types.h>
 int main(int argc, char *argv[]) {
-	uid_t uid = 0;
-	pid_t pid = 0;
-
-	uid = getuid();
-	pid = getpid();
-	return (0);
+	uid_t uid = getuid();
+	pid_t pid = getpid();
+	return (pid == 0 || uid == 0);
 }
 EOF
 	return (0);

@@ -40,9 +40,8 @@ EOF
 int main(int argc, char *argv[]) {
 	int64_t i64 = 0;
 	u_int64_t u64 = 0;
-	i64 = 1;
-	u64 = 1;
-	return (0);
+
+	return (i64 != 0 || u64 != 0);
 }
 EOF
 		MkPrintN('checking for conflicting typedefs...');
@@ -52,11 +51,10 @@ EOF
 		MkCompileC('_MK_HAVE_UNSIGNED_TYPEDEFS', '', '', << 'EOF');
 #include <sys/types.h>
 int main(int argc, char *argv[]) {
-	Uchar foo = 0;
-	Uint bar = 0;
-	Ulong baz = 0;
-	foo = 1; bar = 2; baz = 3;
-	return (0);
+	Uchar foo = 1;
+	Uint bar = 1;
+	Ulong baz = 1;
+	return (foo != 1 || bar != 1 || baz != 1);
 }
 EOF
 	MkElse;
@@ -68,11 +66,10 @@ EOF
 		#
 		MkCompileC('_MK_HAVE_UNSIGNED_TYPEDEFS', '', '', << 'EOF');
 int main(int argc, char *argv[]) {
-	Uchar foo = 0;
-	Uint bar = 0;
-	Ulong baz = 0;
-	foo = 1; bar = 2; baz = 3;
-	return (0);
+	Uchar foo = 1;
+	Uint bar = 1;
+	Ulong baz = 1;
+	return (foo != 1 || bar != 1 || baz != 1);
 }
 EOF
 	MkEndif;

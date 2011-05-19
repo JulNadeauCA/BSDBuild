@@ -27,12 +27,13 @@
 sub Test
 {
 	TryCompile 'HAVE_GETOPT', << 'EOF';
+#include <string.h>
 #include <unistd.h>
 
 int
 main(int argc, char *argv[])
 {
-	int c, x;
+	int c, x = 0;
 	while ((c = getopt(argc, argv, "foo")) != -1) {
 		extern char *optarg;
 		extern int optind, opterr, optopt;
@@ -41,7 +42,7 @@ main(int argc, char *argv[])
 		if (opterr > 0) { x = 3; }
 		if (optopt > 0) { x = 4; }
 	}
-	return (0);
+	return (x != 0);
 }
 EOF
 }

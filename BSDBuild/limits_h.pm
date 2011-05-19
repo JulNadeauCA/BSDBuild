@@ -7,14 +7,15 @@ sub Test
 #include <limits.h>
 
 int main(int argc, char *argv[]) {
-	int i;
-	unsigned u;
-	long l;
-	unsigned long ul;
-
-	i = INT_MIN;	i = INT_MAX;	u = UINT_MAX;
-	l = LONG_MIN;	l = LONG_MAX;	ul = ULONG_MAX;
-	return (0);
+	int i = INT_MIN;
+	unsigned u = 0;
+	long l = LONG_MIN;
+	unsigned long ul = 0;
+	i = INT_MAX;
+	u = UINT_MAX;
+	l = LONG_MAX;
+	ul = ULONG_MAX;
+	return (i != INT_MAX || u != UINT_MAX || l != LONG_MAX || ul != LONG_MAX);
 }
 EOF
 	return (0);

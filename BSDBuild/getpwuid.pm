@@ -28,6 +28,7 @@
 sub Test
 {
 	TryCompile 'HAVE_GETPWUID', << 'EOF';
+#include <string.h>
 #include <sys/types.h>
 #include <pwd.h>
 

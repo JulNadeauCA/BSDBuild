@@ -8,7 +8,7 @@
 #
 #     $ cat configure.in | mkconfigure > configure
 #
-# Copyright (c) 2001-2010 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2011 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -170,6 +170,15 @@ for path in `echo $PATH | sed 's/:/ /g'`; do
 	if [ -x "${path}" ]; then
 		if [ -e "${path}/perl" ]; then
 			PERL="${path}/perl"
+			break
+		fi
+	fi
+done
+PKGCONFIG=""
+for path in `echo $PATH | sed 's/:/ /g'`; do
+	if [ -x "${path}" ]; then
+		if [ -e "${path}/pkg-config" ]; then
+			PKGCONFIG="${path}/pkg-config"
 			break
 		fi
 	fi
@@ -531,8 +540,25 @@ if [ "${with_ctags}" = "yes" ]; then
 	fi
 fi
 echo "CTAGS=${CTAGS}" >> Makefile.config
-LIBTOOL_BUNDLED="yes"
-LIBTOOL=\${TOP}/mk/libtool/libtool
+if [ "${prefix_libtool}" != "" ]; then
+	LIBTOOL_BUNDLED="no"
+	LIBTOOL="${prefix_libtool}"
+else
+	LIBTOOL=""
+	for path in `echo $PATH | sed 's/:/ /g'`; do
+		if [ -x "${path}/libtool" ]; then
+			LIBTOOL="${path}/libtool"
+			break
+		fi
+	done
+	if [ "${LIBTOOL}" = "" ]; then
+		LIBTOOL_BUNDLED="yes"
+		LIBTOOL=\${TOP}/mk/libtool/libtool
+	else
+		LIBTOOL_BUNDLED="no"
+	fi
+fi
+echo "LIBTOOL_BUNDLED=${LIBTOOL_BUNDLED}" >> Makefile.config
 echo "LIBTOOL=${LIBTOOL}" >> Makefile.config
 echo "PREFIX?=${PREFIX}" >> Makefile.config
 echo "#ifndef PREFIX" > config/prefix.h

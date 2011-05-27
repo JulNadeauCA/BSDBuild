@@ -104,23 +104,23 @@ SHARE=	Core.pm \
 all:
 
 install:
-	@if [ ! -d "${SHAREDIR}/BSDBuild" ]; then \
+	@if [ ! -d "${DESTDIR}${SHAREDIR}/BSDBuild" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/BSDBuild"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}/BSDBuild; \
+	    ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${SHAREDIR}/BSDBuild; \
 	fi; \
 	for F in ${SHARE}; do \
 	    echo "${INSTALL_DATA} $$F ${SHAREDIR}/BSDBuild"; \
-	    ${SUDO} ${INSTALL_DATA} $$F ${SHAREDIR}/BSDBuild; \
+	    ${SUDO} ${INSTALL_DATA} $$F ${DESTDIR}${SHAREDIR}/BSDBuild; \
 	done
 
 install-links:
-	@if [ ! -d "${SHAREDIR}/BSDBuild" ]; then \
+	@if [ ! -d "${DESTDIR}${SHAREDIR}/BSDBuild" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/BSDBuild"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}/BSDBuild; \
+	    ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${SHAREDIR}/BSDBuild; \
 	fi; \
 	for F in ${SHARE}; do \
 	    echo "ln -sf `pwd`/$$F ${SHAREDIR}/BSDBuild/$$F"; \
-	    ${SUDO} ln -sf `pwd`/$$F ${SHAREDIR}/BSDBuild/$$F; \
+	    ${SUDO} ln -sf `pwd`/$$F ${DESTDIR}${SHAREDIR}/BSDBuild/$$F; \
 	done
 
 clean:

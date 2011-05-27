@@ -56,11 +56,11 @@ uman: uman.pl
 	    uman.pl > uman
 
 install: install-subdir
-	@if [ ! -d "${SHAREDIR}" ]; then \
+	@if [ ! -d "${DESTDIR}${SHAREDIR}" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
 	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${SHAREDIR}"; \
 	fi
-	@if [ ! -d "${SHAREDIR}/libtool" ]; then \
+	@if [ ! -d "${DESTDIR}${SHAREDIR}/libtool" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/libtool"; \
 	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${SHAREDIR}/libtool"; \
 	fi
@@ -94,7 +94,7 @@ install-links-subdir:
 	fi)
 
 install-links: install-links-subdir
-	@if [ ! -d "${SHAREDIR}" ]; then \
+	@if [ ! -d "${DESTDIR}${SHAREDIR}" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
 	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${SHAREDIR}"; \
 	fi

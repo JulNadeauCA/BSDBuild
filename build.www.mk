@@ -138,12 +138,12 @@ install-www:
 	@if [ "${HTMLDIR}" = "none" ]; then \
 		exit 0; \
 	fi
-	@if [ ! -d "${HTMLDIR}" ]; then \
+	@if [ ! -d "${DESTDIR}${HTMLDIR}" ]; then \
 		echo "${INSTALL_DATA_DIR} ${HTMLDIR}"; \
 		${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${HTMLDIR}; \
 	fi
 	@if [ "${HTML_INSTSOURCE}" = "Yes" ]; then \
-		if [ ! -d "${HTMLDIR}/mk" ]; then \
+		if [ ! -d "${DESTDIR}${HTMLDIR}/mk" ]; then \
 			echo "${INSTALL_DATA_DIR} ${HTMLDIR}/mk"; \
 			${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${HTMLDIR}/mk; \
 		fi; \
@@ -152,12 +152,12 @@ install-www:
 			${SUDO} ${INSTALL_DATA} ${TOP}/mk/$$MK \
 			    ${DESTDIR}${HTMLDIR}/mk; \
 		done; \
-       		if [ ! -d "${HTMLDIR}/xsl" ]; then \
+       		if [ ! -d "${DESTDIR}${HTMLDIR}/xsl" ]; then \
 			echo "${INSTALL_DATA_DIR} ${HTMLDIR}/xsl"; \
 			${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${HTMLDIR}/xsl; \
 		fi; \
 		for XSL in ${XSL}; do \
-			if [ -e "${HTMLDIR}/xsl/$$XSL" \
+			if [ -e "${DESTDIR}${HTMLDIR}/xsl/$$XSL" \
 			     -a "${HTML_OVERWRITE}" = "" ]; then \
 				echo "xsl/$$XSL: exists; preserving"; \
 			else \
@@ -166,12 +166,12 @@ install-www:
 				    ${DESTDIR}${HTMLDIR}/xsl; \
 			fi; \
 		done; \
-		if [ ! -d "${HTMLDIR}/m4" ]; then \
+		if [ ! -d "${DESTDIR}${HTMLDIR}/m4" ]; then \
 			echo "${INSTALL_DATA_DIR} ${HTMLDIR}/m4"; \
 			${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${HTMLDIR}/m4; \
 		fi; \
 		(cd ${BASEDIR}; for M4IN in `ls -1 *.m4`; do \
-			if [ -e "${HTMLDIR}/m4/$$M4IN" \
+			if [ -e "${DESTDIR}${HTMLDIR}/m4/$$M4IN" \
 			     -a "${HTML_OVERWRITE}" = "" ]; then \
 				echo "m4/$$M4IN: exists; preserving"; \
 			else \
@@ -184,7 +184,7 @@ install-www:
 	@for F in ${HTML}; do \
 		rm -f $$F; \
 		if [ "${HTML_INSTSOURCE}" = "Yes" -a \
-		     ! -e "${HTMLDIR}/Makefile" ]; then \
+		     ! -e "${DESTDIR}${HTMLDIR}/Makefile" ]; then \
 			echo "TOP=." > Makefile.prep; \
 			echo "HTML=${HTML}" >> Makefile.prep; \
 			echo "HTMLDIR=none" >> Makefile.prep; \
@@ -204,7 +204,7 @@ install-www:
 		fi; \
 		if [ "${HTML_INSTSOURCE}" = "Yes" ]; then \
 			export SF=`echo $$F |sed s,.html$$,.htm,`; \
-			if [ -e "${HTMLDIR}/$$SF" \
+			if [ -e "${DESTDIR}${HTMLDIR}/$$SF" \
 			     -a "${HTML_OVERWRITE}" = "" ]; then \
 				echo "$$SF exists; preserving"; \
 			else \
@@ -213,7 +213,7 @@ install-www:
 				    ${DESTDIR}${HTMLDIR}; \
 			fi; \
 		fi; \
-		if [ -e "${HTMLDIR}/$$F.var" \
+		if [ -e "${DESTDIR}${HTMLDIR}/$$F.var" \
 		     -a "${HTML_OVERWRITE}" = "" ]; then \
 			echo "$$F.var exists; preserving"; \
 		else \
@@ -222,7 +222,7 @@ install-www:
 		fi; \
 		for LANG in ${LANGUAGES}; do \
 			for ENC in `ls -1 $$F.$$LANG*`; do \
-			    if [ -e "${HTMLDIR}/$$ENC" \
+			    if [ -e "${DESTDIR}${HTMLDIR}/$$ENC" \
 			         -a "${HTML_OVERWRITE}" = "" ]; then \
 				    echo "$$ENC exists; preserving"; \
 			    else \

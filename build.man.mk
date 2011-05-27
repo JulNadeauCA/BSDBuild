@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2001-2010 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2011 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -82,90 +82,108 @@ depend: depend-subdir
 preformat-man:
 	@if [ "${MAN1}" != "" -a "${NOMAN}" != "yes" ]; then \
 	    if [ "${CATMAN1}" = "" ]; then \
+	        CATLIST=""; \
 	        for F in ${MAN1}; do \
 	            CAT=`echo $$F | sed 's/.1$$/.cat1/'`; \
-	            ${MAKE} $$CAT; \
+		    CATLIST="$$CATLIST $$CAT"; \
 	        done; \
+	        ${MAKE} $$CATLIST; \
 	    else \
 	        ${MAKE} ${CATMAN1}; \
 	    fi; \
 	fi
 	@if [ "${MAN2}" != "" -a "${NOMAN}" != "yes" ]; then \
 	    if [ "${CATMAN2}" = "" ]; then \
+	        CATLIST=""; \
 	        for F in ${MAN2}; do \
 	            CAT=`echo $$F | sed 's/.2$$/.cat2/'`; \
-	            ${MAKE} $$CAT; \
+		    CATLIST="$$CATLIST $$CAT"; \
 	        done; \
+	        ${MAKE} $$CATLIST; \
 	    else \
 	        ${MAKE} ${CATMAN2}; \
 	    fi; \
 	fi
 	@if [ "${MAN3}" != "" -a "${NOMAN}" != "yes" ]; then \
 	    if [ "${CATMAN3}" = "" ]; then \
+	        CATLIST=""; \
 	        for F in ${MAN3}; do \
 	            CAT=`echo $$F | sed 's/.3$$/.cat3/'`; \
-	            ${MAKE} $$CAT; \
+		    CATLIST="$$CATLIST $$CAT"; \
 	        done; \
+	        ${MAKE} $$CATLIST; \
 	    else \
 	        ${MAKE} ${CATMAN3}; \
 	    fi; \
 	fi
 	@if [ "${MAN4}" != "" -a "${NOMAN}" != "yes" ]; then \
 	    if [ "${CATMAN4}" = "" ]; then \
+	        CATLIST=""; \
 	        for F in ${MAN4}; do \
 	            CAT=`echo $$F | sed 's/.4$$/.cat4/'`; \
-	            ${MAKE} $$CAT; \
+		    CATLIST="$$CATLIST $$CAT"; \
 	        done; \
+	        ${MAKE} $$CATLIST; \
 	    else \
 	        ${MAKE} ${CATMAN4}; \
 	    fi; \
 	fi
 	@if [ "${MAN5}" != "" -a "${NOMAN}" != "yes" ]; then \
 	    if [ "${CATMAN5}" = "" ]; then \
+	        CATLIST=""; \
 	        for F in ${MAN5}; do \
 	            CAT=`echo $$F | sed 's/.5$$/.cat5/'`; \
-	            ${MAKE} $$CAT; \
+		    CATLIST="$$CATLIST $$CAT"; \
 	        done; \
+	        ${MAKE} $$CATLIST; \
 	    else \
 	        ${MAKE} ${CATMAN5}; \
 	    fi; \
 	fi
 	@if [ "${MAN6}" != "" -a "${NOMAN}" != "yes" ]; then \
 	    if [ "${CATMAN6}" = "" ]; then \
+	        CATLIST=""; \
 	        for F in ${MAN6}; do \
 	            CAT=`echo $$F | sed 's/.6$$/.cat6/'`; \
-	            ${MAKE} $$CAT; \
+		    CATLIST="$$CATLIST $$CAT"; \
 	        done; \
+	        ${MAKE} $$CATLIST; \
 	    else \
 	        ${MAKE} ${CATMAN6}; \
 	    fi; \
 	fi
 	@if [ "${MAN7}" != "" -a "${NOMAN}" != "yes" ]; then \
 	    if [ "${CATMAN7}" = "" ]; then \
+	        CATLIST=""; \
 	        for F in ${MAN7}; do \
 	            CAT=`echo $$F | sed 's/.7$$/.cat7/'`; \
-	            ${MAKE} $$CAT; \
+		    CATLIST="$$CATLIST $$CAT"; \
 	        done; \
+	        ${MAKE} $$CATLIST; \
 	    else \
 	        ${MAKE} ${CATMAN7}; \
 	    fi; \
 	fi
 	@if [ "${MAN8}" != "" -a "${NOMAN}" != "yes" ]; then \
 	    if [ "${CATMAN8}" = "" ]; then \
+	        CATLIST=""; \
 	        for F in ${MAN8}; do \
 	            CAT=`echo $$F | sed 's/.8$$/.cat8/'`; \
-	            ${MAKE} $$CAT; \
+		    CATLIST="$$CATLIST $$CAT"; \
 	        done; \
+	        ${MAKE} $$CATLIST; \
 	    else \
 	        ${MAKE} ${CATMAN8}; \
 	    fi; \
 	fi
 	@if [ "${MAN9}" != "" -a "${NOMAN}" != "yes" ]; then \
 	    if [ "${CATMAN9}" = "" ]; then \
+	        CATLIST=""; \
 	        for F in ${MAN9}; do \
 	            CAT=`echo $$F | sed 's/.9$$/.cat9/'`; \
-	            ${MAKE} $$CAT; \
+		    CATLIST="$$CATLIST $$CAT"; \
 	        done; \
+	        ${MAKE} $$CATLIST; \
 	    else \
 	        ${MAKE} ${CATMAN9}; \
 	    fi; \

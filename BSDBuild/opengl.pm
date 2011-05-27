@@ -26,20 +26,26 @@
 my @autoIncludeDirs = (
 	'/usr/include/X11',
 	'/usr/include/X11R6',
+	'/usr/include/X11R7',
 	'/usr/local/X11/include',
 	'/usr/local/X11R6/include',
+	'/usr/local/X11R7/include',
 	'/usr/local/include/X11',
 	'/usr/local/include/X11R6',
+	'/usr/local/include/X11R7',
 	'/usr/X11/include',
 	'/usr/X11R6/include',
+	'/usr/X11R7/include',
 	'/usr/local/include',
 );
 
 my @autoLibDirs = (
 	'/usr/local/X11/lib',
 	'/usr/local/X11R6/lib',
+	'/usr/local/X11R7/lib',
 	'/usr/X11/lib',
 	'/usr/X11R6/lib',
+	'/usr/X11R7/lib',
 	'/usr/local/lib',
 );
 	

@@ -28,6 +28,7 @@ my @autoPrefixDirs = (
 	'/usr/local',
 	'/opt',
 	'/opt/local',
+	'/usr/pkg'
 );
 my $testCode = << "EOF";
 #include <libintl.h>

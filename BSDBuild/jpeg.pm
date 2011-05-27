@@ -27,6 +27,7 @@ my @autoPrefixDirs = (
 	'/usr/local',
 	'/usr/X11R6',
 	'/usr',
+	'/usr/pkg',
 	'/opt/local',
 	'/opt'
 );

@@ -671,7 +671,7 @@ echo "#ifndef PACKAGE" > config/package.h
 echo "#define PACKAGE \"$PACKAGE\"" >> config/package.h
 echo "#endif" >> config/package.h
 echo "hdefs[\"PACKAGE\"] = \"$PACKAGE\"" >>configure.lua
-VERSION="2.8"
+VERSION="2.9"
 echo "VERSION=$VERSION" >>Makefile.config
 echo "mdefs[\"VERSION\"] = \"$VERSION\"" >>configure.lua
 echo "#ifndef VERSION" > config/version.h

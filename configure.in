@@ -1,7 +1,7 @@
 # Public domain
 
 PACKAGE("BSDBuild")
-VERSION("2.8")
+VERSION("2.9")
 RELEASE("Blast of Ancient Atmospheres")
 
 MDEFINE(SHAREDIR, "$PREFIX/share/bsdbuild")

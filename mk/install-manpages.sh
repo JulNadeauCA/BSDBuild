@@ -6,11 +6,14 @@
 # ${CATMANDIR}, respectively. ${CATMAN} is optional.
 #
 
-for F in ${MAN}; do
-	echo "${INSTALL_DATA} $F ${MANDIR}"
-	${INSTALL_DATA} $F ${MANDIR}
-	if [ $? != 0 ]; then
-		exit 1;
+for F in ${MAN} ignore; do
+	if [ "$F" = "ignore" ]; then continue; fi
+	if [ -e "$F" ]; then
+		echo "${INSTALL_DATA} $F ${MANDIR}"
+		${INSTALL_DATA} $F ${MANDIR}
+		if [ $? != 0 ]; then
+			exit 1;
+		fi
 	fi
 done
 

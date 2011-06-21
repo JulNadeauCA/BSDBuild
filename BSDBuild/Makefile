@@ -99,7 +99,8 @@ SHARE=	Core.pm \
 	clock_gettime.pm \
 	clock_win32.pm \
 	sdl_ttf.pm \
-	xinerama.pm
+	xinerama.pm \
+	portaudio.pm
 
 all:
 

@@ -26,36 +26,42 @@ LTFILES=config.guess config.sub configure configure.in ltconfig ltmain.sh
 
 all: all-subdir ${SCRIPTS}
 
-mkconfigure: mkconfigure.pl
+config-ok:
+	@if [ "${CONFIGURE_OK}" != "yes" ]; then \
+	    echo "Please run ./configure first"; \
+	    exit 1; \
+	fi
+
+mkconfigure: config-ok mkconfigure.pl
 	sed -e s,%PREFIX%,${PREFIX}, \
 	    -e s,%VERSION%,${VERSION}, \
 	    mkconfigure.pl > mkconfigure
 
-mkprojfiles: mkprojfiles.pl
+mkprojfiles: config-ok mkprojfiles.pl
 	sed -e s,%PREFIX%,${PREFIX}, \
 	    -e s,%VERSION%,${VERSION}, \
 	    mkprojfiles.pl > mkprojfiles
 
-mkify: mkify.pl
+mkify: config-ok mkify.pl
 	sed -e s,%SHAREDIR%,${SHAREDIR}, \
 	    -e s,%BINDIR%,${BINDIR}, \
 	    mkify.pl > mkify
 
-h2mandoc: h2mandoc.pl
+h2mandoc: config-ok h2mandoc.pl
 	sed -e s,%VERSION%,${VERSION}, \
 	    h2mandoc.pl > h2mandoc
 
-man2wiki: man2wiki.pl
+man2wiki: config-ok man2wiki.pl
 	sed -e s,%PREFIX%,${PREFIX}, \
 	    -e s,%VERSION%,${VERSION}, \
 	    man2wiki.pl > man2wiki
 
-uman: uman.pl
+uman: config-ok uman.pl
 	sed -e s,%PREFIX%,${PREFIX}, \
 	    -e s,%VERSION%,${VERSION}, \
 	    uman.pl > uman
 
-install: install-subdir
+install: config-ok install-subdir
 	@if [ ! -d "${DESTDIR}${SHAREDIR}" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
 	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${SHAREDIR}"; \
@@ -75,44 +81,6 @@ install: install-subdir
 	@for F in ${SCRIPTS}; do \
 	    echo "${INSTALL_PROG} $$F ${BINDIR}"; \
 	    ${SUDO} ${INSTALL_PROG} $$F "${DESTDIR}${BINDIR}"; \
-	done
-
-install-links-subdir:
-	@(if [ "${SUBDIR}" = "" ]; then \
-	    SUBDIR="NONE"; \
-	else \
-	    SUBDIR="${SUBDIR}"; \
-	fi; \
-	if [ "$$SUBDIR" != "" -a "$$SUBDIR" != "NONE" ]; then \
-		for F in $$SUBDIR; do \
-		    echo "==> ${REL}$$F"; \
-		    (cd $$F && ${MAKE} REL=${REL}$$F/ install-links); \
-		    if [ $$? != 0 ]; then \
-		    	exit 1; \
-		    fi; \
-		done; \
-	fi)
-
-install-links: install-links-subdir
-	@if [ ! -d "${DESTDIR}${SHAREDIR}" ]; then \
-	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${SHAREDIR}"; \
-	fi
-	@if [ ! -d "${SHAREDIR}/libtool" ]; then \
-	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/libtool"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${SHAREDIR}/libtool"; \
-	fi
-	@for F in ${SHARE}; do \
-	    echo "ln -sf `pwd`/$$F ${SHAREDIR}/$$F"; \
-	    ${SUDO} ln -sf `pwd`/$$F "${DESTDIR}${SHAREDIR}/$$F"; \
-	done
-	@for F in ${LTFILES}; do \
-	    echo "${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool"; \
-	    ${SUDO} ${INSTALL_DATA} libtool/$$F "${DESTDIR}${SHAREDIR}/libtool"; \
-	done
-	@for F in ${SCRIPTS}; do \
-	    echo "${INSTALL_PROG} $$F.pl ${BINDIR}/$$F"; \
-	    ${SUDO} ${INSTALL_PROG} $$F.pl "${DESTDIR}${BINDIR}"; \
 	done
 
 cleandir: cleandir-subdir
@@ -142,7 +110,7 @@ clean-release:
 		rm -f ../$$F; \
 	  done);
 
-.PHONY: install install-links install-links-subdir cleandir clean depend release configure clean-release
+.PHONY: install cleandir clean depend release configure clean-release config-ok
 
 include ${TOP}/mk/build.common.mk
 include ${TOP}/mk/build.subdir.mk

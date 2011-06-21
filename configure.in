@@ -5,10 +5,10 @@ VERSION("2.9")
 RELEASE("Blast of Ancient Atmospheres")
 
 MDEFINE(SHAREDIR, "$PREFIX/share/bsdbuild")
+MDEFINE(CONFIGURE_OK, "yes")
 
 echo "*"
 echo "* Configuration successful."
-echo "* Use \"make all install\" to compile and install BSDBuild."
-echo "* Use \"make install-links\" to install links to source (for developers)."
+echo "* Use \"make all install\" to build and install BSDBuild."
 echo "*"
 

@@ -18,6 +18,7 @@ else
 	PHASE=stable
 fi
 REMOTEDIR=www/${PHASE}.hypertriton.com/${PROJ}
+CHANGELOGDIR=www/${PROJ}
 
 cd ..
 
@@ -87,7 +88,8 @@ gpg -ab ${DISTNAME}.zip
 
 if [ "$NOUPLOAD" != "Yes" ]; then
 	echo "Uploading to ${RHOST}"
-	scp -C ${DISTNAME}.{tar.gz,tar.gz.md5,tar.gz.asc,zip,zip.md5,zip.asc} ${RUSER}@${RHOST}:${REMOTEDIR}
+	scp -C ${DISTNAME}.* ${RUSER}@${RHOST}:${REMOTEDIR}
+	scp -C ${PROJ}/ChangeLogs/Release-${VER}.txt ${RUSER}@${RHOST}:${CHANGELOGDIR}
 fi
 
 if [ "$PHASE" = "stable" ]; then

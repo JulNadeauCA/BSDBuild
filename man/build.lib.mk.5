@@ -115,8 +115,14 @@ and
 .It Ev LIBTOOL
 Path to GNU
 .Xr libtool 1 .
-Defaults to the bundled libtool,
-.Pa ${TOP}/mk/libtool/libtool .
+Usually set by configure script (defaults to system libtool, or the bundled
+copy).
+.It Ev LIBTOOLOPTS
+Specify general libtool arguments (passed before --mode).
+Defaults to "--tag=CC".
+.It Ev LIBTOOLFLAGS
+Specify extra compiler arguments when calling compiler from libtool
+(passed after --mode).
 .It Ev LTCONFIG_LOG
 When using libtool, the output of the
 .Pa ltconfig

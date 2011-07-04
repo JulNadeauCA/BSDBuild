@@ -52,15 +52,18 @@ sub Test
 {
 	my ($ver, $pfx) = @_;
 	
+	MkDefine('PORTAUDIO_VERSION', '');
+	
 	MkIfPkgConfig('portaudio-2.0');
 		MkExecPkgConfig($pfx, 'portaudio-2.0', '--modversion', 'PORTAUDIO_VERSION');
 		MkExecPkgConfig($pfx, 'portaudio-2.0', '--cflags', 'PORTAUDIO_CFLAGS');
 		MkExecPkgConfig($pfx, 'portaudio-2.0', '--libs', 'PORTAUDIO_LIBS');
-		MkDefine('PORTAUDIO_VERSION', '${PORTAUDIO_VERSION}.0');
+		MkIfNE('${PORTAUDIO_VERSION}', '');
+			MkDefine('PORTAUDIO_VERSION', '${PORTAUDIO_VERSION}.0');
+		MkEndif;
 	MkElse;
 		MkDefine('PORTAUDIO_CFLAGS', '');
 		MkDefine('PORTAUDIO_LIBS', '');
-		MkDefine('PORTAUDIO_VERSION', '');
 		MkIfNE($pfx, '');
 			MkIfExists("$pfx/include/portaudio.h");
 				MkDefine('PORTAUDIO_CFLAGS', "-I$pfx/include ${PTHREADS_CFLAGS}");

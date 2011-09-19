@@ -94,7 +94,7 @@ sub Emul
 
 	if ($os eq 'windows') {
 		MkDefine('HAVE_PNG', 'no');
-		MkSaveUndef('HAVE_PNG', 'PNG_CFLAGS', 'PNG_LIBS');
+		MkSaveUndef('HAVE_PNG', 'HAVE_LIBPNG14', 'PNG_CFLAGS', 'PNG_LIBS');
 		MkSaveMK('PNG_CFLAGS', 'PNG_LIBS');
 		return (1);
 	}
@@ -115,6 +115,8 @@ sub Emul
 	}
 	MkDefine('HAVE_PNG', 'yes');
 	MkSave('HAVE_PNG', 'PNG_CFLAGS', 'PNG_LIBS');
+	MkDefine('HAVE_LIBPNG14', 'no');
+	MkSave('HAVE_LIBPNG14');
 	return (1);
 }
 

@@ -386,7 +386,7 @@ cleandir-lib:
 
 install-lib: ${LIBTOOL_COOKIE}
 	@if [ "${INCL}" != "none" -a "${INCL}" != "none" ]; then \
-	    if [ ! -d "${INCLDIR}" ]; then \
+	    if [ ! -d "${DESTDIR}${INCLDIR}" ]; then \
                 echo "${INSTALL_DATA_DIR} ${INCLDIR}"; \
                 ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${INCLDIR}; \
 	    fi; \
@@ -397,7 +397,7 @@ install-lib: ${LIBTOOL_COOKIE}
 	fi
 	@if [ "${LIB}" != "" -a "${USE_LIBTOOL}" = "Yes" -a \
 	      "${LIB_INSTALL}" = "Yes" ]; then \
-	    if [ ! -d "${LIBDIR}" ]; then \
+	    if [ ! -d "${DESTDIR}${LIBDIR}" ]; then \
                 echo "${INSTALL_DATA_DIR} ${LIBDIR}"; \
                 ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${LIBDIR}; \
 	    fi; \
@@ -414,7 +414,7 @@ install-lib: ${LIBTOOL_COOKIE}
 	    fi; \
 	fi
 	@if [ "${SHARE}" != "none" ]; then \
-            if [ ! -d "${SHAREDIR}" ]; then \
+            if [ ! -d "${DESTDIR}${SHAREDIR}" ]; then \
                 echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
                 ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${SHAREDIR}; \
             fi; \
@@ -424,7 +424,7 @@ install-lib: ${LIBTOOL_COOKIE}
             done; \
 	fi
 	@if [ "${SHARESRC}" != "none" ]; then \
-            if [ ! -d "${SHAREDIR}" ]; then \
+            if [ ! -d "${DESTDIR}${SHAREDIR}" ]; then \
                 echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
                 ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${SHAREDIR}; \
             fi; \
@@ -442,7 +442,7 @@ install-lib: ${LIBTOOL_COOKIE}
 	    fi; \
 	fi
 	@if [ "${CONF}" != "none" ]; then \
-            if [ ! -d "${SYSCONFDIR}" ]; then \
+            if [ ! -d "${DESTDIR}${SYSCONFDIR}" ]; then \
                 echo "${INSTALL_DATA_DIR} ${SYSCONFDIR}"; \
                 ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${SYSCONFDIR}; \
             fi; \

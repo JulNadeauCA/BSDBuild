@@ -24,7 +24,7 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 my $testCode = << 'EOF';
-#include <portaudio.h>
+#include <portaudio2/portaudio.h>
 
 int
 main(int argc, char *argv[])
@@ -61,20 +61,26 @@ sub Test
 		MkIfNE('${PORTAUDIO_VERSION}', '');
 			MkDefine('PORTAUDIO_VERSION', '${PORTAUDIO_VERSION}.0');
 		MkEndif;
+		foreach my $dir (@autoPrefixes) {
+			# XXX 
+			MkIfExists("$dir/include/portaudio2/portaudio.h");
+				MkDefine('PORTAUDIO_CFLAGS', "-I$dir/include \${PORTAUDIO_CFLAGS}");
+			MkEndif;
+		}
 	MkElse;
 		MkDefine('PORTAUDIO_CFLAGS', '');
 		MkDefine('PORTAUDIO_LIBS', '');
 		MkIfNE($pfx, '');
 			MkIfExists("$pfx/include/portaudio.h");
-				MkDefine('PORTAUDIO_CFLAGS', "-I$pfx/include ${PTHREADS_CFLAGS}");
-			    MkDefine('PORTAUDIO_LIBS', "-L$pfx/lib -lportaudio ${PTHREADS_LIBS}");
+				MkDefine('PORTAUDIO_CFLAGS', "-I$pfx/include \${PTHREADS_CFLAGS}");
+			    MkDefine('PORTAUDIO_LIBS', "-L$pfx/lib -lportaudio \${PTHREADS_LIBS}");
 				MkDefine('PORTAUDIO_VERSION', "18.0");
 			MkEndif;
 		MkElse;
 			foreach my $dir (@autoPrefixes) {
 				MkIfExists("$dir/include/portaudio.h");
-					MkDefine('PORTAUDIO_CFLAGS', "-I$dir/include ${PTHREADS_CFLAGS}");
-				    MkDefine('PORTAUDIO_LIBS', "-L$dir/lib -lportaudio ${PTHREADS_LIBS}");
+					MkDefine('PORTAUDIO_CFLAGS', "-I$dir/include \${PTHREADS_CFLAGS}");
+				    MkDefine('PORTAUDIO_LIBS', "-L$dir/lib -lportaudio \${PTHREADS_LIBS}");
 					MkDefine('PORTAUDIO_VERSION', "18.0");
 				MkEndif;
 			}

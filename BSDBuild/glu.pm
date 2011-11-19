@@ -88,6 +88,7 @@ sub Test
 int main(int argc, char *argv[]) {
 	GLUquadric *qd;
 	qd = gluNewQuadric();
+	gluDeleteQuadric(qd);
 	return (0);
 }
 EOF

@@ -15,7 +15,8 @@ if (!defined($ENV{'UMANPATH'})) {
 @SRC_DIRS = split(':', $ENV{'UMANPATH'});
 
 # Formatting engine
-$NROFF = 'nroff -Tascii -mandoc';
+#$NROFF = 'nroff -Tascii -mandoc';
+$NROFF = 'groff -S -P-h -Wall -mtty-char -man -Tascii -P-c -mandoc';
 
 if (@ARGV < 1) { die "Usage: aman [manpage]"; }
 my $query = $ARGV[0];

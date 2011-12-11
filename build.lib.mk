@@ -63,7 +63,9 @@ LTCONFIG_SUB?=	${TOP}/mk/libtool/config.sub
 LTMAIN_SH?=	${TOP}/mk/libtool/ltmain.sh
 LTCONFIG_LOG?=	./config.log
 LIBTOOLFLAGS?=
-LIBTOOLOPTS?=	--tag=CC
+LIBTOOLOPTS?=	--quiet
+LIBTOOLOPTS_CC?=
+LIBTOOLOPTS_CXX?=
 
 SHARE?=none
 SHARESRC?=none
@@ -94,7 +96,7 @@ depend: depend-subdir
 .c.o:
 	${CC} ${CFLAGS} ${CPPFLAGS} -o $@ -c $<
 .c.lo: ${LIBTOOL}
-	${LIBTOOL} ${LIBTOOLOPTS} --mode=compile \
+	${LIBTOOL} ${LIBTOOLOPTS} ${LIBTOOLOPTS_CC} --mode=compile \
 	    ${CC} ${LIBTOOLFLAGS} ${CFLAGS} ${CPPFLAGS} -o $@ -c $<
 .c.po:
 	${CC} -pg -DPROF ${CFLAGS} ${CPPFLAGS} -o $@ -c $<
@@ -103,7 +105,7 @@ depend: depend-subdir
 .m.o:
 	${CC} ${OBJCFLAGS} ${CPPFLAGS} -o $@ -c $<
 .m.lo: ${LIBTOOL}
-	${LIBTOOL} ${LIBTOOLOPTS} --mode=compile \
+	${LIBTOOL} ${LIBTOOLOPTS} ${LIBTOOLOPTS_CC} --mode=compile \
 	    ${CC} ${LIBTOOLFLAGS} ${OBJCFLAGS} ${CPPFLAGS} -o $@ -c $<
 .m.po:
 	${CC} -pg -DPROF ${OBJCFLAGS} ${CPPFLAGS} -o $@ -c $<
@@ -112,14 +114,14 @@ depend: depend-subdir
 .cc.o:
 	${CXX} ${CXXFLAGS} ${CPPFLAGS} -o $@ -c $<
 .cc.lo: ${LIBTOOL}
-	${LIBTOOL} ${LIBTOOLOPTS} --mode=compile \
+	${LIBTOOL} ${LIBTOOLOPTS} ${LIBTOOLOPTS_CXX} --mode=compile \
 	    ${CXX} ${LIBTOOLFLAGS} ${CXXFLAGS} ${CPPFLAGS} -o $@ -c $<
 .cc.po:
 	${CXX} -pg -DPROF ${CXXFLAGS} ${CPPFLAGS} -o $@ -c $<
 .cpp.o:
 	${CXX} ${CXXFLAGS} ${CPPFLAGS} -o $@ -c $<
 .cpp.lo: ${LIBTOOL}
-	${LIBTOOL} ${LIBTOOLOPTS} --mode=compile \
+	${LIBTOOL} ${LIBTOOLOPTS} ${LIBTOOLOPTS_CXX} --mode=compile \
 	    ${CXX} ${LIBTOOLFLAGS} ${CXXFLAGS} ${CPPFLAGS} -o $@ -c $<
 .cpp.po:
 	${CXX} -pg -DPROF ${CXXFLAGS} ${CPPFLAGS} -o $@ -c $<

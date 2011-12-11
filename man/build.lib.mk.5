@@ -119,7 +119,13 @@ Usually set by configure script (defaults to system libtool, or the bundled
 copy).
 .It Ev LIBTOOLOPTS
 Specify general libtool arguments (passed before --mode).
-Defaults to "--tag=CC".
+Defaults to "--quiet".
+.It Ev LIBTOOLOPTS_CC
+Specify extra libtool arguments for C compilation.
+Defaults to "" or "--tag=CC" depending on cc configure test results.
+.It Ev LIBTOOLOPTS_CXX
+Specify extra libtool arguments for C++ compilation.
+Defaults to "" or "--tag=CXX" depending on cxx configure test results.
 .It Ev LIBTOOLFLAGS
 Specify extra compiler arguments when calling compiler from libtool
 (passed after --mode).

@@ -284,6 +284,26 @@ main(void) {
 }
 EOF
 
+	MkPrintN('checking for libtool --tag=CXX retardation...');
+	my $code = << 'EOF';
+EOF
+	print 'cat << EOT > conftest.cc', "\n";
+	print << 'EOF';
+#include <iostream>
+int main(void) { std::cout << "Hello world!" << std::endl; return 0; }
+EOF
+	print << "EOF";
+\$LIBTOOL --quiet --mode=compile \$CXX --tag=CXX \$CXXFLAGS \$TEST_CXXFLAGS -o \$testdir/conftest.o conftest.cc 2>>config.log
+EOF
+	MkIf('$? == 0');
+		MkPrint('yes');
+		MkDefine('LIBTOOLOPTS_CXX', '--tag=CXX');
+	MkElse;
+		MkPrint('no');
+	MkEndif;
+	MkSaveMK('LIBTOOLOPTS_CXX');
+	print 'rm -f conftest.cc $testdir/conftest$EXECSUFFIX', "\n";
+
 	# Preserve ${CXX} and ${CXXFLAGS}
 	MkSaveMK('CXX', 'CXXFLAGS');
 }

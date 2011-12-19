@@ -293,7 +293,7 @@ EOF
 int main(void) { std::cout << "Hello world!" << std::endl; return 0; }
 EOF
 	print << "EOF";
-\$LIBTOOL --quiet --mode=compile \$CXX --tag=CXX \$CXXFLAGS \$TEST_CXXFLAGS -o \$testdir/conftest.o conftest.cc 2>>config.log
+\$LIBTOOL --quiet --mode=compile --tag=CXX \$CXX \$CXXFLAGS \$TEST_CXXFLAGS -o \$testdir/conftest.o conftest.cc 2>>config.log
 EOF
 	MkIf('$? == 0');
 		MkPrint('yes');

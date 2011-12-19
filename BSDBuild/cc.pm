@@ -303,7 +303,7 @@ EOF
 	print 'cat << EOT > conftest.c', "\n",
 	      'int main(int argc, char *argv[]) { return (0); }', "\nEOT\n";
 	print << "EOF";
-\$LIBTOOL --quiet --mode=compile \$CC --tag=CC \$CFLAGS \$TEST_CFLAGS -o \$testdir/conftest.o conftest.c 2>>config.log
+\$LIBTOOL --quiet --mode=compile --tag=CC \$CC \$CFLAGS \$TEST_CFLAGS -o \$testdir/conftest.o conftest.c 2>>config.log
 EOF
 	MkIf('$? == 0');
 		MkPrint('yes');

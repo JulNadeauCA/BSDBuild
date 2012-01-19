@@ -52,7 +52,7 @@ sub Test
 
 	MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}', $testCode);
 	MkIfFalse('${HAVE_GETTEXT}');
-		MkPrintN('checking whether gettext requires -lintl...');
+		MkPrintN('checking for a gettext library in -lintl...');
 		MkIfNE($pfx, '');
 			MkIfExists("$pfx/include/libintl.h");
 			    MkDefine('GETTEXT_CFLAGS', "-I$pfx/include");
@@ -95,7 +95,7 @@ sub Test
 
 BEGIN
 {
-	$DESCR{'gettext'} = 'a gettext library';
+	$DESCR{'gettext'} = 'a gettext library in libc';
 	$TESTS{'gettext'} = \&Test;
 	$DEPS{'gettext'} = 'cc';
 }

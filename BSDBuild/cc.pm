@@ -305,7 +305,7 @@ EOF
 	print << "EOF";
 \$LIBTOOL --quiet --mode=compile --tag=CC \$CC \$CFLAGS \$TEST_CFLAGS -o \$testdir/conftest.o conftest.c 2>>config.log
 EOF
-	MkIf('$? == 0');
+	MkIf('"$?" = "0"');
 		MkPrint('yes');
 		MkDefine('LIBTOOLOPTS_CC', '--tag=CC');
 	MkElse;

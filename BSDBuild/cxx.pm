@@ -295,7 +295,7 @@ EOF
 	print << "EOF";
 \$LIBTOOL --quiet --mode=compile --tag=CXX \$CXX \$CXXFLAGS \$TEST_CXXFLAGS -o \$testdir/conftest.o conftest.cc 2>>config.log
 EOF
-	MkIf('$? == 0');
+	MkIf('"$?" = "0"');
 		MkPrint('yes');
 		MkDefine('LIBTOOLOPTS_CXX', '--tag=CXX');
 	MkElse;

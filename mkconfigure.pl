@@ -184,7 +184,7 @@ EOF
 sub check_perl_module
 {
     	my $modname = shift;
-	my $define = 'HAVE_'.$modname;
+	my $define = 'HAVE_'.uc($modname);
 	$define =~ s/::/_/;
 
 	MkPrintN("checking for Perl module $modname...");
@@ -201,11 +201,11 @@ if [ "\${MK_CACHED}" = "No" ]; then
 	cat /dev/null | \${PERL} -M$modname 2>/dev/null
 	if [ \$? != 0 ]; then
 		echo "-> not found (\$?)" >> config.log
-		$define="No"
+		$define="no"
 		echo "no"
 	else
 		echo "-> found" >> config.log
-		$define="Yes"
+		$define="yes"
 		echo "yes"
 	fi
 fi
@@ -217,7 +217,7 @@ EOF
 sub require_perl_module
 {
     	my $modname = shift;
-	my $define = 'HAVE_'.$modname;
+	my $define = 'HAVE_'.uc($modname);
 	$define =~ s/::/_/;
 
 	check_perl_module($modname);

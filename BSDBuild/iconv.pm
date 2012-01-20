@@ -106,7 +106,7 @@ sub Test
 		MkEndif;
 		MkCompileC('HAVE_ICONV', '${ICONV_CFLAGS} -Wno-cast-qual',
 		           '${ICONV_LIBS}', $testCode);
-		MkIfTrue('${HAVE_ICONV}');
+		MkIfFalse('${HAVE_ICONV}');
 			MkPrintN('checking for iconv() in -liconv (const)...');
 			MkCompileC('HAVE_ICONV', '${ICONV_CFLAGS} -Wno-cast-qual',
 			           '${ICONV_LIBS}', $testConstCode);
@@ -131,7 +131,7 @@ sub Test
 
 BEGIN
 {
-	$DESCR{'iconv'} = 'iconv()';
+	$DESCR{'iconv'} = 'iconv() in libc';
 	$TESTS{'iconv'} = \&Test;
 	$DEPS{'iconv'} = 'cc';
 }

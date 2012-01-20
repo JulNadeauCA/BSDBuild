@@ -1,5 +1,5 @@
 .\"
-.\" Copyright (c) 2007-2010 Hypertriton, Inc. <http://www.hypertriton.com/>
+.\" Copyright (c) 2007-2012 Hypertriton, Inc. <http://www.hypertriton.com/>
 .\" All rights reserved.
 .\"
 .\" Redistribution and use in source and binary forms, with or without
@@ -241,6 +241,16 @@ is defined.
 Same as
 .Ev CHECK_FUNCTION() ,
 except that the function is tested using the provided CFLAGS and LIBS.
+.It Ev CHECK_PERL_MODULE(modulename)
+Check that the specified Perl module is installed and functioning.
+For example, if
+.Fa modulename
+is "Time::Zone", the macro will set the variable "HAVE_TIME_ZONE"
+accordingly.
+.It Ev REQUIRE_PERL_MODULE(modulename)
+Same as
+.Ev CHECK_PERL_MODULE ,
+except that the configure script will abort if the module is not found.
 .El
 .\" .Sh ENVIRONMENT
 .\" .Sh FILES

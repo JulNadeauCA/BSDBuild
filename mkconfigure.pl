@@ -1,6 +1,6 @@
 #!/usr/bin/perl -I%PREFIX%/share/bsdbuild
 #
-# Copyright (c) 2001-2011 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2012 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -59,6 +59,8 @@ my %Fns = (
 	'check_header_opts'	=> \&check_header_opts,
 	'check_func'		=> \&check_func,
 	'check_func_opts'	=> \&check_func_opts,
+	'check_perl_module'	=> \&check_perl_module,
+	'require_perl_module'	=> \&require_perl_module,
 );
 
 $INSTALLDIR = '%PREFIX%/share/bsdbuild';
@@ -176,6 +178,57 @@ int main() {
 }
 EOF
 	}
+}
+
+# Check for a Perl module.
+sub check_perl_module
+{
+    	my $modname = shift;
+	my $define = 'HAVE_'.$modname;
+	$define =~ s/::/_/;
+
+	MkPrintN("checking for Perl module $modname...");
+	print << "EOF";
+$define="No"
+MK_CACHED="No"
+if [ "\${cache}" != "" ]; then
+	if [ -e "\${cache}/perltest-$define" ]; then
+		$define=`cat \${cache}/perltest-$define`
+		MK_CACHED="Yes"
+	fi
+fi
+if [ "\${MK_CACHED}" = "No" ]; then
+	cat /dev/null | \${PERL} -M$modname 2>/dev/null
+	if [ \$? != 0 ]; then
+		echo "-> not found (\$?)" >> config.log
+		$define="No"
+		echo "no"
+	else
+		echo "-> found" >> config.log
+		$define="Yes"
+		echo "yes"
+	fi
+fi
+EOF
+
+}
+
+# Check for a Perl module and fail if not found.
+sub require_perl_module
+{
+    	my $modname = shift;
+	my $define = 'HAVE_'.$modname;
+	$define =~ s/::/_/;
+
+	check_perl_module($modname);
+	
+	MkIf "\"\$\{$define\}\" != \"yes\"";
+		MkPrint('* ');
+		MkPrint("* This software requires the $modname module.");
+		MkPrint("* Get it from CPAN (http://cpan.org/).");
+		MkPrint('* ');
+		MkFail('configure failed!');
+	MkEndif;
 }
 
 # Check for a function with CFLAGS and LIBS

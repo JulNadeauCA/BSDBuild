@@ -41,7 +41,7 @@ sub Test
 		MkDefine('CRACKLIB_LIBS', "-L$pfx/lib -lcrack");
 	MkElse;
 		foreach my $dir (@autoPrefixDirs) {
-			MkIf("-f \"$dir/include/crack.h\"");
+			MkIf("-f \"$dir/include/packer.h\"");
 				MkDefine('CRACKLIB_CFLAGS', "-I$dir/include");
 				MkDefine('CRACKLIB_LIBS', "-L$dir/lib -lcrack");
 			MkEndif;
@@ -54,7 +54,7 @@ sub Test
 		MkCompileC('HAVE_CRACKLIB', '${CRACKLIB_CFLAGS}', '${CRACKLIB_LIBS}',
 		    << 'EOF');
 #include <stdio.h>
-#include <crack.h>
+#include <packer.h>
 int main(int argc, char *argv[]) {
 	const char *msg = (const char *)FascistCheck("foobar", "/path");
 	return (msg != NULL);

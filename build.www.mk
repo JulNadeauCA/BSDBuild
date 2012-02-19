@@ -33,7 +33,7 @@ PERL?=		perl
 ICONV?=		iconv
 BASEDIR?=	${TOP}/m4
 XSLDIR?=	${TOP}/xsl
-TEMPLATE?=	csoft
+TEMPLATE?=	simple
 LANGUAGES?=	en fr
 DEF_LANGUAGE?=	en
 XSL?=		${XSLDIR}/ml.xsl
@@ -41,6 +41,7 @@ MKDEPS=		build.www.mk build.subdir.mk build.common.mk hstrip.pl
 CLEANFILES?=
 HTMLDIR?=	none
 HTML?=
+HTML_DEPS?=
 CSS?=
 CSS_TEMPLATE?=	style
 HTML_OVERWRITE?=	No
@@ -49,7 +50,7 @@ HTML_INSTSOURCE?=	Yes
 DTD?=		<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"  \
 		"http://www.w3.org/TR/html4/loose.dtd">
 
-all: ${HTML} all-subdir
+all: ${HTML} ${CSS} all-subdir
 clean: clean-www clean-subdir
 cleandir: clean-www clean-subdir cleandir-subdir
 install: install-www install-subdir
@@ -181,6 +182,10 @@ install-www:
 			fi; \
 		done); \
 	fi
+	@for F in ${HTML_DEPS}; do \
+	    echo "${INSTALL_DATA} $$F ${HTMLDIR}"; \
+	    ${SUDO} ${INSTALL_DATA} $$F ${DESTDIR}${HTMLDIR}; \
+	done
 	@for F in ${HTML}; do \
 		rm -f $$F; \
 		if [ "${HTML_INSTSOURCE}" = "Yes" -a \

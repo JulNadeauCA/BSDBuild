@@ -28,6 +28,10 @@ my @autoPrefixDirs = (
 	'/usr/local',
 	'/usr'
 );
+my @dictPaths = (
+	'/usr/local/libdata/cracklib/pw_dict',
+	'/usr/local/share/cracklib/cracklib-small',
+);
 
 sub Test
 {
@@ -47,7 +51,7 @@ sub Test
 			MkEndif;
 		}
 	MkEndif;
-
+		
 	MkIfNE('${CRACKLIB_LIBS}', '');
 		MkPrint('ok');
 		MkPrintN('checking whether cracklib works...');
@@ -61,6 +65,14 @@ int main(int argc, char *argv[]) {
 }
 EOF
 		MkSaveIfTrue('${HAVE_CRACKLIB}', 'CRACKLIB_CFLAGS', 'CRACKLIB_LIBS');
+		MkIfTrue('${HAVE_CRACKLIB}', '');
+			foreach my $path (@dictPaths) {
+				MkIf("-f \"$path.pwd\"");
+					MkDefine('CRACKLIB_DICT_PATH', "$path");
+					MkSaveDefine('CRACKLIB_DICT_PATH');
+				MkEndif;
+			}
+		MkEndif;
 	MkElse;
 		MkSaveUndef('HAVE_CRACKLIB');
 		MkPrint('no');

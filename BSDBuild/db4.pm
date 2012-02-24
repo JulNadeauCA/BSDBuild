@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2002-2010 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2002-2012 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,9 @@
 
 my $testCode = << 'EOF';
 #include <db.h>
-
+#if DB_VERSION_MAJOR != 4
+#error version
+#endif
 int main(int argc, char *argv[]) {
 	DB *db;
 	db_create(&db, NULL, 0);
@@ -45,7 +47,10 @@ DB4_VERSION=""
 for path in $pfx /usr /usr/local /opt; do
 EOF
 	print << 'EOF';
-	if [ -e "${path}/include/db4.7" ]; then
+	if [ -e "${path}/include/db4.8" ]; then
+		DB4_CFLAGS="-I${path}/include/db4.8 -I${path}/include"
+		DB4_VERSION="4.8"
+	elif [ -e "${path}/include/db4.7" ]; then
 		DB4_CFLAGS="-I${path}/include/db4.7 -I${path}/include"
 		DB4_VERSION="4.7"
 	elif [ -e "${path}/include/db4.6" ]; then
@@ -131,6 +136,13 @@ EOF
 			DB4_LIBS="-L${path}/lib/db47 -ldb"
 		elif [ -e "${path}/lib/libdb-4.7.so" ]; then
 			DB4_LIBS="-L${path}/lib -ldb-4.7"
+		fi
+		;;
+	4.8)
+		if [ -e "${path}/lib/db48" ]; then
+			DB4_LIBS="-L${path}/lib/db48 -ldb"
+		elif [ -e "${path}/lib/libdb-4.8.so" ]; then
+			DB4_LIBS="-L${path}/lib -ldb-4.8"
 		fi
 		;;
 	*)

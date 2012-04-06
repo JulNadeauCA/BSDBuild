@@ -100,7 +100,8 @@ SHARE=	Core.pm \
 	clock_win32.pm \
 	sdl_ttf.pm \
 	xinerama.pm \
-	portaudio.pm
+	portaudio.pm \
+	mysql.pm
 
 all:
 

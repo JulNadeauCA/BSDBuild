@@ -1,0 +1,98 @@
+# vim:ts=4
+#
+# Copyright (c) 2012 Hypertriton, Inc. <http://hypertriton.com/>
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+# USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+my $testCode = << 'EOF';
+#include <mysql.h>
+#include <string.h>
+
+int
+main(int argc, char *argv[])
+{
+	MYSQL *my = mysql_init(NULL);
+	if (my != NULL) { mysql_close(my); }
+	return (0);
+}
+EOF
+
+sub Test
+{
+	my ($ver) = @_;
+	
+	MkExecOutputUnique('mysql_config', '--version', 'MYSQL_VERSION');
+	MkIfNE('${MYSQL_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'MYSQL_VERSION');
+		MkPrintN('checking whether MySQL works...');
+		MkExecOutput('mysql_config', '--cflags', 'MYSQL_CFLAGS');
+		MkExecOutput('mysql_config', '--libs', 'MYSQL_LIBS');
+		MkCompileC('HAVE_MYSQL',
+		           '${MYSQL_CFLAGS}', '${MYSQL_LIBS}',
+				   $testCode);
+		MkSaveIfTrue('${HAVE_MYSQL}', 'MYSQL_CFLAGS', 'MYSQL_LIBS');
+	MkElse;
+	    MkNotFound($pfx);
+		MkSaveUndef('MYSQL_CFLAGS', 'MYSQL_LIBS');
+	MkEndif;
+	return (0);
+}
+
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	if ($os eq 'windows') {
+		MkDefine('MYSQL_CFLAGS', '');
+		MkDefine('MYSQL_LIBS', 'mysqlclient');
+	}
+	MkDefine('HAVE_MYSQL', 'yes');
+	MkSave('HAVE_MYSQL', 'MYSQL_CFLAGS', 'MYSQL_LIBS');
+	return (1);
+}
+
+sub Link
+{
+	my $var = shift;
+
+	if ($var eq 'mysqlclient') {
+		PmLink('mysqlclient');
+
+		if ($EmulEnv =~ /^cb-/) {
+			PmIncludePath('$(#libmysql.include)');
+			PmLibPath('$(#libmysql.lib)');
+		}
+		return (1);
+	}
+	return (0);
+}
+
+BEGIN
+{
+	$TESTS{'mysql'} = \&Test;
+	$DEPS{'mysql'} = 'cc';
+	$LINK{'mysql'} = \&Link;
+	$EMUL{'mysql'} = \&Emul;
+	$DESCR{'mysql'} = 'MySQL (http://dev.mysql.com/)';
+}
+
+;1

@@ -616,12 +616,7 @@ while test \$# -gt 0; do
 		echo "$config_script_cflags"
 		;;
 	--libs | --static-libs)
-		if test x"\${prefix}" != x"/usr" ; then
-			libdirs="-L/usr/lib64"
-		else
-			libdirs=""
-		fi
-		echo "\$libdirs $config_script_libs"
+		echo "$config_script_libs"
 		;;
 	*)
 		echo "\${usage}" 1>&2

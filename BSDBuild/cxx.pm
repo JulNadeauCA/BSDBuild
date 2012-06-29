@@ -291,6 +291,7 @@ EOF
 	print << 'EOF';
 #include <iostream>
 int main(void) { std::cout << "Hello world!" << std::endl; return 0; }
+EOT
 EOF
 	print << "EOF";
 \$LIBTOOL --quiet --mode=compile --tag=CXX \$CXX \$CXXFLAGS \$TEST_CXXFLAGS -o \$testdir/conftest.o conftest.cc 2>>config.log

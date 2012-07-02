@@ -30,8 +30,12 @@ sub Test
 int
 main(int argc, char *argv[])
 {
-	(void)strsep(NULL, NULL);
-	return (0);
+	char foo[32], *pFoo = &foo[0];
+	char *s;
+
+	foo[0] = '\0';
+	s = strsep(&pFoo, " ");
+	return (s != NULL);
 }
 EOF
 }

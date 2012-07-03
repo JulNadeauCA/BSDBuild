@@ -31,6 +31,8 @@ GMONOUT?=	gmon.out
 WINRES?=
 
 CC?=		cc
+OBJC?=		cc
+CXX?=		c++
 ASM?=		nasm
 LEX?=		lex
 YACC?=		yacc
@@ -89,11 +91,11 @@ depend: depend-subdir
 .cpp.po:
 	${CXX} -pg -DPROF ${CXXFLAGS} ${CPPFLAGS} -o $@ -c $<
 
-# Compile C+Objective-C code into an object file
+# Compile Objective-C code into an object file
 .m.o:
-	${CC} ${OBJCFLAGS} ${CPPFLAGS} -o $@ -c $<
+	${OBJC} ${OBJCFLAGS} ${CPPFLAGS} -o $@ -c $<
 .m.po:
-	${CC} -pg -DPROF ${OBJCFLAGS} ${CPPFLAGS} -o $@ -c $<
+	${OBJC} -pg -DPROF ${OBJCFLAGS} ${CPPFLAGS} -o $@ -c $<
 
 # Compile assembly code into an object file
 .asm.o:

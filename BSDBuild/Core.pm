@@ -954,6 +954,56 @@ EOF
 }
 
 #
+# Compile a test Objective-C program. If compilation fails, the test fails.
+# The test program is never executed.
+#
+# Sets $define to "yes" or "no" and saves it to both MK and C defines.
+#
+sub MkCompileOBJC
+{
+	my ($define, $cflags, $libs, $code) = @_;
+
+	print << "EOF";
+MK_CACHED="No"
+MK_COMPILE_STATUS="OK"
+if [ "\${cache}" != "" ]; then
+	if [ -e "\${cache}/ctest-$define" ]; then
+		$define=`cat \${cache}/ctest-$define`
+		MK_COMPILE_STATUS=`cat \${cache}/ctest-status-$define`
+		MK_CACHED="Yes"
+	fi
+fi
+if [ "\${MK_CACHED}" = "No" ]; then
+	cat << EOT > conftest.m
+$code
+EOT
+	echo "\$CC \$CFLAGS \$TEST_CFLAGS $cflags -x objective-c -o \$testdir/conftest conftest.m $libs" >>config.log
+	\$CC \$CFLAGS \$TEST_CFLAGS $cflags -x objective-c -o \$testdir/conftest conftest.m $libs 2>>config.log
+	if [ \$? != 0 ]; then
+		echo "-> failed (\$?)" >> config.log
+		MK_COMPILE_STATUS="FAIL(\$?)"
+	fi
+fi
+EOF
+
+	MkIf('"${MK_COMPILE_STATUS}" = "OK"');
+		MkPrint('yes');
+		MkSaveCompileSuccess($define);
+	MkElse;
+		MkPrint('no');
+		MkSaveCompileFailed($define);
+	MkEndif;
+
+print << "EOF";
+if [ "\${cache}" != "" ]; then
+	echo "\$$define" > \${cache}/ctest-$define
+	echo \$MK_COMPILE_STATUS > \${cache}/ctest-status-$define
+fi
+rm -f conftest.m \$testdir/conftest\$EXECSUFFIX
+EOF
+}
+
+#
 # Compile a test C++ program. If compilation fails, the test fails. The
 # test program is never executed.
 #
@@ -1038,7 +1088,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSetTrue MkSetFalse MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkPrint MkPrintN MkFoundVer MkNotFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion);
+    @EXPORT = qw($OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSetTrue MkSetFalse MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkPrint MkPrintN MkFoundVer MkNotFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion);
 }
 
 ;1

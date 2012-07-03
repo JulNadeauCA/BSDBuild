@@ -83,7 +83,7 @@ EOT
 		for OUTFILE in conftest.exe conftest conftest.*; do
 			if [ -f $OUTFILE ]; then
 				case $OUTFILE in
-				*.c | *.cc | *.o | *.obj | *.bb | *.bbg | *.d | *.pdb | *.tds | *.xcoff | *.dSYM | *.xSYM )
+				*.c | *.cc | *.m | *.o | *.obj | *.bb | *.bbg | *.d | *.pdb | *.tds | *.xcoff | *.dSYM | *.xSYM )
 					;;
 				*.* )
 					EXECSUFFIX=`expr "$OUTFILE" : '[^.]*\(\..*\)'`
@@ -115,16 +115,6 @@ EOF
 		MkDefine('TEST_CXXFLAGS', '-Wall -Werror');
 	MkEndif;
 	
-	MkPrintN('checking for gcc...');
-	MkCompileCXX('HAVE_GCC', '', '-lstdc++', << 'EOF');
-int main(void) {
-#if !defined(__GNUC__)
-# error "Not GCC"
-#endif
-	return (0);
-}
-EOF
-
 	MkPrintN('checking aligned attribute in c++...');
 	TryCompileFlagsCXX('HAVE_ALIGNED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 int main(void)

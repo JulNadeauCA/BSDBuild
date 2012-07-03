@@ -3,7 +3,9 @@ TOP=..
 SHARE=	Core.pm \
 	Builtins.pm \
 	cc.pm \
+	objc.pm \
 	cxx.pm \
+	gcc.pm \
 	glib.pm \
 	glib2.pm \
 	sdl.pm \
@@ -101,7 +103,8 @@ SHARE=	Core.pm \
 	sdl_ttf.pm \
 	xinerama.pm \
 	portaudio.pm \
-	mysql.pm
+	mysql.pm \
+	cocoa.pm
 
 all:
 

@@ -83,7 +83,7 @@ EOT
 		for OUTFILE in conftest.exe conftest conftest.*; do
 			if [ -f $OUTFILE ]; then
 				case $OUTFILE in
-				*.c | *.o | *.obj | *.bb | *.bbg | *.d | *.pdb | *.tds | *.xcoff | *.dSYM | *.xSYM )
+				*.c | *.cc | *.m | *.o | *.obj | *.bb | *.bbg | *.d | *.pdb | *.tds | *.xcoff | *.dSYM | *.xSYM )
 					;;
 				*.* )
 					EXECSUFFIX=`expr "$OUTFILE" : '[^.]*\(\..*\)'`
@@ -116,16 +116,6 @@ EOF
 		MkDefine('TEST_CFLAGS', '-Wall -Werror');
 	MkEndif;
 	
-	MkPrintN('checking for gcc...');
-	MkCompileC('HAVE_GCC', '', '', << 'EOF');
-int main(int argc, char *argv[]) {
-#if !defined(__GNUC__)
-# error "Not GCC"
-#endif
-	return (0);
-}
-EOF
-
 	# Check for floating point support.
 	# TODO representation
 	MkPrintN('checking for IEEE754 floating point...');

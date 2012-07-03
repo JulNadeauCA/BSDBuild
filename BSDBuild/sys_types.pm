@@ -44,34 +44,8 @@ int main(int argc, char *argv[]) {
 	return (i64 != 0 || u64 != 0);
 }
 EOF
-		MkPrintN('checking for conflicting typedefs...');
-		#
-		# XXX should check each type separatedly!
-		#
-		MkCompileC('_MK_HAVE_UNSIGNED_TYPEDEFS', '', '', << 'EOF');
-#include <sys/types.h>
-int main(int argc, char *argv[]) {
-	Uchar foo = 1;
-	Uint bar = 1;
-	Ulong baz = 1;
-	return (foo != 1 || bar != 1 || baz != 1);
-}
-EOF
 	MkElse;
 		MkSaveUndef('HAVE_64BIT');
-
-		MkPrintN('checking for conflicting typedefs...');
-		#
-		# XXX should check each type separatedly!
-		#
-		MkCompileC('_MK_HAVE_UNSIGNED_TYPEDEFS', '', '', << 'EOF');
-int main(int argc, char *argv[]) {
-	Uchar foo = 1;
-	Uint bar = 1;
-	Ulong baz = 1;
-	return (foo != 1 || bar != 1 || baz != 1);
-}
-EOF
 	MkEndif;
 	return (0);
 }

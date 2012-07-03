@@ -66,7 +66,6 @@ sub Test
 			    MkDefine('X11_LIBS', "-L$pfx/lib");
 			MkEndif;
 		MkElse;
-			MkPrint("WARNING: You should probably use --with-x=prefix");
 			foreach my $dir (@autoIncludeDirs) {
 				MkIfExists("$dir/X11");
 				    MkDefine('X11_CFLAGS', "-I$dir");
@@ -77,6 +76,10 @@ sub Test
 				    MkDefine('X11_LIBS', "\${X11_LIBS} -L$dir");
 				MkEndif;
 			}
+			MkIfNE('${X11_CFLAGS}', '');
+				MkPrint("trying autodetected path");
+				MkPrint("WARNING: You should probably use --with-x=prefix");
+			MkEndif;
 		MkEndif;
 	MkEndif;
 

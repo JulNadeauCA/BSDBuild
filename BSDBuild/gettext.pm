@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 	textdomain("foo");
 	s = gettext("string");
 	s = dgettext("foo","string");
-	return (0);
+	return (s != NULL);
 }
 EOF
 

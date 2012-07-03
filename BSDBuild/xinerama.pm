@@ -58,7 +58,6 @@ sub Test
 				'/usr/X11/lib',
 				'/usr/X11R6/lib',
 			);
-			MkPrint("WARNING: You should probably use --with-xinerama=prefix");
 			foreach my $dir (@autoIncludeDirs) {
 				MkIfExists("$dir/X11");
 				    MkDefine('XINERAMA_CFLAGS', "-I$dir");
@@ -69,6 +68,10 @@ sub Test
 				    MkDefine('XINERAMA_LIBS', "\${XINERAMA_LIBS} -L$dir");
 				MkEndif;
 			}
+			MkIfNE('${XINERAMA_CFLAGS}', '');
+				MkPrint("trying autodetected path");
+				MkPrint("WARNING: You should probably use --with-xinerama=prefix");
+			MkEndif;
 		MkEndif;
 		MkDefine('XINERAMA_LIBS', "\${XINERAMA_LIBS} -lXinerama");
 	MkEndif;

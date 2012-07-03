@@ -32,12 +32,14 @@ sub Test
 	                         '-falign-loops=16 -force_cpusubtype_ALL '.
 							 '-fpascal-strings');
 	MkDefine('COCOA_LIBS', '-lobjc '.
-	                       '-Wl,framework,Cocoa ' .
-	                       '-Wl,framework,Carbon ' .
-	                       '-Wl,framework,IOKit');
+	                       '-Wl,-framework,Cocoa ' .
+	                       '-Wl,-framework,Carbon ' .
+	                       '-Wl,-framework,IOKit');
 
 	MkCompileOBJC('HAVE_COCOA', '${COCOA_CFLAGS}', '${COCOA_LIBS}', << 'EOF');
 #import <Cocoa/Cocoa.h>
+
+int main(int argc, char *argv[]) { return (0); }
 EOF
 	MkSaveIfTrue('${HAVE_COCOA}', 'COCOA_CFLAGS', 'COCOA_LIBS');
 	return (0);
@@ -70,9 +72,9 @@ sub Emul
 	                             '-falign-loops=16 -force_cpusubtype_ALL '.
 							     '-fpascal-strings');
 		MkDefine('COCOA_LIBS', '-lobjc '.
-		                       '-Wl,framework,Cocoa ' .
-		                       '-Wl,framework,Carbon ' .
-		                       '-Wl,framework,IOKit');
+		                       '-Wl,-framework,Cocoa ' .
+		                       '-Wl,-framework,Carbon ' .
+		                       '-Wl,-framework,IOKit');
 		MkSave('HAVE_COCOA', 'COCOA_CFLAGS', 'COCOA_LIBS');
 	} else {
 		MkDefine('HAVE_COCOA', 'no');

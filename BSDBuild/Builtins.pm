@@ -161,7 +161,7 @@ else
 		LIBTOOL_BUNDLED="yes"
 		LIBTOOL=\${TOP}/mk/libtool/libtool
 	else
-		if [ "`libtool --version |grep GNU`" = "" ]; then
+		if [ "`libtool --version 2>/dev/null |grep GNU`" = "" ]; then
 			LIBTOOL_BUNDLED="yes"
 			LIBTOOL=\${TOP}/mk/libtool/libtool
 		else

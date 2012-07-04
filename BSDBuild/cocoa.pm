@@ -33,6 +33,7 @@ sub Test
 							 '-fpascal-strings');
 	MkDefine('COCOA_LIBS', '-lobjc '.
 	                       '-Wl,-framework,Cocoa ' .
+	                       '-Wl,-framework,OpenGL ' .
 	                       '-Wl,-framework,Carbon ' .
 	                       '-Wl,-framework,IOKit');
 
@@ -73,6 +74,7 @@ sub Emul
 							     '-fpascal-strings');
 		MkDefine('COCOA_LIBS', '-lobjc '.
 		                       '-Wl,-framework,Cocoa ' .
+		                       '-Wl,-framework,OpenGL ' .
 		                       '-Wl,-framework,Carbon ' .
 		                       '-Wl,-framework,IOKit');
 		MkSave('HAVE_COCOA', 'COCOA_CFLAGS', 'COCOA_LIBS');

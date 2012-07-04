@@ -1061,12 +1061,7 @@ if [ "${srcdir}" != "" ]; then
 		echo "*"
 		exit 1
 	fi
-	echo "* Separate build (source in ${srcdir})"
 	SRC=${srcdir}
-	${PERL} ${SRC}/mk/mkconcurrent.pl ${SRC}
-	if [ $? != 0 ]; then
-		exit 1;
-	fi
 else
 	SRC=`pwd`
 fi
@@ -1350,3 +1345,17 @@ foreach $_ (@INPUT) {
 	}
 }
 
+print << 'EOF';
+if [ "${srcdir}" != "" ]; then
+	$ECHO_N "* Source is in ${srcdir}. Generating Makefiles..."
+	${PERL} ${SRC}/mk/mkconcurrent.pl ${SRC}
+	if [ $? != 0 ]; then
+		exit 1;
+	fi
+	echo "done"
+fi
+echo "*"
+echo "* Configuration successful. Use \"make depend all\" to compile,"
+echo "* and \"make install\" to install this software under $PREFIX."
+echo "*"
+EOF

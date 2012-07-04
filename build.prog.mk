@@ -41,7 +41,7 @@ WINDRES?=
 CFLAGS?=	-O2 -g
 CPPFLAGS?=
 CXXFLAGS?=
-OBJCFLAGS?=	${CFLAGS}
+OBJCFLAGS?=
 ASMFLAGS?=	-g -w-orphan-labels
 LFLAGS?=
 LIBL?=		-ll
@@ -93,9 +93,9 @@ depend: depend-subdir
 
 # Compile Objective-C code into an object file
 .m.o:
-	${OBJC} ${OBJCFLAGS} ${CPPFLAGS} -o $@ -c $<
+	${OBJC} ${CFLAGS} ${OBJCFLAGS} ${CPPFLAGS} -o $@ -c $<
 .m.po:
-	${OBJC} -pg -DPROF ${OBJCFLAGS} ${CPPFLAGS} -o $@ -c $<
+	${OBJC} -pg -DPROF ${CFLAGS} ${OBJCFLAGS} ${CPPFLAGS} -o $@ -c $<
 
 # Compile assembly code into an object file
 .asm.o:

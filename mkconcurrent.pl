@@ -228,7 +228,7 @@ EOF
 						push @deps,
 						    "$shobj: $SRC/$ndir/$src";
 						push @deps, << 'EOF';
-	${LIBTOOL} --mode=compile ${CC} ${LIBTOOLFLAGS} ${CFLAGS} ${OBJCFLAGS} ${CPPFLAGS} -c $<
+	${LIBTOOL} --mode=compile ${OBJC} ${LIBTOOLFLAGS} ${CFLAGS} ${OBJCFLAGS} ${CPPFLAGS} -c $<
 
 EOF
 					} else {

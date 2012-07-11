@@ -34,7 +34,6 @@ sub Test
 	MkDefine('COCOA_LIBS', '-lobjc '.
 	                       '-Wl,-framework,Cocoa ' .
 	                       '-Wl,-framework,OpenGL ' .
-	                       '-Wl,-framework,Carbon ' .
 	                       '-Wl,-framework,IOKit');
 
 	MkCompileOBJC('HAVE_COCOA', '${COCOA_CFLAGS}', '${COCOA_LIBS}', << 'EOF');
@@ -75,7 +74,6 @@ sub Emul
 		MkDefine('COCOA_LIBS', '-lobjc '.
 		                       '-Wl,-framework,Cocoa ' .
 		                       '-Wl,-framework,OpenGL ' .
-		                       '-Wl,-framework,Carbon ' .
 		                       '-Wl,-framework,IOKit');
 		MkSave('HAVE_COCOA', 'COCOA_CFLAGS', 'COCOA_LIBS');
 	} else {

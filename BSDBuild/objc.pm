@@ -76,72 +76,77 @@ int main(int argc, char *argv[]) { return (0); }
 EOT
 	$OBJC -x objective-c -o conftest conftest.m 2>>config.log
 	if [ $? != 0 ]; then
-	    echo "no, the test failed to compile"
-	    echo "no, the test failed to compile" >> config.log
+	    echo "no"
+	    echo "no (test failed to compile)" >> config.log
 		HAVE_OBJC="no"
 	else
 		echo "yes"
 		echo "yes" >> config.log
 		HAVE_OBJC="yes"
 	fi
-
-	if [ "${EXECSUFFIX}" = "" ]; then
-		EXECSUFFIX=""
-		for OUTFILE in conftest.exe conftest conftest.*; do
-			if [ -f $OUTFILE ]; then
-				case $OUTFILE in
-				*.c | *.cc | *.m | *.o | *.obj | *.bb | *.bbg | *.d | *.pdb | *.tds | *.xcoff | *.dSYM | *.xSYM )
-					;;
-				*.* )
-					EXECSUFFIX=`expr "$OUTFILE" : '[^.]*\(\..*\)'`
-					break ;;
-				* )
-					break ;;
-				esac;
-		    fi
-		done
-		if [ "$EXECSUFFIX" != "" ]; then
-			echo "Detected executable suffix: $EXECSUFFIX" >> config.log
-		fi
+	
+	if [ "${HAVE_OBJC}" = "yes" ]; then
+		if [ "${EXECSUFFIX}" = "" ]; then
+			EXECSUFFIX=""
+			for OUTFILE in conftest.exe conftest conftest.*; do
+				if [ -f $OUTFILE ]; then
+					case $OUTFILE in
+					*.c | *.cc | *.m | *.o | *.obj | *.bb | *.bbg | *.d | *.pdb | *.tds | *.xcoff | *.dSYM | *.xSYM )
+						;;
+					*.* )
+						EXECSUFFIX=`expr "$OUTFILE" : '[^.]*\(\..*\)'`
+						break ;;
+					* )
+						break ;;
+					esac;
+			    fi
+			done
+			if [ "$EXECSUFFIX" != "" ]; then
+				echo "Detected executable suffix: $EXECSUFFIX" >> config.log
+			fi
 EOF
 
 	MkSaveMK('EXECSUFFIX');
 	MkSaveDefine('EXECSUFFIX');
 
 	print << 'EOF';
+		fi
 	fi
 	rm -f conftest.m conftest$EXECSUFFIX
 	TEST_OBJCFLAGS=""
 fi
 EOF
-
-	MkPrintN('checking for compiler warning options...');
-	MkCompileOBJC('HAVE_OBJC_WARNINGS', '-Wall -Werror', '', << 'EOF');
+	
+	MkIfTrue('${HAVE_OBJC}');
+		MkPrintN('checking for compiler warning options...');
+		MkCompileOBJC('HAVE_OBJC_WARNINGS', '-Wall -Werror', '', << 'EOF');
 int main(int argc, char *argv[]) { return (0); }
 EOF
-	MkIfTrue('${HAVE_OBJC_WARNINGS}');
-		MkDefine('TEST_OBJCFLAGS', '-Wall -Werror');
-	MkEndif;
+		MkIfTrue('${HAVE_OBJC_WARNINGS}');
+			MkDefine('TEST_OBJCFLAGS', '-Wall -Werror');
+		MkEndif;
 	
-	MkPrintN('checking for libtool --tag=OBJC retardation...');
-	my $code = << 'EOF';
+		MkPrintN('checking for libtool --tag=OBJC retardation...');
+		my $code = << 'EOF';
 EOF
-	print 'cat << EOT > conftest.m', "\n",
-	      'int main(int argc, char *argv[]) { return (0); }', "\nEOT\n";
-	print << "EOF";
+		print 'cat << EOT > conftest.m', "\n",
+		      'int main(int argc, char *argv[]) { return (0); }', "\nEOT\n";
+		print << "EOF";
 \$LIBTOOL --quiet --mode=compile --tag=OBJC \$OBJC \$CFLAGS \$OBJCFLAGS \$TEST_OBJCFLAGS -o \$testdir/conftest.o conftest.m 2>>config.log
 EOF
-	MkIf('"$?" = "0"');
-		MkPrint('yes');
-		MkDefine('LIBTOOLOPTS_OBJC', '--tag=OBJC');
-	MkElse;
-		MkPrint('no');
-	MkEndif;
-	MkSaveMK('LIBTOOLOPTS_OBJC');
-	print 'rm -f conftest.m $testdir/conftest$EXECSUFFIX', "\n";
+		MkIf('"$?" = "0"');
+			MkPrint('yes');
+			MkDefine('LIBTOOLOPTS_OBJC', '--tag=OBJC');
+		MkElse;
+			MkPrint('no');
+		MkEndif;
+		MkSaveMK('LIBTOOLOPTS_OBJC');
+		print 'rm -f conftest.m $testdir/conftest$EXECSUFFIX', "\n";
 
-	# Preserve ${OBJC} and ${OBJCFLAGS}
-	MkSaveMK('OBJC', 'OBJCFLAGS');
+		# Preserve ${OBJC} and ${OBJCFLAGS}
+		MkSaveMK('OBJC', 'OBJCFLAGS');
+
+	MkEndif; # HAVE_OBJC
 }
 
 sub Emul

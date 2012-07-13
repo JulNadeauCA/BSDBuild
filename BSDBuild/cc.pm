@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2002-2010 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2002-2012 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -69,8 +69,8 @@ int main(int argc, char *argv[]) { return (0); }
 EOT
 	$CC -o conftest conftest.c 2>>config.log
 	if [ $? != 0 ]; then
-	    echo "no, the test failed to compile"
-	    echo "no, the test failed to compile" >> config.log
+	    echo "no"
+	    echo "no (test failed to compile)" >> config.log
 		HAVE_CC="no"
 	else
 		echo "yes"
@@ -78,48 +78,52 @@ EOT
 		HAVE_CC="yes"
 	fi
 
-	if [ "${EXECSUFFIX}" = "" ]; then
-		EXECSUFFIX=""
-		for OUTFILE in conftest.exe conftest conftest.*; do
-			if [ -f $OUTFILE ]; then
-				case $OUTFILE in
-				*.c | *.cc | *.m | *.o | *.obj | *.bb | *.bbg | *.d | *.pdb | *.tds | *.xcoff | *.dSYM | *.xSYM )
-					;;
-				*.* )
-					EXECSUFFIX=`expr "$OUTFILE" : '[^.]*\(\..*\)'`
-					break ;;
-				* )
-					break ;;
-				esac;
-		    fi
-		done
-		if [ "$EXECSUFFIX" != "" ]; then
-			echo "Detected executable suffix: $EXECSUFFIX" >> config.log
-		fi
+	if [ "${HAVE_CC}" = "yes" ]; then
+		if [ "${EXECSUFFIX}" = "" ]; then
+			EXECSUFFIX=""
+			for OUTFILE in conftest.exe conftest conftest.*; do
+				if [ -f $OUTFILE ]; then
+					case $OUTFILE in
+					*.c | *.cc | *.m | *.o | *.obj | *.bb | *.bbg | *.d | *.pdb | *.tds | *.xcoff | *.dSYM | *.xSYM )
+						;;
+					*.* )
+						EXECSUFFIX=`expr "$OUTFILE" : '[^.]*\(\..*\)'`
+						break ;;
+					* )
+						break ;;
+					esac;
+			    fi
+			done
+			if [ "$EXECSUFFIX" != "" ]; then
+				echo "Detected executable suffix: $EXECSUFFIX" >> config.log
+			fi
 EOF
 
 	MkSaveMK('EXECSUFFIX');
 	MkSaveDefine('EXECSUFFIX');
 
 	print << 'EOF';
+		fi
 	fi
 	rm -f conftest.c conftest$EXECSUFFIX
 	TEST_CFLAGS=""
 fi
 EOF
+	
+	MkIfTrue('${HAVE_CC}');
 
-	MkPrintN('checking for compiler warning options...');
-	MkCompileC('HAVE_CC_WARNINGS', '-Wall -Werror', '', << 'EOF');
+		MkPrintN('checking for compiler warning options...');
+		MkCompileC('HAVE_CC_WARNINGS', '-Wall -Werror', '', << 'EOF');
 int main(int argc, char *argv[]) { return (0); }
 EOF
-	MkIfTrue('${HAVE_CC_WARNINGS}');
-		MkDefine('TEST_CFLAGS', '-Wall -Werror');
-	MkEndif;
+		MkIfTrue('${HAVE_CC_WARNINGS}');
+			MkDefine('TEST_CFLAGS', '-Wall -Werror');
+		MkEndif;
 	
-	# Check for floating point support.
-	# TODO representation
-	MkPrintN('checking for IEEE754 floating point...');
-	MkCompileC('HAVE_IEEE754', '', '', << 'EOF');
+		# Check for floating point support.
+		# TODO representation
+		MkPrintN('checking for IEEE754 floating point...');
+		MkCompileC('HAVE_IEEE754', '', '', << 'EOF');
 int
 main(int argc, char *argv[])
 {
@@ -130,8 +134,8 @@ main(int argc, char *argv[])
 }
 EOF
 	
-	MkPrintN('checking aligned attribute...');
-	TryCompileFlagsC('HAVE_ALIGNED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
+		MkPrintN('checking aligned attribute...');
+		TryCompileFlagsC('HAVE_ALIGNED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 int main(int argc, char *argv[])
 {
 	struct s1 { int x,y,z; } __attribute__ ((aligned(16)));
@@ -139,8 +143,8 @@ int main(int argc, char *argv[])
 }
 EOF
 
-	MkPrintN('checking bounded attribute...');
-	MkCompileC('HAVE_BOUNDED_ATTRIBUTE', '', '', << 'EOF');
+		MkPrintN('checking bounded attribute...');
+		MkCompileC('HAVE_BOUNDED_ATTRIBUTE', '', '', << 'EOF');
 void foo(char *, int) __attribute__ ((__bounded__(__string__,1,2)));
 void foo(char *a, int c) { }
 int main(int argc, char *argv[])
@@ -151,8 +155,8 @@ int main(int argc, char *argv[])
 }
 EOF
 	
-	MkPrintN('checking const attribute...');
-	TryCompileFlagsC('HAVE_CONST_ATTRIBUTE', '', << 'EOF');
+		MkPrintN('checking const attribute...');
+		TryCompileFlagsC('HAVE_CONST_ATTRIBUTE', '', << 'EOF');
 int foo(int) __attribute__ ((const));
 int foo(int x) { return (x*x); }
 int main(int argc, char *argv[])
@@ -162,8 +166,8 @@ int main(int argc, char *argv[])
 }
 EOF
 	
-	MkPrintN('checking deprecated attribute...');
-	TryCompileFlagsC('HAVE_DEPRECATED_ATTRIBUTE', '', << 'EOF');
+		MkPrintN('checking deprecated attribute...');
+		TryCompileFlagsC('HAVE_DEPRECATED_ATTRIBUTE', '', << 'EOF');
 void foo(void) __attribute__ ((deprecated));
 void foo(void) { }
 
@@ -174,8 +178,8 @@ int main(int argc, char *argv[])
 }
 EOF
 	
-	MkPrintN('checking format attribute...');
-	MkCompileC('HAVE_FORMAT_ATTRIBUTE', '', '', << 'EOF');
+		MkPrintN('checking format attribute...');
+		MkCompileC('HAVE_FORMAT_ATTRIBUTE', '', '', << 'EOF');
 #include <stdarg.h>
 void foo1(char *, ...)
      __attribute__((__format__ (printf, 1, 2)));
@@ -192,8 +196,8 @@ int main(int argc, char *argv[])
 }
 EOF
 
-	MkPrintN('checking nonnull attribute...');
-	TryCompileFlagsC('HAVE_NONNULL_ATTRIBUTE', '-Wall -Werror', << 'EOF');
+		MkPrintN('checking nonnull attribute...');
+		TryCompileFlagsC('HAVE_NONNULL_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 void foo(char *) __attribute__((__nonnull__ (1)));
 void foo(char *a) { }
 int main(int argc, char *argv[])
@@ -203,8 +207,8 @@ int main(int argc, char *argv[])
 }
 EOF
 	
-	MkPrintN('checking noreturn attribute...');
-	TryCompileFlagsC('HAVE_NORETURN_ATTRIBUTE', '', << 'EOF');
+		MkPrintN('checking noreturn attribute...');
+		TryCompileFlagsC('HAVE_NORETURN_ATTRIBUTE', '', << 'EOF');
 #include <unistd.h>
 #include <stdlib.h>
 void foo(void) __attribute__ ((noreturn));
@@ -215,8 +219,8 @@ int main(int argc, char *argv[])
 }
 EOF
 
-	MkPrintN('checking packed attribute...');
-	TryCompileFlagsC('HAVE_PACKED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
+		MkPrintN('checking packed attribute...');
+		TryCompileFlagsC('HAVE_PACKED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 int main(int argc, char *argv[])
 {
 	struct s1 { char c; int x,y,z; } __attribute__ ((packed));
@@ -224,8 +228,8 @@ int main(int argc, char *argv[])
 }
 EOF
 	
-	MkPrintN('checking pure attribute...');
-	TryCompileFlagsC('HAVE_PURE_ATTRIBUTE', '', << 'EOF');
+		MkPrintN('checking pure attribute...');
+		TryCompileFlagsC('HAVE_PURE_ATTRIBUTE', '', << 'EOF');
 int foo(int) __attribute__ ((pure));
 int foo(int x) { return (x*x); }
 int main(int argc, char *argv[])
@@ -235,8 +239,8 @@ int main(int argc, char *argv[])
 }
 EOF
 	
-	MkPrintN('checking warn_unused_result attribute...');
-	TryCompileFlagsC('HAVE_WARN_UNUSED_RESULT_ATTRIBUTE', '', << 'EOF');
+		MkPrintN('checking warn_unused_result attribute...');
+		TryCompileFlagsC('HAVE_WARN_UNUSED_RESULT_ATTRIBUTE', '', << 'EOF');
 int foo(void) __attribute__ ((warn_unused_result));
 int foo(void) { return (1); }
 int main(int argc, char *argv[])
@@ -246,9 +250,9 @@ int main(int argc, char *argv[])
 }
 EOF
 	
-	# Check for long double type.
-	MkPrintN('checking for long double...');
-	TryCompile('HAVE_LONG_DOUBLE', << 'EOF');
+		# Check for long double type.
+		MkPrintN('checking for long double...');
+		TryCompile('HAVE_LONG_DOUBLE', << 'EOF');
 int
 main(int argc, char *argv[])
 {
@@ -258,9 +262,9 @@ main(int argc, char *argv[])
 }
 EOF
 	
-	# Check for long long type.
-	MkPrintN('checking for long long...');
-	TryCompile('HAVE_LONG_LONG', << 'EOF');
+		# Check for long long type.
+		MkPrintN('checking for long long...');
+		TryCompile('HAVE_LONG_LONG', << 'EOF');
 int
 main(int argc, char *argv[])
 {
@@ -271,8 +275,8 @@ main(int argc, char *argv[])
 }
 EOF
 
-	MkPrintN('checking for cygwin environment...');
-	TryCompileFlagsC('HAVE_CYGWIN', '-mcygwin', << 'EOF');
+		MkPrintN('checking for cygwin environment...');
+		TryCompileFlagsC('HAVE_CYGWIN', '-mcygwin', << 'EOF');
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <windows.h>
@@ -287,25 +291,27 @@ main(int argc, char *argv[]) {
 }
 EOF
 	
-	MkPrintN('checking for libtool --tag=CC retardation...');
-	my $code = << 'EOF';
+		MkPrintN('checking for libtool --tag=CC retardation...');
+		my $code = << 'EOF';
 EOF
-	print 'cat << EOT > conftest.c', "\n",
-	      'int main(int argc, char *argv[]) { return (0); }', "\nEOT\n";
-	print << "EOF";
+		print 'cat << EOT > conftest.c', "\n",
+		      'int main(int argc, char *argv[]) { return (0); }', "\nEOT\n";
+		print << "EOF";
 \$LIBTOOL --quiet --mode=compile --tag=CC \$CC \$CFLAGS \$TEST_CFLAGS -o \$testdir/conftest.o conftest.c 2>>config.log
 EOF
-	MkIf('"$?" = "0"');
-		MkPrint('yes');
-		MkDefine('LIBTOOLOPTS_CC', '--tag=CC');
-	MkElse;
-		MkPrint('no');
-	MkEndif;
-	MkSaveMK('LIBTOOLOPTS_CC');
-	print 'rm -f conftest.c $testdir/conftest$EXECSUFFIX', "\n";
+		MkIf('"$?" = "0"');
+			MkPrint('yes');
+			MkDefine('LIBTOOLOPTS_CC', '--tag=CC');
+		MkElse;
+			MkPrint('no');
+		MkEndif;
+		MkSaveMK('LIBTOOLOPTS_CC');
+		print 'rm -f conftest.c $testdir/conftest$EXECSUFFIX', "\n";
 
-	# Preserve ${CC} and ${CFLAGS}
-	MkSaveMK('CC', 'CFLAGS');
+		# Preserve ${CC} and ${CFLAGS}
+		MkSaveMK('CC', 'CFLAGS');
+
+	MkEndif; # HAVE_CC
 }
 
 sub Emul

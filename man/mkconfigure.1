@@ -144,6 +144,10 @@ variable, which will be visible in the project's makefiles.
 is again an unquoted, usually upper-case string and
 .Fa val
 is a value enclosed in double quotes.
+.It Ev MAPPEND(opt,val)
+Same effect as
+.Ev MDEFINE() ,
+except that the value is appended to the variable (following a space).
 .It Ev C_DEFINE(opt)
 (C-style compilers only) Specify a global define that will be passed to
 the compiler.

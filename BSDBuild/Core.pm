@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2002-2009 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2002-2012 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,7 @@ our $LUA = undef;
 our $EmulOS = undef;
 our $EmulOSRel = undef;
 our $EmulEnv = undef;
+our %MkDefinesToSave = ();
 
 
 #
@@ -319,6 +320,12 @@ sub MkDefine
 	print "$arg=\"$val\"\n";
 }
 
+sub MkAppend
+{
+	my ($arg, $val) = @_;
+	print "$arg=\"\${$arg} $val\"\n";
+}
+
 sub MkSetTrue
 {
 	my ($arg) = @_;
@@ -419,6 +426,13 @@ sub MKSave
 sub MkSaveMK
 {
 	foreach my $var (@_) {
+		$MkDefinesToSave{$var} = 1;
+	}
+}
+
+sub MkSaveMK_Commit
+{
+	foreach my $var (keys %MkDefinesToSave) {
 		print << "EOF";
 echo "$var=\$$var" >>Makefile.config
 echo "mdefs[\\"$var\\"] = \\"\$$var\\"" >>$OutputLUA
@@ -1088,7 +1102,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSetTrue MkSetFalse MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkPrint MkPrintN MkFoundVer MkNotFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion);
+    @EXPORT = qw($OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSetTrue MkSetFalse MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveMK_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkPrint MkPrintN MkFoundVer MkNotFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion);
 }
 
 ;1

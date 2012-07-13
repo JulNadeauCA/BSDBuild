@@ -39,6 +39,7 @@ my %Fns = (
 	'require'		=> \&test_require,
 	'test_dir'		=> \&test_dir,
 	'mdefine'		=> \&mdefine,
+	'mappend'		=> \&mappend,
 	'hdefine'		=> \&hdefine,
 	'hdefine_unquoted'	=> \&hdefine_unquoted,
 	'hundef'		=> \&hundef,
@@ -377,6 +378,16 @@ sub mdefine
 	
 	if ($val =~ /^"(.*)"$/) { $val = $1; }
 	MkDefine($def, $val);
+	MkSaveMK($def);
+}
+
+# Append to make environment define
+sub mappend
+{
+	my ($def, $val) = @_;
+	
+	if ($val =~ /^"(.*)"$/) { $val = $1; }
+	MkDefine($def, "\${$def} $val");
 	MkSaveMK($def);
 }
 
@@ -1344,6 +1355,8 @@ foreach $_ (@INPUT) {
 		&{$Fns{$cmd}}(@args);
 	}
 }
+
+MkSaveMK_Commit();
 
 print << 'EOF';
 if [ "${srcdir}" != "" ]; then

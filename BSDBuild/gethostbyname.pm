@@ -1,8 +1,6 @@
-# $Csoft: gethostname.pm,v 1.2 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2012 Hypertriton, Inc. <http://www.hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,19 +25,18 @@
 
 sub Test
 {
-	TryCompile 'HAVE_GETPWUID', << 'EOF';
+	TryCompile 'HAVE_GETHOSTBYNAME', << 'EOF';
 #include <string.h>
-#include <sys/types.h>
-#include <pwd.h>
+#include <netdb.h>
 
 int
 main(int argc, char *argv[])
 {
-	struct passwd *pwd;
-	uid_t uid = 0;
+	struct hostent *hp;
+	const char *host = "localhost";
 
-	pwd = getpwuid(uid);
-	return (pwd != NULL && pwd->pw_gecos != NULL && pwd->pw_class != NULL);
+	hp = gethostbyname(host);
+	return (hp == NULL);
 }
 EOF
 }
@@ -48,21 +45,21 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_GETPWUID', 'yes');
-		MkSaveDefine('HAVE_GETPWUID');
+	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd/) {
+		MkDefine('HAVE_GETHOSTBYNAME', 'yes');
+		MkSaveDefine('HAVE_GETHOSTBYNAME');
 	} else {
-		MkSaveUndef('HAVE_GETPWUID');
+		MkSaveUndef('HAVE_GETHOSTBYNAME');
 	}
 	return (1);
 }
 
 BEGIN
 {
-	$DESCR{'getpwuid'} = 'a getpwuid() function';
-	$DEPS{'getpwuid'} = 'cc';
-	$TESTS{'getpwuid'} = \&Test;
-	$EMUL{'getpwuid'} = \&Emul;
+	$TESTS{'gethostbyname'} = \&Test;
+	$DEPS{'gethostbyname'} = 'cc';
+	$EMUL{'gethostbyname'} = \&Emul;
+	$DESCR{'gethostbyname'} = 'the gethostbyname() function';
 }
 
 ;1

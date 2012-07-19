@@ -36,6 +36,7 @@ SHARE=	Core.pm \
 	arc4random.pm \
 	pctr.pm \
 	getpwuid.pm \
+	getpwnam_r.pm \
 	getuid.pm \
 	md5.pm \
 	sha1.pm \
@@ -56,6 +57,7 @@ SHARE=	Core.pm \
 	perl.pm \
 	libidn.pm \
 	getaddrinfo.pm \
+	gethostbyname.pm \
 	glu.pm \
 	ode.pm \
 	sse.pm \
@@ -104,7 +106,8 @@ SHARE=	Core.pm \
 	xinerama.pm \
 	portaudio.pm \
 	mysql.pm \
-	cocoa.pm
+	cocoa.pm \
+	sockopts.pm
 
 all:
 

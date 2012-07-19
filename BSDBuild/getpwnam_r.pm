@@ -1,8 +1,6 @@
-# $Csoft: gethostname.pm,v 1.2 2004/01/03 04:13:29 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2004 CubeSoft Communications, Inc.
-# <http://www.csoft.org>
+# Copyright (c) 2012 Hypertriton Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,19 +25,31 @@
 
 sub Test
 {
-	TryCompile 'HAVE_GETPWUID', << 'EOF';
-#include <string.h>
+	TryCompile 'HAVE_GETPWNAM_R', << 'EOF';
 #include <sys/types.h>
 #include <pwd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
 
 int
 main(int argc, char *argv[])
 {
-	struct passwd *pwd;
-	uid_t uid = 0;
+	struct passwd pw, *res;
+	char *buf;
+	size_t bufSize;
+	int rv;
 
-	pwd = getpwuid(uid);
-	return (pwd != NULL && pwd->pw_gecos != NULL && pwd->pw_class != NULL);
+	bufSize = sysconf(_SC_GETPW_R_SIZE_MAX);
+	if (bufSize == -1) { bufSize = 16384; }
+	if ((buf = malloc(bufSize)) == NULL) { return (1); }
+
+	rv = getpwnam_r("foo", &pw, buf, bufSize, &res);
+	if (res == NULL) {
+		return (rv == 0);
+	}
+	return (pw.pw_class != NULL && pw.pw_gecos != NULL && pw.pw_dir != NULL);
 }
 EOF
 }
@@ -49,20 +59,20 @@ sub Emul
 	my ($os, $osrel, $machine) = @_;
 
 	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_GETPWUID', 'yes');
-		MkSaveDefine('HAVE_GETPWUID');
+		MkDefine('HAVE_GETPWNAM_R', 'yes');
+		MkSaveDefine('HAVE_GETPWNAM_R');
 	} else {
-		MkSaveUndef('HAVE_GETPWUID');
-	}
+		MkSaveUndef('HAVE_GETPWNAM_R');
+	PWNAM_R}
 	return (1);
 }
 
 BEGIN
 {
-	$DESCR{'getpwuid'} = 'a getpwuid() function';
-	$DEPS{'getpwuid'} = 'cc';
-	$TESTS{'getpwuid'} = \&Test;
-	$EMUL{'getpwuid'} = \&Emul;
+	$DESCR{'getpwnam_r'} = 'the getpwnam_r() interface';
+	$DEPS{'getpwnam_r'} = 'cc';
+	$TESTS{'getpwnam_r'} = \&Test;
+	$EMUL{'getpwnam_r'} = \&Emul;
 }
 
 ;1

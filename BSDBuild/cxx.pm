@@ -119,122 +119,6 @@ EOF
 			MkDefine('TEST_CXXFLAGS', '-Wall -Werror');
 		MkEndif;
 	
-		MkPrintN('checking aligned attribute in c++...');
-		TryCompileFlagsCXX('HAVE_ALIGNED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
-int main(void)
-{
-	struct s1 { int x,y,z; } __attribute__ ((aligned(16)));
-	return (0);
-}
-EOF
-
-		MkPrintN('checking bounded attribute in c++...');
-		MkCompileCXX('HAVE_BOUNDED_ATTRIBUTE', '', '-lstdc++', << 'EOF');
-void foo(char *, int) __attribute__ ((__bounded__(__string__,1,2)));
-void foo(char *a, int c) { }
-int main(void)
-{
-	char buf[32];
-	foo(buf, sizeof(buf));
-	return (0);
-}
-EOF
-	
-		MkPrintN('checking const attribute in c++...');
-		TryCompileFlagsCXX('HAVE_CONST_ATTRIBUTE', '', << 'EOF');
-int foo(int) __attribute__ ((const));
-int foo(int x) { return (x*x); }
-int main(void)
-{
-	int x = foo(1);
-	return (x);
-}
-EOF
-	
-		MkPrintN('checking deprecated attribute in c++...');
-		TryCompileFlagsCXX('HAVE_DEPRECATED_ATTRIBUTE', '', << 'EOF');
-void foo(void) __attribute__ ((deprecated));
-void foo(void) { }
-
-int main(void)
-{
-/*	foo(); */
-	return (0);
-}
-EOF
-	
-		MkPrintN('checking format attribute in c++...');
-		MkCompileCXX('HAVE_FORMAT_ATTRIBUTE', '', '-lstdc++', << 'EOF');
-#include <stdarg.h>
-void foo1(char *, ...)
-     __attribute__((__format__ (printf, 1, 2)));
-void foo2(char *, ...)
-     __attribute__((__format__ (__printf__, 1, 2)))
-     __attribute__((__nonnull__ (1)));
-void foo1(char *a, ...) {}
-void foo2(char *a, ...) {}
-int main(void)
-{
-	foo1("foo %s", "bar");
-	foo2("foo %d", 1);
-	return (0);
-}
-EOF
-
-		MkPrintN('checking nonnull attribute in c++...');
-		TryCompileFlagsCXX('HAVE_NONNULL_ATTRIBUTE', '-Wall -Werror', << 'EOF');
-void foo(char *) __attribute__((__nonnull__ (1)));
-void foo(char *a) { }
-int main(void)
-{
-	foo("foo");
-	return (0);
-}
-EOF
-	
-		MkPrintN('checking noreturn attribute in c++...');
-		TryCompileFlagsCXX('HAVE_NORETURN_ATTRIBUTE', '', << 'EOF');
-#include <unistd.h>
-#include <stdlib.h>
-void foo(void) __attribute__ ((noreturn));
-void foo(void) { _exit(0); }
-int main(void)
-{
-	foo();
-}
-EOF
-
-		MkPrintN('checking packed attribute in c++...');
-		TryCompileFlagsCXX('HAVE_PACKED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
-int main(void)
-{
-	struct s1 { char c; int x,y,z; } __attribute__ ((packed));
-	return (0);
-}
-EOF
-	
-		MkPrintN('checking pure attribute in c++...');
-		TryCompileFlagsCXX('HAVE_PURE_ATTRIBUTE', '', << 'EOF');
-int foo(int) __attribute__ ((pure));
-int foo(int x) { return (x*x); }
-int main(void)
-{
-	int x = foo(1);
-	return (x);
-}
-EOF
-	
-		MkPrintN('checking warn_unused_result attribute in c++...');
-		TryCompileFlagsCXX('HAVE_WARN_UNUSED_RESULT_ATTRIBUTE', '', << 'EOF');
-int foo(void) __attribute__ ((warn_unused_result));
-int foo(void) { return (1); }
-int main(void)
-{
-	int rv = foo();
-	return (rv);
-}
-EOF
-	
 		# Check for long double type.
 		MkPrintN('checking for long double...');
 		TryCompile('HAVE_LONG_DOUBLE', << 'EOF');
@@ -310,20 +194,8 @@ sub Emul
 	MkDefine('HAVE_IEEE754', 'yes');
 	MkSaveDefine('HAVE_IEEE754');
 
-	MkSaveUndef('HAVE_ALIGNED_ATTRIBUTE');
-	MkSaveUndef('HAVE_BOUNDED_ATTRIBUTE');
-	MkSaveUndef('HAVE_CONST_ATTRIBUTE');
-	MkSaveUndef('HAVE_DEPRECATED_ATTRIBUTE');
-	MkSaveUndef('HAVE_FORMAT_ATTRIBUTE');
-	MkSaveUndef('HAVE_NONNULL_ATTRIBUTE');
-	MkSaveUndef('HAVE_NORETURN_ATTRIBUTE');
-	MkSaveUndef('HAVE_PACKED_ATTRIBUTE');
-	MkSaveUndef('HAVE_PURE_ATTRIBUTE');
-	MkSaveUndef('HAVE_WARN_UNUSED_RESULT_ATTRIBUTE');
-
 	MkSaveUndef('HAVE_LONG_DOUBLE');
 	MkSaveUndef('HAVE_LONG_LONG');
-	
 	MkSaveUndef('HAVE_CYGWIN');
 	return (1);
 }

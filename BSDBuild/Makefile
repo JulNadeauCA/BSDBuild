@@ -3,6 +3,7 @@ TOP=..
 SHARE=	Core.pm \
 	Builtins.pm \
 	cc.pm \
+	cc_attributes.pm \
 	objc.pm \
 	cxx.pm \
 	gcc.pm \

@@ -166,6 +166,7 @@ BEGIN
 	$TESTS{'cc_attributes'} = \&Test;
 	$EMUL{'cc_attributes'} = \&Emul;
 	$DESCR{'cc_attributes'} = 'aligned attribute';
+	$DEPS{'cc_attributes'} = 'cc';
 }
 
 ;1

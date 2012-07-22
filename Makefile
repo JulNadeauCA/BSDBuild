@@ -20,7 +20,7 @@ SHARE=	hstrip.pl mkdep mkconcurrent.pl manlinks.pl cmpfiles.pl cleanfiles.pl \
 	gen-includelinks.pl \
 	build.common.mk build.dep.mk build.lib.mk build.man.mk \
 	build.perl.mk build.prog.mk build.subdir.mk build.www.mk \
-	build.po.mk build.doc.mk build.den.mk build.proj.mk
+	build.po.mk build.doc.mk build.proj.mk
 	
 LTFILES=config.guess config.sub configure configure.in ltconfig ltmain.sh
 

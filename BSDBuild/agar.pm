@@ -40,14 +40,14 @@ EOF
 
 sub Test
 {
-	my ($ver) = @_;
+	my ($ver, $pfx) = @_;
 	
-	MkExecOutputUnique('agar-config', '--version', 'AGAR_VERSION');
+	MkExecOutputPfx($pfx, 'agar-config', '--version', 'AGAR_VERSION');
 	MkIfNE('${AGAR_VERSION}', '');
 		MkFoundVer($pfx, $ver, 'AGAR_VERSION');
 		MkPrintN('checking whether Agar works...');
-		MkExecOutput('agar-config', '--cflags', 'AGAR_CFLAGS');
-		MkExecOutput('agar-config', '--libs', 'AGAR_LIBS');
+		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
+		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
 		MkCompileC('HAVE_AGAR',
 		           '${AGAR_CFLAGS}', '${AGAR_LIBS}',
 				   $testCode);

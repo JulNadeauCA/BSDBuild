@@ -142,6 +142,15 @@ int main(int argc, char *argv[])
 	return (rv);
 }
 EOF
+		
+		MkPrintN('checking for unused variable attribute...');
+		TryCompileFlagsC('HAVE_UNUSED_VARIABLE_ATTRIBUTE', '', << 'EOF');
+int main(int argc, char *argv[])
+{
+	int __attribute__ ((unused)) variable;
+	return (0);
+}
+EOF
 }
 
 sub Emul

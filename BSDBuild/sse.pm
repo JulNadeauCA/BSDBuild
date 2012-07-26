@@ -27,7 +27,7 @@ sub Test
 {
 	my ($ver) = @_;
 
-	MkDefine('SSE_CFLAGS', '-msse');
+	MkDefine('SSE_CFLAGS', '-msse -Wno-unused-but-set-variable');
 	# XXX cross compiling
 	MkCompileAndRunC('HAVE_SSE', '${CFLAGS} ${SSE_CFLAGS}', '', << 'EOF');
 #include <xmmintrin.h>

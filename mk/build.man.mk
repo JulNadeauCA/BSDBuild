@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2001-2010 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2011 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -68,7 +68,7 @@ depend: depend-subdir
 	@(cat $< | \
 	  sed 's,\$$SYSCONFDIR,${SYSCONFDIR},' | \
 	  sed 's,\$$PREFIX,${PREFIX},' | \
-	  sed 's,\$$SHAREDIR,${SHAREDIR},' | \
+	  sed 's,\$$DATADIR,${DATADIR},' | \
 	  ${NROFF} -Tascii -mandoc > $@) || (rm -f $@; true)
 
 .1.ps1 .2.ps2 .3.ps3 .4.ps4 .5.ps5 .6.ps6 .7.ps7 .8.ps8 .9.ps9:
@@ -76,96 +76,114 @@ depend: depend-subdir
 	@(cat $< | \
 	  sed 's,\$$SYSCONFDIR,${SYSCONFDIR},' | \
 	  sed 's,\$$PREFIX,${PREFIX},' | \
-	  sed 's,\$$SHAREDIR,${SHAREDIR},' | \
+	  sed 's,\$$DATADIR,${DATADIR},' | \
 	  ${NROFF} -Tps -mandoc > $@) || (rm -f $@; true)
 
 preformat-man:
 	@if [ "${MAN1}" != "" -a "${NOMAN}" != "yes" ]; then \
 	    if [ "${CATMAN1}" = "" ]; then \
+	        CATLIST=""; \
 	        for F in ${MAN1}; do \
 	            CAT=`echo $$F | sed 's/.1$$/.cat1/'`; \
-	            ${MAKE} $$CAT; \
+		    CATLIST="$$CATLIST $$CAT"; \
 	        done; \
+	        ${MAKE} $$CATLIST; \
 	    else \
 	        ${MAKE} ${CATMAN1}; \
 	    fi; \
 	fi
 	@if [ "${MAN2}" != "" -a "${NOMAN}" != "yes" ]; then \
 	    if [ "${CATMAN2}" = "" ]; then \
+	        CATLIST=""; \
 	        for F in ${MAN2}; do \
 	            CAT=`echo $$F | sed 's/.2$$/.cat2/'`; \
-	            ${MAKE} $$CAT; \
+		    CATLIST="$$CATLIST $$CAT"; \
 	        done; \
+	        ${MAKE} $$CATLIST; \
 	    else \
 	        ${MAKE} ${CATMAN2}; \
 	    fi; \
 	fi
 	@if [ "${MAN3}" != "" -a "${NOMAN}" != "yes" ]; then \
 	    if [ "${CATMAN3}" = "" ]; then \
+	        CATLIST=""; \
 	        for F in ${MAN3}; do \
 	            CAT=`echo $$F | sed 's/.3$$/.cat3/'`; \
-	            ${MAKE} $$CAT; \
+		    CATLIST="$$CATLIST $$CAT"; \
 	        done; \
+	        ${MAKE} $$CATLIST; \
 	    else \
 	        ${MAKE} ${CATMAN3}; \
 	    fi; \
 	fi
 	@if [ "${MAN4}" != "" -a "${NOMAN}" != "yes" ]; then \
 	    if [ "${CATMAN4}" = "" ]; then \
+	        CATLIST=""; \
 	        for F in ${MAN4}; do \
 	            CAT=`echo $$F | sed 's/.4$$/.cat4/'`; \
-	            ${MAKE} $$CAT; \
+		    CATLIST="$$CATLIST $$CAT"; \
 	        done; \
+	        ${MAKE} $$CATLIST; \
 	    else \
 	        ${MAKE} ${CATMAN4}; \
 	    fi; \
 	fi
 	@if [ "${MAN5}" != "" -a "${NOMAN}" != "yes" ]; then \
 	    if [ "${CATMAN5}" = "" ]; then \
+	        CATLIST=""; \
 	        for F in ${MAN5}; do \
 	            CAT=`echo $$F | sed 's/.5$$/.cat5/'`; \
-	            ${MAKE} $$CAT; \
+		    CATLIST="$$CATLIST $$CAT"; \
 	        done; \
+	        ${MAKE} $$CATLIST; \
 	    else \
 	        ${MAKE} ${CATMAN5}; \
 	    fi; \
 	fi
 	@if [ "${MAN6}" != "" -a "${NOMAN}" != "yes" ]; then \
 	    if [ "${CATMAN6}" = "" ]; then \
+	        CATLIST=""; \
 	        for F in ${MAN6}; do \
 	            CAT=`echo $$F | sed 's/.6$$/.cat6/'`; \
-	            ${MAKE} $$CAT; \
+		    CATLIST="$$CATLIST $$CAT"; \
 	        done; \
+	        ${MAKE} $$CATLIST; \
 	    else \
 	        ${MAKE} ${CATMAN6}; \
 	    fi; \
 	fi
 	@if [ "${MAN7}" != "" -a "${NOMAN}" != "yes" ]; then \
 	    if [ "${CATMAN7}" = "" ]; then \
+	        CATLIST=""; \
 	        for F in ${MAN7}; do \
 	            CAT=`echo $$F | sed 's/.7$$/.cat7/'`; \
-	            ${MAKE} $$CAT; \
+		    CATLIST="$$CATLIST $$CAT"; \
 	        done; \
+	        ${MAKE} $$CATLIST; \
 	    else \
 	        ${MAKE} ${CATMAN7}; \
 	    fi; \
 	fi
 	@if [ "${MAN8}" != "" -a "${NOMAN}" != "yes" ]; then \
 	    if [ "${CATMAN8}" = "" ]; then \
+	        CATLIST=""; \
 	        for F in ${MAN8}; do \
 	            CAT=`echo $$F | sed 's/.8$$/.cat8/'`; \
-	            ${MAKE} $$CAT; \
+		    CATLIST="$$CATLIST $$CAT"; \
 	        done; \
+	        ${MAKE} $$CATLIST; \
 	    else \
 	        ${MAKE} ${CATMAN8}; \
 	    fi; \
 	fi
 	@if [ "${MAN9}" != "" -a "${NOMAN}" != "yes" ]; then \
 	    if [ "${CATMAN9}" = "" ]; then \
+	        CATLIST=""; \
 	        for F in ${MAN9}; do \
 	            CAT=`echo $$F | sed 's/.9$$/.cat9/'`; \
-	            ${MAKE} $$CAT; \
+		    CATLIST="$$CATLIST $$CAT"; \
 	        done; \
+	        ${MAKE} $$CATLIST; \
 	    else \
 	        ${MAKE} ${CATMAN9}; \
 	    fi; \
@@ -349,99 +367,99 @@ install-man-dirs:
 
 install-man:
 	@if [ "${MAN1}" != "" -a "${NOMAN}" != "yes" ]; then \
-	    env MAN="${MAN1}" CATMAN="${CATMAN1}" NOCATMAN="${NOCATMAN}" \
+	    ${SUDO} env MAN="${MAN1}" CATMAN="${CATMAN1}" NOCATMAN="${NOCATMAN}" \
 	        INSTALL_DATA="${INSTALL_DATA}" \
 		MANDIR="${DESTDIR}${MANDIR}/man1" \
 	        CATMANDIR="${DESTDIR}${MANDIR}/cat1" \
-	        ${SUDO} ${SH} ${TOP}/mk/install-manpages.sh; \
+	        ${SH} ${TOP}/mk/install-manpages.sh; \
 	    if [ $$? != 0 ]; then \
 	    	echo "install-manpages.sh failed"; \
 		exit 1; \
 	    fi; \
 	fi
 	@if [ "${MAN2}" != "" -a "${NOMAN}" != "yes" ]; then \
-	    env MAN="${MAN2}" CATMAN="${CATMAN2}" NOCATMAN="${NOCATMAN}" \
+	    ${SUDO} env MAN="${MAN2}" CATMAN="${CATMAN2}" NOCATMAN="${NOCATMAN}" \
 	        INSTALL_DATA="${INSTALL_DATA}" \
 		MANDIR="${DESTDIR}${MANDIR}/man2" \
 	        CATMANDIR="${DESTDIR}${MANDIR}/cat2" \
-	        ${SUDO} ${SH} ${TOP}/mk/install-manpages.sh; \
+	        ${SH} ${TOP}/mk/install-manpages.sh; \
 	    if [ $$? != 0 ]; then \
 	    	echo "install-manpages.sh failed"; \
 		exit 1; \
 	    fi; \
 	fi
 	@if [ "${MAN3}" != "" -a "${NOMAN}" != "yes" ]; then \
-	    env MAN="${MAN3}" CATMAN="${CATMAN3}" NOCATMAN="${NOCATMAN}" \
+	    ${SUDO} env MAN="${MAN3}" CATMAN="${CATMAN3}" NOCATMAN="${NOCATMAN}" \
 	        INSTALL_DATA="${INSTALL_DATA}" \
 		MANDIR="${DESTDIR}${MANDIR}/man3" \
 	        CATMANDIR="${DESTDIR}${MANDIR}/cat3" \
-	        ${SUDO} ${SH} ${TOP}/mk/install-manpages.sh; \
+	        ${SH} ${TOP}/mk/install-manpages.sh; \
 	    if [ $$? != 0 ]; then \
 	    	echo "install-manpages.sh failed"; \
 		exit 1; \
 	    fi; \
 	fi
 	@if [ "${MAN4}" != "" -a "${NOMAN}" != "yes" ]; then \
-	    env MAN="${MAN4}" CATMAN="${CATMAN4}" NOCATMAN="${NOCATMAN}" \
+	    ${SUDO} env MAN="${MAN4}" CATMAN="${CATMAN4}" NOCATMAN="${NOCATMAN}" \
 	        INSTALL_DATA="${INSTALL_DATA}" \
 		MANDIR="${DESTDIR}${MANDIR}/man4" \
 	        CATMANDIR="${DESTDIR}${MANDIR}/cat4" \
-	        ${SUDO} ${SH} ${TOP}/mk/install-manpages.sh; \
+	        ${SH} ${TOP}/mk/install-manpages.sh; \
 	    if [ $$? != 0 ]; then \
 	    	echo "install-manpages.sh failed"; \
 		exit 1; \
 	    fi; \
 	fi
 	@if [ "${MAN5}" != "" -a "${NOMAN}" != "yes" ]; then \
-	    env MAN="${MAN5}" CATMAN="${CATMAN5}" NOCATMAN="${NOCATMAN}" \
+	    ${SUDO} env MAN="${MAN5}" CATMAN="${CATMAN5}" NOCATMAN="${NOCATMAN}" \
 	        INSTALL_DATA="${INSTALL_DATA}" \
 		MANDIR="${DESTDIR}${MANDIR}/man5" \
 	        CATMANDIR="${DESTDIR}${MANDIR}/cat5" \
-	        ${SUDO} ${SH} ${TOP}/mk/install-manpages.sh; \
+	        ${SH} ${TOP}/mk/install-manpages.sh; \
 	    if [ $$? != 0 ]; then \
 	    	echo "install-manpages.sh failed"; \
 		exit 1; \
 	    fi; \
 	fi
 	@if [ "${MAN6}" != "" -a "${NOMAN}" != "yes" ]; then \
-	    env MAN="${MAN6}" CATMAN="${CATMAN6}" NOCATMAN="${NOCATMAN}" \
+	    ${SUDO} env MAN="${MAN6}" CATMAN="${CATMAN6}" NOCATMAN="${NOCATMAN}" \
 	        INSTALL_DATA="${INSTALL_DATA}" \
 		MANDIR="${DESTDIR}${MANDIR}/man6" \
 	        CATMANDIR="${DESTDIR}${MANDIR}/cat6" \
-	        ${SUDO} ${SH} ${TOP}/mk/install-manpages.sh; \
+	        ${SH} ${TOP}/mk/install-manpages.sh; \
 	    if [ $$? != 0 ]; then \
 	    	echo "install-manpages.sh failed"; \
 		exit 1; \
 	    fi; \
 	fi
 	@if [ "${MAN7}" != "" -a "${NOMAN}" != "yes" ]; then \
-	    env MAN="${MAN7}" CATMAN="${CATMAN7}" NOCATMAN="${NOCATMAN}" \
+	    ${SUDO} env MAN="${MAN7}" CATMAN="${CATMAN7}" NOCATMAN="${NOCATMAN}" \
 	        INSTALL_DATA="${INSTALL_DATA}" \
 		MANDIR="${DESTDIR}${MANDIR}/man7" \
 	        CATMANDIR="${DESTDIR}${MANDIR}/cat7" \
-	        ${SUDO} ${SH} ${TOP}/mk/install-manpages.sh; \
+	        ${SH} ${TOP}/mk/install-manpages.sh; \
 	    if [ $$? != 0 ]; then \
 	    	echo "install-manpages.sh failed"; \
 		exit 1; \
 	    fi; \
 	fi
 	@if [ "${MAN8}" != "" -a "${NOMAN}" != "yes" ]; then \
-	    env MAN="${MAN8}" CATMAN="${CATMAN8}" NOCATMAN="${NOCATMAN}" \
+	    ${SUDO} env MAN="${MAN8}" CATMAN="${CATMAN8}" NOCATMAN="${NOCATMAN}" \
 	        INSTALL_DATA="${INSTALL_DATA}" \
 		MANDIR="${DESTDIR}${MANDIR}/man8" \
 	        CATMANDIR="${DESTDIR}${MANDIR}/cat8" \
-	        ${SUDO} ${SH} ${TOP}/mk/install-manpages.sh; \
+	        ${SH} ${TOP}/mk/install-manpages.sh; \
 	    if [ $$? != 0 ]; then \
 	    	echo "install-manpages.sh failed"; \
 		exit 1; \
 	    fi; \
 	fi
 	@if [ "${MAN9}" != "" -a "${NOMAN}" != "yes" ]; then \
-	    env MAN="${MAN9}" CATMAN="${CATMAN9}" NOCATMAN="${NOCATMAN}" \
+	    ${SUDO} env MAN="${MAN9}" CATMAN="${CATMAN9}" NOCATMAN="${NOCATMAN}" \
 	        INSTALL_DATA="${INSTALL_DATA}" \
 		MANDIR="${DESTDIR}${MANDIR}/man9" \
 	        CATMANDIR="${DESTDIR}${MANDIR}/cat9" \
-	        ${SUDO} ${SH} ${TOP}/mk/install-manpages.sh; \
+	        ${SH} ${TOP}/mk/install-manpages.sh; \
 	    if [ $$? != 0 ]; then \
 	    	echo "install-manpages.sh failed"; \
 		exit 1; \

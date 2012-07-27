@@ -215,7 +215,7 @@ sub MkExecPkgConfig
 
 	print << "EOF";
 if [ "$pfx" != "" ]; then
-	MK_EXEC_PKGPREFIX=`\$PKGCONFIG --variable=prefix $pkg`
+	MK_EXEC_PKGPREFIX=`\$PKGCONFIG --variable=prefix $pkg 2>/dev/null`
 	if [ "\$MK_EXEC_PKGPREFIX" != "$pfx" ]; then
 		echo " "
 		echo "* "
@@ -227,10 +227,10 @@ if [ "$pfx" != "" ]; then
 		echo "* "
 		exit 1
 	else
-		$define=`\$PKGCONFIG $pkg $args`
+		$define=`\$PKGCONFIG $pkg $args 2>/dev/null`
 	fi
 else
-	$define=`\$PKGCONFIG $pkg $args`
+	$define=`\$PKGCONFIG $pkg $args 2>/dev/null`
 fi
 EOF
 }

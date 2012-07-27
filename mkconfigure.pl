@@ -736,6 +736,7 @@ sub Help
 		'--exec-prefix=p' =>	'Machine-dependent installation base',
 		'--bindir=p' =>		'Executables for common users',
 		'--libdir=p' =>		'System libraries',
+		'--moduledir=P' =>	'Dynamically loaded modules',
 		'--libexecdir=p' =>	'Executables for program use',
 		'--datadir=P' =>	'Data files for program use',
 		'--statedir=P' =>	'Modifiable single-machine data',
@@ -764,6 +765,7 @@ sub Help
 		'--exec-prefix=p' =>	'PREFIX',
 		'--bindir=p' =>		'PREFIX/bin',
 		'--libdir=p' =>		'PREFIX/lib',
+		'--moduledir=P' =>	'PREFIX/lib',
 		'--libexecdir=p' =>	'PREFIX/libexec',
 		'--datadir=P' =>	'PREFIX/share',
 		'--statedir=P' =>	'PREFIX/var',
@@ -936,6 +938,9 @@ do
 	    ;;
 	--libdir=*)
 	    libdir=$optarg
+	    ;;
+	--moduledir=*)
+	    moduledir=$optarg
 	    ;;
 	--libexecdir=*)
 	    libexecdir=$optarg
@@ -1320,6 +1325,7 @@ MkSaveDefine('PREFIX');
 my @defPaths = (
 	'bindir:${PREFIX}/bin',
 	'libdir:${PREFIX}/lib',
+	'moduledir:${PREFIX}/lib',
 	'libexecdir:${PREFIX}/libexec',
 	'datadir:${PREFIX}/share',
 	'statedir:${PREFIX}/var',

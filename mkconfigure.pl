@@ -238,6 +238,9 @@ sub default_dir
 {
     	my $dir = shift;
 	my $default = shift;
+	
+	if ($dir =~ /^"(.*)"$/) { $dir = $1; }
+	if ($default =~ /^"(.*)"$/) { $default = $1; }
 
 	MkIf "\"\$\{${dir}_SPECIFIED\}\" != \"yes\"";
 		MkDefine($dir, $default);

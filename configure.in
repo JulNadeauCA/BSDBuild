@@ -4,11 +4,6 @@ PACKAGE("BSDBuild")
 VERSION("3.0-beta")
 RELEASE("Blast of Ancient Atmospheres")
 
-MDEFINE(SHAREDIR, "$PREFIX/share/bsdbuild")
+DEFAULT_DIR(DATADIR, "$PREFIX/share/bsdbuild")
+
 MDEFINE(CONFIGURE_OK, "yes")
-
-echo "*"
-echo "* Configuration successful."
-echo "* Use \"make all install\" to build and install BSDBuild."
-echo "*"
-

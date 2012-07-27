@@ -57,17 +57,16 @@ This variable is typically passed as an argument to a
 .Sq make install
 command.
 Defaults to an empty string.
-.It Ev LOCALSTATEDIR
-Installation directory for system-wide data files.
+.It Ev STATEDIR
+Installation directory for writeable machine-wide data files.
 Defaults to
-.Sq PREFIX/share .
-.It Ev SHAREDIR
-Alias for
-.Ev LOCALSTATEDIR .
+.Sq PREFIX/var .
 .It Ev SYSCONFDIR
 System-wide configuration directory.
 Defaults to
 .Sq PREFIX/etc .
+.It Ev DATADIR
+Installation directory for read-only machine-wide data files.
 .It Ev BINDIR
 Installation directory for executables.
 Defaults to
@@ -82,10 +81,6 @@ Defaults to
 .Sq PREFIX/include .
 .It Ev MANDIR
 Installation directory for manual pages.
-Defaults to
-.Sq PREFIX/man .
-.It Ev PSDIR
-Installation directory for PostScript documentation.
 Defaults to
 .Sq PREFIX/man .
 .It Ev SUDO

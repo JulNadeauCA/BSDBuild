@@ -1,27 +1,27 @@
 TOP=..
 
-SHARE=	Mdoc.pm
+DATAFILES=	Mdoc.pm
 
 all:
 
 install:
-	@if [ ! -d "${SHAREDIR}/ManReader" ]; then \
-	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/ManReader"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}/ManReader; \
+	@if [ ! -d "${DATADIR}/ManReader" ]; then \
+	    echo "${INSTALL_DATA_DIR} ${DATADIR}/ManReader"; \
+	    ${SUDO} ${INSTALL_DATA_DIR} ${DATADIR}/ManReader; \
 	fi; \
-	for F in ${SHARE}; do \
-	    echo "${INSTALL_DATA} $$F ${SHAREDIR}/ManReader"; \
-	    ${SUDO} ${INSTALL_DATA} $$F ${SHAREDIR}/ManReader; \
+	for F in ${DATAFILES}; do \
+	    echo "${INSTALL_DATA} $$F ${DATADIR}/ManReader"; \
+	    ${SUDO} ${INSTALL_DATA} $$F ${DATADIR}/ManReader; \
 	done
 
 install-links:
-	@if [ ! -d "${SHAREDIR}/ManReader" ]; then \
-	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/ManReader"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} ${SHAREDIR}/ManReader; \
+	@if [ ! -d "${DATADIR}/ManReader" ]; then \
+	    echo "${INSTALL_DATA_DIR} ${DATADIR}/ManReader"; \
+	    ${SUDO} ${INSTALL_DATA_DIR} ${DATADIR}/ManReader; \
 	fi; \
-	for F in ${SHARE}; do \
-	    echo "ln -sf `pwd`/$$F ${SHAREDIR}/ManReader/$$F"; \
-	    ${SUDO} ln -sf `pwd`/$$F ${SHAREDIR}/ManReader/$$F; \
+	for F in ${DATAFILES}; do \
+	    echo "ln -sf `pwd`/$$F ${DATADIR}/ManReader/$$F"; \
+	    ${SUDO} ln -sf `pwd`/$$F ${DATADIR}/ManReader/$$F; \
 	done
 
 clean:

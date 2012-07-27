@@ -190,14 +190,18 @@ utility, which generates windows resource files.
 (Specific to the win32 platform)
 Resource file to use with
 .Xr windres 1 .
-.It Ev SHARE
+.It Ev DATAFILES
 List of data files to install into
-.Dv ${SHAREDIR} .
-Files must have been generated from the build process.
-.It Ev SHARESRC
-Similar to
-.Ev SHARE
-for non-generated files to be copied from the source directory.
+.Dv ${DATADIR} .
+The files must have been generated from the build process (i.e., if using a
+separate build with --srcdir, the specified files must exist in the build
+directory).
+.It Ev DATAFILES_SRC
+Files to install into
+.Dv ${DATADIR} .
+This variable is handled similarly to
+.Ev DATAFILES ,
+except that the specified files must exist in the source directory.
 .It Ev INCLDIR
 Library header files will be installed into this directory.
 See

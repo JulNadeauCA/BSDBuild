@@ -62,6 +62,7 @@ my %Fns = (
 	'check_func_opts'	=> \&check_func_opts,
 	'check_perl_module'	=> \&check_perl_module,
 	'require_perl_module'	=> \&require_perl_module,
+	'default_dir'		=> \&default_dir,
 );
 
 $INSTALLDIR = '%PREFIX%/share/bsdbuild';
@@ -229,6 +230,19 @@ sub require_perl_module
 		MkPrint("* Get it from CPAN (http://cpan.org/).");
 		MkPrint('* ');
 		MkFail('configure failed!');
+	MkEndif;
+}
+
+# Specify an alternate installation directory default.
+sub default_dir
+{
+    	my $dir = shift;
+	my $default = shift;
+
+	MkIf "\"\$\{${dir}_SPECIFIED\}\" != \"yes\"";
+		MkDefine($dir, $default);
+		MkSaveDefine($dir);
+		MkSaveMK($dir);
 	MkEndif;
 }
 
@@ -714,19 +728,18 @@ sub Help
 		'--srcdir=p' =>		'Source directory for concurrent build',
 		'--build=s' =>		'Host environment for build',
 		'--host=s' =>		'Cross-compile for target environment',
-#		'--byte-order=s' =>	'Byte order for target environment (LE|BE)',
-		'--prefix=p' =>		'Installation base (MI files)',
-		'--exec-prefix=p' =>	'Installation base (MD files)',
-		'--sysconfdir=p' =>	'System configuration files',
-		'--bindir=p' =>		'Executables (for common users)',
-		'--sbindir=p' =>	'Executables (for administrator)',
+		'--byte-order=s' =>	'Byte order for target environment (LE|BE)',
+		'--prefix=p' =>		'Installation base',
+		'--exec-prefix=p' =>	'Machine-dependent installation base',
+		'--bindir=p' =>		'Executables for common users',
 		'--libdir=p' =>		'System libraries',
-		'--libexecdir=p' =>	'Executables (for programs)',
-		'--datadir=p' =>	'Data files (for programs)',
+		'--libexecdir=p' =>	'Executables for program use',
+		'--datadir=P' =>	'Data files for program use',
+		'--statedir=P' =>	'Modifiable single-machine data',
+		'--sysconfdir=P' =>	'System configuration files',
 		'--localedir=p' =>	'Multi-language support locales',
 		'--mandir=p' =>		'Manual page documentation',
-		'--infodir=p' =>	'Texinfo documentation',
-		'--testdir=p' =>	'Execute ./configure tests in directory',
+		'--testdir=p' =>	'Execute all tests in this directory',
 		'--cache=p' =>		'Cache ./configure results in directory',
 		'--includes=s' =>	'Preprocess C headers (yes|no|link)',
 		
@@ -743,18 +756,17 @@ sub Help
 		'--srcdir=p' =>		'.',
 		'--build=s' =>		'auto-detect',
 		'--host=s' =>		'BUILD',
-#		'--byte-order=s' =>	'auto-detect',
+		'--byte-order=s' =>	'auto-detect',
 		'--prefix=p' =>		'/usr/local',
 		'--exec-prefix=p' =>	'PREFIX',
-		'--sysconfdir=p' =>	'PREFIX/etc',
 		'--bindir=p' =>		'PREFIX/bin',
-		'--sbindir=p' =>	'PREFIX/sbin',
 		'--libdir=p' =>		'PREFIX/lib',
 		'--libexecdir=p' =>	'PREFIX/libexec',
-		'--datadir=p' =>	'PREFIX/share',
-		'--localedir=p' =>	'SHAREDIR/locale',
+		'--datadir=P' =>	'PREFIX/share',
+		'--statedir=P' =>	'PREFIX/var',
+		'--sysconfdir=P' =>	'PREFIX/etc',
+		'--localedir=p' =>	'DATADIR/locale',
 		'--mandir=p' =>		'PREFIX/man',
-		'--infodir=p' =>	'SHAREDIR/info',
 		'--testdir=p' =>	'.',
 		'--cache=p' =>		'none',
 		'--includes=s' =>	'yes',
@@ -782,6 +794,8 @@ EOF
 
 		if (defined($optSpec) && $optSpec eq 'p') {
 			$optName = $optName.'=DIR';
+		} elsif (defined($optSpec) && $optSpec eq 'P') {
+			$optName = $optName.'=DIR|NONE';
 		} elsif (defined($optSpec) && $optSpec eq 's') {
 			$optName = $optName.'=STRING';
 		}
@@ -853,7 +867,7 @@ EOF
 # Initialize and parse for command-line options.
 #
 print << 'EOF';
-# Copyright (c) 2001-2011 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2012 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -920,11 +934,14 @@ do
 	--libdir=*)
 	    libdir=$optarg
 	    ;;
+	--libexecdir=*)
+	    libexecdir=$optarg
+	    ;;
 	--datadir=*)
 	    datadir=$optarg
 	    ;;
-	--sharedir=*)
-	    datadir=$optarg
+	--statedir=* | --localstatedir=*)
+	    statedir=$optarg
 	    ;;
 	--localedir=*)
 	    localedir=$optarg
@@ -932,8 +949,7 @@ do
 	--mandir=*)
 	    mandir=$optarg
 	    ;;
-	--infodir=*)
-	    infodir=$optarg
+	--infodir=* | --datarootdir=* | --docdir=* | --htmldir=* | --dvidir=* | --pdfdir=* | --psdir=* | --sharedstatedir=* | --sbindir=*)
 	    ;;
 	--enable-*)
 	    option=`echo $arg | sed -e 's/--enable-//' -e 's/=.*//'`
@@ -1298,29 +1314,30 @@ MkSaveDefine('PREFIX');
 #
 # Define and save the conventional installation paths.
 # 
-my %defPaths = (
-	'bindir' => '${PREFIX}/bin',
-	'sbindir' => '${PREFIX}/sbin',
-	'libexecdir' => '${PREFIX}/libexec',
-	'datadir' => '${PREFIX}/share',
-	'sharedir' => '${PREFIX}/share',
-	'sysconfdir' => '${PREFIX}/etc',
-	'libdir' => '${PREFIX}/lib',
-	'localstatedir' => '${PREFIX}/var',
-	'localedir' => '${SHAREDIR}/locale',
-	'mandir' => '${PREFIX}/man',		# (or ${SHAREDIR}/man)
-	'infodir' => '${SHAREDIR}/info',
+my @defPaths = (
+	'bindir:${PREFIX}/bin',
+	'libdir:${PREFIX}/lib',
+	'libexecdir:${PREFIX}/libexec',
+	'datadir:${PREFIX}/share',
+	'statedir:${PREFIX}/var',
+	'sysconfdir:${PREFIX}/etc',
+	'localedir:${DATADIR}/locale',
+	'mandir:${PREFIX}/man'
 );
-foreach my $path (keys %defPaths) {
+foreach my $pathSpec (@defPaths) {
+	my ($path, $defPath) = split(':', $pathSpec);
 	my $ucPath = uc($path);
+
 	print << "EOF";
 if [ "\${$path}" != "" ]; then
 	$ucPath="\${$path}"
+	${ucPath}_SPECIFIED="yes"
 else
-	$ucPath="$defPaths{$path}"
+	$ucPath="$defPath"
 fi
 EOF
 	MkSaveDefine($ucPath);
+	MkSaveMK($ucPath);
 }
 
 #

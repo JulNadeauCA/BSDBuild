@@ -255,6 +255,12 @@ accordingly.
 Same as
 .Ev CHECK_PERL_MODULE ,
 except that the configure script will abort if the module is not found.
+.It Ev DEFAULT_DIR(dirname, path)
+Override one of the standard installation path defaults.
+The
+.Fa dirname
+argument may be one of: PREFIX, BINDIR, LIBDIR, LIBEXECDIR,
+DATADIR, STATEDIR, SYSCONFDIR, LOCALEDIR or MANDIR.
 .El
 .\" .Sh ENVIRONMENT
 .\" .Sh FILES

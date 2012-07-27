@@ -45,7 +45,7 @@
 	ltmain.sh
 	ltconfig);
 
-$SHAREDIR = '%SHAREDIR%';
+$DATADIR = '%DATADIR%';
 %copied = ();
 
 #
@@ -59,8 +59,8 @@ sub InstallASIS
 	if (!defined($dst)) { $dst = 'mk/'.$file; }
 
 	print STDERR " $file";
-	unless (open(SRC, $SHAREDIR.'/'.$file)) {
-		print STDERR "Reading $SHAREDIR/$file: $!\n";
+	unless (open(SRC, $DATADIR.'/'.$file)) {
+		print STDERR "Reading $DATADIR/$file: $!\n";
 		return (0);
 	}
 	unless (open(DST, ">$dst")) {
@@ -116,13 +116,13 @@ sub InstallMK ($)
 {
 	my ($file) = @_;
 	my $dst = 'mk/'.$file;
-	my $path = $SHAREDIR.'/'.$file;
+	my $path = $DATADIR.'/'.$file;
 	my @deps = ();
 	
 	print STDERR " $file";
 
-	unless (open(SRC, $SHAREDIR.'/'.$file)) {
-		print STDERR "$SHAREDIR/$file: $!\n";
+	unless (open(SRC, $DATADIR.'/'.$file)) {
+		print STDERR "$DATADIR/$file: $!\n";
 		return 0;
 	}
 	chop(@src = <SRC>);
@@ -186,7 +186,7 @@ if (!-e 'mk' || @ARGV > 0) {
 		if ($f =~ /^\./ || -d 'mk/'.$f) { next; }
 		if ($f =~ /^(build\.[\w]+\.mk)$/) {
 			InstallMK($f);
-		} elsif (-e $SHAREDIR.'/'.$f) {
+		} elsif (-e $DATADIR.'/'.$f) {
 			InstallASIS($f);
 		}
 	}

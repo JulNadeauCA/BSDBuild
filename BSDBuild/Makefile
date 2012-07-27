@@ -1,6 +1,6 @@
 TOP=..
 
-SHARE=	Core.pm \
+DATAFILES=Core.pm \
 	Builtins.pm \
 	cc.pm \
 	cc_attributes.pm \
@@ -113,23 +113,23 @@ SHARE=	Core.pm \
 all:
 
 install:
-	@if [ ! -d "${DESTDIR}${SHAREDIR}/BSDBuild" ]; then \
-	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/BSDBuild"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${SHAREDIR}/BSDBuild; \
+	@if [ ! -d "${DESTDIR}${DATADIR}/BSDBuild" ]; then \
+	    echo "${INSTALL_DATA_DIR} ${DATADIR}/BSDBuild"; \
+	    ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${DATADIR}/BSDBuild; \
 	fi; \
-	for F in ${SHARE}; do \
-	    echo "${INSTALL_DATA} $$F ${SHAREDIR}/BSDBuild"; \
-	    ${SUDO} ${INSTALL_DATA} $$F ${DESTDIR}${SHAREDIR}/BSDBuild; \
+	for F in ${DATAFILES}; do \
+	    echo "${INSTALL_DATA} $$F ${DATADIR}/BSDBuild"; \
+	    ${SUDO} ${INSTALL_DATA} $$F ${DESTDIR}${DATADIR}/BSDBuild; \
 	done
 
 install-links:
-	@if [ ! -d "${DESTDIR}${SHAREDIR}/BSDBuild" ]; then \
-	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/BSDBuild"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${SHAREDIR}/BSDBuild; \
+	@if [ ! -d "${DESTDIR}${DATADIR}/BSDBuild" ]; then \
+	    echo "${INSTALL_DATA_DIR} ${DATADIR}/BSDBuild"; \
+	    ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${DATADIR}/BSDBuild; \
 	fi; \
-	for F in ${SHARE}; do \
-	    echo "ln -sf `pwd`/$$F ${SHAREDIR}/BSDBuild/$$F"; \
-	    ${SUDO} ln -sf `pwd`/$$F ${DESTDIR}${SHAREDIR}/BSDBuild/$$F; \
+	for F in ${DATAFILES}; do \
+	    echo "ln -sf `pwd`/$$F ${DATADIR}/BSDBuild/$$F"; \
+	    ${SUDO} ln -sf `pwd`/$$F ${DESTDIR}${DATADIR}/BSDBuild/$$F; \
 	done
 
 clean:

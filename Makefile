@@ -14,7 +14,7 @@ SCRIPTS=mkconfigure \
 	man2wiki \
 	uman
 
-SHARE=	hstrip.pl mkdep mkconcurrent.pl manlinks.pl cmpfiles.pl cleanfiles.pl \
+DATAFILES=hstrip.pl mkdep mkconcurrent.pl manlinks.pl cmpfiles.pl cleanfiles.pl \
 	gen-includes.pl gen-declspecs.pl get-version.pl get-release.pl \
 	install-manpages.sh ml.xsl gen-dotdepend.pl config.guess \
 	gen-includelinks.pl \
@@ -43,7 +43,7 @@ mkprojfiles: config-ok mkprojfiles.pl
 	    mkprojfiles.pl > mkprojfiles
 
 mkify: config-ok mkify.pl
-	sed -e s,%SHAREDIR%,${SHAREDIR}, \
+	sed -e s,%DATADIR%,${DATADIR}, \
 	    -e s,%BINDIR%,${BINDIR}, \
 	    mkify.pl > mkify
 
@@ -62,21 +62,21 @@ uman: config-ok uman.pl
 	    uman.pl > uman
 
 install: config-ok install-subdir
-	@if [ ! -d "${DESTDIR}${SHAREDIR}" ]; then \
-	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${SHAREDIR}"; \
+	@if [ ! -d "${DESTDIR}${DATADIR}" ]; then \
+	    echo "${INSTALL_DATA_DIR} ${DATADIR}"; \
+	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${DATADIR}"; \
 	fi
-	@if [ ! -d "${DESTDIR}${SHAREDIR}/libtool" ]; then \
-	    echo "${INSTALL_DATA_DIR} ${SHAREDIR}/libtool"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${SHAREDIR}/libtool"; \
+	@if [ ! -d "${DESTDIR}${DATADIR}/libtool" ]; then \
+	    echo "${INSTALL_DATA_DIR} ${DATADIR}/libtool"; \
+	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${DATADIR}/libtool"; \
 	fi
-	@for F in ${SHARE}; do \
-	    echo "${INSTALL_DATA} $$F ${SHAREDIR}"; \
-	    ${SUDO} ${INSTALL_DATA} $$F "${DESTDIR}${SHAREDIR}"; \
+	@for F in ${DATAFILES}; do \
+	    echo "${INSTALL_DATA} $$F ${DATADIR}"; \
+	    ${SUDO} ${INSTALL_DATA} $$F "${DESTDIR}${DATADIR}"; \
 	done
 	@for F in ${LTFILES}; do \
-	    echo "${INSTALL_DATA} libtool/$$F ${SHAREDIR}/libtool"; \
-	    ${SUDO} ${INSTALL_DATA} libtool/$$F "${DESTDIR}${SHAREDIR}/libtool"; \
+	    echo "${INSTALL_DATA} libtool/$$F ${DATADIR}/libtool"; \
+	    ${SUDO} ${INSTALL_DATA} libtool/$$F "${DESTDIR}${DATADIR}/libtool"; \
 	done
 	@for F in ${SCRIPTS}; do \
 	    echo "${INSTALL_PROG} $$F ${BINDIR}"; \

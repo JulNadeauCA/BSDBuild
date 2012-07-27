@@ -29,8 +29,8 @@
 PERL?=/usr/bin/perl
 SCRIPTS?=
 MODULES?=
-SHARE?=
-MODULES_DIR?=${SHAREDIR}/perl
+DATAFILES?=
+MODULES_DIR?=${DATADIR}/perl
 SCRIPTS_SUBST?=
 MODULES_SUBST?=
 CLEANFILES?=
@@ -84,15 +84,15 @@ install-perl:
 	        done; \
 	    fi; \
 	fi
-	@export _share="${SHARE}"; \
-        if [ "$$_share" != "" ]; then \
-            if [ ! -d "${SHAREDIR}" ]; then \
-                echo "${INSTALL_DATA_DIR} ${SHAREDIR}"; \
-                ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${SHAREDIR}; \
+	@export _datafiles="${DATAFILES}"; \
+        if [ "$$_datafiles" != "" ]; then \
+            if [ ! -d "${DATADIR}" ]; then \
+                echo "${INSTALL_DATA_DIR} ${DATADIR}"; \
+                ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${DATADIR}; \
             fi; \
-            for F in $$_share; do \
-                echo "${INSTALL_DATA} $$F ${SHAREDIR}"; \
-                ${SUDO} ${INSTALL_DATA} $$F ${DESTDIR}${SHAREDIR}; \
+            for F in $$_datafiles; do \
+                echo "${INSTALL_DATA} $$F ${DATADIR}"; \
+                ${SUDO} ${INSTALL_DATA} $$F ${DESTDIR}${DATADIR}; \
             done; \
 	fi
 
@@ -109,10 +109,10 @@ deinstall-perl:
 	        ${SUDO} ${DEINSTALL_DATA} ${DESTDIR}${MODULES_DIR}/$$F; \
 	    done; \
 	fi
-	@if [ "${SHARE}" != "" ]; then \
-	    for F in ${SHARE}; do \
-	        echo "${DEINSTALL_DATA} ${SHAREDIR}/$$F"; \
-	        ${SUDO} ${DEINSTALL_DATA} ${DESTDIR}${SHAREDIR}/$$F; \
+	@if [ "${DATAFILES}" != "" ]; then \
+	    for F in ${DATAFILES}; do \
+	        echo "${DEINSTALL_DATA} ${DATADIR}/$$F"; \
+	        ${SUDO} ${DEINSTALL_DATA} ${DESTDIR}${DATADIR}/$$F; \
 	    done; \
 	fi
 

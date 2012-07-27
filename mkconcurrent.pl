@@ -249,7 +249,7 @@ EOF
 	@(cat $< | \
 	  sed 's,\$$SYSCONFDIR,${SYSCONFDIR},' | \
 	  sed 's,\$$PREFIX,${PREFIX},' | \
-	  sed 's,\$$SHAREDIR,${SHAREDIR},' | \
+	  sed 's,\$$DATADIR,${DATADIR},' | \
 	  ${NROFF} -Tascii -mandoc > $@) || (rm -f $@; true)
 
 EOF
@@ -262,7 +262,7 @@ EOF
 	@(cat $< | \
 	  sed 's,\$$SYSCONFDIR,${SYSCONFDIR},' | \
 	  sed 's,\$$PREFIX,${PREFIX},' | \
-	  sed 's,\$$SHAREDIR,${SHAREDIR},' | \
+	  sed 's,\$$DATADIR,${DATADIR},' | \
 	  ${NROFF} -Tps -mandoc > $@) || (rm -f $@; true)
 
 EOF

@@ -108,7 +108,8 @@ DATAFILES=Core.pm \
 	portaudio.pm \
 	mysql.pm \
 	cocoa.pm \
-	sockopts.pm
+	sockopts.pm \
+	crypt.pm
 
 all:
 

@@ -731,7 +731,7 @@ sub Help
 		'--srcdir=p' =>		'Source directory for concurrent build',
 		'--build=s' =>		'Host environment for build',
 		'--host=s' =>		'Cross-compile for target environment',
-		'--byte-order=s' =>	'Byte order for target environment (LE|BE)',
+		'--byte-order=s' =>	'Byte order for build (LE|BE)',
 		'--prefix=p' =>		'Installation base',
 		'--exec-prefix=p' =>	'Machine-dependent installation base',
 		'--bindir=p' =>		'Executables for common users',

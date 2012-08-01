@@ -59,11 +59,20 @@ sub Test
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+	
+	MkEmulUnavail('SNDFILE');
+	return (1);
+}
+
 BEGIN
 {
 	$DESCR{'sndfile'} = 'libsndfile (http://www.mega-nerd.com/libsndfile/)';
 	$TESTS{'sndfile'} = \&Test;
 	$DEPS{'sndfile'} = 'cc';
+	$EMUL{'sndfile'} = \&Emul;
 }
 
 ;1

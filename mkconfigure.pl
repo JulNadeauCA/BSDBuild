@@ -69,6 +69,7 @@ $INSTALLDIR = '%PREFIX%/share/bsdbuild';
 my @Help = ();
 my $ConfigGuess = 'mk/config.guess';
 my @TestDirs = ("$INSTALLDIR/BSDBuild");
+my %EmulDepsTested = ();
 
 # Specify software package name
 sub package
@@ -334,10 +335,17 @@ sub test
 	}
 	my $c;
 	if ($EmulOS) {
-		unless (exists($EMUL{$t}) &&
-		        defined($EMUL{$t})) {
-#			print STDERR "Ignoring: $t\n";
-			next DIRECTIVE;
+		unless (exists($EMUL{$t}) && defined($EMUL{$t})) {
+			print STDERR "Missing EMUL for $t\n";
+			exit(1);
+		}
+		if (exists($EMULDEPS{$t})) {
+	 		foreach my $ed (@{$EMULDEPS{$t}}) {
+				if (!exists($EmulDepsTested{$ed})) {
+					test($ed);
+					$EmulDepsTested{$ed} = 1;
+				}
+			}
 		}
 		$c = $EMUL{$t};
 		@args = ($EmulOS, $EmulOSRel, '');

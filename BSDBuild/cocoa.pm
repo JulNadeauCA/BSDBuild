@@ -45,22 +45,6 @@ EOF
 	return (0);
 }
 
-sub Link
-{
-	my $lib = shift;
-
-	if ($lib ne 'Cocoa') {
-		return (0);
-	}
-	PmIfHDefined('HAVE_COCOA');
-		if ($EmulEnv =~ /^cb-/) {
-			PmIncludePath('$(#Cocoa.include)');
-			PmLibPath('$(#Cocoa.lib)');
-		}
-	PmEndif;
-	return (1);
-}
-
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
@@ -73,7 +57,6 @@ BEGIN
 {
 	$DESCR{'cocoa'} = 'the Cocoa framework';
 	$TESTS{'cocoa'} = \&Test;
-	$LINK{'cocoa'} = \&Link;
 	$EMUL{'cocoa'} = \&Emul;
 	$DEPS{'cocoa'} = 'objc';
 }

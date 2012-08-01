@@ -71,23 +71,6 @@ sub Test
 	return (0);
 }
 
-sub Link
-{
-	my $lib = shift;
-
-	if ($lib ne 'png') {
-		return (0);
-	}
-	PmIfHDefined('HAVE_PNG');
-		PmLink('png');
-		if ($EmulEnv =~ /^cb-/) {
-			PmIncludePath('$(#libpng.include)');
-			PmLibPath('$(#libpng.lib)');
-		}
-	PmEndif;
-	return (1);
-}
-
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
@@ -105,7 +88,6 @@ BEGIN
 	$DESCR{'png'} = 'libpng (http://www.libpng.org)';
 	$EMUL{'png'} = \&Emul;
 	$TESTS{'png'} = \&Test;
-	$LINK{'png'} = \&Link;
 	$DEPS{'png'} = 'cc';
 }
 

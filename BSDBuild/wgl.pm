@@ -59,16 +59,6 @@ sub Test
 	return (0);
 }
 
-sub Link
-{
-	my $lib = shift;
-
-	if ($lib ne 'wgl') {
-		return (0);
-	}
-	return (1);
-}
-
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
@@ -86,7 +76,6 @@ BEGIN
 	$DESCR{'wgl'} = 'the WGL interface';
 	$TESTS{'wgl'} = \&Test;
 	$EMUL{'wgl'} = \&Emul;
-	$LINK{'wgl'} = \&Link;
 	$DEPS{'wgl'} = 'cc';
 }
 

@@ -68,23 +68,6 @@ sub Test
 	return (0);
 }
 
-sub Link
-{
-	my $lib = shift;
-
-	if ($lib ne 'freetype') {
-		return (0);
-	}
-	PmIfHDefined('HAVE_FREETYPE');
-		PmLink('freetype');
-		if ($EmulEnv =~ /^cb-/) {
-			PmIncludePath('$(#freetype.include)');
-			PmLibPath('$(#freetype.lib)');
-		}
-	PmEndif;
-	return (1);
-}
-
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
@@ -103,7 +86,6 @@ BEGIN
 	$DEPS{'freetype'} = 'cc';
 	$TESTS{'freetype'} = \&Test;
 	$EMUL{'freetype'} = \&Emul;
-	$LINK{'freetype'} = \&Link;
 }
 
 ;1

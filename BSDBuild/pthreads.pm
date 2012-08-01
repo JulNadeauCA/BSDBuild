@@ -280,33 +280,11 @@ sub Emul
 	return (1);
 }
 
-sub Link
-{
-	my $lib = shift;
-
-	if ($lib ne 'pthreads') {
-		return (0);
-	}
-	PmIfHDefined('HAVE_PTHREADS');
-		if ($EmulOS =~ /^windows/) {
-			PmLink('pthreadVC2');
-		} else {
-			PmLink('pthread');
-		}
-		if ($EmulEnv =~ /^cb-/) {
-			PmIncludePath('$(#pthreads.include)');
-			PmLibPath('$(#pthreads.lib)');
-		}
-	PmEndif;
-	return (1);
-}
-
 BEGIN
 {
 	$DESCR{'pthreads'} = 'POSIX threads';
 	$TESTS{'pthreads'} = \&TestPthreads;
 	$EMUL{'pthreads'} = \&Emul;
-	$LINK{'pthreads'} = \&Link;
 	$DEPS{'pthreads'} = 'cc';
 }
 

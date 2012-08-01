@@ -76,28 +76,12 @@ sub Emul
 	return (1);
 }
 
-sub Link
-{
-	my $var = shift;
-
-	if ($var ne 'edacious' && $var ne 'es_core') {
-		return (0);
-	}
-	PmLink('es_core');
-	if ($EmulEnv =~ /^cb-/) {
-		PmIncludePath('$(#edacious.include)');
-		PmLibPath('$(#edacious.lib)');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	$TESTS{'edacious'} = \&Test;
 	$DESCR{'edacious'} = 'Edacious (http://edacious.hypertriton.com/)';
 	$DEPS{'edacious'} = 'cc,agar,agar-vg,agar-math';
 	$EMUL{'edacious'} = \&Emul;
-	$LINK{'edacious'} = \&Link;
 }
 
 ;1

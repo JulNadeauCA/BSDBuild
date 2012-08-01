@@ -129,11 +129,21 @@ sub Test
 	MkEndif;
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+	
+	MkEmulUnavail('ICONV');
+	MkEmulUnavailSYS('ICONV_CONST');
+	return (1);
+}
+
 BEGIN
 {
 	$DESCR{'iconv'} = 'iconv() in libc';
 	$TESTS{'iconv'} = \&Test;
 	$DEPS{'iconv'} = 'cc';
+	$EMUL{'iconv'} = \&Emul;
 }
 
 ;1

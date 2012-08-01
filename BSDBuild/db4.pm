@@ -163,11 +163,20 @@ EOF
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+	
+	MkEmulUnavail('DB4');
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'db4'} = \&Test;
 	$DEPS{'db4'} = 'cc';
 	$DESCR{'db4'} = 'Berkeley DB 4.x';
+	$EMUL{'db4'} = \&Emul;
 }
 
 ;1

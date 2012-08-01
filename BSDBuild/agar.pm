@@ -71,56 +71,29 @@ sub Emul
 	return (1);
 }
 
-sub Link
-{
-	my $var = shift;
-
-	if ($var eq 'ag_core') {
-		PmLink('ag_core');
-		PmLink('SDL');
-
-		if ($EmulEnv =~ /^cb-/) {
-			PmIncludePath('$(#agar.include)');
-			PmIncludePath('$(#sdl.include)');
-			PmLibPath('$(#agar.lib)');
-			PmLibPath('$(#sdl.lib)');
-		}
-		return (1);
-	}
-
-	if ($var eq 'ag_gui') {
-		PmLink('ag_gui');
-		PmLink('SDL');
-		if ($EmulOS =~ /^windows/) {
-			PmLink('opengl32');
-		} else {
-			PmLink('GL');
-		}
-		PmLink('freetype');
-		
-		if ($EmulEnv =~ /^cb-/) {
-			PmIncludePath('$(#agar.include)');
-			PmIncludePath('$(#sdl.include)');
-			PmIncludePath('$(#gl.include)');
-			PmIncludePath('$(#freetype.include)');
-			PmLibPath('$(#agar.lib)');
-			PmLibPath('$(#sdl.lib)');
-			PmLibPath('$(#gl.lib)');
-			PmLibPath('$(#freetype.lib)');
-		}
-		return (1);
-	}
-
-	return (0);
-}
-
 BEGIN
 {
 	$TESTS{'agar'} = \&Test;
 	$DEPS{'agar'} = 'cc';
-	$LINK{'agar'} = \&Link;
 	$EMUL{'agar'} = \&Emul;
 	$DESCR{'agar'} = 'Agar (http://libagar.org/)';
+	@{$EMULDEPS{'agar'}} = qw(
+		clock_win32
+		sdl
+		opengl
+		wgl
+		freetype
+		jpeg
+		png
+		winsock
+		db4
+		mysql
+		pthreads
+		iconv
+		gettext
+		sndfile
+		portaudio
+	);
 }
 
 ;1

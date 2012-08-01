@@ -91,23 +91,6 @@ EOF
 	return (0);
 }
 
-sub Link
-{
-	my $lib = shift;
-
-	if ($lib ne 'jpeg') {
-		return (0);
-	}
-	PmIfHDefined('HAVE_JPEG');
-		PmLink('jpeg');
-		if ($EmulEnv =~ /^cb-/) {
-			PmIncludePath('$(#jpeg.include)');
-			PmLibPath('$(#jpeg.lib)');
-		}
-	PmEndif;
-	return (1);
-}
-
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
@@ -121,7 +104,6 @@ BEGIN
 	$DESCR{'jpeg'} = 'libjpeg (ftp://ftp.uu.net/graphics/jpeg/)';
 	$TESTS{'jpeg'} = \&Test;
 	$EMUL{'jpeg'} = \&Emul;
-	$LINK{'jpeg'} = \&Link;
 	$DEPS{'jpeg'} = 'cc';
 }
 

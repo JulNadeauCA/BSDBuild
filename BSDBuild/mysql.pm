@@ -65,27 +65,10 @@ sub Emul
 	return (1);
 }
 
-sub Link
-{
-	my $var = shift;
-
-	if ($var eq 'mysqlclient') {
-		PmLink('mysqlclient');
-
-		if ($EmulEnv =~ /^cb-/) {
-			PmIncludePath('$(#libmysql.include)');
-			PmLibPath('$(#libmysql.lib)');
-		}
-		return (1);
-	}
-	return (0);
-}
-
 BEGIN
 {
 	$TESTS{'mysql'} = \&Test;
 	$DEPS{'mysql'} = 'cc';
-	$LINK{'mysql'} = \&Link;
 	$EMUL{'mysql'} = \&Emul;
 	$DESCR{'mysql'} = 'MySQL (http://dev.mysql.com/)';
 }

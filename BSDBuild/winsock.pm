@@ -23,18 +23,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Link
-{
-	my $lib = shift;
-
-	if ($lib eq 'winsock' ||
-	    $lib eq 'ws2_32' ||
-		$lib eq 'iphlpapi') {
-		return (1);
-	}
-	return (0);
-}
-
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
@@ -53,7 +41,6 @@ BEGIN
 {
 	$DESCR{'winsock'} = 'the WinSock interface';
 	$EMUL{'winsock'} = \&Emul;
-	$LINK{'winsock'} = \&Link;
 }
 
 ;1

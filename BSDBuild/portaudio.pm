@@ -100,10 +100,19 @@ sub Test
 	MkEndif;
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+	
+	MkEmulUnavail('PORTAUDIO');
+	return (1);
+}
+
 BEGIN
 {
 	$TESTS{'portaudio'} = \&Test;
 	$DEPS{'portaudio'} = 'cc,pthreads';
 	$DESCR{'portaudio'} = 'PortAudio (http://www.portaudio.com/)';
+	$EMUL{'portaudio'} = \&Emul;
 }
 ;1

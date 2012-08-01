@@ -81,23 +81,6 @@ sub Test
 	return (0);
 }
 
-sub Link
-{
-	my $lib = shift;
-
-	if ($lib ne 'alsa') {
-		return (0);
-	}
-	PmIfHDefined('HAVE_ALSA');
-		PmLink('asound');
-		if ($EmulEnv =~ /^cb-/) {
-			PmIncludePath('$(#alsa.include)');
-			PmLibPath('$(#alsa.lib)');
-		}
-	PmEndif;
-	return (1);
-}
-
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
@@ -111,7 +94,6 @@ BEGIN
 	$DESCR{'alsa'} = 'ALSA (http://www.alsa-project.org)';
 	$TESTS{'alsa'} = \&Test;
 	$EMUL{'alsa'} = \&Emul;
-	$LINK{'alsa'} = \&Link;
 	$DEPS{'alsa'} = 'cc';
 }
 

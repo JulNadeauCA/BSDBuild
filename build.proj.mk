@@ -41,7 +41,8 @@ PROJFILELIST=	.projfiles2.out
 PROJCONFIGDIR?=
 PROJNOCLEAN?=	no
 
-PROJFILES?=	windows:vs2005::
+PROJFILES?=	windows:vs2005:: \
+		windows-xp:vs2005::
 
 CLEANFILES+=	${PREMAKEOUT}
 

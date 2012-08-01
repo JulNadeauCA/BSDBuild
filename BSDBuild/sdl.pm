@@ -91,24 +91,6 @@ sub Test
 	return (0);
 }
 
-sub Link
-{
-	my $lib = shift;
-
-	if ($lib ne 'SDL' && $lib ne 'SDLmain') {
-		return (0);
-	}
-	PmIfHDefined('HAVE_SDL');
-		PmLink('SDL');
-		PmLink('SDLmain');
-		if ($EmulEnv =~ /^cb-/) {
-			PmIncludePath('$(#sdl.include)');
-			PmLibPath('$(#sdl.lib)');
-		}
-	PmEndif;
-	return (1);
-}
-
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
@@ -126,7 +108,6 @@ BEGIN
 	$DESCR{'sdl'} = 'SDL (http://www.libsdl.org)';
 	$EMUL{'sdl'} = \&Emul;
 	$TESTS{'sdl'} = \&Test;
-	$LINK{'sdl'} = \&Link;
 	$DEPS{'sdl'} = 'cc';
 }
 

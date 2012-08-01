@@ -130,27 +130,6 @@ sub Test
 	return (0);
 }
 
-sub Link
-{
-	my $lib = shift;
-
-	if ($lib ne 'opengl') {
-		return (0);
-	}
-	PmIfHDefined('HAVE_OPENGL');
-		if ($EmulOS =~ /^windows/) {
-			PmLink('opengl32');
-		} else {
-			PmLink('GL');
-		}
-		if ($EmulEnv =~ /^cb-/) {
-			PmIncludePath('$(#gl.include)');
-			PmLibPath('$(#gl.lib)');
-		}
-	PmEndif;
-	return (1);
-}
-
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
@@ -168,7 +147,6 @@ BEGIN
 	$DESCR{'opengl'} = 'OpenGL (http://www.opengl.org)';
 	$TESTS{'opengl'} = \&Test;
 	$EMUL{'opengl'} = \&Emul;
-	$LINK{'opengl'} = \&Link;
 	$DEPS{'opengl'} = 'cc';
 }
 

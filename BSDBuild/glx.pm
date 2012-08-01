@@ -60,22 +60,6 @@ EOF
 	return (0);
 }
 
-sub Link
-{
-	my $lib = shift;
-
-	if ($lib ne 'glx') {
-		return (0);
-	}
-	PmIfHDefined('HAVE_GLX');
-		if ($EmulEnv =~ /^cb-/) {
-			PmIncludePath('$(#GLX.include)');
-			PmLibPath('$(#GLX.lib)');
-		}
-	PmEndif;
-	return (1);
-}
-
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
@@ -88,7 +72,6 @@ BEGIN
 {
 	$DESCR{'glx'} = 'the GLX interface';
 	$TESTS{'glx'} = \&Test;
-	$LINK{'glx'} = \&Link;
 	$EMUL{'glx'} = \&Emul;
 	$DEPS{'glx'} = 'cc,opengl,x11,math';
 }

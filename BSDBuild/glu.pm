@@ -96,27 +96,6 @@ EOF
 	return (0);
 }
 
-sub Link
-{
-	my $lib = shift;
-
-	if ($lib ne 'glu') {
-		return (0);
-	}
-	PmIfHDefined('HAVE_GLU');
-		if ($EmulOS =~ /^windows/) {
-			PmLink('glu32');
-		} else {
-			PmLink('GLU');
-		}
-		if ($EmulEnv =~ /^cb-/) {
-			PmIncludePath('$(#GLU.include)');
-			PmLibPath('$(#GLU.lib)');
-		}
-	PmEndif;
-	return (1);
-}
-
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
@@ -133,7 +112,6 @@ BEGIN
 {
 	$DESCR{'glu'} = 'GLU (http://www.opengl.org)';
 	$TESTS{'glu'} = \&Test;
-	$LINK{'glu'} = \&Link;
 	$EMUL{'glu'} = \&Emul;
 	$DEPS{'glu'} = 'cc,opengl,math';
 }

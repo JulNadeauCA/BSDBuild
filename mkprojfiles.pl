@@ -119,13 +119,7 @@ EOF
 	}
 	if ($links) {
 		foreach my $ln (split(' ', $links)) {
-			my $handled = 0;
-			foreach my $fn (values %linkFn) {
-				if (&$fn($ln)) { $handled++; }
-			}
-			if (!$handled) {
-				print "tinsert(package.links,{\"$ln\"})\n";
-			}
+			print "tinsert(package.links,{\"$ln\"})\n";
 		}
 	}
 	if (exists($V{'SRCS'}) && $V{'SRCS'}) {

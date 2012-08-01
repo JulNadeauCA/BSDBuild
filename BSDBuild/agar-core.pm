@@ -84,26 +84,10 @@ sub Emul
 	return (1);
 }
 
-sub Link
-{
-	my $var = shift;
-
-	if ($var ne 'ag_core') {
-		return (0);
-	}
-	PmLink('ag_core');
-	if ($EmulEnv =~ /^cb-/) {
-		PmIncludePath('$(#agar.include)');
-		PmLibPath('$(#agar.lib)');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	$TESTS{'agar-core'} = \&Test;
 	$DEPS{'agar-core'} = 'cc';
-	$LINK{'agar-core'} = \&Link;
 	$EMUL{'agar-core'} = \&Emul;
 	$DESCR{'agar-core'} = 'Agar-Core (http://libagar.org/)';
 }

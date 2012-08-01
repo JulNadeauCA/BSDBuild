@@ -71,45 +71,15 @@ sub Emul
 	return (1);
 }
 
-sub Link
-{
-	my $var = shift;
-
-	if ($var eq 'freesg') {
-		PmLink('freesg');
-		if ($EmulEnv =~ /^cb-/) {
-			PmIncludePath('$(#freesg.include)');
-			PmLibPath('$(#freesg.lib)');
-		}
-		return (1);
-	}
-	if ($var eq 'freesg_sk') {
-		PmLink('freesg_sk');
-		if ($EmulEnv =~ /^cb-/) {
-			PmIncludePath('$(#freesg.include)');
-			PmLibPath('$(#freesg.lib)');
-		}
-		return (1);
-	}
-	if ($var eq 'freesg_pe') {
-		PmLink('freesg_pe');
-		if ($EmulEnv =~ /^cb-/) {
-			PmIncludePath('$(#freesg.include)');
-			PmLibPath('$(#freesg.lib)');
-		}
-		return (1);
-	}
-
-	return (0);
-}
-
 BEGIN
 {
 	$TESTS{'freesg'} = \&Test;
 	$DESCR{'freesg'} = 'FreeSG (http://FreeSG.org/)';
 	$DEPS{'freesg'} = 'cc,agar';
 	$EMUL{'freesg'} = \&Emul;
-	$LINK{'freesg'} = \&Link;
+	@{$EMULDEPS{'freesg'}} = qw(
+		agar
+	);
 }
 
 ;1

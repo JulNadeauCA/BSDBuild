@@ -73,28 +73,12 @@ sub Emul
 	return (1);
 }
 
-sub Link
-{
-	my $var = shift;
-
-	if ($var ne 'ag_math') {
-		return (0);
-	}
-	PmLink('ag_math');
-	if ($EmulEnv =~ /^cb-/) {
-		PmIncludePath('$(#agar.include)');
-		PmLibPath('$(#agar.lib)');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	$TESTS{'agar-math'} = \&Test;
 	$DESCR{'agar-math'} = 'Agar-Math library (http://libagar.org/)';
 	$DEPS{'agar-math'} = 'cc,agar';
 	$EMUL{'agar-math'} = \&Emul;
-	$LINK{'agar-math'} = \&Link;
 }
 
 ;1

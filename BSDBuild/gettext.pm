@@ -93,11 +93,21 @@ sub Test
 	MkEndif;
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+	
+	MkEmulUnavail('GETTEXT');
+	return (1);
+}
+
+
 BEGIN
 {
 	$DESCR{'gettext'} = 'a gettext library in libc';
 	$TESTS{'gettext'} = \&Test;
 	$DEPS{'gettext'} = 'cc';
+	$EMUL{'gettext'} = \&Emul;
 }
 
 ;1

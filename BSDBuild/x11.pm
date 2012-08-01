@@ -100,19 +100,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('X11_CFLAGS', '-I/usr/X11R6/include');
-		MkDefine('X11_LIBS', '-L/usr/X11R6/lib -lX11');
-		MkDefine('HAVE_X11', 'yes');
-		MkSaveDefine('HAVE_X11', 'X11_CFLAGS', 'X11_LIBS');
-		MkSaveMK('X11_CFLAGS', 'X11_LIBS');
-	} else {
-		MkDefine('X11_CFLAGS', '');
-		MkDefine('X11_LIBS', '');
-		MkDefine('HAVE_X11', 'no');
-		MkSaveUndef('HAVE_X11');
-		MkSaveMK('X11_CFLAGS', 'X11_LIBS');
-	}
+	MkEmulUnavail('X11');
 	return (1);
 }
 

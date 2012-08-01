@@ -152,6 +152,7 @@ EOF
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
+
 	return (1);
 }
 

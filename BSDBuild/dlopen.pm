@@ -66,17 +66,8 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_DLOPEN', 'yes');
-		MkDefine('HAVE_DLFCN_H', 'yes');
-		MkSaveDefine('HAVE_DLOPEN');
-	} else {
-		MkSaveUndef('HAVE_DLFCN_H');
-		MkSaveUndef('HAVE_DLOPEN');
-	}
-	MkDefine('DSO_CFLAGS', '');
-	MkDefine('DSO_LIBS', '');
-	MkSave('DSO_CFLAGS', 'DSO_LIBS');
+	MkEmulUnavail('DSO');
+	MkEmulUnavailSYS('DLOPEN', 'DLFCN_H');
 	return (1);
 }
 

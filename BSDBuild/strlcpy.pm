@@ -40,12 +40,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_STRLCPY', 'yes');
-		MkSaveDefine('HAVE_STRLCPY');
-	} else {
-		MkSaveUndef('HAVE_STRLCPY');
-	}
+	MkEmulUnavailSYS('STRLCPY');
 	return (1);
 }
 

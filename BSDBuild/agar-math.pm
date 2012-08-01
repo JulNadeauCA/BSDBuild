@@ -65,27 +65,11 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'darwin') {
-		MkDefine('AGAR_MATH_CFLAGS', '-I/opt/local/include/agar '.
-		                             '-I/opt/local/include '.
-		                             '-I/usr/local/include/agar '.
-							         '-I/usr/local/include '.
-		                             '-I/usr/include/agar -I/usr/include '.
-		                             '-D_THREAD_SAFE');
-		MkDefine('AGAR_MATH_LIBS', '-L/usr/lib -L/opt/local/lib '.
-		                           '-L/usr/local/lib -L/usr/X11R6/lib '.
-		                           '-lag_math');
-	} elsif ($os eq 'windows') {
-		MkDefine('AGAR_MATH_CFLAGS', '');
-		MkDefine('AGAR_MATH_LIBS', 'ag_math');
+	if ($os =~ /^windows/) {
+		MkEmulWindows('AGAR_MATH', 'ag_math');
 	} else {
-		MkDefine('AGAR_MATH_CFLAGS', '-I/usr/include/agar -I/usr/include '.
-		                             '-I/usr/local/include/agar '.
-							         '-I/usr/local/include ');
-		MkDefine('AGAR_MATH_LIBS', '-L/usr/local/lib -lag_math');
+		MkEmulUnavail('AGAR_MATH');
 	}
-	MkDefine('HAVE_AGAR_MATH', 'yes');
-	MkSave('HAVE_AGAR_MATH', 'AGAR_MATH_CFLAGS', 'AGAR_MATH_LIBS');
 	return (1);
 }
 

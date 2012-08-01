@@ -54,12 +54,9 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd/) {
-		MkDefine('HAVE_GETADDRINFO', 'yes');
-		MkSaveDefine('HAVE_GETADDRINFO');
-	} else {
-		MkSaveUndef('HAVE_GETADDRINFO');
-	}
+	# Note: This is available in the "winsock" test.
+
+	MkEmulUnavail('GETADDRINFO');
 	return (1);
 }
 

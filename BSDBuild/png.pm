@@ -92,31 +92,11 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'windows') {
-		MkDefine('HAVE_PNG', 'no');
-		MkSaveUndef('HAVE_PNG', 'HAVE_LIBPNG14', 'PNG_CFLAGS', 'PNG_LIBS');
-		MkSaveMK('PNG_CFLAGS', 'PNG_LIBS');
-		return (1);
-	}
-	if ($os eq 'darwin') {
-		MkDefine('PNG_CFLAGS', '-I/opt/local/include/libpng12 -I/opt/local/include '.
-		                       '-I/usr/local/include/libpng12 -I/usr/local/include '.
-		                       '-I/usr/include/libpng12 -I/usr/include '.
-		                       '-D_GNU_SOURCE=1 -D_THREAD_SAFE');
-		MkDefine('PNG_LIBS', '-L/usr/lib -L/opt/local/lib -L/usr/local/lib '.
-		                     '-lpng12');
-	} else {
-		MkDefine('PNG_CFLAGS', '-I/usr/include/libpng12 -I/usr/include '.
-		                       '-I/usr/local/include/libpng12 '.
-							   '-I/usr/local/include '.
-		                       '-I/usr/X11R6/include '.
-		                       '-D_GNU_SOURCE=1 -D_REENTRANT');
-		MkDefine('PNG_LIBS', '-lpng12 -lpthread');
-	}
-	MkDefine('HAVE_PNG', 'yes');
-	MkSave('HAVE_PNG', 'PNG_CFLAGS', 'PNG_LIBS');
+	MkEmulUnavail('PNG');
+
 	MkDefine('HAVE_LIBPNG14', 'no');
-	MkSave('HAVE_LIBPNG14');
+	MkSaveMK('HAVE_LIBPNG14');
+	MkSaveUndef('HAVE_LIBPNG14');
 	return (1);
 }
 

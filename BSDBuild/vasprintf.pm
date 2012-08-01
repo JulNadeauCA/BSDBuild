@@ -54,12 +54,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_VASPRINTF', 'yes');
-		MkSaveDefine('HAVE_VASPRINTF');
-	} else {
-		MkSaveUndef('HAVE_VASPRINTF');
-	}
+	MkEmulUnavailSYS('VASPRINTF');
 	return (1);
 }
 

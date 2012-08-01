@@ -43,12 +43,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_FLOCK', 'yes');
-		MkSaveDefine('HAVE_FLOCK');
-	} else {
-		MkSaveUndef('HAVE_FLOCK');
-	}
+	MkEmulUnavailSYS('FLOCK');
 	return (1);
 }
 

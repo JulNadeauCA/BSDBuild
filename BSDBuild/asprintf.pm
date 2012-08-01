@@ -44,12 +44,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_ASPRINTF', 'yes');
-		MkSaveDefine('HAVE_ASPRINTF');
-	} else {
-		MkSaveUndef('HAVE_ASPRINTF');
-	}
+	MkEmulUnavailSYS('ASPRINTF');
 	return (1);
 }
 

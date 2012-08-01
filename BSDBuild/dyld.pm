@@ -85,14 +85,9 @@ EOF
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
-
-	MkSaveUndef('HAVE_MACH_O_DYLD_H');
-	MkSaveUndef('HAVE_DYLD');
-	MkSaveUndef('HAVE_DYLD_RETURN_ON_ERROR');
-
-	MkDefine('DSO_CFLAGS', '');
-	MkDefine('DSO_LIBS', '');
-	MkSave('DSO_CFLAGS', 'DSO_LIBS');
+	
+	MkEmulUnavail('DSO');
+	MkEmulUnavailSYS('MACH_O_DYLD_H', 'DYLD', 'DYLD_RETURN_ON_ERROR');
 	return (1);
 }
 

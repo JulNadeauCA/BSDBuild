@@ -343,17 +343,13 @@ sub test
 		@args = ($EmulOS, $EmulOSRel, '');
 	} else {
 		$c = $TESTS{$t};
-		unless ($c) {
-			die "Bad test: $t";
+	}
+	if ($c) {
+		MkPrintN("checking for $DESCR{$t}...");
+		&$c(@args);
+		if ($EmulOS) {
+			MkPrintN("ok\n");
 		}
-	}
-	if ($Verbose) {
-		print STDERR "Add test: $t ($DESCR{$t})\n";
-	}
-	MkPrintN("checking for $DESCR{$t}...");
-	&$c(@args);
-	if ($EmulOS) {
-		MkPrintN("ok\n");
 	}
 	$done{$t} = 1;
 }
@@ -920,6 +916,9 @@ do
 	    ;;
 	--target=*)
 	    target=$optarg
+	    ;;
+	--emul-os=*)
+	    PROJ_TARGET=$optarg
 	    ;;
 	--byte-order=*)
 	    byte_order=$optarg

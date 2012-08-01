@@ -64,15 +64,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_CRYPT', 'yes');
-		MkSaveDefine('HAVE_CRYPT');
-	} else {
-		MkSaveUndef('HAVE_CRYPT');
-	}
-	MkDefine('CRYPT_CFLAGS', '');
-	MkDefine('CRYPT_LIBS', '');
-	MkSave('CRYPT_CFLAGS', 'CRYPT_LIBS');
+	MkEmulUnavail('CRYPT');
 	return (1);
 }
 

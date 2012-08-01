@@ -138,7 +138,7 @@ sub Link
 		return (0);
 	}
 	PmIfHDefined('HAVE_OPENGL');
-		if ($EmulOS eq 'windows') {
+		if ($EmulOS =~ /^windows/) {
 			PmLink('opengl32');
 		} else {
 			PmLink('GL');
@@ -155,18 +155,11 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 	
-	if ($os eq 'darwin') {
-		MkDefine('OPENGL_CFLAGS', '');
-		MkDefine('OPENGL_LIBS', '-framework OpenGL');
-	} elsif ($os eq 'windows') {
-		MkDefine('OPENGL_CFLAGS', '');
-		MkDefine('OPENGL_LIBS', 'opengl32');
+	if ($os =~ /^windows/) {
+		MkEmulWindows('OPENGL', 'opengl32');
 	} else {
-		MkDefine('OPENGL_CFLAGS', '-I/usr/X11R6/include');
-		MkDefine('OPENGL_LIBS', '-lGL');
+		MkEmulUnavail('OPENGL');
 	}
-	MkSetTrue('HAVE_OPENGL');
-	MkSave('HAVE_OPENGL', 'OPENGL_CFLAGS', 'OPENGL_LIBS');
 	return (1);
 }
 

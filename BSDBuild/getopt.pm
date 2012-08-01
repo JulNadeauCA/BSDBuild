@@ -51,12 +51,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_GETOPT', 'yes');
-		MkSaveDefine('HAVE_GETOPT');
-	} else {
-		MkSaveUndef('HAVE_GETOPT');
-	}
+	MkEmulUnavail('GETHOSTNAME');
 	return (1);
 }
 

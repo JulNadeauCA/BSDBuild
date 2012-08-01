@@ -161,11 +161,19 @@ EOF
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	MkEmulUnavail('SSE', 'SSE2', 'SSE3');
+	return (1);
+}
 
 BEGIN
 {
 	$DESCR{'sse'} = 'SSE extensions';
 	$TESTS{'sse'} = \&Test;
+	$EMUL{'sse'} = \&Emul;
 	$DEPS{'sse'} = 'cc';
 }
 

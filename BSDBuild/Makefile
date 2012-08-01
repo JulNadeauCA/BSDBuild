@@ -109,7 +109,8 @@ DATAFILES=Core.pm \
 	mysql.pm \
 	cocoa.pm \
 	sockopts.pm \
-	crypt.pm
+	crypt.pm \
+	winsock.pm
 
 all:
 

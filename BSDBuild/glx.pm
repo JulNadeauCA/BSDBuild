@@ -80,15 +80,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'windows') {
-		MkDefine('HAVE_GLX', 'no');
-		MkSaveUndef('HAVE_GLX', 'GLX_CFLAGS', 'GLX_LIBS');
-		return (1);
-	}
-	MkDefine('GLX_CFLAGS', '-I/usr/X11R6/include');
-	MkDefine('GLX_LIBS', '-lX11 -lGL');
-	MkDefine('HAVE_GLX', 'yes');
-	MkSave('HAVE_GLX', 'GLX_CFLAGS', 'GLX_LIBS');
+	MkEmulUnavail('GLX');
 	return (1);
 }
 

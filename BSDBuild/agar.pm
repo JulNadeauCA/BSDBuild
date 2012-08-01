@@ -63,30 +63,11 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'darwin') {
-		MkDefine('AGAR_CFLAGS', '-I/opt/local/include/agar '.
-		                       '-I/opt/local/include '.
-		                       '-I/usr/local/include/agar '.
-							   '-I/usr/local/include '.
-		                       '-I/usr/include/agar -I/usr/include '.
-		                       '-D_THREAD_SAFE');
-		MkDefine('AGAR_LIBS', '-L/usr/lib -L/opt/local/lib -L/usr/local/lib '.
-		                      '-L/usr/X11R6/lib '.
-		                      '-lag_gui -lag_core -lSDL -lGL -lpthread '.
-							  '-lfreetype');
-	} elsif ($os eq 'windows') {
-		MkDefine('AGAR_CFLAGS', '');
-		MkDefine('AGAR_LIBS', 'ag_core ag_gui');
+	if ($os =~ /^windows/) {
+		MkEmulWindows('AGAR', 'ag_core ag_gui');
 	} else {
-		MkDefine('AGAR_CFLAGS', '-I/usr/include/agar -I/usr/include '.
-		                        '-I/usr/local/include/agar '.
-							    '-I/usr/local/include ');
-		MkDefine('AGAR_LIBS', '-L/usr/local/lib -lag_gui -lag_core -lSDL '.
-		                      '-lpthread -lfreetype -lz -L/usr/X11R6/lib '.
-							  '-lGL -lm');
+		MkEmulUnavail('AGAR');
 	}
-	MkDefine('HAVE_AGAR', 'yes');
-	MkSave('HAVE_AGAR', 'AGAR_CFLAGS', 'AGAR_LIBS');
 	return (1);
 }
 
@@ -110,7 +91,7 @@ sub Link
 	if ($var eq 'ag_gui') {
 		PmLink('ag_gui');
 		PmLink('SDL');
-		if ($EmulOS eq 'windows') {
+		if ($EmulOS =~ /^windows/) {
 			PmLink('opengl32');
 		} else {
 			PmLink('GL');

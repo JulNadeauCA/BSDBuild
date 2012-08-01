@@ -42,13 +42,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'linux' || $os eq 'darwin' || $os eq 'windows' ||
-	    $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_SETENV', 'yes');
-		MkSaveDefine('HAVE_SETENV');
-	} else {
-		MkSaveUndef('HAVE_SETENV');
-	}
+	MkEmulUnavailSYS('SETENV');
 	return (1);
 }
 

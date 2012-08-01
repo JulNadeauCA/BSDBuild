@@ -44,12 +44,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os =~ /^(open|fab)bsd$/ && $machine eq 'i386') {
-		MkDefine('HAVE_PCTR', 'yes');
-		MkSaveDefine('HAVE_PCTR');
-	} else {
-		MkSaveUndef('HAVE_PCTR');
-	}
+	MkEmulUnavailSYS('PCTR');
 	return (1);
 }
 

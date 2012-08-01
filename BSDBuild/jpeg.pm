@@ -111,13 +111,8 @@ sub Link
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
-
-	MkDefine('HAVE_JPEG', 'no');
-	MkDefine('JPEG_CFLAGS', '');
-	MkDefine('JPEG_LIBS', '');
-
-	MkSaveUndef('HAVE_JPEG');
-	MkSave('JPEG_CFLAGS', 'JPEG_LIBS');
+	
+	MkEmulUnavail('JPEG');
 	return (1);
 }
 

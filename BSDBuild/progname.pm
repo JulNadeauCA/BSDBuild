@@ -41,12 +41,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_PROGNAME', 'yes');
-		MkSaveDefine('HAVE_PROGNAME');
-	} else {
-		MkSaveUndef('HAVE_PROGNAME');
-	}
+	MkEmulUnavailSYS('PROGNAME');
 	return (1);
 }
 

@@ -40,12 +40,8 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'linux' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('FREE_NULL_IS_A_NOOP', 'yes');
-		MkSaveDefine('FREE_NULL_IS_A_NOOP');
-	} else {
-		MkSaveUndef('FREE_NULL_IS_A_NOOP');
-	}
+	MkDefine('FREE_NULL_IS_A_NOOP', 'no');
+	MkSaveUndef('FREE_NULL_IS_A_NOOP');
 	return (1);
 }
 

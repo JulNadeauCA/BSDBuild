@@ -72,11 +72,8 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	MkSaveUndef('HAVE_DL_H');
-	MkSaveUndef('HAVE_SHL_LOAD');
-	MkDefine('DSO_CFLAGS', '');
-	MkDefine('DSO_LIBS', '');
-	MkSave('DSO_CFLAGS', 'DSO_LIBS');
+	MkEmulUnavail('DSO');
+	MkEmulUnavailSYS('DL_H', 'SHL_LOAD');
 	return (1);
 }
 

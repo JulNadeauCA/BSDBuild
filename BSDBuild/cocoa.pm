@@ -65,21 +65,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'darwin') {
-		MkDefine('HAVE_COCOA', 'yes');
-		MkDefine('COCOA_CFLAGS', '-DTARGET_API_MAC_CARBON ' .
-	                             '-DTARGET_API_MAC_OSX ' .
-	                             '-falign-loops=16 -force_cpusubtype_ALL '.
-							     '-fpascal-strings');
-		MkDefine('COCOA_LIBS', '-lobjc '.
-		                       '-Wl,-framework,Cocoa ' .
-		                       '-Wl,-framework,OpenGL ' .
-		                       '-Wl,-framework,IOKit');
-		MkSave('HAVE_COCOA', 'COCOA_CFLAGS', 'COCOA_LIBS');
-	} else {
-		MkDefine('HAVE_COCOA', 'no');
-		MkSaveUndef('HAVE_COCOA', 'COCOA_CFLAGS', 'COCOA_LIBS');
-	}
+	MkEmulUnavail('COCOA');
 	return (1);
 }
 

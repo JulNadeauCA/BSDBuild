@@ -104,7 +104,7 @@ sub Link
 		return (0);
 	}
 	PmIfHDefined('HAVE_GLU');
-		if ($EmulOS eq 'windows') {
+		if ($EmulOS =~ /^windows/) {
 			PmLink('glu32');
 		} else {
 			PmLink('GLU');
@@ -121,18 +121,11 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 	
-	if ($os eq 'darwin') {
-		MkDefine('GLU_CFLAGS', '');
-		MkDefine('GLU_LIBS', '-framework GLUT');
-	} elsif ($os eq 'windows') {
-		MkDefine('GLU_CFLAGS', '');
-		MkDefine('GLU_LIBS', 'glu32');
+	if ($os =~ /^windows/) {
+		MkEmulWindows('GLU', 'glu32');
 	} else {
-		MkDefine('GLU_CFLAGS', '-I/usr/X11R6/include');
-		MkDefine('GLU_LIBS', '-lGLU');
+		MkEmulUnavail('GLU');
 	}
-	MkDefine('HAVE_GLU', 'yes');
-	MkSave('HAVE_GLU', 'GLU_CFLAGS', 'GLU_LIBS');
 	return (1);
 }
 

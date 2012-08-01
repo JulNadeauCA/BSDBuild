@@ -42,12 +42,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_SETPROCTITLE', 'yes');
-		MkSaveDefine('HAVE_SETPROCTITLE');
-	} else {
-		MkSaveUndef('HAVE_SETPROCTITLE');
-	}
+	MkEmulUnavailSYS('SETPROCTITLE');
 	return (1);
 }
 

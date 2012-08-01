@@ -47,12 +47,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_OPEN_EXLOCK', 'yes');
-		MkSaveDefine('HAVE_OPEN_EXLOCK');
-	} else {
-		MkSaveUndef('HAVE_OPEN_EXLOCK');
-	}
+	MkEmulUnavailSYS('OPEN_EXLOCK');
 	return (1);
 }
 

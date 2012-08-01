@@ -53,12 +53,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'linux') {
-		MkDefine('HAVE_SO_PEERCRED', 'yes');
-		MkSaveDefine('HAVE_SO_PEERCRED');
-	} else {
-		MkSaveUndef('HAVE_SO_PEERCRED');
-	}
+	MkEmulUnavailSYS('SO_PEERCRED');
 	return (1);
 }
 

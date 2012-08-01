@@ -54,20 +54,17 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'linux' || $os eq 'darwin' || $os eq 'windows' ||
-	    $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('_MK_HAVE_SYS_TYPES_H', 'yes');
-		MkSaveDefine('_MK_HAVE_SYS_TYPES_H');
+	if ($os =~ /^windows/) {
+		MkEmulWindowsSYS('_MK_HAVE_SYS_TYPES_H');
+		if ($os =~ /64/) {
+			MkEmulWindowsSYS('64BIT');
+		} else {
+			MkEmulUnavailSYS('64BIT');
+		}
 	} else {
-		MkSaveUndef('_MK_HAVE_SYS_TYPES_H');
+		MkEmulUnavailSYS('_MK_HAVE_SYS_TYPES_H');
+		MkEmulUnavailSYS('64BIT');
 	}
-	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_64BIT', 'yes');
-		MkSaveDefine('HAVE_64BIT');
-	} else {
-		MkSaveUndef('HAVE_64BIT');
-	}
-	MkSaveUndef('_MK_HAVE_UNSIGNED_TYPEDEFS');
 	return (1);
 }
 

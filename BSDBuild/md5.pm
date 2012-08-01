@@ -44,12 +44,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os =~ /^(open|fab)bsd$/) {
-		MkDefine('HAVE_MD5', 'yes');
-		MkSaveDefine('HAVE_MD5');
-	} else {
-		MkSaveUndef('HAVE_MD5');
-	}
+	MkEmulUnavailSYS('MD5');
 	return (1);
 }
 

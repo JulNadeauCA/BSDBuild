@@ -68,28 +68,11 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'darwin') {
-		MkDefine('EDACIOUS_CFLAGS', '-I/opt/local/include/edacious '.
-		                            '-I/opt/local/include '.
-		                            '-I/usr/local/include/edacious '.
-							        '-I/usr/local/include '.
-		                            '-I/usr/include/edacious -I/usr/include '.
-		                            '-D_THREAD_SAFE');
-		MkDefine('EDACIOUS_LIBS', '-L/usr/lib -L/opt/local/lib '.
-		                          '-L/usr/local/lib '.
-		                          '-L/usr/X11R6/lib '.
-		                          '-les_core');
-	} elsif ($os eq 'windows') {
-		MkDefine('EDACIOUS_CFLAGS', '');
-		MkDefine('EDACIOUS_LIBS', 'es_core');
+	if ($os =~ /^windows/) {
+		MkEmulWindows('EDACIOUS', 'es_core');
 	} else {
-		MkDefine('EDACIOUS_CFLAGS', '-I/usr/include/edacious -I/usr/include '.
-		                          '-I/usr/local/include/edacious '.
-							      '-I/usr/local/include ');
-		MkDefine('EDACIOUS_LIBS', '-L/usr/local/lib -les_core');
+		MkEmulUnavail('EDACIOUS');
 	}
-	MkDefine('HAVE_EDACIOUS', 'yes');
-	MkSave('HAVE_EDACIOUS', 'EDACIOUS_CFLAGS', 'EDACIOUS_LIBS');
 	return (1);
 }
 

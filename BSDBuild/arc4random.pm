@@ -43,12 +43,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'darwin' || $os =~ /^(open|free|fab)bsd$/) {
-		MkDefine('HAVE_ARC4RANDOM', 'yes');
-		MkSaveDefine('HAVE_ARC4RANDOM');
-	} else {
-		MkSaveUndef('HAVE_ARC4RANDOM');
-	}
+	MkEmulUnavailSYS('ARC4RANDOM');
 	return (1);
 }
 

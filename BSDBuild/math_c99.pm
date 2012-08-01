@@ -57,17 +57,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_MATH_C99', 'yes');
-		MkDefine('MATH_C99_LIBS', '-lm');
-		MkDefine('MATH_C99_CFLAGS', '');
-		MkSaveDefine('HAVE_MATH_C99');
-	} else {
-		MkDefine('MATH_C99_LIBS', '');
-		MkDefine('MATH_C99_CFLAGS', '');
-		MkSaveUndef('HAVE_MATH_C99');
-	}
-	MkSave('MATH_C99_LIBS', 'MATH_C99_CFLAGS');
+	MkEmulUnavail('MATH_C99');
 	return (1);
 }
 

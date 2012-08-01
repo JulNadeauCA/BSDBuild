@@ -63,16 +63,11 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'windows') {
-		MkDefine('AGAR_AU_CFLAGS', '');
-		MkDefine('AGAR_AU_LIBS', 'ag_au ag_au_pa');
+	if ($os =~ /^windows/) {
+		MkEmulWindows('AGAR_AU', 'ag_au ag_au_pa');
 	} else {
-		MkDefine('AGAR_AU_CFLAGS', '-I/usr/local/include/agar '.
-		                           '-I/usr/include/agar');
-		MkDefine('AGAR_AU_LIBS', '-L/usr/local/lib -lag_au -lag_au_pa');
+		MkEmulUnavail('AGAR_AU');
 	}
-	MkDefine('HAVE_AGAR_AU', 'yes');
-	MkSave('HAVE_AGAR_AU', 'AGAR_AU_CFLAGS', 'AGAR_AU_LIBS');
 	return (1);
 }
 

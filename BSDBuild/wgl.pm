@@ -73,12 +73,11 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 	
-	if ($os eq 'windows') {
-		MkDefine('HAVE_WGL', 'yes');
+	if ($os =~ /^windows/) {
+		MkEmulWindowsSYS('WGL');
 	} else {
-		MkDefine('HAVE_WGL', 'no');
+		MkEmulUnavailSYS('WGL');
 	}
-	MkSaveDefine('HAVE_WGL');
 	return (1);
 }
 

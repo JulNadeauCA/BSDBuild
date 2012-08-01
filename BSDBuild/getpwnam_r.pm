@@ -58,12 +58,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_GETPWNAM_R', 'yes');
-		MkSaveDefine('HAVE_GETPWNAM_R');
-	} else {
-		MkSaveUndef('HAVE_GETPWNAM_R');
-	PWNAM_R}
+	MkEmulUnavailSYS('GETPWNAM_R');
 	return (1);
 }
 

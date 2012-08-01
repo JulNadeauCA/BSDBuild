@@ -40,9 +40,12 @@ EOF
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
-
-	MkDefine('_MK_HAVE_STDLIB_H', 'yes');
-	MkSaveDefine('_MK_HAVE_STDLIB_H');
+	
+	if ($os =~ /^windows/) {
+		MkEmulWindowsSYS('_MK_HAVE_STDLIB_H');
+	} else {
+		MkEmulUnavailSYS('_MK_HAVE_STDLIB_H');
+	}
 	return (1);
 }
 

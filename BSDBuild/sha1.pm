@@ -44,12 +44,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os =~ /^(open|fab)bsd$/) {
-		MkDefine('HAVE_SHA1', 'yes');
-		MkSaveDefine('HAVE_SHA1');
-	} else {
-		MkSaveUndef('HAVE_SHA1');
-	}
+	MkEmulUnavailSYS('SHA1');
 	return (1);
 }
 

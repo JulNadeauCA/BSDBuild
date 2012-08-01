@@ -37,23 +37,53 @@ The
 .Nm
 module uses the
 .Xr premake 1
-utility to generate a set of archives containing project files for various
-IDEs.
+utility to generate "project files", so that BSDBuild projects can be
+opened by various IDEs (Integrated Development Environments).
 .Pp
-The name of archive files follows the format
-.Sq OS:ARCH:IDE:FLAVOR.ext ,
-where
-.Sq OS
-is the name of the operating system,
-.Sq ARCH
-is the architecture name for the target,
-.Sq IDE
-is the name of the IDE
-and
-.Sq FLAVOR
-is a comma-separated list of flavors, or variants.
+This module adds the target "proj", so that "make proj" will compile
+the project files, and pack them into sets of archive files (under
+.Ev PROJDIR ,
+which defaults to "./ProjectFiles").
 .Pp
-As of this writing, premake supports the following IDE targets:
+The various profiles are defined by the space-separated list
+.Ev PROJFILES .
+Each entry in
+.Ev PROJFILES
+has the format:
+.Bd -literal -offset indent
+<OS>:<IDE>:<FLAVOR>:<OPTIONS>
+.Ed
+.Pp
+"<OS>" specifies the operating system and "<IDE>" is the target IDE name.
+The "<FLAVOR> argument is a flavor or variant identifier (e.g., "nothreads"),
+and "<OPTIONS>" is a comma-separated list of ./configure options
+(e.g., "--disable-threads").
+.Pp
+Valid "<OS>" values include:
+.Pp
+.Bl -tag -compact -width "windows-vista-x64 "
+.It windows
+Windows 95 and up
+.It windows-xp
+Windows XP and up
+.It windows-xp-x64
+Windows XP and up (64-bit)
+.It windows-vista
+Windows Vista and up
+.It windows-vista-x64
+Windows Vista and up (64-bit)
+.It windows-7
+Windows 7 and up
+.It windows-7-x64
+Windows 7 and up (64-bit)
+.El
+.Pp
+Note: Premake does support other targets ("bsd", "linux" and "macosx"), but
+it rarely if ever necessary to generate project files for those targets
+since they already provide a proper compilation environment (i.e., BSDBuild
+can be used directly on them).
+.Pp
+Valid "<IDE>" target names include:
 .Pp
 .Bl -tag -compact -width "sharpdev "
 .It cb-gcc
@@ -66,27 +96,11 @@ Visual Studio 2002
 Visual Studio 2003
 .It vs2005
 Visual Studio 2005
-.It gnu
-GNU makefile (unneeded with BSDBuild)
 .It monodev
 MonoDevelop
 .It sharpdev
 ICSharpCode SharpDevelop
 .El
-.Pp
-And the following OS targets:
-.Pp
-.Bl -tag -compact -width "windows "
-.It bsd
-OpenBSD, NetBSD and FreeBSD
-.It linux
-Linux
-.It macosx
-MacOS X
-.It windows
-Windows
-.El
-.Pp
 .Sh TARGETS
 .Bl -tag -width "proj "
 .It Ar proj
@@ -104,22 +118,7 @@ Name of project.
 If a project has multiple subdirectories, this should only be defined in
 the top-level directory.
 .It Ev PROJFILES
-List of project files to generate.
-Each entry has the format
-.Sq OS:ARCH:IDE:FLAVOR:OPTIONS ,
-where
-.Sq OS
-is the operating system,
-.Sq ARCH
-is the architecture,
-.Sq IDE
-is the name of the IDE,
-.Sq FLAVOR
-is a variant name (e.g., "nothreads")
-and
-.Sq OPTIONS
-is a comma-separated list of configure options
-(e.g., "--disable-threads").
+List of project files to generate (see DESCRIPTION above).
 .It Ev PROJDIR
 Directory to hold generated project file archives.
 .It Ev PROJFILESEXTRA

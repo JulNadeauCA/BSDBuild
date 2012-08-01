@@ -63,27 +63,11 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'darwin') {
-		MkDefine('FREESG_CFLAGS', '-I/opt/local/include/freesg '.
-		                          '-I/opt/local/include '.
-		                          '-I/usr/local/include/freesg '.
-							      '-I/usr/local/include '.
-		                          '-I/usr/include/freesg -I/usr/include '.
-		                          '-D_THREAD_SAFE');
-		MkDefine('FREESG_LIBS', '-L/usr/lib -L/opt/local/lib -L/usr/local/lib '.
-		                        '-L/usr/X11R6/lib '.
-		                        '-lfreesg -framework GLU');
-	} elsif ($os eq 'windows') {
-		MkDefine('FREESG_CFLAGS', '');
-		MkDefine('FREESG_LIBS', 'freesg_pe freesg glu');
+	if ($os =~ /^windows/) {
+		MkEmulWindows('FREESG', 'freesg_pe freesg glu');
 	} else {
-		MkDefine('FREESG_CFLAGS', '-I/usr/include/freesg -I/usr/include '.
-		                          '-I/usr/local/include/freesg '.
-							      '-I/usr/local/include ');
-		MkDefine('FREESG_LIBS', '-L/usr/local/lib -lfreesg_pe -lfreesg -lGLU');
+		MkEmulUnavail('FREESG');
 	}
-	MkDefine('HAVE_FREESG', 'yes');
-	MkSave('HAVE_FREESG', 'FREESG_CFLAGS', 'FREESG_LIBS');
 	return (1);
 }
 

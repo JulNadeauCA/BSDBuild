@@ -1095,6 +1095,62 @@ EOF
 	print 'rm -f $testdir/conftest.pl', "\n";
 }
 
+# Specify module availability under Windows platforms in Emul()
+sub MkEmulWindows
+{
+	my $module = shift;
+	my $libs = shift;
+
+	MkDefine("HAVE_${module}", "yes");
+	MkSaveDefine("HAVE_${module}");
+
+	MkDefine("${module}_CFLAGS", "");
+	MkDefine("${module}_LIBS", "$libs");
+	MkSave("${module}_CFLAGS", "${module}_LIBS");
+}
+
+# Specify module availability under Windows platforms in Emul()
+# No CFLAGS/LIBS are defined.
+sub MkEmulWindowsSYS
+{
+	my $module = shift;
+
+	if ($module =~ /^_/) {
+		MkDefine($module, "yes");
+		MkSaveDefine($module);
+	} else {
+		MkDefine("HAVE_${module}", "yes");
+		MkSaveDefine("HAVE_${module}");
+	}
+}
+
+# Specify module unavailability in Emul().
+sub MkEmulUnavail
+{
+	foreach my $module (@_) {
+		MkDefine("HAVE_${module}", "no");
+		MkSaveUndef("HAVE_${module}");
+
+		MkDefine("${module}_CFLAGS", "");
+		MkDefine("${module}_LIBS", "");
+		MkSave("${module}_CFLAGS", "${module}_LIBS");
+	}
+}
+
+# Specify module unavailability in Emul(), without CFLAGS/LIBS.
+sub MkEmulUnavailSYS
+{
+	foreach my $module (@_) {
+		if ($module =~ /^_/) {
+			MkDefine($module, "no");
+			MkSaveUndef($module);
+		} else {
+			MkDefine("HAVE_${module}", "no");
+			MkSaveUndef("HAVE_${module}");
+		}
+	}
+}
+
 BEGIN
 {
     require Exporter;
@@ -1102,7 +1158,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSetTrue MkSetFalse MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveMK_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkPrint MkPrintN MkFoundVer MkNotFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion);
+    @EXPORT = qw($OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSetTrue MkSetFalse MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveMK_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkPrint MkPrintN MkFoundVer MkNotFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion MkEmulWindows MkEmulWindowsSYS MkEmulUnavail MkEmulUnavailSYS);
 }
 
 ;1

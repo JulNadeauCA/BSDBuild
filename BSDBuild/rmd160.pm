@@ -44,12 +44,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os =~ /^(open|fab)bsd$/) {
-		MkDefine('HAVE_RMD160', 'yes');
-		MkSaveDefine('HAVE_RMD160');
-	} else {
-		MkSaveUndef('HAVE_RMD160');
-	}
+	MkEmulUnavailSYS('RMD160');
 	return (1);
 }
 

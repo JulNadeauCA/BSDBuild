@@ -46,13 +46,8 @@ EOF
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
-
-	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_EXECVP', 'yes');
-		MkSaveDefine('HAVE_EXECVP');
-	} else {
-		MkSaveUndef('HAVE_EXECVP');
-	}
+	
+	MkEmulUnavailSYS('EXECVP');
 	return (1);
 }
 

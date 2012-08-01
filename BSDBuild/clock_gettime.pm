@@ -60,12 +60,9 @@ sub Test
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
-
-	MkSaveUndef('HAVE_CLOCK_GETTIME');
-
-	MkDefine('CLOCK_CFLAGS', '');
-	MkDefine('CLOCK_LIBS', '');
-	MkSave('CLOCK_CFLAGS', 'CLOCK_LIBS');
+	
+	MkEmulUnavailSYS('CLOCK_GETTIME');
+	MkEmulUnavail('CLOCK');
 	return (1);
 }
 

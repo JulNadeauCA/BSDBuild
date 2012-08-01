@@ -102,10 +102,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 	
-	MkDefine('ALSA_CFLAGS', '-I/usr/local/include');
-	MkDefine('ALSA_LIBS', '-lasound');
-	MkDefine('HAVE_ALSA', 'yes');
-	MkSave('HAVE_ALSA', 'ALSA_CFLAGS', 'ALSA_LIBS');
+	MkEmulUnavail('ALSA');
 	return (1);
 }
 

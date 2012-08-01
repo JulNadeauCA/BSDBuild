@@ -101,20 +101,8 @@ EOF
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
-
-	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('XINERAMA_CFLAGS', '-I/usr/X11R6/include');
-		MkDefine('XINERAMA_LIBS', '-L/usr/X11R6/lib -lXinerama');
-		MkDefine('HAVE_XINERAMA', 'yes');
-		MkSaveDefine('HAVE_XINERAMA', 'XINERAMA_CFLAGS', 'XINERAMA_LIBS');
-		MkSaveMK('XINERAMA_CFLAGS', 'XINERAMA_LIBS');
-	} else {
-		MkDefine('XINERAMA_CFLAGS', '');
-		MkDefine('XINERAMA_LIBS', '');
-		MkDefine('HAVE_XINERAMA', 'no');
-		MkSaveUndef('HAVE_XINERAMA');
-		MkSaveMK('XINERAMA_CFLAGS', 'XINERAMA_LIBS');
-	}
+	
+	MkEmulUnavail('XINERAMA');
 	return (1);
 }
 

@@ -24,9 +24,8 @@ EOF
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
-
-	if ($os eq 'linux' || $os eq 'darwin' || $os eq 'windows' ||
-	    $os =~ /^(open|net|free)bsd$/) {
+	
+	if ($os =~ /^windows/) {
 		MkDefine('_MK_HAVE_LIMITS_H', 'yes');
 		MkSaveDefine('_MK_HAVE_LIMITS_H');
 	} else {

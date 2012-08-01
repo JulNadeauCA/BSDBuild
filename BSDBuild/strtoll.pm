@@ -45,12 +45,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('_MK_HAVE_STRTOLL', 'yes');
-		MkSaveDefine('_MK_HAVE_STRTOLL');
-	} else {
-		MkSaveUndef('_MK_HAVE_STRTOLL');
-	}
+	MkEmulUnavailSYS('_MK_HAVE_STRTOLL');
 	return (1);
 }
 

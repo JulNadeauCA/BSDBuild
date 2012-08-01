@@ -48,13 +48,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'darwin' || $os eq 'openbsd' || $os eq 'freebsd' ||
-	    $os eq 'fabbsd') {
-		MkDefine('HAVE_FGETLN', 'yes');
-		MkSaveDefine('HAVE_FGETLN');
-	} else {
-		MkSaveUndef('HAVE_FGETLN');
-	}
+	MkEmulUnavailSYS('FGETLN');
 	return (1);
 }
 

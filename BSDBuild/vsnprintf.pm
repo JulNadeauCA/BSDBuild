@@ -51,12 +51,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_VSNPRINTF', 'yes');
-		MkSaveDefine('HAVE_VSNPRINTF');
-	} else {
-		MkSaveUndef('HAVE_VSNPRINTF');
-	}
+	MkEmulUnavailSYS('VSNPRINTF');
 	return (1);
 }
 
@@ -64,7 +59,7 @@ BEGIN
 {
 	$DESCR{'vsnprintf'} = 'the vsnprintf() function';
 	$TESTS{'vsnprintf'} = \&Test;
-	$EMUL{'vsnprintf'} = \&Test;
+	$EMUL{'vsnprintf'} = \&Emul;
 	$DEPS{'vsnprintf'} = 'cc';
 }
 

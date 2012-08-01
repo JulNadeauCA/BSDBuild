@@ -97,15 +97,8 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_SYSLOG', 'yes');
-		MkSaveDefine('HAVE_SYSLOG');
-		MkDefine('HAVE_VSYSLOG', 'yes');
-		MkSaveDefine('HAVE_VSYSLOG');
-	} else {
-		MkSaveUndef('HAVE_SYSLOG');
-		MkSaveUndef('HAVE_VSYSLOG');
-	}
+	MkEmulUnavailSYS('SYSLOG');
+	MkEmulUnavailSYS('VSYSLOG');
 	return (1);
 }
 

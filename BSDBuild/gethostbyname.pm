@@ -44,12 +44,11 @@ EOF
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
-
-	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd/) {
-		MkDefine('HAVE_GETHOSTBYNAME', 'yes');
-		MkSaveDefine('HAVE_GETHOSTBYNAME');
+	
+	if ($os =~ /^windows/) {
+		MkEmulWindows('GETHOSTBYNAME', 'Winsock');
 	} else {
-		MkSaveUndef('HAVE_GETHOSTBYNAME');
+		MkEmulUnavail('GETHOSTBYNAME');
 	}
 	return (1);
 }

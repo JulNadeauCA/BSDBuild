@@ -113,25 +113,11 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'darwin') {
-		MkDefine('SDL_CFLAGS', '-I/opt/local/include/SDL -I/opt/local/include '.
-		                       '-I/usr/local/include/SDL -I/usr/local/include '.
-		                       '-I/usr/include/SDL -I/usr/include '.
-		                       '-D_GNU_SOURCE=1 -D_THREAD_SAFE');
-		MkDefine('SDL_LIBS', '-L/usr/lib -L/opt/local/lib -L/usr/local/lib '.
-		                     '-lSDLmain -lSDL -Wl,-framework,Cocoa');
-	} elsif ($os eq 'windows') {
-		MkDefine('SDL_CFLAGS', '');
-		MkDefine('SDL_LIBS', 'SDL SDLmain');
+	if ($os =~ /^windows/) {
+		MkEmulWindows('SDL', 'SDL');
 	} else {
-		MkDefine('SDL_CFLAGS', '-I/usr/include/SDL -I/usr/include '.
-		                       '-I/usr/local/include/SDL -I/usr/local/include '.
-		                       '-I/usr/X11R6/include/SDL -I/usr/X11R6/include '.
-		                       '-D_GNU_SOURCE=1 -D_REENTRANT');
-		MkDefine('SDL_LIBS', '-lSDL -lpthread');
+		MkEmulUnavail('SDL');
 	}
-	MkSetTrue('HAVE_SDL');
-	MkSave('HAVE_SDL', 'SDL_CFLAGS', 'SDL_LIBS');
 	return (1);
 }
 

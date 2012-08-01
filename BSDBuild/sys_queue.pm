@@ -67,12 +67,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'openbsd' || $os eq 'fabbsd') {
-		MkDefine('_MK_HAVE_SYS_QUEUE_H', 'yes');
-		MkSaveDefine('_MK_HAVE_SYS_QUEUE_H');
-	} else {
-		MkSaveUndef('_MK_HAVE_SYS_QUEUE_H');
-	}
+	MkEmulUnavailSYS('_MK_HAVE_SYS_QUEUE_H');
 	return (1);
 }
 

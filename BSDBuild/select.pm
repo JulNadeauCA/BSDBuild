@@ -50,12 +50,10 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd$/) {
-		MkDefine('HAVE_SELECT', 'yes');
-		MkSaveDefine('HAVE_SELECT');
-	} else {
-		MkSaveUndef('HAVE_SELECT');
-	}
+	# Note: On Windows, a kind of select() is available of linking
+	# against WinSock (see winsock.pm)
+
+	MkEmulUnavail('SELECT');
 	return (1);
 }
 

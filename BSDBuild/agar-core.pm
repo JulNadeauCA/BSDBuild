@@ -76,27 +76,11 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'darwin') {
-		MkDefine('AGAR_CORE_CFLAGS', '-I/opt/local/include/agar '.
-		                             '-I/opt/local/include '.
-		                             '-I/usr/local/include/agar '.
-							         '-I/usr/local/include '.
-		                             '-I/usr/include/agar -I/usr/include '.
-		                             '-D_THREAD_SAFE');
-		MkDefine('AGAR_CORE_LIBS', '-L/usr/lib -L/opt/local/lib '.
-		                           '-L/usr/local/lib '.
-		                           '-lag_core -lpthread ');
-	} elsif ($os eq 'windows') {
-		MkDefine('AGAR_CORE_CFLAGS', '');
-		MkDefine('AGAR_CORE_LIBS', 'ag_core');
+	if ($os =~ /^windows/) {
+		MkEmulWindows('AGAR_CORE', 'ag_core');
 	} else {
-		MkDefine('AGAR_CORE_CFLAGS', '-I/usr/include/agar -I/usr/include '.
-		                             '-I/usr/local/include/agar '.
-							         '-I/usr/local/include ');
-		MkDefine('AGAR_CORE_LIBS', '-L/usr/local/lib -lag_core -lpthread ');
+		MkEmulUnavail('AGAR_CORE');
 	}
-	MkDefine('HAVE_AGAR_CORE', 'yes');
-	MkSave('HAVE_AGAR_CORE', 'AGAR_CORE_CFLAGS', 'AGAR_CORE_LIBS');
 	return (1);
 }
 

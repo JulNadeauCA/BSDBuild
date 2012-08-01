@@ -61,17 +61,12 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'windows') {
-		MkDefine('HAVE_CLOCK_WIN32', 'yes');
-		MkSaveDefine('HAVE_CLOCK_WIN32');
-		MkDefine('CLOCK_CFLAGS', '');
-		MkDefine('CLOCK_LIBS', '-lwinmm');
-		MkSave('CLOCK_CFLAGS', 'CLOCK_LIBS');
+	if ($os =~ /^windows/) {
+		MkEmulWindows('CLOCK_WIN32', 'winmm');
+		MkEmulWindows('CLOCK', 'winmm');
 	} else {
-		MkSaveUndef('HAVE_CLOCK_WIN32');
-		MkDefine('CLOCK_CFLAGS', '');
-		MkDefine('CLOCK_LIBS', '');
-		MkSave('CLOCK_CFLAGS', 'CLOCK_LIBS');
+		MkEmulUnavail('CLOCK_WIN32');
+		MkEmulUnavail('CLOCK');
 	}
 	return (1);
 }

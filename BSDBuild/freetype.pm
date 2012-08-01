@@ -89,27 +89,11 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'darwin') {
-		MkDefine('FREETYPE_CFLAGS', '-I/usr/X11R6/include '.
-		                            '-I/usr/X11R6/include/freetype2');
-		MkDefine('FREETYPE_LIBS', '-L/usr/X11R6/lib -lfreetype');
-	} elsif ($os eq 'windows') {
-		MkDefine('FREETYPE_CFLAGS', '');
-		MkDefine('FREETYPE_LIBS', 'freetype6');
+	if ($os =~ /^windows/) {
+		MkEmulWindows('FREETYPE', 'freetype6');
 	} else {
-		MkDefine('FREETYPE_CFLAGS', '-I/usr/include/freetype2 '.
-		                            '-I/usr/local/include/freetype2 '.
-									'-I/usr/local/include '.
-									'-I/usr/X11R6/include/freetype2 '.
-									'-I/usr/X11R6/include');
-		MkDefine('FREETYPE_LIBS', '-L/usr/local/lib '.
-		                          '-Wl,--rpath --Wl,/usr/local/lib ' .
-		                          '-L/usr/X11R6/lib '.
-		                          '-Wl,--rpath --Wl,/usr/X11R6/lib ' .
-		                          '-lfreetype -lz');
+		MkEmulUnavail('FREETYPE');
 	}
-	MkDefine('HAVE_FREETYPE', 'yes');
-	MkSave('HAVE_FREETYPE', 'FREETYPE_CFLAGS', 'FREETYPE_LIBS');
 	return (1);
 }
 

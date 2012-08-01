@@ -106,19 +106,16 @@ EOF
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
+	
+	MkEmulUnavailSYS('SETSOCKOPT');
+	MkSaveUndef(
+	    'HAVE_SO_OOBINLINE',
+	    'HAVE_SO_REUSEPORT',
+	    'HAVE_SO_TIMESTAMP',
+	    'HAVE_SO_NOSIGPIPE',
+	    'HAVE_SO_LINGER',
+	    'HAVE_SO_ACCEPTFILTER');
 
-	if ($os eq 'linux' || $os eq 'darwin' || $os =~ /^(open|net|free)bsd/) {
-		MkDefine('HAVE_SETSOCKOPT', 'yes');
-		MkSaveDefine('HAVE_SETSOCKOPT');
-	} else {
-		MkSaveUndef('HAVE_SETSOCKOPT');
-	}
-	MkSaveUndef('HAVE_SO_OOBINLINE');
-	MkSaveUndef('HAVE_SO_REUSEPORT');
-	MkSaveUndef('HAVE_SO_TIMESTAMP');
-	MkSaveUndef('HAVE_SO_NOSIGPIPE');
-	MkSaveUndef('HAVE_SO_LINGER');
-	MkSaveUndef('HAVE_SO_ACCEPTFILTER');
 	return (1);
 }
 

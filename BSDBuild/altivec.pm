@@ -85,16 +85,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'darwin' && $machine eq 'ppc') {
-		MkDefine('HAVE_ALTIVEC', 'yes');
-		MkSaveDefine('HAVE_ALTIVEC');
-		MkDefine('ALTIVEC_CFLAGS', '-faltivec -maltivec');
-	} else {
-		MkSaveUndef('HAVE_ALTIVEC');
-		MkDefine('ALTIVEC_CFLAGS', '');
-	}
-	MkSaveUndef('HAVE_ALTIVEC_H');
-	MkSave('ALTIVEC_CFLAGS');
+	MkEmulUnavail('ALTIVEC');
 	return (1);
 }
 

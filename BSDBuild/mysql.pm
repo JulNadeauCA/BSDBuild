@@ -61,12 +61,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($os eq 'windows') {
-		MkDefine('MYSQL_CFLAGS', '');
-		MkDefine('MYSQL_LIBS', 'mysqlclient');
-	}
-	MkDefine('HAVE_MYSQL', 'yes');
-	MkSave('HAVE_MYSQL', 'MYSQL_CFLAGS', 'MYSQL_LIBS');
+	MkEmulUnavail('MYSQL');
 	return (1);
 }
 

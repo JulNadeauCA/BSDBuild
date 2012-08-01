@@ -2,8 +2,11 @@
 #
 # Public domain
 # 
-# uman.pl: Search source directories for an uninstalled manual page.
-# The script also looks up BSDBuild-generated .manlinks.mk files.
+# Search $UMANPATH for a user-installed manual page and write it to
+# the standard output (via groff).
+#
+# Links can also be specified (uman will search BSDBuild-generated
+# .manlinks.mk files for them).
 #
 
 if (!defined($ENV{'UMANPATH'})) {
@@ -18,7 +21,7 @@ if (!defined($ENV{'UMANPATH'})) {
 #$NROFF = 'nroff -Tascii -mandoc';
 $NROFF = 'groff -S -P-h -Wall -mtty-char -man -Tascii -P-c -mandoc';
 
-if (@ARGV < 1) { die "Usage: aman [manpage]"; }
+if (@ARGV < 1) { die "Usage: uman [manpage]"; }
 my $query = $ARGV[0];
 my $pager = 'less';
 if (exists($ENV{'PAGER'})) { $pager = $ENV{'PAGER'}; }
@@ -73,7 +76,7 @@ sub SearchDir ($$$$)
 			next;
 		}
 		if ($ent =~ /^\./) { next; }
-		if ($ent =~ /^([\w\-]+)\.(\d)$/) {
+		if ($ent =~ /^([\w\-\.]+)\.(\d)$/) {
 			if ($q eq lc($1) ||
 			    $q eq lc($1.'.'.$2)) {
 				ReadPage($path);

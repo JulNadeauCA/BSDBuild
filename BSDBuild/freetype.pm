@@ -90,7 +90,7 @@ sub Emul
 	my ($os, $osrel, $machine) = @_;
 
 	if ($os =~ /^windows/) {
-		MkEmulWindows('FREETYPE', 'freetype6');
+		MkEmulWindows('FREETYPE', 'freetype');
 	} else {
 		MkEmulUnavail('FREETYPE');
 	}

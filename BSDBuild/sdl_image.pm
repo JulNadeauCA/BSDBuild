@@ -55,11 +55,24 @@ EOF
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+#	if ($os =~ /^windows/) {
+#		MkEmulWindows('SDL_IMAGE', 'SDL_image');
+#	} else {
+		MkEmulUnavail('SDL_IMAGE');
+#	}
+	return (1);
+}
+
 BEGIN
 {
 	$DESCR{'sdl_image'} = 'SDL_image (http://libsdl.org/projects/SDL_image)';
 	$TESTS{'sdl_image'} = \&Test;
 	$DEPS{'sdl_image'} = 'cc,sdl';
+	$EMUL{'sdl_image'} = \&Emul;
 }
 
 ;1

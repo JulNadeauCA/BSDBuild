@@ -23,6 +23,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+sub Test
+{
+	MkDefine('HAVE_WINSOCK1', 'no');
+	MkDefine('HAVE_WINSOCK2', 'no');
+	MkSaveUndef('HAVE_WINSOCK1', 'HAVE_WINSOCK2');
+	return (1);
+}
+
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
@@ -40,6 +48,7 @@ sub Emul
 BEGIN
 {
 	$DESCR{'winsock'} = 'the WinSock interface';
+	$TESTS{'winsock'} = \&Test;
 	$EMUL{'winsock'} = \&Emul;
 }
 

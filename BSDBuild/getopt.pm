@@ -51,7 +51,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	MkEmulUnavail('GETHOSTNAME');
+	MkEmulUnavail('GETOPT');
 	return (1);
 }
 

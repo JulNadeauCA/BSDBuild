@@ -25,6 +25,7 @@
 
 sub Test
 {
+	MkPrint("no");
 	MkDefine('HAVE_WINSOCK1', 'no');
 	MkDefine('HAVE_WINSOCK2', 'no');
 	MkSaveUndef('HAVE_WINSOCK1', 'HAVE_WINSOCK2');

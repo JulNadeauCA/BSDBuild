@@ -29,8 +29,7 @@ sub Test
 	
 	MkDefine('COCOA_CFLAGS', '-DTARGET_API_MAC_CARBON ' .
 	                         '-DTARGET_API_MAC_OSX ' .
-	                         '-falign-loops=16 -force_cpusubtype_ALL '.
-							 '-fpascal-strings');
+	                         '-force_cpusubtype_ALL -fpascal-strings');
 	MkDefine('COCOA_LIBS', '-lobjc '.
 	                       '-Wl,-framework,Cocoa ' .
 	                       '-Wl,-framework,OpenGL ' .

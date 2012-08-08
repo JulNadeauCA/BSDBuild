@@ -78,6 +78,10 @@ install: config-ok install-subdir
 	    echo "${INSTALL_DATA} libtool/$$F ${DATADIR}/libtool"; \
 	    ${SUDO} ${INSTALL_DATA} libtool/$$F "${DESTDIR}${DATADIR}/libtool"; \
 	done
+	@if [ ! -d "${DESTDIR}${BINDIR}" ]; then \
+	    echo "${INSTALL_PROG_DIR} ${BINDIR}"; \
+	    ${SUDO} ${INSTALL_PROG_DIR} "${DESTDIR}${BINDIR}"; \
+	fi
 	@for F in ${SCRIPTS}; do \
 	    echo "${INSTALL_PROG} $$F ${BINDIR}"; \
 	    ${SUDO} ${INSTALL_PROG} $$F "${DESTDIR}${BINDIR}"; \

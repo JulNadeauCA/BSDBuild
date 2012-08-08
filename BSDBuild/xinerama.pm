@@ -68,10 +68,10 @@ sub Test
 				    MkDefine('XINERAMA_LIBS', "\${XINERAMA_LIBS} -L$dir");
 				MkEndif;
 			}
-			MkIfNE('${XINERAMA_CFLAGS}', '');
-				MkPrint("trying autodetected path");
-				MkPrint("WARNING: You should probably use --with-xinerama=prefix");
-			MkEndif;
+#			MkIfNE('${XINERAMA_CFLAGS}', '');
+#				MkPrint("trying autodetected path");
+#				MkPrint("WARNING: You should probably use --with-xinerama=prefix");
+#			MkEndif;
 		MkEndif;
 		MkDefine('XINERAMA_LIBS', "\${XINERAMA_LIBS} -lXinerama");
 	MkEndif;

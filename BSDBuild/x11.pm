@@ -76,10 +76,10 @@ sub Test
 				    MkDefine('X11_LIBS', "\${X11_LIBS} -L$dir");
 				MkEndif;
 			}
-			MkIfNE('${X11_CFLAGS}', '');
-				MkPrint("trying autodetected path");
-				MkPrint("WARNING: You should probably use --with-x=prefix");
-			MkEndif;
+#			MkIfNE('${X11_CFLAGS}', '');
+#				MkPrint("trying autodetected path");
+#				MkPrint("WARNING: You should probably use --with-x=prefix");
+#			MkEndif;
 		MkEndif;
 	MkEndif;
 

@@ -110,7 +110,8 @@ DATAFILES=Core.pm \
 	cocoa.pm \
 	sockopts.pm \
 	crypt.pm \
-	winsock.pm
+	winsock.pm \
+	siocgifconf.pm
 
 all:
 

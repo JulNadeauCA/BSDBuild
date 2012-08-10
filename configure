@@ -669,7 +669,7 @@ echo "#ifndef PACKAGE" > config/package.h
 echo "#define PACKAGE \"$PACKAGE\"" >> config/package.h
 echo "#endif" >> config/package.h
 echo "hdefs[\"PACKAGE\"] = \"$PACKAGE\"" >>configure.lua
-VERSION="3.0-beta"
+VERSION="3.0"
 echo "#ifndef VERSION" > config/version.h
 echo "#define VERSION \"$VERSION\"" >> config/version.h
 echo "#endif" >> config/version.h

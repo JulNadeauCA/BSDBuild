@@ -1,0 +1,22 @@
+
+Release Notes for BSDBuild 3.0
+------------------------------
+- It is now possible to control conditional compilation from configure
+  (i.e., a Makefile's ${SRCS} definition may safely reference configure-
+  script-defined variables). To accomodate this, when using separate builds,
+  mkconcurrent is now invoked at the very end of configure (and it performs
+  more extensive parsing of Makefiles as well).
+- New mkconfigure(1) directives: MAPPEND(), CHECK_PERL_MODULE(), DEFAULT_DIR().
+- Prevent redundant Makefile.config definitions from being produced.
+- Avoid using system the libtool if it is not GNU libtool.
+- Added --moduledir, --statedir and --libexecdir (and others for GNU compat).
+- mkconfigure(1) now processes long line breaks on input scripts.
+- Added macros to simplify Emul() handling, removed unneeded Emul() code.
+- Renamed ${SHAREDIR} -> ${DATADIR} and ${SHARE} -> ${DATAFILES}.
+- Compiler attribute tests have been moved to a separate module cc_attributes.
+- mkdep(1) now passes any "-m" cflags to the compiler.
+- build.prog.mk(5) and build.lib.mk(5) now honor ${OBJC}.
+- build.proj.mk(5) now accepts more specific "windows-foo" targets.
+- All modules should now honor ${DESTDIR}.
+- New tests: objc, gcc, getpwnam_r, gethostbyname, portaudio, mysql, cocoa,
+  sockopts, crypt, winsock, siocgifconf, fontconfig

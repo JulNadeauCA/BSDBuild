@@ -111,7 +111,8 @@ DATAFILES=Core.pm \
 	sockopts.pm \
 	crypt.pm \
 	winsock.pm \
-	siocgifconf.pm
+	siocgifconf.pm \
+	fontconfig.pm
 
 all:
 

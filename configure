@@ -57,6 +57,9 @@ do
 	--target=*)
 	    target=$optarg
 	    ;;
+	--emul-os=*)
+	    PROJ_TARGET=$optarg
+	    ;;
 	--byte-order=*)
 	    byte_order=$optarg
 	    ;;
@@ -74,6 +77,9 @@ do
 	    ;;
 	--libdir=*)
 	    libdir=$optarg
+	    ;;
+	--moduledir=*)
+	    moduledir=$optarg
 	    ;;
 	--libexecdir=*)
 	    libexecdir=$optarg
@@ -350,23 +356,24 @@ echo ""
 echo "Usage: ./configure [options]"
 echo ""
 echo "Standard build options:"
-echo "    --bindir=DIR              Executables (for common users) [PREFIX/bin]"
+echo "    --bindir=DIR              Executables for common users [PREFIX/bin]"
 echo "    --build=STRING            Host environment for build [auto-detect]"
-echo "    --byte-order=STRING       Byte order for target environment (LE|BE) [auto-detect]"
+echo "    --byte-order=STRING       Byte order for build (LE|BE) [auto-detect]"
 echo "    --cache=DIR               Cache ./configure results in directory [none]"
-echo "    --datadir=DIR             Data files (for program use) [PREFIX/share]"
+echo "    --datadir=DIR|NONE        Data files for program use [PREFIX/share]"
 echo "    --enable-nls              Multi-language support [no]"
-echo "    --exec-prefix=DIR         Installation base (machine-dependent) [PREFIX]"
+echo "    --exec-prefix=DIR         Machine-dependent installation base [PREFIX]"
 echo "    --host=STRING             Cross-compile for target environment [BUILD]"
 echo "    --includes=STRING         Preprocess C headers (yes|no|link) [yes]"
 echo "    --libdir=DIR              System libraries [PREFIX/lib]"
-echo "    --libexecdir=DIR          Executables (for program use) [PREFIX/libexec]"
+echo "    --libexecdir=DIR          Executables for program use [PREFIX/libexec]"
 echo "    --localedir=DIR           Multi-language support locales [DATADIR/locale]"
 echo "    --mandir=DIR              Manual page documentation [PREFIX/man]"
-echo "    --prefix=DIR              Installation base (machine-independent) [/usr/local]"
+echo "    --moduledir=DIR|NONE      Dynamically loaded modules [PREFIX/lib]"
+echo "    --prefix=DIR              Installation base [/usr/local]"
 echo "    --srcdir=DIR              Source directory for concurrent build [.]"
-echo "    --statedir=DIR            Modifiable single-machine data [PREFIX/var]"
-echo "    --sysconfdir=DIR          System configuration files [PREFIX/etc]"
+echo "    --statedir=DIR|NONE       Modifiable single-machine data [PREFIX/var]"
+echo "    --sysconfdir=DIR|NONE     System configuration files [PREFIX/etc]"
 echo "    --testdir=DIR             Execute all tests in this directory [.]"
 echo "    --with-catman             Install cat files for manual pages [auto-detect]"
 echo "    --with-ctags              Generate ctags(1) tag files [no]"
@@ -587,6 +594,16 @@ echo "#ifndef LIBDIR" > config/libdir.h
 echo "#define LIBDIR \"$LIBDIR\"" >> config/libdir.h
 echo "#endif" >> config/libdir.h
 echo "hdefs[\"LIBDIR\"] = \"$LIBDIR\"" >>configure.lua
+if [ "${moduledir}" != "" ]; then
+	MODULEDIR="${moduledir}"
+	MODULEDIR_SPECIFIED="yes"
+else
+	MODULEDIR="${PREFIX}/lib"
+fi
+echo "#ifndef MODULEDIR" > config/moduledir.h
+echo "#define MODULEDIR \"$MODULEDIR\"" >> config/moduledir.h
+echo "#endif" >> config/moduledir.h
+echo "hdefs[\"MODULEDIR\"] = \"$MODULEDIR\"" >>configure.lua
 if [ "${libexecdir}" != "" ]; then
 	LIBEXECDIR="${libexecdir}"
 	LIBEXECDIR_SPECIFIED="yes"
@@ -663,7 +680,7 @@ echo "#define RELEASE \"$RELEASE\"" >> config/release.h
 echo "#endif" >> config/release.h
 echo "hdefs[\"RELEASE\"] = \"$RELEASE\"" >>configure.lua
 if [ "${DATADIR_SPECIFIED}" != "yes" ]; then
-DATADIR=""$PREFIX/share/bsdbuild""
+DATADIR="$PREFIX/share/bsdbuild"
 echo "#ifndef DATADIR" > config/datadir.h
 echo "#define DATADIR \"$DATADIR\"" >> config/datadir.h
 echo "#endif" >> config/datadir.h
@@ -688,6 +705,8 @@ echo "ENABLE_NLS=$ENABLE_NLS" >>Makefile.config
 echo "mdefs[\"ENABLE_NLS\"] = \"$ENABLE_NLS\"" >>configure.lua
 echo "MANDIR=$MANDIR" >>Makefile.config
 echo "mdefs[\"MANDIR\"] = \"$MANDIR\"" >>configure.lua
+echo "MODULEDIR=$MODULEDIR" >>Makefile.config
+echo "mdefs[\"MODULEDIR\"] = \"$MODULEDIR\"" >>configure.lua
 echo "DATADIR=$DATADIR" >>Makefile.config
 echo "mdefs[\"DATADIR\"] = \"$DATADIR\"" >>configure.lua
 echo "STATEDIR=$STATEDIR" >>Makefile.config

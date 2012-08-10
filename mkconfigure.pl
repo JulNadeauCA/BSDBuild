@@ -673,7 +673,7 @@ sub pass1_register
 	if ($arg =~ /\"(.*)\"/) { $arg = $1; }
 	if ($descr =~ /\"(.*)\"/) { $descr = $1; }
 
-	my $darg = pack('A' x 25, split('', $arg));
+	my $darg = pack('A' x 27, split('', $arg));
 	push @Help, "echo \"    $darg $descr\"";
 }
 
@@ -1185,10 +1185,38 @@ my %done = ();
 my $registers = 1;
 my @INPUT = ();
 
-chop(@INPUT = <STDIN>);
+#
+# Read input, processing long line breaks.
+#
+my $trunc = 0;
+my $truncLine = '';
+while (<STDIN>) {
+	chop;
+	if ($trunc) {
+		$truncLine .= ' '.$_;
+		if (!/\\$/) {
+			$truncLine =~ s/\s+/ /g;
+			push @INPUT, $truncLine;
+			$truncLine = '';
+			$trunc = 0;
+		} else {
+			chop($truncLine);
+		}
+	} else {
+		if (/\\$/) {
+			chop;
+			$truncLine = $_;
+			$truncLine =~ s/\s+/ /g;
+			$trunc = 1;
+		} else {
+			push @INPUT, $_;
+		}
+	}
+}
 
 #
-# First pass: scan for directives that will not be processed in order.
+# First pass: scan for special directives which will not be processed
+# directly into Bourne script fragments.
 #
 if ($Verbose) {
 	print STDERR "First pass\n";

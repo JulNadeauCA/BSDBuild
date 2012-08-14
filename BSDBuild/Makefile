@@ -112,7 +112,8 @@ DATAFILES=Core.pm \
 	crypt.pm \
 	winsock.pm \
 	siocgifconf.pm \
-	fontconfig.pm
+	fontconfig.pm \
+	rand48.pm
 
 all:
 

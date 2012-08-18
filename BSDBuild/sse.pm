@@ -125,36 +125,6 @@ EOF
 	MkEndif;
 	MkSaveMK('SSE3_CFLAGS');
 	
-	MkPrintN('checking for SSE4 extensions...');
-	MkDefine('SSE4_CFLAGS', '-msse4');
-	MkCompileAndRunC('HAVE_SSE4', '${CFLAGS} ${SSE4_CFLAGS}', '',
-	    << 'EOF');
-#include <smmintrin.h>
-
-int
-main(int argc, char *argv[])
-{
-	float a[4] __attribute__ ((aligned(16)));
-	float b[4] __attribute__ ((aligned(16)));
-	__m128 vec1, vec2;
-	float rv;
-	a[0] = 1.0f; a[1] = 2.0f; a[2] = 3.0f; a[3] = 4.0f;
-	b[0] = 1.0f; b[1] = 2.0f; b[2] = 3.0f; b[3] = 4.0f;
-	vec1 = _mm_load_ps(a);
-	vec2 = _mm_load_ps(b);
-	vec1 = _mm_blend_ps(vec1, vec2, 0x00);
-	_mm_store_ss(&rv, vec1);
-	return (0);
-}
-EOF
-	MkIfTrue('${HAVE_SSE4}');
-		MkSaveDefine('SSE4_CFLAGS');
-	MkElse;
-		MkSaveUndef('SSE4_CFLAGS');
-		MkDefine('SSE4_CFLAGS', '');
-	MkEndif;
-	MkSaveMK('SSE4_CFLAGS');
-
 	return (0);
 }
 
@@ -162,7 +132,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	MkEmulUnavail('SSE', 'SSE2', 'SSE3', 'SSE4');
+	MkEmulUnavail('SSE', 'SSE2', 'SSE3');
 	return (1);
 }
 

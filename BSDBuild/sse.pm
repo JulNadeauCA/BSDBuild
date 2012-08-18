@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2007 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2007-2012 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -39,54 +39,19 @@ typedef union vec {
 	float v[4];
 	__m128 m128;
 	struct { float x, y, z, pad; };
-} Vector __attribute__ ((aligned(16)));
-
-const float testVals[4][7] = {
-	{ 0.076003,0.559770,0.163680, 1.0,	0.076003,0.559770,0.163680 },
-	{ 0.076003,0.559770,0.163680, 0.20485,	0.015569,0.114667,0.033529 },
-	{ 0.668390,0.929890,0.382710, 1.0,	0.668390,0.929890,0.382710 },
-	{ 0.668390,0.929890,0.382710, 0.95831,	0.640530,0.891120,0.366760 },
-};
-
-static Vector
-Scale(Vector a, float c)
-{
-	Vector b;
-	__m128 v;
-
-	v = _mm_set1_ps(c);
-	b.m128 = _mm_mul_ps(a.m128, v);
-	return (b);
-}
+} MyVector __attribute__ ((aligned(16)));
 
 int
 main(int argc, char *argv[])
 {
-	Vector a, b;
-	float dx, dy, dz;
-	int i, j;
+	MyVector a;
+	__m128 v;
 
-	for (i = 0; i < 10000; i++) {
-		for (j = 0; j < 4; j++) {
-			a.x = testVals[j][0];
-			a.y = testVals[j][1];
-			a.z = testVals[j][2];
-			b = Scale(a, testVals[j][3]);
-			dx = b.x - testVals[j][4];
-			dy = b.y - testVals[j][5];
-			dz = b.z - testVals[j][6];
-			if ((dx > 0.0 && dx >  MAXERR) ||
-			    (dx < 0.0 && dx < -MAXERR) ||
-			    (dy > 0.0 && dy >  MAXERR) ||
-			    (dy < 0.0 && dz < -MAXERR) ||
-			    (dz > 0.0 && dz >  MAXERR) ||
-			    (dz < 0.0 && dz < -MAXERR)) {
-				printf("results inaccurate [%f,%f,%f]\n",
-				    dx, dy, dz);
-				return (1);
-			}
-		}
-	}
+	a.x = 1.0f;
+	a.y = 2.0f;
+	a.z = 3.0f;
+	v = _mm_set1_ps(1.0f);
+	a.m128 = _mm_mul_ps(a.m128, v);
 	return (0);
 }
 EOF
@@ -111,7 +76,8 @@ main(int argc, char *argv[])
 	double b[4] __attribute__ ((aligned(16)));
 	double rv;
 	__m128d vec1, vec2;
-
+	a[0] = 1.0f; a[1] = 2.0f; a[2] = 3.0f; a[3] = 4.0f;
+	b[0] = 1.0f; b[1] = 2.0f; b[2] = 3.0f; b[3] = 4.0f;
 	vec1 = _mm_load_pd(a);
 	vec2 = _mm_load_pd(b);
 	vec1 = _mm_xor_pd(vec1, vec2);
@@ -140,7 +106,8 @@ main(int argc, char *argv[])
 	float b[4] __attribute__ ((aligned(16)));
 	__m128 vec1, vec2;
 	float rv;
-
+	a[0] = 1.0f; a[1] = 2.0f; a[2] = 3.0f; a[3] = 4.0f;
+	b[0] = 1.0f; b[1] = 2.0f; b[2] = 3.0f; b[3] = 4.0f;
 	vec1 = _mm_load_ps(a);
 	vec2 = _mm_load_ps(b);
 	vec1 = _mm_mul_ps(vec1, vec2);
@@ -157,6 +124,36 @@ EOF
 		MkDefine('SSE3_CFLAGS', '');
 	MkEndif;
 	MkSaveMK('SSE3_CFLAGS');
+	
+	MkPrintN('checking for SSE4 extensions...');
+	MkDefine('SSE4_CFLAGS', '-msse4');
+	MkCompileAndRunC('HAVE_SSE4', '${CFLAGS} ${SSE4_CFLAGS}', '',
+	    << 'EOF');
+#include <smmintrin.h>
+
+int
+main(int argc, char *argv[])
+{
+	float a[4] __attribute__ ((aligned(16)));
+	float b[4] __attribute__ ((aligned(16)));
+	__m128 vec1, vec2;
+	float rv;
+	a[0] = 1.0f; a[1] = 2.0f; a[2] = 3.0f; a[3] = 4.0f;
+	b[0] = 1.0f; b[1] = 2.0f; b[2] = 3.0f; b[3] = 4.0f;
+	vec1 = _mm_load_ps(a);
+	vec2 = _mm_load_ps(b);
+	vec1 = _mm_blend_ps(vec1, vec2, 0x00);
+	_mm_store_ss(&rv, vec1);
+	return (0);
+}
+EOF
+	MkIfTrue('${HAVE_SSE4}');
+		MkSaveDefine('SSE4_CFLAGS');
+	MkElse;
+		MkSaveUndef('SSE4_CFLAGS');
+		MkDefine('SSE4_CFLAGS', '');
+	MkEndif;
+	MkSaveMK('SSE4_CFLAGS');
 
 	return (0);
 }
@@ -165,7 +162,7 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	MkEmulUnavail('SSE', 'SSE2', 'SSE3');
+	MkEmulUnavail('SSE', 'SSE2', 'SSE3', 'SSE4');
 	return (1);
 }
 

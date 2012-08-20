@@ -39,7 +39,7 @@ main(int argc, char *argv[])
 	uid_t uid = 0;
 
 	pwd = getpwuid(uid);
-	return (pwd != NULL && pwd->pw_gecos != NULL && pwd->pw_class != NULL);
+	return (pwd != NULL && pwd->pw_dir != NULL);
 }
 EOF
 }

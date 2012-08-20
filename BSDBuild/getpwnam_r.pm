@@ -49,7 +49,7 @@ main(int argc, char *argv[])
 	if (res == NULL) {
 		return (rv == 0);
 	}
-	return (pw.pw_class != NULL && pw.pw_gecos != NULL && pw.pw_dir != NULL);
+	return (pw.pw_dir != NULL);
 }
 EOF
 }

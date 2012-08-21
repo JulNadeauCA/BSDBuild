@@ -113,7 +113,8 @@ DATAFILES=Core.pm \
 	winsock.pm \
 	siocgifconf.pm \
 	fontconfig.pm \
-	rand48.pm
+	rand48.pm \
+	nanosleep.pm
 
 all:
 

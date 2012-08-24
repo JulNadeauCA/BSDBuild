@@ -94,6 +94,26 @@ int main(int argc, char *argv[])
 }
 EOF
 	MkSaveIfTrue('${HAVE_X11}', 'X11_CFLAGS', 'X11_LIBS');
+
+	MkIfTrue('${HAVE_X11}');
+		MkPrintN('checking for the XKB extension...');
+		MkCompileC('HAVE_XKB', '${X11_CFLAGS}', '${X11_LIBS} -lX11', << 'EOF');
+#include <X11/Xlib.h>
+#include <X11/XKBlib.h>
+int main(int argc, char *argv[])
+{
+	Display *disp;
+	KeyCode kc = 0;
+	KeySym ks;
+	disp = XOpenDisplay(NULL);
+	ks = XkbKeycodeToKeysym(disp, kc, 0, 0);
+	XCloseDisplay(disp);
+	return (ks != NoSymbol);
+}
+EOF
+	MkElse;
+		MkSaveUndef('HAVE_XKB');
+	MkEndif;
 }
 
 sub Emul

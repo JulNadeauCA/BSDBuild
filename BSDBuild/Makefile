@@ -114,7 +114,8 @@ DATAFILES=Core.pm \
 	siocgifconf.pm \
 	fontconfig.pm \
 	rand48.pm \
-	nanosleep.pm
+	nanosleep.pm \
+	kqueue.pm
 
 all:
 

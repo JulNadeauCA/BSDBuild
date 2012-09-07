@@ -115,7 +115,8 @@ DATAFILES=Core.pm \
 	fontconfig.pm \
 	rand48.pm \
 	nanosleep.pm \
-	kqueue.pm
+	kqueue.pm \
+	timerfd.pm
 
 all:
 

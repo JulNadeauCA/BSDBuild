@@ -32,7 +32,11 @@ main(int argc, char *argv[])
 	int rv;
 
 	if ((rv = Pa_Initialize()) != paNoError) {
-		return (rv);
+		if (Pa_IsFormatSupported(NULL, NULL) != 0) {
+			return (0);
+		} else {
+			return (rv);
+		}
 	} else {
 		Pa_Terminate();
 		return (0);
@@ -89,7 +93,7 @@ sub Test
 
 	MkIfNE('${PORTAUDIO_VERSION}', '');
 		MkFoundVer($pfx, $ver, 'PORTAUDIO_VERSION');
-		MkPrintN('checking whether PortAudio works...');
+		MkPrintN('checking whether PortAudio2 works...');
 		MkCompileC('HAVE_PORTAUDIO',
 		    '${PORTAUDIO_CFLAGS}', '${PORTAUDIO_LIBS}',
 			$testCode);
@@ -112,7 +116,7 @@ BEGIN
 {
 	$TESTS{'portaudio'} = \&Test;
 	$DEPS{'portaudio'} = 'cc,pthreads';
-	$DESCR{'portaudio'} = 'PortAudio (http://www.portaudio.com/)';
+	$DESCR{'portaudio'} = 'PortAudio2 (http://www.portaudio.com/)';
 	$EMUL{'portaudio'} = \&Emul;
 }
 ;1

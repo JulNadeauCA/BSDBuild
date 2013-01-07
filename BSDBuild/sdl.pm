@@ -26,9 +26,14 @@
 use BSDBuild::Core;
 
 my $testCode = << 'EOF';
-#include <stdio.h>
-#include <SDL.h>
-
+#ifdef _USE_SDL_FRAMEWORK
+# include <SDL/SDL.h>
+# ifdef main
+#  undef main
+# endif
+#else
+# include <SDL.h>
+#endif
 int main(int argc, char *argv[]) {
 	SDL_Surface *su;
 
@@ -52,6 +57,18 @@ sub Test
 		MkExecOutputPfx($pfx, 'sdl-config', '--libs', 'SDL_LIBS');
 	MkElse;
 		MkCaseIn('${host}');
+		MkCaseBegin('*-*-darwin*');
+			MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
+			MkIfNE('${SDL_VERSION}', '');
+				MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
+				MkExecOutput('sdl-config', '--libs', 'SDL_LIBS');
+			MkElse;
+				MkPrintN('framework...');
+				MkDefine('SDL_VERSION', '1.2.15');
+				MkDefine('SDL_CFLAGS', '-D_USE_SDL_FRAMEWORK');
+				MkDefine('SDL_LIBS', '-framework SDL');
+			MkEndif;
+			MkCaseEnd;
 		MkCaseBegin('*-*-freebsd*');
 			MkExecOutput('sdl11-config', '--version', 'SDL_VERSION');
 			MkIfNE('${SDL_VERSION}', '');

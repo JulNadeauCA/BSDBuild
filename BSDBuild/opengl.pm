@@ -50,10 +50,10 @@ my @autoLibDirs = (
 );
 	
 my $testCode = << 'EOF';
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
+#ifdef _USE_OPENGL_FRAMEWORK
+# include <OpenGL/gl.h>
 #else
-#include <GL/gl.h>
+# include <GL/gl.h>
 #endif
 int main(int argc, char *argv[]) {
 	glFlush();
@@ -77,18 +77,28 @@ sub Test
 			MkSetTrue('GL_FOUND');
 		MkEndif;
 	MkElse;
-		foreach my $dir (@autoIncludeDirs) {
-			MkIfExists("$dir/GL");
-				MkDefine('GL_CFLAGS', "-I$dir");
-				MkSetTrue('GL_FOUND');
-			MkEndif;
-		}
-		foreach my $dir (@autoLibDirs) {
-			MkIfExists($dir);
-				MkDefine('GL_LIBS', "\${GL_LIBS} -L$dir");
-				MkSetTrue('GL_FOUND');
-			MkEndif;
-		}
+		MkCaseIn('${host}');
+		MkCaseBegin('*-*-darwin*');
+			MkPrintN('framework...');
+			MkDefine('OPENGL_CFLAGS', '-D_USE_OPENGL_FRAMEWORK');
+			MkDefine('OPENGL_LIBS', '-framework OpenGL');
+			MkSetTrue('GL_FOUND');
+			MkCaseEnd;
+		MkCaseBegin('*');
+			foreach my $dir (@autoIncludeDirs) {
+				MkIfExists("$dir/GL");
+					MkDefine('GL_CFLAGS', "-I$dir");
+					MkSetTrue('GL_FOUND');
+				MkEndif;
+			}
+			foreach my $dir (@autoLibDirs) {
+				MkIfExists($dir);
+					MkDefine('GL_LIBS', "\${GL_LIBS} -L$dir");
+					MkSetTrue('GL_FOUND');
+				MkEndif;
+			}
+			MkCaseEnd;
+		MkEsac;
 	MkEndif;
 
 	MkIfTrue('${GL_FOUND}');
@@ -96,8 +106,6 @@ sub Test
 
 		MkCaseIn('${host}');
 		MkCaseBegin('*-*-darwin*');
-			MkDefine('OPENGL_CFLAGS', '');
-			MkDefine('OPENGL_LIBS', '-framework OpenGL');
 			MkCaseEnd;
 		MkCaseBegin('*-*-cygwin* | *-*-mingw32*');
 			MkPrintN('checking whether -lopengl32 works...');

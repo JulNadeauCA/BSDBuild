@@ -116,7 +116,9 @@ DATAFILES=Core.pm \
 	rand48.pm \
 	nanosleep.pm \
 	kqueue.pm \
-	timerfd.pm
+	timerfd.pm \
+	etubestore.pm \
+	uim.pm
 
 all:
 

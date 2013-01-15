@@ -1,7 +1,6 @@
-# $Csoft: agar.pm,v 1.7 2005/09/27 00:29:42 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2011 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2012 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,13 +24,13 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 my $testCode = << 'EOF';
-#include <agar/core.h>
-#include <agar/au.h>
-
+#include <etubestore/ets/ets.h>
 int main(int argc, char *argv[]) {
-	AU_InitSubsystem();
-	AU_DestroySubsystem();
-	return (0);
+	ETS_Item *it;
+	ETS_Init(0);
+	it = ETS_ItemNew(NULL);
+	ETS_Destroy();
+	return (it != NULL);
 }
 EOF
 
@@ -39,22 +38,22 @@ sub Test
 {
 	my ($ver, $pfx) = @_;
 	
-	MkExecOutputPfx($pfx, 'agar-au-config', '--version', 'AGAR_AU_VERSION');
-	MkIfNE('${AGAR_AU_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'AGAR_AU_VERSION');
-		MkPrintN('checking whether agar-au works...');
+	MkExecOutputPfx($pfx, 'etubestore-config', '--version', 'ETUBESTORE_VERSION');
+	MkIfNE('${ETUBESTORE_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'ETUBESTORE_VERSION');
+		MkPrintN('checking whether libetubestore works...');
 		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
-		MkExecOutputPfx($pfx, 'agar-au-config', '--cflags', 'AGAR_AU_CFLAGS');
-		MkExecOutputPfx($pfx, 'agar-au-config', '--libs', 'AGAR_AU_LIBS');
-		MkCompileC('HAVE_AGAR_AU',
-		           '${AGAR_AU_CFLAGS} ${AGAR_CFLAGS}',
-		           '${AGAR_AU_LIBS} ${AGAR_LIBS}',
-				   $testCode);
-		MkSaveIfTrue('${HAVE_AGAR_AU}', 'AGAR_AU_CFLAGS', 'AGAR_AU_LIBS');
+		MkExecOutputPfx($pfx, 'etubestore-config', '--cflags', 'ETUBESTORE_CFLAGS');
+		MkExecOutputPfx($pfx, 'etubestore-config', '--libs', 'ETUBESTORE_LIBS');
+		MkCompileC('HAVE_ETUBESTORE',
+		           '${ETUBESTORE_CFLAGS} ${AGAR_CFLAGS}',
+				   '${ETUBESTORE_LIBS} ${AGAR_LIBS}',
+		           $testCode);
+		MkSaveIfTrue('${HAVE_ETUBESTORE}', 'ETUBESTORE_CFLAGS', 'ETUBESTORE_LIBS');
 	MkElse;
 		MkNotFound($pfx);
-		MkSaveUndef('HAVE_AGAR_AU', 'AGAR_AU_CFLAGS', 'AGAR_AU_LIBS');
+		MkSaveUndef('HAVE_ETUBESTORE', 'ETUBESTORE_CFLAGS', 'ETUBESTORE_LIBS');
 	MkEndif;
 	return (0);
 }
@@ -64,19 +63,22 @@ sub Emul
 	my ($os, $osrel, $machine) = @_;
 
 	if ($os =~ /^windows/) {
-		MkEmulWindows('AGAR_AU', 'ag_au');
+		MkEmulWindows('ETUBESTORE', 'etubestore');
 	} else {
-		MkEmulUnavail('AGAR_AU');
+		MkEmulUnavail('ETUBESTORE');
 	}
 	return (1);
 }
 
 BEGIN
 {
-	$DESCR{'agar-au'} = 'agar-au (http://libagar.org/)';
-	$DEPS{'agar-au'} = 'cc,agar';
-	$TESTS{'agar-au'} = \&Test;
-	$EMUL{'agar-au'} = \&Emul;
+	$TESTS{'etubestore'} = \&Test;
+	$DESCR{'etubestore'} = 'ElectronTubeStore API (http://electrontubestore.com/)';
+	$DEPS{'etubestore'} = 'cc,agar';
+	$EMUL{'etubestore'} = \&Emul;
+	@{$EMULDEPS{'etubestore'}} = qw(
+		agar
+	);
 }
 
 ;1

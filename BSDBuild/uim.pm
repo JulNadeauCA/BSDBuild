@@ -1,7 +1,6 @@
-# $Csoft: agar.pm,v 1.7 2005/09/27 00:29:42 vedge Exp $
 # vim:ts=4
 #
-# Copyright (c) 2011 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2013 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,12 +24,21 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 my $testCode = << 'EOF';
-#include <agar/core.h>
-#include <agar/au.h>
+#include <uim.h>
+#include <uim-util.h>
 
 int main(int argc, char *argv[]) {
-	AU_InitSubsystem();
-	AU_DestroySubsystem();
+	uim_context uimCtx;
+	const char *s;
+	int i;
+
+	uimCtx = uim_create_context(NULL, "UTF-8", NULL, NULL, uim_iconv, NULL);
+	for (i = 0; i < uim_get_nr_im(uimCtx); i++) {
+		s = uim_get_im_name(uimCtx, i);
+		if (s == NULL) { return (1); }
+	}
+	uim_release_context(uimCtx);
+
 	return (0);
 }
 EOF
@@ -39,22 +47,17 @@ sub Test
 {
 	my ($ver, $pfx) = @_;
 	
-	MkExecOutputPfx($pfx, 'agar-au-config', '--version', 'AGAR_AU_VERSION');
-	MkIfNE('${AGAR_AU_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'AGAR_AU_VERSION');
-		MkPrintN('checking whether agar-au works...');
-		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
-		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
-		MkExecOutputPfx($pfx, 'agar-au-config', '--cflags', 'AGAR_AU_CFLAGS');
-		MkExecOutputPfx($pfx, 'agar-au-config', '--libs', 'AGAR_AU_LIBS');
-		MkCompileC('HAVE_AGAR_AU',
-		           '${AGAR_AU_CFLAGS} ${AGAR_CFLAGS}',
-		           '${AGAR_AU_LIBS} ${AGAR_LIBS}',
-				   $testCode);
-		MkSaveIfTrue('${HAVE_AGAR_AU}', 'AGAR_AU_CFLAGS', 'AGAR_AU_LIBS');
+	MkExecPkgConfig($pfx, 'uim', '--modversion', 'UIM_VERSION');
+	MkExecPkgConfig($pfx, 'uim', '--cflags', 'UIM_CFLAGS');
+	MkExecPkgConfig($pfx, 'uim', '--libs', 'UIM_LIBS');
+	MkIfNE('${UIM_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'UIM_VERSION');
+		MkPrintN('checking whether uim works...');
+		MkCompileC('HAVE_UIM', '${UIM_CFLAGS}', '${UIM_LIBS}', $testCode);
+		MkSaveIfTrue('${HAVE_UIM}', 'UIM_CFLAGS', 'UIM_LIBS');
 	MkElse;
 		MkNotFound($pfx);
-		MkSaveUndef('HAVE_AGAR_AU', 'AGAR_AU_CFLAGS', 'AGAR_AU_LIBS');
+		MkSaveUndef('HAVE_UIM');
 	MkEndif;
 	return (0);
 }
@@ -62,21 +65,17 @@ sub Test
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
-
-	if ($os =~ /^windows/) {
-		MkEmulWindows('AGAR_AU', 'ag_au');
-	} else {
-		MkEmulUnavail('AGAR_AU');
-	}
+	
+	MkEmulUnavail('UIM');
 	return (1);
 }
 
 BEGIN
 {
-	$DESCR{'agar-au'} = 'agar-au (http://libagar.org/)';
-	$DEPS{'agar-au'} = 'cc,agar';
-	$TESTS{'agar-au'} = \&Test;
-	$EMUL{'agar-au'} = \&Emul;
+	$DESCR{'uim'} = 'uim framework (http://code.google.com/p/uim/)';
+	$TESTS{'uim'} = \&Test;
+	$DEPS{'uim'} = 'cc';
+	$EMUL{'uim'} = \&Emul;
 }
 
 ;1

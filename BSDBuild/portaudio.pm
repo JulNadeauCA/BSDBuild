@@ -24,6 +24,7 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 my $testCode = << 'EOF';
+#include <stdio.h>
 #include <portaudio2/portaudio.h>
 
 int
@@ -32,7 +33,7 @@ main(int argc, char *argv[])
 	int rv;
 
 	if ((rv = Pa_Initialize()) != paNoError) {
-		if (Pa_IsFormatSupported(NULL, NULL) != 0) {
+		if (Pa_IsFormatSupported(NULL, NULL, 48000.0) != 0) {
 			return (0);
 		} else {
 			return (rv);

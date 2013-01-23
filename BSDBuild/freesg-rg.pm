@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2007 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2013 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 my $testCode = << 'EOF';
 #include <agar/core.h>
 #include <agar/gui.h>
-#include <agar/rg.h>
+#include <freesg/rg.h>
 
 int main(int argc, char *argv[]) {
 	RG_Tileset *ts;
@@ -41,22 +41,22 @@ sub Test
 {
 	my ($ver, $pfx) = @_;
 	
-	MkExecOutputPfx($pfx, 'agar-rg-config', '--version', 'AGAR_RG_VERSION');
-	MkIfNE('${AGAR_RG_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'AGAR_RG_VERSION');
-		MkPrintN('checking whether Agar-RG works...');
+	MkExecOutputPfx($pfx, 'freesg-rg-config', '--version', 'FREESG_RG_VERSION');
+	MkIfNE('${FREESG_RG_VERSION}', '');
+		MkFoundVer($pfx, $ver, 'FREESG_RG_VERSION');
+		MkPrintN('checking whether FreeSG-RG works...');
 		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
-		MkExecOutputPfx($pfx, 'agar-rg-config', '--cflags', 'AGAR_RG_CFLAGS');
-		MkExecOutputPfx($pfx, 'agar-rg-config', '--libs', 'AGAR_RG_LIBS');
-		MkCompileC('HAVE_AGAR_RG',
-		           '${AGAR_RG_CFLAGS} ${AGAR_CFLAGS}',
-		           '${AGAR_RG_LIBS} ${AGAR_LIBS}',
+		MkExecOutputPfx($pfx, 'freesg-rg-config', '--cflags', 'FREESG_RG_CFLAGS');
+		MkExecOutputPfx($pfx, 'freesg-rg-config', '--libs', 'FREESG_RG_LIBS');
+		MkCompileC('HAVE_FREESG_RG',
+		           '${FREESG_RG_CFLAGS} ${AGAR_CFLAGS}',
+		           '${FREESG_RG_LIBS} ${AGAR_LIBS}',
 				   $testCode);
-		MkSaveIfTrue('${HAVE_AGAR_RG}', 'AGAR_RG_CFLAGS', 'AGAR_RG_LIBS');
+		MkSaveIfTrue('${HAVE_FREESG_RG}', 'FREESG_RG_CFLAGS', 'FREESG_RG_LIBS');
 	MkElse;
 		MkNotFound($pfx);
-		MkSaveUndef('HAVE_AGAR_RG', 'AGAR_RG_CFLAGS', 'AGAR_RG_LIBS');
+		MkSaveUndef('HAVE_FREESG_RG', 'FREESG_RG_CFLAGS', 'FREESG_RG_LIBS');
 	MkEndif;
 	return (0);
 }
@@ -66,19 +66,19 @@ sub Emul
 	my ($os, $osrel, $machine) = @_;
 
 	if ($os =~ /^windows/) {
-		MkEmulWindows('AGAR_RG', 'ag_rg');
+		MkEmulWindows('FREESG_RG', 'freesg_rg');
 	} else {
-		MkEmulUnavail('AGAR_RG');
+		MkEmulUnavail('FREESG_RG');
 	}
 	return (1);
 }
 
 BEGIN
 {
-	$DESCR{'agar-rg'} = 'agar-rg (http://hypertriton.com/agar-rg/)';
-	$DEPS{'agar-rg'} = 'cc,agar';
-	$TESTS{'agar-rg'} = \&Test;
-	$EMUL{'agar-rg'} = \&Emul;
+	$DESCR{'freesg-rg'} = 'FreeSG-RG (http://freesg.org/)';
+	$DEPS{'freesg-rg'} = 'cc,agar';
+	$TESTS{'freesg-rg'} = \&Test;
+	$EMUL{'freesg-rg'} = \&Emul;
 }
 
 ;1

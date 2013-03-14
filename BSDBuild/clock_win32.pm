@@ -40,7 +40,7 @@ main(int argc, char *argv[])
 #endif
 	t0 = timeGetTime();
 	Sleep(1);
-	return (0);
+	return (to != 0) ? 0 : 1;
 }
 EOF
 

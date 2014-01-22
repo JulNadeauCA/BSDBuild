@@ -47,15 +47,15 @@ EXTERN_C void xs_init(pTHX) {
 int
 main(int argc, char **argv, char **env)
 {
-	PerlInterpreter *myPerl;
+	PerlInterpreter *my_perl;
 	char *myArgv[] = { "", "foo.pl" };
 
 	PERL_SYS_INIT3(&argc, &argv, &env);
-	myPerl = perl_alloc();
-	perl_construct(myPerl);
-	perl_parse(myPerl, xs_init, 2, myArgv, (char **)NULL);
+	my_perl = perl_alloc();
+	perl_construct(my_perl);
+	perl_parse(my_perl, xs_init, 2, myArgv, (char **)NULL);
 	PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
-	perl_run(myPerl);
+	perl_run(my_perl);
 	return (0);
 }
 EOF

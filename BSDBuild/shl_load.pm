@@ -60,8 +60,8 @@ sub Test
 	                 '${SHL_LOAD_LIBS}',
 					 $testCode);
 	MkIfTrue('${HAVE_SHL_LOAD}');
-		MkSave('HAVE_SHL_LOAD');
 		MkDefine('DSO_LIBS', '$DSO_LIBS $SHL_LOAD_LIBS');
+		MkSave('HAVE_SHL_LOAD', 'DSO_LIBS');
 	MkElse;
 		MkSaveUndef('HAVE_SHL_LOAD');
 	MkEndif;

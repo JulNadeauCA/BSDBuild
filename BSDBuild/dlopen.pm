@@ -55,11 +55,10 @@ sub Test
 		MkIfTrue('${HAVE_DLOPEN}');
 			MkDefine('DSO_CFLAGS', '');
 			MkDefine('DSO_LIBS', '-ldl');
+			MkSave('DSO_CFLAGS', 'DSO_LIBS');
 		MkEndif;
 	MkEndif;
 	EndTestHeaders();
-
-	MkSave('DSO_CFLAGS', 'DSO_LIBS');
 }
 
 sub Emul

@@ -25,9 +25,6 @@
 
 sub Test
 {
-	MkDefine('DSO_CFLAGS', '');
-	MkDefine('DSO_LIBS', '');
-
 	BeginTestHeaders();
 	DetectHeaderC('HAVE_MACH_O_DYLD_H',	'<mach-o/dyld.h>');
 
@@ -78,8 +75,6 @@ EOF
 	MkEndif;
 
 	EndTestHeaders();
-	
-	MkSave('DSO_CFLAGS', 'DSO_LIBS');
 }
 
 sub Emul

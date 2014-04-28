@@ -29,8 +29,7 @@ sub Test
 	
 	MkExecOutputPfx($pfx, 'curl-config', '--version', 'CURL_VERSION');
 
-	MkIfNE('${CURL_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'CURL_VERSION');
+	MkIfFound($pfx, $ver, 'CURL_VERSION');
 		MkPrintN('checking whether libcurl works...');
 		MkExecOutputPfx($pfx, 'curl-config', '--cflags', 'CURL_CFLAGS');
 		MkExecOutputPfx($pfx, 'curl-config', '--libs', 'CURL_LIBS');
@@ -49,8 +48,7 @@ main(int argc, char *argv[])
 EOF
 		MkSaveIfTrue('${HAVE_CURL}', 'CURL_CFLAGS', 'CURL_LIBS');
 	MkElse;
-		MkNotFound($pfx);
-	    MkSaveUndef('HAVE_CURL', 'CURL_CFLAGS', 'CURL_LIBS');
+		MkSaveUndef('HAVE_CURL', 'CURL_CFLAGS', 'CURL_LIBS');
 	MkEndif;
 	return (0);
 }

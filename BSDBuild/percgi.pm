@@ -39,18 +39,14 @@ sub Test
 	my ($ver, $pfx) = @_;
 	
 	MkExecOutputPfx($pfx, 'percgi-config', '--version', 'PERCGI_VERSION');
-	MkIfNE('${PERCGI_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'PERCGI_VERSION');
+	MkIfFound($pfx, $ver, 'PERCGI_VERSION');
 		MkExecOutputPfx($pfx, 'percgi-config', '--cflags', 'PERCGI_CFLAGS');
 		MkExecOutputPfx($pfx, 'percgi-config', '--libs', 'PERCGI_LIBS');
 		MkPrintN('checking whether PerCGI works...');
-		MkCompileC('HAVE_PERCGI',
-		           '${PERCGI_CFLAGS}', '${PERCGI_LIBS}',
-				   $testCode);
-        MkSaveIfTrue('${HAVE_PERCGI}', 'PERCGI_CFLAGS', 'PERCGI_LIBS');
+		MkCompileC('HAVE_PERCGI', '${PERCGI_CFLAGS}', '${PERCGI_LIBS}', $testCode);
+		MkSaveIfTrue('${HAVE_PERCGI}', 'PERCGI_CFLAGS', 'PERCGI_LIBS');
 	MkElse;
-		MkNotFound($pfx);
-	    MkSaveUndef('HAVE_PERCGI', 'PERCGI_CFLAGS', 'PERCGI_LIBS');
+		MkSaveUndef('HAVE_PERCGI', 'PERCGI_CFLAGS', 'PERCGI_LIBS');
 	MkEndif;
 	return (0);
 }

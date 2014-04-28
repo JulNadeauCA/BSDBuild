@@ -56,8 +56,7 @@ sub Test
 	my ($ver, $pfx) = @_;
 	
 	MkExecOutputPfx($pfx, 'agar-core-config', '--version', 'AGAR_CORE_VERSION');
-	MkIfNE('${AGAR_CORE_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'AGAR_CORE_VERSION');
+	MkIfFound($pfx, $ver, 'AGAR_CORE_VERSION');
 		MkPrintN('checking whether Agar-Core works...');
 		MkExecOutputPfx($pfx, 'agar-core-config', '--cflags', 'AGAR_CORE_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-core-config', '--libs', 'AGAR_CORE_LIBS');
@@ -66,7 +65,6 @@ sub Test
 				   $testCode);
 		MkSaveIfTrue('${HAVE_AGAR_CORE}', 'AGAR_CORE_CFLAGS', 'AGAR_CORE_LIBS');
 	MkElse;
-	    MkNotFound($pfx);
 		MkSaveUndef('AGAR_CORE_CFLAGS', 'AGAR_CORE_LIBS');
 	MkEndif;
 	return (0);

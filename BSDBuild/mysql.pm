@@ -38,20 +38,16 @@ EOF
 
 sub Test
 {
-	my ($ver) = @_;
+	my ($ver, $pfx) = @_;
 	
 	MkExecOutputUnique('mysql_config', '--version', 'MYSQL_VERSION');
-	MkIfNE('${MYSQL_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'MYSQL_VERSION');
+	MkIfFound($pfx, $ver, 'MYSQL_VERSION');
 		MkPrintN('checking whether MySQL works...');
 		MkExecOutput('mysql_config', '--cflags', 'MYSQL_CFLAGS');
 		MkExecOutput('mysql_config', '--libs', 'MYSQL_LIBS');
-		MkCompileC('HAVE_MYSQL',
-		           '${MYSQL_CFLAGS}', '${MYSQL_LIBS}',
-				   $testCode);
+		MkCompileC('HAVE_MYSQL', '${MYSQL_CFLAGS}', '${MYSQL_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_MYSQL}', 'MYSQL_CFLAGS', 'MYSQL_LIBS');
 	MkElse;
-	    MkNotFound($pfx);
 		MkSaveUndef('MYSQL_CFLAGS', 'MYSQL_LIBS');
 	MkEndif;
 	return (0);

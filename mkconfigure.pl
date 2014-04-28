@@ -54,6 +54,7 @@ my %Fns = (
 	'c_no_secure_warnings'	=> \&c_no_secure_warnings,
 	'c_incdir_config'	=> \&c_incdir_config,
 	'c_include_config'	=> \&c_include_config,
+	'config_cache'		=> \&config_cache,
 	'config_script'		=> \&config_script,
 	'config_guess'		=> \&config_guess,
 	'check_header'		=> \&check_header,
@@ -102,6 +103,18 @@ sub release
 	MkDefine('RELEASE', $val);
 	MkSaveMK('RELEASE');
 	MkSaveDefine('RELEASE');
+}
+
+# Enable/disable support for the ./configure --cache option.
+sub config_cache
+{
+	my ($val) = @_;
+
+	if (lc($val) eq 'yes' || lc($val) eq 'on') {
+		$Cache = 1;
+	} else {
+		$Cache = 0;
+	}
 }
 
 # Directives used in first pass; no-ops as script directives
@@ -191,7 +204,8 @@ sub check_perl_module
 	$define =~ s/::/_/;
 
 	MkPrintN("checking for Perl module $modname...");
-	print << "EOF";
+	if ($Cache) {
+		print << "EOF";
 $define="No"
 MK_CACHED="No"
 if [ "\${cache}" != "" ]; then
@@ -213,7 +227,21 @@ if [ "\${MK_CACHED}" = "No" ]; then
 	fi
 fi
 EOF
-
+	} else {
+		print << "EOF";
+$define="No"
+cat /dev/null | \${PERL} -M$modname 2>/dev/null
+if [ \$? != 0 ]; then
+	echo "-> not found (\$?)" >> config.log
+	$define="no"
+	echo "no"
+else
+	echo "-> found" >> config.log
+	$define="yes"
+	echo "yes"
+fi
+EOF
+	}
 }
 
 # Check for a Perl module and fail if not found.

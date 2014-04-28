@@ -92,15 +92,11 @@ sub Test
 		MkEndif;
 	MkEndif;
 
-	MkIfNE('${PORTAUDIO_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'PORTAUDIO_VERSION');
+	MkIfFound($pfx, $ver, 'PORTAUDIO_VERSION');
 		MkPrintN('checking whether PortAudio2 works...');
-		MkCompileC('HAVE_PORTAUDIO',
-		    '${PORTAUDIO_CFLAGS}', '${PORTAUDIO_LIBS}',
-			$testCode);
+		MkCompileC('HAVE_PORTAUDIO', '${PORTAUDIO_CFLAGS}', '${PORTAUDIO_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_PORTAUDIO}', 'PORTAUDIO_CFLAGS', 'PORTAUDIO_LIBS');
 	MkElse;
-		MkPrint('no');
 		MkSaveUndef('HAVE_PORTAUDIO', 'PORTAUDIO_CFLAGS', 'PORTAUDIO_LIBS');
 	MkEndif;
 }

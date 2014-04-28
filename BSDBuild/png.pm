@@ -49,23 +49,19 @@ sub Test
 	MkExecOutputPfx($pfx, 'libpng-config', '--L_opts', 'PNG_LOPTS');
 	MkExecOutputPfx($pfx, 'libpng-config', '--libs', 'PNG_LIBS');
 	MkDefine('PNG_LIBS', '${PNG_LOPTS} ${PNG_LIBS}');
-	MkIfNE('${PNG_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'PNG_VERSION');
+	MkIfFound($pfx, $ver, 'PNG_VERSION');
 		MkPrintN('checking whether libpng works...');
-		MkCompileC('HAVE_PNG',
-		           '${PNG_CFLAGS}', '${PNG_LIBS}',
-				   $testCode);
+		MkCompileC('HAVE_PNG', '${PNG_CFLAGS}', '${PNG_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_PNG}', 'PNG_CFLAGS', 'PNG_LIBS');
 		
 		MkTestVersion('PNG_VERSION', '1.4.0');
-		MkIfEQ('${MK_VERSION_OK}', 'yes');
+		MkIfVersionOK;
 			MkDefine('HAVE_LIBPNG14', 'yes');
 			MkSave('HAVE_LIBPNG14');
 		MkElse;
 			MkSaveUndef('HAVE_LIBPNG14');
 		MkEndif;
 	MkElse;
-		MkNotFound($pfx);
 		MkSaveUndef('HAVE_PNG', 'PNG_CFLAGS', 'PNG_LIBS', 'HAVE_LIBPNG14');
 	MkEndif;
 	return (0);

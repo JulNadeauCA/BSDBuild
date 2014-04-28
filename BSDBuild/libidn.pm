@@ -45,15 +45,11 @@ sub Test
 	MkExecPkgConfig($pfx, 'libidn', '--modversion', 'LIBIDN_VERSION');
 	MkExecPkgConfig($pfx, 'libidn', '--cflags', 'LIBIDN_CFLAGS');
 	MkExecPkgConfig($pfx, 'libidn', '--libs', 'LIBIDN_LIBS');
-	MkIfNE('${LIBIDN_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'LIBIDN_VERSION');
+	MkIfFound($pfx, $ver, 'LIBIDN_VERSION');
 		MkPrintN('checking whether libidn works...');
-		MkCompileC('HAVE_LIBIDN',
-		           '${LIBIDN_CFLAGS}', '${LIBIDN_LIBS}',
-				   $testCode);
+		MkCompileC('HAVE_LIBIDN', '${LIBIDN_CFLAGS}', '${LIBIDN_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_LIBIDN}', 'LIBIDN_CFLAGS', 'LIBIDN_LIBS');
 	MkElse;
-		MkNotFound($pfx);
 		MkSaveUndef('HAVE_LIBIDN', 'LIBIDN_CFLAGS', 'LIBIDN_LIBS');
 	MkEndif;
 	return (0);

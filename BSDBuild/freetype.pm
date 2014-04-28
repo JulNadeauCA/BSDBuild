@@ -54,16 +54,12 @@ sub Test
 		MkCaseEnd;
 	MkEsac;
 
-	MkIfNE('${FREETYPE_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'FREETYPE_VERSION');
+	MkIfFound($pfx, $ver, 'FREETYPE_VERSION');
 		MkPrintN('checking whether FreeType works...');
-		MkCompileC('HAVE_FREETYPE',
-		           '${FREETYPE_CFLAGS}',
-				   '${FREETYPE_LIBS}', $testCode);
+		MkCompileC('HAVE_FREETYPE', '${FREETYPE_CFLAGS}', '${FREETYPE_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_FREETYPE}', 'FREETYPE_CFLAGS', 'FREETYPE_LIBS');
 	MkElse;
-		MkNotFound($pfx);
-	    MkSaveUndef('HAVE_FREETYPE');
+		MkSaveUndef('HAVE_FREETYPE');
 	MkEndif;
 	return (0);
 }

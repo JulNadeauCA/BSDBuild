@@ -41,8 +41,7 @@ sub Test
 	my ($ver, $pfx) = @_;
 	
 	MkExecOutputPfx($pfx, 'agar-vg-config', '--version', 'AGAR_VG_VERSION');
-	MkIfNE('${AGAR_VG_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'AGAR_VG_VERSION');
+	MkIfFound($pfx, $ver, 'AGAR_VG_VERSION');
 		MkPrintN('checking whether agar-vg works...');
 		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
@@ -54,7 +53,6 @@ sub Test
 				   $testCode);
 		MkSaveIfTrue('${HAVE_AGAR_VG}', 'AGAR_VG_CFLAGS', 'AGAR_VG_LIBS');
 	MkElse;
-		MkNotFound($pfx);
 		MkSaveUndef('HAVE_AGAR_VG', 'AGAR_VG_CFLAGS', 'AGAR_VG_LIBS');
 	MkEndif;
 	return (0);

@@ -41,15 +41,11 @@ sub Test
 	MkExecOutputPfx($pfx, 'mgid-config', '--version', 'MGID_VERSION');
 	MkExecOutputPfx($pfx, 'mgid-config', '--cflags', 'MGID_CFLAGS');
 	MkExecOutputPfx($pfx, 'mgid-config', '--libs', 'MGID_LIBS');
-	MkIfNE('${MGID_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'MGID_VERSION');
+	MkIfFound($pfx, $ver, 'MGID_VERSION');
 		MkPrintN('checking whether libmgid works...');
-		MkCompileC('HAVE_MGID',
-		           '${MGID_CFLAGS}', '${MGID_LIBS}',
-				   $testCode);
+		MkCompileC('HAVE_MGID', '${MGID_CFLAGS}', '${MGID_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_MGID}', 'MGID_CFLAGS', 'MGID_LIBS');
 	MkElse;
-		MkNotFound($pfx);
 		MkSaveUndef('HAVE_MGID');
 	MkEndif;
 	return (0);

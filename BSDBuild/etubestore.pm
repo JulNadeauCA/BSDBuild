@@ -39,8 +39,7 @@ sub Test
 	my ($ver, $pfx) = @_;
 	
 	MkExecOutputPfx($pfx, 'etubestore-config', '--version', 'ETUBESTORE_VERSION');
-	MkIfNE('${ETUBESTORE_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'ETUBESTORE_VERSION');
+	MkIfFound($pfx, $ver, 'ETUBESTORE_VERSION');
 		MkPrintN('checking whether libetubestore works...');
 		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
@@ -52,7 +51,6 @@ sub Test
 		           $testCode);
 		MkSaveIfTrue('${HAVE_ETUBESTORE}', 'ETUBESTORE_CFLAGS', 'ETUBESTORE_LIBS');
 	MkElse;
-		MkNotFound($pfx);
 		MkSaveUndef('HAVE_ETUBESTORE', 'ETUBESTORE_CFLAGS', 'ETUBESTORE_LIBS');
 	MkEndif;
 	return (0);

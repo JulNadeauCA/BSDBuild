@@ -45,15 +45,11 @@ sub Test
 	MkExecPkgConfig($pfx, 'sndfile', '--modversion', 'SNDFILE_VERSION');
 	MkExecPkgConfig($pfx, 'sndfile', '--cflags', 'SNDFILE_CFLAGS');
 	MkExecPkgConfig($pfx, 'sndfile', '--libs', 'SNDFILE_LIBS');
-	MkIfNE('${SNDFILE_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'SNDFILE_VERSION');
+	MkIfFound($pfx, $ver, 'SNDFILE_VERSION');
 		MkPrintN('checking whether libsndfile works...');
-		MkCompileC('HAVE_SNDFILE',
-		           '${SNDFILE_CFLAGS}', '${SNDFILE_LIBS}',
-				   $testCode);
+		MkCompileC('HAVE_SNDFILE', '${SNDFILE_CFLAGS}', '${SNDFILE_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_SNDFILE}', 'SNDFILE_CFLAGS', 'SNDFILE_LIBS');
 	MkElse;
-		MkNotFound($pfx);
 		MkSaveUndef('HAVE_SNDFILE');
 	MkEndif;
 	return (0);

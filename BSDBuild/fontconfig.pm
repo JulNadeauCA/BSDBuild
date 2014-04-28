@@ -58,15 +58,13 @@ sub Test
 	MkExecPkgConfig($pfx, 'fontconfig', '--modversion', 'FONTCONFIG_VERSION');
 	MkExecPkgConfig($pfx, 'fontconfig', '--cflags', 'FONTCONFIG_CFLAGS');
 	MkExecPkgConfig($pfx, 'fontconfig', '--libs', 'FONTCONFIG_LIBS');
-	MkIfNE('${FONTCONFIG_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'FONTCONFIG_VERSION');
+	MkIfFound($pfx, $ver, 'FONTCONFIG_VERSION');
 		MkPrintN('checking whether fontconfig works...');
 		MkCompileC('HAVE_FONTCONFIG',
 		           '${FONTCONFIG_CFLAGS}', '${FONTCONFIG_LIBS}',
 				   $testCode);
 		MkSaveIfTrue('${HAVE_FONTCONFIG}', 'FONTCONFIG_CFLAGS', 'FONTCONFIG_LIBS');
 	MkElse;
-		MkNotFound($pfx);
 		MkSaveUndef('HAVE_FONTCONFIG');
 	MkEndif;
 	return (0);

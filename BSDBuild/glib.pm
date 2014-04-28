@@ -31,26 +31,18 @@ sub Test
 	MkExecOutputPfx($pfx, 'glib-config', '--cflags', 'GLIB_CFLAGS');
 	MkExecOutputPfx($pfx, 'glib-config', '--libs', 'GLIB_LIBS');
 	
-	MkCaseIn('${host}');
-	MkCaseBegin('*-*-freebsd*');
-		MkExecOutputPfx($pfx, 'glib12-config', '--version', 'glib12_version');
-		MkExecOutputPfx($pfx, 'glib12-config', '--cflags', 'glib12_cflags');
-		MkExecOutputPfx($pfx, 'glib12-config', '--libs', 'glib12_libs');
-		MkCaseEnd;
-	MkEsac;
-
-	MkIfNE('${GLIB_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'GLIB_VERSION');
+	MkIfFound($pfx, $ver, 'GLIB_VERSION');
 		MkSave('HAVE_GLIB', 'GLIB_CFLAGS', 'GLIB_LIBS');
 	MkElse;
-		MkIfNE('${glib12_version}', '');
-			MkFoundVer($pfx, $ver, 'glib12_version');
-			MkDefine('GLIB_CFLAGS', '${glib12_cflags}');
-			MkDefine('GLIB_LIBS', '${glib12_libs}');
+		MkPrintN("checking for glib 1.2...")
+		MkExecOutputPfx($pfx, 'glib12-config', '--version', 'GLIB12_VERSION');
+		MkExecOutputPfx($pfx, 'glib12-config', '--cflags', 'GLIB12_CFLAGS');
+		MkExecOutputPfx($pfx, 'glib12-config', '--libs', 'GLIB12_LIBS');
+		MkIfFound($pfx, $ver, 'GLIB12_VERSION');
+			MkDefine('GLIB_CFLAGS', '${GLIB12_CFLAGS}');
+			MkDefine('GLIB_LIBS', '${GLIB12_LIBS}');
 			MkSave('HAVE_GLIB', 'GLIB_CFLAGS', 'GLIB_LIBS');
-			MkPrint('yes');
 		MkElse;
-			MkNotFound($pfx);
 			MkSaveUndef('HAVE_GLIB');
 		MkEndif;
 	MkEndif;

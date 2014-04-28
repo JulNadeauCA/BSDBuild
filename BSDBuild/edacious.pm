@@ -39,8 +39,7 @@ sub Test
 	my ($ver, $pfx) = @_;
 	
 	MkExecOutputPfx($pfx, 'edacious-config', '--version', 'EDACIOUS_VERSION');
-	MkIfNE('${EDACIOUS_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'EDACIOUS_VERSION');
+	MkIfFound($pfx, $ver, 'EDACIOUS_VERSION');
 		MkPrintN('checking whether Edacious works...');
 		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
@@ -58,7 +57,6 @@ sub Test
 		           $testCode);
 		MkSaveIfTrue('${HAVE_EDACIOUS}', 'EDACIOUS_CFLAGS', 'EDACIOUS_LIBS');
 	MkElse;
-		MkNotFound($pfx);
 		MkSaveUndef('HAVE_EDACIOUS', 'EDACIOUS_CFLAGS', 'EDACIOUS_LIBS');
 	MkEndif;
 	return (0);

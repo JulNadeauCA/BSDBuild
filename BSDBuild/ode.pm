@@ -45,15 +45,11 @@ sub Test
 	MkExecOutputPfx($pfx, 'ode-config', '--version', 'ODE_VERSION');
 	MkExecOutputPfx($pfx, 'ode-config', '--cflags', 'ODE_CFLAGS');
 	MkExecOutputPfx($pfx, 'ode-config', '--libs', 'ODE_LIBS');
-	MkIfNE('${ODE_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'ODE_VERSION');
+	MkIfFound($pfx, $ver, 'ODE_VERSION');
 		MkPrintN('checking whether ODE works...');
-		MkCompileC('HAVE_ODE',
-		           '${ODE_CFLAGS}', '${ODE_LIBS}',
-				   $testCode);
+		MkCompileC('HAVE_ODE', '${ODE_CFLAGS}', '${ODE_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_ODE}', 'ODE_CFLAGS', 'ODE_LIBS');
 	MkElse;
-		MkNotFound($pfx);
 		MkSaveUndef('HAVE_ODE');
 	MkEndif;
 	return (0);

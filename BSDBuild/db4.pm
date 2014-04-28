@@ -151,13 +151,11 @@ EOF
 done
 EOF
 
-	MkIfNE('${DB4_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'DB4_VERSION');
+	MkIfFound($pfx, $ver, 'DB4_VERSION');
 		MkPrintN('checking whether DB4 works...');
 		MkCompileC('HAVE_DB4', '${DB4_CFLAGS}', '${DB4_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_DB4}', 'DB4_CFLAGS', 'DB4_LIBS');
 	MkElse;
-		MkNotFound($pfx);
 		MkSaveUndef('HAVE_DB4');
 	MkEndif;
 	return (0);

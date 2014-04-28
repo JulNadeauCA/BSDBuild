@@ -40,8 +40,7 @@ sub Test
 	my ($ver, $pfx) = @_;
 	
 	MkExecOutputPfx($pfx, 'agar-au-config', '--version', 'AGAR_AU_VERSION');
-	MkIfNE('${AGAR_AU_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'AGAR_AU_VERSION');
+	MkIfFound($pfx, $ver, 'AGAR_AU_VERSION');
 		MkPrintN('checking whether agar-au works...');
 		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
@@ -53,7 +52,6 @@ sub Test
 				   $testCode);
 		MkSaveIfTrue('${HAVE_AGAR_AU}', 'AGAR_AU_CFLAGS', 'AGAR_AU_LIBS');
 	MkElse;
-		MkNotFound($pfx);
 		MkSaveUndef('HAVE_AGAR_AU', 'AGAR_AU_CFLAGS', 'AGAR_AU_LIBS');
 	MkEndif;
 	return (0);

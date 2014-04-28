@@ -42,8 +42,7 @@ sub Test
 	my ($ver, $pfx) = @_;
 	
 	MkExecOutputPfx($pfx, 'agar-math-config', '--version', 'AGAR_MATH_VERSION');
-	MkIfNE('${AGAR_MATH_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'AGAR_MATH_VERSION');
+	MkIfFound($pfx, $ver, 'AGAR_MATH_VERSION');
 		MkPrintN('checking whether Agar-Math works...');
 		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
@@ -55,7 +54,6 @@ sub Test
 				   $testCode);
 		MkSaveIfTrue('${HAVE_AGAR_MATH}', 'AGAR_MATH_CFLAGS', 'AGAR_MATH_LIBS');
 	MkElse;
-		MkNotFound($pfx);
 		MkSaveUndef('HAVE_AGAR_MATH', 'AGAR_MATH_CFLAGS', 'AGAR_MATH_LIBS');
 	MkEndif;
 	return (0);

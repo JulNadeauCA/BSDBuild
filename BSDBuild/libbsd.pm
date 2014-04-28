@@ -20,15 +20,13 @@ sub Test
 	MkExecPkgConfig($pfx, 'libbsd', '--modversion', 'LIBBSD_VERSION');
 	MkExecPkgConfig($pfx, 'libbsd', '--cflags', 'LIBBSD_CFLAGS');
 	MkExecPkgConfig($pfx, 'libbsd', '--libs', 'LIBBSD_LIBS');
-	MkIfNE('${LIBBSD_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'LIBBSD_VERSION');
+	MkIfFound($pfx, $ver, 'LIBBSD_VERSION');
 		MkPrintN('checking whether libbsd works...');
 		MkCompileC('HAVE_LIBBSD',
 		           '${LIBBSD_CFLAGS}', '${LIBBSD_LIBS}',
 		           $testCode);
 		MkSaveIfTrue('${HAVE_LIBBSD}', 'LIBBSD_CFLAGS', 'LIBBSD_LIBS');
 	MkElse;
-		MkNotFound($pfx);
 		MkSaveUndef('HAVE_LIBBSD', 'LIBBSD_CFLAGS', 'LIBBSD_LIBS');
 	MkEndif;
 	return (0);

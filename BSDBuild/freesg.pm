@@ -40,8 +40,7 @@ sub Test
 	my ($ver, $pfx) = @_;
 	
 	MkExecOutputPfx($pfx, 'freesg-config', '--version', 'FREESG_VERSION');
-	MkIfNE('${FREESG_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'FREESG_VERSION');
+	MkIfFound($pfx, $ver, 'FREESG_VERSION');
 		MkPrintN('checking whether FreeSG works...');
 		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
@@ -53,7 +52,6 @@ sub Test
 		           $testCode);
 		MkSaveIfTrue('${HAVE_FREESG}', 'FREESG_CFLAGS', 'FREESG_LIBS');
 	MkElse;
-		MkNotFound($pfx);
 		MkSaveUndef('HAVE_FREESG', 'FREESG_CFLAGS', 'FREESG_LIBS');
 	MkEndif;
 	return (0);

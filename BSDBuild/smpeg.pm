@@ -33,11 +33,9 @@ sub Test
 
 	# TODO Test
 
-	MkIfNE('${SMPEG_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'SMPEG_VERSION');
+	MkIfFound($pfx, $ver, 'SMPEG_VERSION');
 		MkSaveIfTrue('${HAVE_SMPEG}', 'SMPEG_CFLAGS', 'SMPEG_LIBS');
 	MkElse;
-		MkNotFound($pfx);
 		MkSaveUndef('HAVE_SMPEG');
 	MkEndif;
 	return (0);

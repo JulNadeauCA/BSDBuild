@@ -38,15 +38,13 @@ sub Test
 	MkExecPkgConfig($pfx, 'glib-2.0', '--modversion', 'GLIB2_VERSION');
 	MkExecPkgConfig($pfx, 'glib-2.0', '--cflags', 'GLIB2_CFLAGS');
 	MkExecPkgConfig($pfx, 'glib-2.0', '--libs', 'GLIB2_LIBS');
-	MkIfNE('${GLIB2_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'GLIB2_VERSION');
+	MkIfFound($pfx, $ver, 'GLIB2_VERSION');
 		MkPrintN('checking whether glib 2.x works...');
 		MkCompileC('HAVE_GLIB2',
 			   '${GLIB2_CFLAGS}', '${GLIB2_LIBS}',
 			    $testCode);
 		MkSaveIfTrue('${HAVE_GLIB2}', 'GLIB2_CFLAGS', 'GLIB2_LIBS');
 	MkElse;
-		MkNotFound($pfx);
 		MkSaveUndef('HAVE_GLIB2');
 	MkEndif;
 	return (0);

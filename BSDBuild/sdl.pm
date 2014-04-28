@@ -88,8 +88,7 @@ sub Test
 		MkEsac;
 	MkEndif;
 
-	MkIfNE('${SDL_VERSION}', '');
-		MkFoundVer($pfx, $ver, 'SDL_VERSION');
+	MkIfFound($pfx, $ver, 'SDL_VERSION');
 		MkPrintN('checking whether SDL works...');
 		MkCompileC('HAVE_SDL', '${SDL_CFLAGS}', '${SDL_LIBS}', $testCode);
 		MkIfTrue('${HAVE_SDL}');
@@ -102,7 +101,6 @@ sub Test
 			MkSaveIfTrue('${HAVE_SDL}', 'SDL_CFLAGS', 'SDL_LIBS');
 		MkEndif;
 	MkElse;
-		MkNotFound($pfx);
 		MkSaveUndef('HAVE_SDL', 'SDL_CFLAGS', 'SDL_LIBS');
 	MkEndif;
 	return (0);

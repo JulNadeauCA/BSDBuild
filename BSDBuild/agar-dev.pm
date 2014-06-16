@@ -44,7 +44,7 @@ sub Test
 	my ($ver, $pfx) = @_;
 	
 	MkExecOutputPfx($pfx, 'agar-dev-config', '--version', 'AGAR_DEV_VERSION');
-	MkIfFound($pfx, $ver, 'AGAR_DEV_VERSION') {
+	MkIfFound($pfx, $ver, 'AGAR_DEV_VERSION');
 		MkPrintN('checking whether Agar-DEV works...');
 		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');

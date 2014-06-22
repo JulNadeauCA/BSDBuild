@@ -29,6 +29,11 @@ sub Test
 	# XXX duplicated code between cc/cxx/objc
 	#
 	print << 'EOF';
+if [ "$CROSS_COMPILING" = "yes" ]; then
+	CROSSPFX="${host}-"
+else
+	CROSSPFX=""
+fi
 if [ "$OBJC" = "" ]; then
 	if [ "$CC" != "" ]; then
 		OBJC="$CC"
@@ -36,24 +41,24 @@ if [ "$OBJC" = "" ]; then
 		echo "using CC (${OBJC})"
 	else
 		for i in `echo $PATH |sed 's/:/ /g'`; do
-			if [ -x "${i}/cc" ]; then
-				if [ -f "${i}/cc" ]; then
-					OBJC="${i}/cc"
+			if [ -x "${i}/${CROSSPFX}cc" ]; then
+				if [ -f "${i}/${CROSSPFX}cc" ]; then
+					OBJC="${i}/${CROSSPFX}cc"
 					break
 				fi
-			elif [ -x "${i}/gcc" ]; then
-				if [ -f "${i}/gcc" ]; then
-					OBJC="${i}/gcc"
+			elif [ -x "${i}/${CROSSPFX}gcc" ]; then
+				if [ -f "${i}/${CROSSPFX}gcc" ]; then
+					OBJC="${i}/${CROSSPFX}gcc"
 					break
 				fi
 			fi
 		done
 		if [ "$OBJC" = "" ]; then
-			echo "*"
-			echo "* Unable to find an Objective-C compiler in PATH. You may need"
-			echo "* to set the CC or OBJC environment variable."
-			echo "*"
-			echo "Unable to find an Objective-C compiler in PATH." >> config.log
+		    echo "*"
+		    echo "* Cannot find ${CROSSPFX}objc or ${CROSSPFX}gcc in default PATH."
+		    echo "* You may need to set the OBJC environment variable."
+		    echo "*"
+		    echo "Cannot find ${CROSSPFX}objc or ${CROSSPFX}gcc in PATH." >> config.log
 			HAVE_OBJC="no"
 			echo "no"
 		else
@@ -80,8 +85,6 @@ EOT
 	    echo "no (test failed to compile)" >> config.log
 		HAVE_OBJC="no"
 	else
-		echo "yes"
-		echo "yes" >> config.log
 		HAVE_OBJC="yes"
 	fi
 	
@@ -102,14 +105,19 @@ EOT
 			    fi
 			done
 			if [ "$EXECSUFFIX" != "" ]; then
-				echo "Detected executable suffix: $EXECSUFFIX" >> config.log
+				echo "yes (it outputs $EXECSUFFIX files)"
+				echo "yes (it outputs $EXECSUFFIX files)" >> config.log
+			else
+				echo "yes"
+				echo "yes" >> config.log
 			fi
 EOF
-
 	MkSaveMK('EXECSUFFIX');
 	MkSaveDefine('EXECSUFFIX');
-
 	print << 'EOF';
+		else
+			echo "yes"
+			echo "yes" >> config.log
 		fi
 	fi
 	rm -f conftest.m conftest$EXECSUFFIX

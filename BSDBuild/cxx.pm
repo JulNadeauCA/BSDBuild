@@ -29,26 +29,31 @@ sub Test
 	# XXX duplicated code between cc/cxx
 
 	print << 'EOF';
+if [ "$CROSS_COMPILING" = "yes" ]; then
+	CROSSPFX="${host}-"
+else
+	CROSSPFX=""
+fi
 if [ "$CXX" = "" ]; then
 	for i in `echo $PATH |sed 's/:/ /g'`; do
-		if [ -x "${i}/cxx" ]; then
-			if [ -f "${i}/cxx" ]; then
-				CXX="${i}/cxx"
+		if [ -x "${i}/${CROSSPFX}c++" ]; then
+			if [ -f "${i}/${CROSSPFX}c++" ]; then
+				CXX="${i}/${CROSSPFX}c++"
 				break
 			fi
-		elif [ -x "${i}/gcc" ]; then
-			if [ -f "${i}/gcc" ]; then
-				CXX="${i}/gcc"
+		elif [ -x "${i}/${CROSSPFX}gcc" ]; then
+			if [ -f "${i}/${CROSSPFX}gcc" ]; then
+				CXX="${i}/${CROSSPFX}gcc"
 				break
 			fi
 		fi
 	done
 	if [ "$CXX" = "" ]; then
 		echo "*"
-		echo "* Unable to find a standard C++ compiler in PATH. You may need"
-		echo "* to set the CXX environment variable."
+		echo "* Cannot find ${CROSSPFX}c++ or ${CROSSPFX}gcc in default PATH."
+		echo "* You may need to set the CXX environment variable."
 		echo "*"
-		echo "Unable to find a C compiler in PATH." >> config.log
+		echo "Cannot find ${CROSSPFX}c++ or ${CROSSPFX}gcc in PATH." >> config.log
 		HAVE_CXX="no"
 		echo "no"
 	else
@@ -57,6 +62,7 @@ if [ "$CXX" = "" ]; then
 		echo "yes, ${CXX}" >> config.log
 	fi
 else
+	HAVE_CXX="yes"
 	echo "using ${CXX}"
 fi
 
@@ -73,8 +79,6 @@ EOT
 	    echo "no (test failed to compile)" >> config.log
 		HAVE_CXX="no"
 	else
-		echo "yes"
-		echo "yes" >> config.log
 		HAVE_CXX="yes"
 	fi
 
@@ -95,13 +99,19 @@ EOT
 			    fi
 			done
 			if [ "$EXECSUFFIX" != "" ]; then
-				echo "Detected executable suffix: $EXECSUFFIX" >> config.log
+				echo "yes (it outputs $EXECSUFFIX files)"
+				echo "yes (it outputs $EXECSUFFIX files)" >> config.log
+			else
+				echo "yes"
+				echo "yes" >> config.log
 			fi
 EOF
 	MkSaveMK('EXECSUFFIX');
 	MkSaveDefine('EXECSUFFIX');
-
 print << 'EOF';
+		else
+			echo "yes"
+			echo "yes" >> config.log
 		fi
 	fi
 	rm -f conftest.cc conftest$EXECSUFFIX

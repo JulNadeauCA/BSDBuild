@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2002-2012 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2002-2014 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,26 +29,31 @@ sub Test
 	# XXX duplicated code between cc/cxx
 	#
 	print << 'EOF';
+if [ "$CROSS_COMPILING" = "yes" ]; then
+	CROSSPFX="${host}-"
+else
+	CROSSPFX=""
+fi
 if [ "$CC" = "" ]; then
 	for i in `echo $PATH |sed 's/:/ /g'`; do
-		if [ -x "${i}/cc" ]; then
-			if [ -f "${i}/cc" ]; then
-				CC="${i}/cc"
+		if [ -x "${i}/${CROSSPFX}cc" ]; then
+			if [ -f "${i}/${CROSSPFX}cc" ]; then
+				CC="${i}/${CROSSPFX}cc"
 				break
 			fi
-		elif [ -x "${i}/gcc" ]; then
-			if [ -f "${i}/gcc" ]; then
-				CC="${i}/gcc"
+		elif [ -x "${i}/${CROSSPFX}gcc" ]; then
+			if [ -f "${i}/${CROSSPFX}gcc" ]; then
+				CC="${i}/${CROSSPFX}gcc"
 				break
 			fi
 		fi
 	done
 	if [ "$CC" = "" ]; then
 		echo "*"
-		echo "* Unable to find a standard C compiler in PATH. You may need"
-		echo "* to set the CC environment variable."
+		echo "* Cannot find ${CROSSPFX}cc or ${CROSSPFX}gcc in default PATH."
+		echo "* You may need to set the CC environment variable."
 		echo "*"
-		echo "Unable to find a C compiler in PATH." >> config.log
+		echo "Cannot find ${CROSSPFX}cc or ${CROSSPFX}gcc in PATH." >> config.log
 		HAVE_CC="no"
 		echo "no"
 	else
@@ -73,8 +78,6 @@ EOT
 	    echo "no (test failed to compile)" >> config.log
 		HAVE_CC="no"
 	else
-		echo "yes"
-		echo "yes" >> config.log
 		HAVE_CC="yes"
 	fi
 
@@ -95,14 +98,19 @@ EOT
 			    fi
 			done
 			if [ "$EXECSUFFIX" != "" ]; then
-				echo "Detected executable suffix: $EXECSUFFIX" >> config.log
+				echo "yes (it outputs $EXECSUFFIX files)"
+				echo "yes (it outputs $EXECSUFFIX files)" >> config.log
+			else
+				echo "yes"
+				echo "yes" >> config.log
 			fi
 EOF
-
 	MkSaveMK('EXECSUFFIX');
 	MkSaveDefine('EXECSUFFIX');
-
 	print << 'EOF';
+		else
+			echo "yes"
+			echo "yes" >> config.log
 		fi
 	fi
 	rm -f conftest.c conftest$EXECSUFFIX

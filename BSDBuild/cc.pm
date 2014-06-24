@@ -183,23 +183,6 @@ main(int argc, char *argv[]) {
 }
 EOF
 	
-		MkPrintN('checking for libtool --tag=CC retardation...');
-		my $code = << 'EOF';
-EOF
-		print 'cat << EOT > conftest.c', "\n",
-		      'int main(int argc, char *argv[]) { return (0); }', "\nEOT\n";
-		print << "EOF";
-\$LIBTOOL --quiet --mode=compile --tag=CC \$CC \$CFLAGS \$TEST_CFLAGS -o \$testdir/conftest.o conftest.c 2>>config.log
-EOF
-		MkIf('"$?" = "0"');
-			MkPrint('yes');
-			MkDefine('LIBTOOLOPTS_CC', '--tag=CC');
-		MkElse;
-			MkPrint('no');
-		MkEndif;
-		MkSaveMK('LIBTOOLOPTS_CC');
-		print 'rm -f conftest.c $testdir/conftest$EXECSUFFIX', "\n";
-
 		# Preserve ${CC} and ${CFLAGS}
 		MkSaveMK('CC', 'CFLAGS');
 

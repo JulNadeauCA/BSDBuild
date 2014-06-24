@@ -810,7 +810,7 @@ sub Help
 
 		'--enable-nls' =>	'no',
 		'--with-gettext' =>	'auto-detect',
-		'--with-libtool' =>	'auto-detect',
+		'--with-libtool' =>	'bundled',
 		'--with-manpages' =>	'yes',
 		'--with-catman' =>	'auto-detect',
 		'--with-manlinks' =>	'no',

@@ -38,12 +38,22 @@
 	install-manpages.sh);
 		  
 @LibtoolFiles = qw(
+	Makefile
+	Makefile.in
+	aclocal.m4
 	config.guess
 	config.sub
-	configure.in
 	configure
+	configure.in
+	install-sh
 	ltmain.sh
-	ltconfig);
+	README);
+@LibtoolFilesM4 = qw(
+	libtool.m4
+	ltoptions.m4
+	ltsugar.m4
+	ltversion.m4
+	lt~obsolete.m4);
 
 $DATADIR = '%DATADIR%';
 %copied = ();
@@ -93,14 +103,19 @@ sub CopyDepsWWW
 #
 sub CopyDepsLIB
 {
-	if (! -e 'mk/libtool') {
-		unless (mkdir('mk/libtool', 0755)) {
-			print STDERR "mk/libtool/: $!\n";
-			return (0);
-		}
+	if (! -e 'mk/libtool' && !mkdir('mk/libtool', 0755)) {
+		print STDERR "mk/libtool/: $!\n";
+		return (0);
+	}
+	if (! -e 'mk/libtool/m4' && !mkdir('mk/libtool/m4', 0755)) {
+		print STDERR "mk/libtool/m4/: $!\n";
+		return (0);
 	}
 	foreach my $f (@LibtoolFiles) {
 		InstallASIS('libtool/'.$f) || return (0);
+	}
+	foreach my $f (@LibtoolFilesM4) {
+		InstallASIS('libtool/m4/'.$f) || return (0);
 	}
 	chmod(0755, 'mk/libtool/config.sub') ||
 	    print STDERR "mk/libtool/config.sub: $!\n";

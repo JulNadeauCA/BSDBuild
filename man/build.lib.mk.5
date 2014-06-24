@@ -1,5 +1,5 @@
 .\"
-.\" Copyright (c) 2007 Hypertriton, Inc. <http://www.hypertriton.com/>
+.\" Copyright (c) 2007-2014 Hypertriton, Inc. <http://www.hypertriton.com/>
 .\" All rights reserved.
 .\"
 .\" Redistribution and use in source and binary forms, with or without
@@ -37,12 +37,12 @@ The
 .Nm
 module compiles static and/or shared libraries from a set of source files.
 For shared libraries, it uses a bundled copy of GNU libtool.
-Currently, supported languages include:
+The module provides built-in support for sources in the following languages:
 .Bl -bullet -compact
 .It
 C (*.c)
 .It
-C++ (*.cc)
+C++ (*.cc or *.cpp)
 .It
 Objective C (*.m)
 .It
@@ -99,10 +99,12 @@ Exact interpretation is platform-specific.
 Major version number for shared libraries.
 .It Ev LIB_MINOR
 Minor version number for shared libraries.
-.It Ev LIB_XOBJS
-Extra object files to use in generating the library.
+.It Ev LIB_REVISION
+Revision number for shared libraries.
 .It Ev LIBS
-Other libtool-generated libraries (*.la) to include in this library.
+Specify other libraries to link against this library.
+Bare filename arguments are interpreted as archive files ("foo.a" or "foo.la").
+Arguments of the form "-L/path/to/dir" and "-lfoo" specify shared libraries.
 .It Ev USE_LIBTOOL
 If set to Yes, use
 .Xr libtool 1
@@ -115,26 +117,17 @@ and
 .It Ev LIBTOOL
 Path to GNU
 .Xr libtool 1 .
-Usually set by configure script (defaults to system libtool, or the bundled
-copy).
+This is usually set by the configure script.
+BSDBuild-generated configure scripts will select BSDBuild's bundled copy
+of libtool by default (recommended), but an alternate libtool may be specified
+using --with-libtool=PATH.
 .It Ev LIBTOOLOPTS
 Specify general libtool arguments (passed before --mode).
 Defaults to "--quiet".
-.It Ev LIBTOOLOPTS_CC
-Specify extra libtool arguments for C compilation.
-Defaults to "" or "--tag=CC" depending on cc configure test results.
-.It Ev LIBTOOLOPTS_CXX
-Specify extra libtool arguments for C++ compilation.
-Defaults to "" or "--tag=CXX" depending on cxx configure test results.
-.It Ev LIBTOOLFLAGS
-Specify extra compiler arguments when calling compiler from libtool
-(passed after --mode).
-.It Ev LTCONFIG_LOG
-When using libtool, the output of the
-.Pa ltconfig
-script will be saved to this file.
-Defaults to
-.Pa ./config.log .
+.It Ev LIBTOOLOPTS_SHARED
+Specify extra libtool arguments for linking of shared libraries.
+.It Ev LIBTOOLOPTS_STATIC
+Specify extra libtool arguments for linking of static libraries.
 .It Ev CC
 Compiler for C, C++ and Objective C sources.
 Defaults to the CC environment variable, or "cc".

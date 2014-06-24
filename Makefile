@@ -21,8 +21,10 @@ DATAFILES=hstrip.pl mkdep mkconcurrent.pl manlinks.pl cmpfiles.pl cleanfiles.pl 
 	build.common.mk build.dep.mk build.lib.mk build.man.mk \
 	build.perl.mk build.prog.mk build.subdir.mk build.www.mk \
 	build.po.mk build.doc.mk build.proj.mk
-	
-LTFILES=config.guess config.sub configure configure.in ltconfig ltmain.sh
+
+LTFILES=Makefile Makefile.in aclocal.m4 config.guess config.sub configure \
+	configure.in install-sh ltmain.sh README
+LTFILES_M4=libtool.m4 ltoptions.m4 ltsugar.m4 ltversion.m4 lt~obsolete.m4
 
 all: all-subdir ${SCRIPTS}
 
@@ -70,6 +72,10 @@ install: config-ok install-subdir
 	    echo "${INSTALL_DATA_DIR} ${DATADIR}/libtool"; \
 	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${DATADIR}/libtool"; \
 	fi
+	@if [ ! -d "${DESTDIR}${DATADIR}/libtool/m4" ]; then \
+	    echo "${INSTALL_DATA_DIR} ${DATADIR}/libtool/m4"; \
+	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${DATADIR}/libtool/m4"; \
+	fi
 	@for F in ${DATAFILES}; do \
 	    echo "${INSTALL_DATA} $$F ${DATADIR}"; \
 	    ${SUDO} ${INSTALL_DATA} $$F "${DESTDIR}${DATADIR}"; \
@@ -77,6 +83,10 @@ install: config-ok install-subdir
 	@for F in ${LTFILES}; do \
 	    echo "${INSTALL_DATA} libtool/$$F ${DATADIR}/libtool"; \
 	    ${SUDO} ${INSTALL_DATA} libtool/$$F "${DESTDIR}${DATADIR}/libtool"; \
+	done
+	@for F in ${LTFILES_M4}; do \
+	    echo "${INSTALL_DATA} libtool/m4/$$F ${DATADIR}/libtool/m4"; \
+	    ${SUDO} ${INSTALL_DATA} libtool/m4/$$F "${DESTDIR}${DATADIR}/libtool/m4"; \
 	done
 	@if [ ! -d "${DESTDIR}${BINDIR}" ]; then \
 	    echo "${INSTALL_PROG_DIR} ${BINDIR}"; \

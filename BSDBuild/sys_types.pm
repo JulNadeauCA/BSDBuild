@@ -34,16 +34,31 @@ int main(int argc, char *argv[]) {
 }
 EOF
 	MkIfTrue('${_MK_HAVE_SYS_TYPES_H}');
-		MkPrintN('checking for 64-bit types...');
-		MkCompileC('HAVE_64BIT', '', '', << 'EOF');
+		MkPrintN('checking for int64_t type...');
+		MkCompileC('HAVE_INT64_T', '', '', << 'EOF');
 #include <sys/types.h>
 int main(int argc, char *argv[]) {
 	int64_t i64 = 0;
 	u_int64_t u64 = 0;
-
 	return (i64 != 0 || u64 != 0);
 }
 EOF
+		MkPrintN('checking for __int64 type...');
+		MkCompileC('HAVE___INT64', '', '', << 'EOF');
+#include <sys/types.h>
+int main(int argc, char *argv[]) {
+	__int64 i64 = 0;
+	return (i64 != 0);
+}
+EOF
+		MkIfTrue('${HAVE_INT64_T}');
+			MkDefine('HAVE_64BIT', "yes");
+			MkSaveDefine('HAVE_64BIT');
+		MkEndif;
+		MkIfTrue('${HAVE___INT64}');
+			MkDefine('HAVE_64BIT', "yes");
+			MkSaveDefine('HAVE_64BIT');
+		MkEndif;
 	MkElse;
 		MkSaveUndef('HAVE_64BIT');
 	MkEndif;

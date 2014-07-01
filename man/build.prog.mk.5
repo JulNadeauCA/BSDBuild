@@ -76,8 +76,7 @@ Uninstall program from the installation directory.
 Filename of target executable.
 Platform-specific transforms may be applied to the name.
 .It Ev PROG_TYPE
-Type of application (used on some platforms by
-.Xr build.proj.mk 5 ) .
+Type of application.
 Set to
 .Sq CLI
 for a command-line utility,
@@ -87,6 +86,9 @@ for a graphical interface and
 for a server program.
 Defaults to
 .Sq CLI .
+The interpretation of this setting is platform-specific.
+On the Windows platform, this instructs the compiler to select the
+appropriate PE header subsystem.
 .It Ev BINDIR
 Target installation directory for executables
 (usually set by configure).

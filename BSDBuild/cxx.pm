@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2002-2012 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2002-2014 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,9 +25,6 @@
 
 sub Test
 {
-	# Look for a C++ compiler.
-	# XXX duplicated code between cc/cxx
-
 	print << 'EOF';
 if [ "$CROSS_COMPILING" = "yes" ]; then
 	CROSSPFX="${host}-"
@@ -121,77 +118,16 @@ EOF
 
 	MkIfTrue('${HAVE_CXX}');
 
-		MkPrintN('checking for c++ compiler warning options...');
+		MkPrintN('cxx: checking for compiler warning options...');
 		MkCompileCXX('HAVE_CXX_WARNINGS', '-Wall -Werror', '-lstdc++', << 'EOF');
 int main(void) { return (0); }
 EOF
 		MkIfTrue('${HAVE_CXX_WARNINGS}');
 			MkDefine('TEST_CXXFLAGS', '-Wall -Werror');
 		MkEndif;
-	
-		# Check for long double type.
-		MkPrintN('checking for long double...');
-		TryCompile('HAVE_LONG_DOUBLE', << 'EOF');
-int
-main(void)
-{
-	long double ld = 0.1;
 
-	ld = 0;
-	return (0);
-}
-EOF
-	
-		# Check for long long type.
-		MkPrintN('checking for long long...');
-		TryCompile('HAVE_LONG_LONG', << 'EOF');
-int
-main(void)
-{
-	long long ll = 0.0;
-	unsigned long long ull = 0.0;
-	ll = 1.0;
-	ull = 1.0;
-	return (0);
-}
-EOF
-
-		MkPrintN('checking for cygwin environment...');
-		TryCompileFlagsCXX('HAVE_CYGWIN', '-mcygwin', << 'EOF');
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <windows.h>
-
-int
-main(void) {
-	struct stat sb;
-	DWORD rv;
-	rv = GetFileAttributes("foo");
-	stat("foo", &sb);
-	return (0);
-}
-EOF
-
-		MkPrintN('checking for libtool --tag=CXX retardation...');
-		print 'cat << EOT > conftest.cc', "\n";
-		print << 'EOF';
-#include <iostream>
-int main(void) { std::cout << "Hello world!" << std::endl; return 0; }
-EOT
-EOF
-	print << "EOF";
-\$LIBTOOL --quiet --mode=compile --tag=CXX \$CXX \$CXXFLAGS \$TEST_CXXFLAGS -o \$testdir/conftest.o conftest.cc 2>>config.log
-EOF
-		MkIf('"$?" = "0"');
-			MkPrint('yes');
-			MkDefine('LIBTOOLOPTS_CXX', '--tag=CXX');
-		MkElse;
-			MkPrint('no');
-		MkEndif;
-		MkSaveMK('LIBTOOLOPTS_CXX');
 		print 'rm -f conftest.cc $testdir/conftest$EXECSUFFIX', "\n";
 
-		# Preserve ${CXX} and ${CXXFLAGS}
 		MkSaveMK('CXX', 'CXXFLAGS');
 
 	MkEndif; # HAVE_CXX
@@ -201,12 +137,6 @@ sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
 
-	MkDefine('HAVE_IEEE754', 'yes');
-	MkSaveDefine('HAVE_IEEE754');
-
-	MkSaveUndef('HAVE_LONG_DOUBLE');
-	MkSaveUndef('HAVE_LONG_LONG');
-	MkSaveUndef('HAVE_CYGWIN');
 	return (1);
 }
 
@@ -215,6 +145,7 @@ BEGIN
 	$TESTS{'cxx'} = \&Test;
 	$EMUL{'cxx'} = \&Emul;
 	$DESCR{'cxx'} = 'a C++ compiler';
+	$DEPS{'cxx'} = 'cc';
 }
 
 ;1

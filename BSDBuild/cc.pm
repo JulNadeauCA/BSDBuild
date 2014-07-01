@@ -25,9 +25,6 @@
 
 sub Test
 {
-	# Look for a C compiler.
-	# XXX duplicated code between cc/cxx
-	#
 	print << 'EOF';
 if [ "$CROSS_COMPILING" = "yes" ]; then
 	CROSSPFX="${host}-"
@@ -120,7 +117,7 @@ EOF
 	
 	MkIfTrue('${HAVE_CC}');
 
-		MkPrintN('checking for compiler warning options...');
+		MkPrintN('cc: checking for compiler warning options...');
 		MkCompileC('HAVE_CC_WARNINGS', '-Wall -Werror', '', << 'EOF');
 int main(int argc, char *argv[]) { return (0); }
 EOF
@@ -128,22 +125,9 @@ EOF
 			MkDefine('TEST_CFLAGS', '-Wall -Werror');
 		MkEndif;
 	
-		# Check for floating point support.
-		# TODO representation
-		MkPrintN('checking for IEEE754 floating point...');
-		MkCompileC('HAVE_IEEE754', '', '', << 'EOF');
-int
-main(int argc, char *argv[])
-{
-	float f = 1.5;
-	double d = 2.5;
-
-	return (f == 1.0 || d == 1.0);
-}
-EOF
-
 		# Check for long double type.
-		MkPrintN('checking for long double...');
+		# XXX: should rename to HAVE_CC_LONG_DOUBLE
+		MkPrintN('cc: checking for long double...');
 		TryCompile('HAVE_LONG_DOUBLE', << 'EOF');
 int
 main(int argc, char *argv[])
@@ -155,7 +139,8 @@ main(int argc, char *argv[])
 EOF
 	
 		# Check for long long type.
-		MkPrintN('checking for long long...');
+		# XXX: should rename to HAVE_CC_LONG_LONG
+		MkPrintN('cc: checking for long long...');
 		TryCompile('HAVE_LONG_LONG', << 'EOF');
 int
 main(int argc, char *argv[])
@@ -167,7 +152,8 @@ main(int argc, char *argv[])
 }
 EOF
 
-		MkPrintN('checking for cygwin environment...');
+		# XXX: should rename to HAVE_CC_CYGWIN
+		MkPrintN('cc: checking for cygwin environment...');
 		TryCompileFlagsC('HAVE_CYGWIN', '-mcygwin', << 'EOF');
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -182,9 +168,59 @@ main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-	
-		# Preserve ${CC} and ${CFLAGS}
-		MkSaveMK('CC', 'CFLAGS');
+		MkPrintN('cc: checking for -mwindows option...');
+		TryCompileFlagsC('HAVE_CC_MWINDOWS', '-mwindows', << 'EOF');
+#include <windows.h>
+int
+main(int argc, char *argv[]) {
+	return GetFileAttributes("foo") ? 0 : 1;
+}
+EOF
+		MkIfTrue('${HAVE_CC_MWINDOWS}');
+			MkDefine('PROG_GUI_FLAGS', '-mwindows');
+		MkElse;
+			MkDefine('PROG_GUI_FLAGS', '');
+		MkEndif;
+		
+		MkPrintN('cc: checking for -mconsole option...');
+		TryCompileFlagsC('HAVE_CC_MCONSOLE', '-mconsole', << 'EOF');
+#include <windows.h>
+int
+main(int argc, char *argv[]) {
+	return GetFileAttributes("foo") ? 0 : 1;
+}
+EOF
+		MkIfTrue('${HAVE_CC_MCONSOLE}');
+			MkDefine('PROG_CLI_FLAGS', '-mconsole');
+		MkElse;
+			MkDefine('PROG_CLI_FLAGS', '');
+		MkEndif;
+		
+		MkCaseIn('${host}');
+		MkCaseBegin('*-*-cygwin* | *-*-mingw32*');
+			MkPrintN('cc: checking for linker -no-undefined option...');
+			TryCompileFlagsC('HAVE_LD_NO_UNDEFINED',
+			    '-Wl,--no-undefined', << 'EOF');
+int main(int argc, char *argv[]) { return (0); }
+EOF
+			MkIfTrue('${HAVE_LD_NO_UNDEFINED}');
+				MkDefine('LIBTOOLOPTS_SHARED',
+				    '${LIBTOOLOPTS_SHARED} -no-undefined -Wl,--no-undefined');
+			MkEndif;
+			MkPrintN('cc: checking for linker -static-libgcc option...');
+			TryCompileFlagsC('HAVE_LD_STATIC_LIBGCC',
+			    '-static-libgcc', << 'EOF');
+int main(int argc, char *argv[]) { return (0); }
+EOF
+			MkIfTrue('${HAVE_LD_STATIC_LIBGCC}');
+				MkDefine('LIBTOOLOPTS_SHARED',
+				    '${LIBTOOLOPTS_SHARED} -XCClinker -static-libgcc');
+			MkEndif;
+			MkCaseEnd;
+		MkEsac;
+
+		MkSaveMK('CC', 'CFLAGS', 'PROG_GUI_FLAGS', 'PROG_CLI_FLAGS',
+		         'LIBTOOLOPTS_SHARED');
 
 	MkEndif; # HAVE_CC
 }
@@ -192,9 +228,6 @@ EOF
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
-
-	MkDefine('HAVE_IEEE754', 'yes');
-	MkSaveDefine('HAVE_IEEE754');
 
 	MkSaveUndef('HAVE_ALIGNED_ATTRIBUTE');
 	MkSaveUndef('HAVE_BOUNDED_ATTRIBUTE');
@@ -206,10 +239,8 @@ sub Emul
 	MkSaveUndef('HAVE_PACKED_ATTRIBUTE');
 	MkSaveUndef('HAVE_PURE_ATTRIBUTE');
 	MkSaveUndef('HAVE_WARN_UNUSED_RESULT_ATTRIBUTE');
-
 	MkSaveUndef('HAVE_LONG_DOUBLE');
 	MkSaveUndef('HAVE_LONG_LONG');
-	
 	MkSaveUndef('HAVE_CYGWIN');
 	return (1);
 }

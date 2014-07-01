@@ -25,9 +25,6 @@
 
 sub Test
 {
-	# Look for an Objective-C compiler.
-	# XXX duplicated code between cc/cxx/objc
-	#
 	print << 'EOF';
 if [ "$CROSS_COMPILING" = "yes" ]; then
 	CROSSPFX="${host}-"
@@ -126,7 +123,7 @@ fi
 EOF
 	
 	MkIfTrue('${HAVE_OBJC}');
-		MkPrintN('checking for compiler warning options...');
+		MkPrintN('objc: checking for compiler warning options...');
 		MkCompileOBJC('HAVE_OBJC_WARNINGS', '-Wall -Werror', '', << 'EOF');
 int main(int argc, char *argv[]) { return (0); }
 EOF
@@ -134,24 +131,8 @@ EOF
 			MkDefine('TEST_OBJCFLAGS', '-Wall -Werror');
 		MkEndif;
 	
-		MkPrintN('checking for libtool --tag=OBJC retardation...');
-		my $code = << 'EOF';
-EOF
-		print 'cat << EOT > conftest.m', "\n",
-		      'int main(int argc, char *argv[]) { return (0); }', "\nEOT\n";
-		print << "EOF";
-\$LIBTOOL --quiet --mode=compile --tag=OBJC \$OBJC \$CFLAGS \$OBJCFLAGS \$TEST_OBJCFLAGS -o \$testdir/conftest.o conftest.m 2>>config.log
-EOF
-		MkIf('"$?" = "0"');
-			MkPrint('yes');
-			MkDefine('LIBTOOLOPTS_OBJC', '--tag=OBJC');
-		MkElse;
-			MkPrint('no');
-		MkEndif;
-		MkSaveMK('LIBTOOLOPTS_OBJC');
 		print 'rm -f conftest.m $testdir/conftest$EXECSUFFIX', "\n";
 
-		# Preserve ${OBJC} and ${OBJCFLAGS}
 		MkSaveMK('OBJC', 'OBJCFLAGS');
 
 	MkEndif; # HAVE_OBJC
@@ -169,6 +150,7 @@ BEGIN
 	$TESTS{'objc'} = \&Test;
 	$EMUL{'objc'} = \&Emul;
 	$DESCR{'objc'} = 'an Objective-C compiler';
+	$DEPS{'objc'} = 'cc';
 }
 
 ;1

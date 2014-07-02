@@ -91,7 +91,9 @@ sub Emul
 
 BEGIN
 {
-	$DESCR{'alsa'} = 'ALSA (http://www.alsa-project.org)';
+	$DESCR{'alsa'} = 'ALSA';
+	$URL{'alsa'} = 'http://www.alsa-project.org';
+
 	$TESTS{'alsa'} = \&Test;
 	$EMUL{'alsa'} = \&Emul;
 	$DEPS{'alsa'} = 'cc';

@@ -69,7 +69,9 @@ sub Emul
 
 BEGIN
 {
-	$DESCR{'sdl_image'} = 'SDL_image (http://libsdl.org/projects/SDL_image)';
+	$DESCR{'sdl_image'} = 'SDL_image';
+	$URL{'sdl_image'} = 'http://libsdl.org/projects/SDL_image';
+
 	$TESTS{'sdl_image'} = \&Test;
 	$DEPS{'sdl_image'} = 'cc,sdl';
 	$EMUL{'sdl_image'} = \&Emul;

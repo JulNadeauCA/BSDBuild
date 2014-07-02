@@ -127,6 +127,8 @@ sub Emul
 BEGIN
 {
 	$DESCR{'x11'} = 'the X window system';
+	$URL{'x11'} = 'http://x.org';
+
 	$TESTS{'x11'} = \&Test;
 	$EMUL{'x11'} = \&Emul;
 	$DEPS{'x11'} = 'cc';

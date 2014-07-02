@@ -60,7 +60,9 @@ EOF
 
 BEGIN
 {
-	$DESCR{'sdl_ttf'} = 'SDL_ttf (http://libsdl.org/projects/SDL_ttf)';
+	$DESCR{'sdl_ttf'} = 'SDL_ttf';
+	$URL{'sdl_ttf'} = 'http://libsdl.org/projects/SDL_ttf';
+
 	$TESTS{'sdl_ttf'} = \&Test;
 	$DEPS{'sdl_ttf'} = 'cc,sdl';
 }

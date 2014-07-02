@@ -87,9 +87,11 @@ sub Test
 
 BEGIN
 {
+	$DESCR{'cg'} = 'Cg';
+	$URL{'cg'} = 'http://developer.nvidia.com/object/cg_toolkit.html';
+
 	$TESTS{'cg'} = \&Test;
 	$DEPS{'cg'} = 'cc';
-	$DESCR{'cg'} = 'Cg (http://developer.nvidia.com/object/cg_toolkit.html)';
 }
 
 ;1

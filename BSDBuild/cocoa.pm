@@ -55,6 +55,8 @@ sub Emul
 BEGIN
 {
 	$DESCR{'cocoa'} = 'the Cocoa framework';
+	$URL{'cocoa'} = 'http://developer.apple.com';
+
 	$TESTS{'cocoa'} = \&Test;
 	$EMUL{'cocoa'} = \&Emul;
 	$DEPS{'cocoa'} = 'objc';

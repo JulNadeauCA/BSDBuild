@@ -71,10 +71,13 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'agar'} = 'Agar';
+	$URL{'agar'} = 'http://libagar.org';
+
 	$TESTS{'agar'} = \&Test;
 	$DEPS{'agar'} = 'cc';
 	$EMUL{'agar'} = \&Emul;
-	$DESCR{'agar'} = 'Agar (http://libagar.org/)';
+
 	@{$EMULDEPS{'agar'}} = qw(
 		clock_win32
 		sdl

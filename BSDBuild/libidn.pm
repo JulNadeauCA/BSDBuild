@@ -57,8 +57,10 @@ sub Test
 
 BEGIN
 {
+	$DESCR{'libidn'} = 'libidn';
+	$URL{'libidn'} = 'http://www.gnu.org/software/libidn';
+
 	$TESTS{'libidn'} = \&Test;
-	$DESCR{'libidn'} = 'Libidn (http://www.gnu.org/software/libidn/)';
 	$DEPS{'libidn'} = 'cc';
 }
 

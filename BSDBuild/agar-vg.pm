@@ -72,7 +72,9 @@ sub Emul
 
 BEGIN
 {
-	$DESCR{'agar-vg'} = 'agar-vg (http://hypertriton.com/agar-vg/)';
+	$DESCR{'agar-vg'} = 'Agar-VG';
+	$URL{'agar-vg'} = 'http://libagar.org';
+
 	$DEPS{'agar-vg'} = 'cc,agar';
 	$TESTS{'agar-vg'} = \&Test;
 	$EMUL{'agar-vg'} = \&Emul;

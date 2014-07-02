@@ -57,7 +57,9 @@ sub Test
 
 BEGIN
 {
-	$DESCR{'ode'} = 'ODE (http://www.ode.org/)';
+	$DESCR{'ode'} = 'Open Dynamics Engine';
+	$URL{'ode'} = 'http://www.ode.org';
+
 	$TESTS{'ode'} = \&Test;
 	$DEPS{'ode'} = 'cc';
 }

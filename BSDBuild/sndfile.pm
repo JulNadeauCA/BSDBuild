@@ -65,7 +65,9 @@ sub Emul
 
 BEGIN
 {
-	$DESCR{'sndfile'} = 'libsndfile (http://www.mega-nerd.com/libsndfile/)';
+	$DESCR{'sndfile'} = 'libsndfile';
+	$URL{'sndfile'} = 'http://www.mega-nerd.com/libsndfile';
+
 	$TESTS{'sndfile'} = \&Test;
 	$DEPS{'sndfile'} = 'cc';
 	$EMUL{'sndfile'} = \&Emul;

@@ -63,10 +63,12 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'mysql'} = 'MySQL';
+	$URL{'mysql'} = 'http://dev.mysql.com';
+
 	$TESTS{'mysql'} = \&Test;
 	$DEPS{'mysql'} = 'cc';
 	$EMUL{'mysql'} = \&Emul;
-	$DESCR{'mysql'} = 'MySQL (http://dev.mysql.com/)';
 }
 
 ;1

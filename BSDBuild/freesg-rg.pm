@@ -73,7 +73,9 @@ sub Emul
 
 BEGIN
 {
-	$DESCR{'freesg-rg'} = 'FreeSG-RG (http://freesg.org/)';
+	$DESCR{'freesg-rg'} = 'FreeSG-RG';
+	$URL{'freesg-rg'} = 'http://freesg.org';
+
 	$DEPS{'freesg-rg'} = 'cc,agar';
 	$TESTS{'freesg-rg'} = \&Test;
 	$EMUL{'freesg-rg'} = \&Emul;

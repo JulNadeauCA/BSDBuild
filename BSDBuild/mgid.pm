@@ -53,7 +53,9 @@ sub Test
 
 BEGIN
 {
-	$DESCR{'mgid'} = 'libmgid (http://mgid.hypertriton.com/)';
+	$DESCR{'mgid'} = 'libmgid';
+	$URL{'mgid'} = 'http://mgid.hypertriton.com';
+
 	$DEPS{'mgid'} = 'cc';
 	$TESTS{'mgid'} = \&Test;
 }

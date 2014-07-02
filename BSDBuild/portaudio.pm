@@ -111,9 +111,11 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'portaudio'} = 'PortAudio2';
+	$URL{'portaudio'} = 'http://www.portaudio.com';
+
 	$TESTS{'portaudio'} = \&Test;
 	$DEPS{'portaudio'} = 'cc,pthreads';
-	$DESCR{'portaudio'} = 'PortAudio2 (http://www.portaudio.com/)';
 	$EMUL{'portaudio'} = \&Emul;
 }
 ;1

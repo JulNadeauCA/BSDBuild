@@ -405,6 +405,9 @@ sub test_require
 	MkIf "\"\$\{$def\}\" != \"yes\"";
 		MkPrint('* ');
 		MkPrint("* This software requires $t installed on your system.");
+		if (exists($URL{$t}) && defined($URL{$t})) {
+			MkPrint("* It is available from: $URL{$t}");
+		}
 		MkPrint('* ');
 		MkFail('configure failed!');
 	MkEndif;
@@ -414,6 +417,9 @@ sub test_require
 			MkPrint('* ');
 			MkPrint("* This software requires $t version >= $ver,");
 			MkPrint("* please upgrade and try again.");
+			if (exists($URL{$t}) && defined($URL{$t})) {
+				MkPrint("* $t is available from: $URL{$t}");
+			}
 			MkPrint('* ');
 			MkFail('configure failed!');
 		MkEndif;

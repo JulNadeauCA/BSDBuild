@@ -34,8 +34,10 @@ sub Test
 
 BEGIN
 {
+	$DESCR{'libbsd'} = 'Libbsd';
+	$URL{'libbsd'} = 'http://libbsd.freedesktop.org';
+
 	$TESTS{'libbsd'} = \&Test;
-	$DESCR{'libbsd'} = 'Libbsd (http://libbsd.freedesktop.org/)';
 	$DEPS{'libbsd'} = 'cc';
 }
 

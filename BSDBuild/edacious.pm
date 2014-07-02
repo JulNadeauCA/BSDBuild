@@ -76,8 +76,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'edacious'} = 'Edacious';
+	$URL{'edacious'} = 'http://edacious.hypertriton.com';
+
 	$TESTS{'edacious'} = \&Test;
-	$DESCR{'edacious'} = 'Edacious (http://edacious.hypertriton.com/)';
 	$DEPS{'edacious'} = 'cc,agar,agar-vg,agar-math';
 	$EMUL{'edacious'} = \&Emul;
 }

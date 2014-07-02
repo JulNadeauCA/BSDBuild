@@ -52,7 +52,9 @@ sub Test
 
 BEGIN
 {
-	$DESCR{'glib2'} = 'Glib 2.x (http://www.gtk.org/)';
+	$DESCR{'glib2'} = 'Glib 2.x';
+	$URL{'glib2'} = 'http://www.gtk.org';
+
 	$TESTS{'glib2'} = \&Test;
 	$DEPS{'glib2'} = 'cc';
 }

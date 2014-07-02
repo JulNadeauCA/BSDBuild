@@ -152,7 +152,9 @@ sub Emul
 
 BEGIN
 {
-	$DESCR{'opengl'} = 'OpenGL (http://www.opengl.org)';
+	$DESCR{'opengl'} = 'OpenGL';
+	$URL{'opengl'} = 'http://www.opengl.org';
+
 	$TESTS{'opengl'} = \&Test;
 	$EMUL{'opengl'} = \&Emul;
 	$DEPS{'opengl'} = 'cc';

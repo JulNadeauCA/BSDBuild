@@ -70,8 +70,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'etubestore'} = 'ElectronTubeStore API';
+	$URL{'etubestore'} = 'http://electrontubestore.com';
+
 	$TESTS{'etubestore'} = \&Test;
-	$DESCR{'etubestore'} = 'ElectronTubeStore API (http://electrontubestore.com/)';
 	$DEPS{'etubestore'} = 'cc,agar';
 	$EMUL{'etubestore'} = \&Emul;
 	@{$EMULDEPS{'etubestore'}} = qw(

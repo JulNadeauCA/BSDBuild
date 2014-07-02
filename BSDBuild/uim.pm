@@ -70,7 +70,9 @@ sub Emul
 
 BEGIN
 {
-	$DESCR{'uim'} = 'uim framework (http://code.google.com/p/uim/)';
+	$DESCR{'uim'} = 'uim framework';
+	$URL{'uim'} = 'http://code.google.com/p/uim';
+
 	$TESTS{'uim'} = \&Test;
 	$DEPS{'uim'} = 'cc';
 	$EMUL{'uim'} = \&Emul;

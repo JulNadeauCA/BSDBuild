@@ -75,8 +75,10 @@ sub Test
 
 BEGIN
 {
+	$DESCR{'fastcgi'} = 'FastCGI (http://fastcgi.com)';
+	$URL{'fastcgi'} = 'http://fastcgi.com';
+
 	$TESTS{'fastcgi'} = \&Test;
 	$DEPS{'fastcgi'} = 'cc';
-	$DESCR{'fastcgi'} = 'FastCGI (http://fastcgi.com)';
 }
 ;1

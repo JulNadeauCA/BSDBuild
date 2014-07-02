@@ -80,7 +80,9 @@ sub Emul
 
 BEGIN
 {
-	$DESCR{'fontconfig'} = 'fontconfig (http://fontconfig.org/)';
+	$DESCR{'fontconfig'} = 'fontconfig';
+	$URL{'fontconfig'} = 'http://fontconfig.org';
+
 	$TESTS{'fontconfig'} = \&Test;
 	$DEPS{'fontconfig'} = 'cc';
 	$EMUL{'fontconfig'} = \&Emul;

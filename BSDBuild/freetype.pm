@@ -78,7 +78,9 @@ sub Emul
 
 BEGIN
 {
-	$DESCR{'freetype'} = 'FreeType (http://www.freetype.org)';
+	$DESCR{'freetype'} = 'FreeType';
+	$URL{'freetype'} = 'http://www.freetype.org';
+
 	$DEPS{'freetype'} = 'cc';
 	$TESTS{'freetype'} = \&Test;
 	$EMUL{'freetype'} = \&Emul;

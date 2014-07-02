@@ -44,6 +44,8 @@ sub Test
 BEGIN
 {
 	$DESCR{'smpeg'} = 'the smpeg library';
+	$URL{'smpeg'} = 'http://icculus.org/smpeg';
+
 	$TESTS{'smpeg'} = \&Test;
 	$DEPS{'smpeg'} = 'cc,sdl';
 }

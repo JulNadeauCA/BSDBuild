@@ -110,7 +110,9 @@ sub Emul
 
 BEGIN
 {
-	$DESCR{'glu'} = 'GLU (http://www.opengl.org)';
+	$DESCR{'glu'} = 'GLU';
+	$URL{'glu'} = 'http://www.opengl.org';
+
 	$TESTS{'glu'} = \&Test;
 	$EMUL{'glu'} = \&Emul;
 	$DEPS{'glu'} = 'cc,opengl,math';

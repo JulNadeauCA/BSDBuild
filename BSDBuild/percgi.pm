@@ -53,9 +53,11 @@ sub Test
 
 BEGIN
 {
+	$DESCR{'percgi'} = 'PerCGI';
+	$URL{'percgi'} = 'http://percgi.hypertriton.com';
+
 	$TESTS{'percgi'} = \&Test;
 	$DEPS{'percgi'} = 'cc';
-	$DESCR{'percgi'} = 'PerCGI (http://percgi.org/)';
 }
 
 ;1

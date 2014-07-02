@@ -171,9 +171,11 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'db4'} = 'Berkeley DB 4.x';
+	$URL{'db4'} = 'http://www.oracle.com/technology/products/berkeley-db';
+
 	$TESTS{'db4'} = \&Test;
 	$DEPS{'db4'} = 'cc';
-	$DESCR{'db4'} = 'Berkeley DB 4.x';
 	$EMUL{'db4'} = \&Emul;
 }
 

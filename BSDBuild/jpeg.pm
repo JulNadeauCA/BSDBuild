@@ -97,7 +97,9 @@ sub Emul
 
 BEGIN
 {
-	$DESCR{'jpeg'} = 'libjpeg (ftp://ftp.uu.net/graphics/jpeg/)';
+	$DESCR{'jpeg'} = 'libjpeg';
+	$URL{'jpeg'} = 'ftp://ftp.uu.net/graphics/jpeg';
+
 	$TESTS{'jpeg'} = \&Test;
 	$EMUL{'jpeg'} = \&Emul;
 	$DEPS{'jpeg'} = 'cc';

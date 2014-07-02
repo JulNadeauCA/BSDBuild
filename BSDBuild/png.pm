@@ -81,7 +81,9 @@ sub Emul
 
 BEGIN
 {
-	$DESCR{'png'} = 'libpng (http://www.libpng.org)';
+	$DESCR{'png'} = 'libpng';
+	$URL{'png'} = 'http://www.libpng.org';
+
 	$EMUL{'png'} = \&Emul;
 	$TESTS{'png'} = \&Test;
 	$DEPS{'png'} = 'cc';

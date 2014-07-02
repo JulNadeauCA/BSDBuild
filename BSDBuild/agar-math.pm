@@ -73,8 +73,10 @@ sub Emul
 
 BEGIN
 {
+	$DESCR{'agar-math'} = 'Agar-Math';
+	$URL{'agar-math'} = 'http://libagar.org';
+
 	$TESTS{'agar-math'} = \&Test;
-	$DESCR{'agar-math'} = 'Agar-Math library (http://libagar.org/)';
 	$DEPS{'agar-math'} = 'cc,agar';
 	$EMUL{'agar-math'} = \&Emul;
 }

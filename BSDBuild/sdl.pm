@@ -139,7 +139,9 @@ sub Emul
 
 BEGIN
 {
-	$DESCR{'sdl'} = 'SDL (http://www.libsdl.org)';
+	$DESCR{'sdl'} = 'SDL';
+	$URL{'sdl'} = 'http://www.libsdl.org';
+
 	$EMUL{'sdl'} = \&Emul;
 	$TESTS{'sdl'} = \&Test;
 	$DEPS{'sdl'} = 'cc';

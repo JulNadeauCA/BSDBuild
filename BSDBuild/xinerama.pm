@@ -109,6 +109,8 @@ sub Emul
 BEGIN
 {
 	$DESCR{'xinerama'} = 'the Xinerama extension';
+	$URL{'xinerama'} = 'http://x.org';
+
 	$TESTS{'xinerama'} = \&Test;
 	$EMUL{'xinerama'} = \&Emul;
 	$DEPS{'xinerama'} = 'cc,x11';

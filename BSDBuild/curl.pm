@@ -55,9 +55,11 @@ EOF
 
 BEGIN
 {
+	$DESCR{'curl'} = 'libcurl';
+	$URL{'curl'} = 'http://curl.haxx.se';
+
 	$TESTS{'curl'} = \&Test;
 	$DEPS{'curl'} = 'cc';
-	$DESCR{'curl'} = 'libcurl (http://curl.haxx.se/)';
 }
 
 ;1

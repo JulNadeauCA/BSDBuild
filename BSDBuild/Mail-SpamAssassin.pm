@@ -47,8 +47,10 @@ EOF
 
 BEGIN
 {
-	$TESTS{'Mail-SpamAssassin'} = \&Test;
 	$DESCR{'Mail-SpamAssassin'} = 'the Mail::SpamAssassin module';
+	$URL{'Mail-SpamAssassin'} = 'http://spamassassin.org';
+
+	$TESTS{'Mail-SpamAssassin'} = \&Test;
 	$DEPS{'Mail-SpamAssassin'} = 'perl';
 }
 

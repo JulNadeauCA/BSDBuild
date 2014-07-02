@@ -55,10 +55,6 @@ sub Test
 		MkPrint('yes');
 		MkPrintN('checking whether libjpeg works...');
 		MkCompileC('HAVE_JPEG', '${JPEG_CFLAGS}', '${JPEG_LIBS}', << 'EOF');
-#ifdef _WIN32
-#error "libjpeg conflicts with windows.h"
-#endif
-
 #include <stdio.h>
 #include <jpeglib.h>
 

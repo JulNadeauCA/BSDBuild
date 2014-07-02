@@ -52,6 +52,7 @@ sub Test
 	my ($ver, $pfx) = @_;
 
 	MkIfNE($pfx, '');
+		MkExecOutputPfx($pfx, 'sdl-config', '--prefix', 'SDL_PREFIX');
 		MkExecOutputPfx($pfx, 'sdl-config', '--version', 'SDL_VERSION');
 		MkExecOutputPfx($pfx, 'sdl-config', '--cflags', 'SDL_CFLAGS');
 		MkExecOutputPfx($pfx, 'sdl-config', '--libs', 'SDL_LIBS');
@@ -60,6 +61,7 @@ sub Test
 		MkCaseBegin('*-*-darwin*');
 			MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
 			MkIfNE('${SDL_VERSION}', '');
+				MkExecOutput('sdl-config', '--prefix', 'SDL_PREFIX');
 				MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
 				MkExecOutput('sdl-config', '--libs', 'SDL_LIBS');
 			MkElse;
@@ -72,26 +74,43 @@ sub Test
 		MkCaseBegin('*-*-freebsd*');
 			MkExecOutput('sdl11-config', '--version', 'SDL_VERSION');
 			MkIfNE('${SDL_VERSION}', '');
+				MkExecOutput('sdl11-config', '--prefix', 'SDL_PREFIX');
 				MkExecOutput('sdl11-config', '--cflags', 'SDL_CFLAGS');
 				MkExecOutput('sdl11-config', '--libs', 'SDL_LIBS');
 			MkElse;
+				MkExecOutput('sdl-config', '--prefix', 'SDL_PREFIX');
 				MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
 				MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
 				MkExecOutput('sdl-config', '--libs', 'SDL_LIBS');
 			MkEndif;
 			MkCaseEnd;
 		MkCaseBegin('*');
+			MkExecOutput('sdl-config', '--prefix', 'SDL_PREFIX');
 			MkExecOutput('sdl-config', '--version', 'SDL_VERSION');
 			MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
 			MkExecOutput('sdl-config', '--libs', 'SDL_LIBS');
 			MkCaseEnd;
 		MkEsac;
 	MkEndif;
-
+		
 	MkIfFound($pfx, $ver, 'SDL_VERSION');
 		MkPrintN('checking whether SDL works...');
 		MkCompileC('HAVE_SDL', '${SDL_CFLAGS}', '${SDL_LIBS}', $testCode);
 		MkIfTrue('${HAVE_SDL}');
+			MkCaseIn('${host}');
+			MkCaseBegin('*-*-cygwin* | *-*-mingw32*');
+				#
+				# On Cygwin/MinGW, linking against -lSDL.dll is preferable 
+				# to the output of `sdl-config`; use it if available.
+				#
+				MkIfExists('${SDL_PREFIX}/include/SDL');
+					MkDefine('SDL_CFLAGS', '-I${SDL_PREFIX}/include/SDL -D_GNU_SOURCE=1');
+				MkEndif;
+				MkIfExists('${SDL_PREFIX}/lib/libSDL.dll.a');
+					MkDefine('SDL_LIBS', '-L${SDL_PREFIX}/lib -lSDL.dll');
+				MkEndif;
+				MkCaseEnd;
+			MkEsac;
 			MkSave('SDL_CFLAGS', 'SDL_LIBS');
 		MkElse;
 			MkPrintN('checking whether SDL works (with X11 libs)...');

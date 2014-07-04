@@ -28,7 +28,7 @@ sub Test
 {
 	TryCompile 'HAVE_GETOPT', << 'EOF';
 #include <string.h>
-#include <unistd.h>
+#include <getopt.h>
 
 int
 main(int argc, char *argv[])

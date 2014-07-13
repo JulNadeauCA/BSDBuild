@@ -118,7 +118,9 @@ DATAFILES=Core.pm \
 	kqueue.pm \
 	timerfd.pm \
 	etubestore.pm \
-	uim.pm
+	uim.pm \
+	xbox.pm \
+	csidl.pm
 
 all:
 

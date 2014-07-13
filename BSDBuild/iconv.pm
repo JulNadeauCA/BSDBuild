@@ -35,7 +35,6 @@ my $testCode = << "EOF";
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <iconv.h>
 
 int main(int argc, char *argv[])
@@ -48,10 +47,8 @@ int main(int argc, char *argv[])
 
 	cd = iconv_open("ISO-8859-1", "UTF-8");
 	rv = iconv(cd, &inbuf, &inlen, &outbuf, &outbuflen);
-	if (rv == (size_t)-1 && errno == E2BIG) {
-	}
 	iconv_close(cd);
-	return (0);
+	return ((rv == (size_t)-1));
 }
 EOF
 
@@ -59,7 +56,6 @@ my $testConstCode = << "EOF";
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <iconv.h>
 
 int main(int argc, char *argv[])
@@ -72,10 +68,8 @@ int main(int argc, char *argv[])
 
 	cd = iconv_open("ISO-8859-1", "UTF-8");
 	rv = iconv(cd, &inbuf, &inlen, &outbuf, &outbuflen);
-	if (rv == (size_t)-1 && errno == E2BIG) {
-	}
 	iconv_close(cd);
-	return (0);
+	return ((rv == (size_t)-1));
 }
 EOF
 

@@ -430,12 +430,12 @@ echo "CROSS_COMPILING=${CROSS_COMPILING}" >> Makefile.config
 echo "SRCDIR=${SRC}" >> Makefile.config
 echo "BLDDIR=${BLD}" >> Makefile.config
 
-echo -n "./configure" >> config.log
-echo -n "./configure" >> config.status
+$ECHO_N "./configure" >> config.log
+$ECHO_N "./configure" >> config.status
 for arg
 do
-	echo -n " $arg" >> config.log
-	echo -n " $arg" >> config.status
+	$ECHO_N " $arg" >> config.log
+	$ECHO_N " $arg" >> config.status
 done
 echo "" >> config.log
 echo "" >> config.status

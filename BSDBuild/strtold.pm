@@ -24,7 +24,9 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 my $testCode = << 'EOF';
-#define _XOPEN_SOURCE 600
+#ifndef __NetBSD__
+# define _XOPEN_SOURCE 600
+#endif
 #include <stdlib.h>
 int
 main(int argc, char *argv[])

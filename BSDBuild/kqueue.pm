@@ -39,8 +39,13 @@ main(int argc, char *argv[])
 	int kq, fd = -1, nev;
 
 	if ((kq = kqueue()) == -1) { return (1); }
+#if defined(__NetBSD__)
+	EV_SET(&kev, (uintptr_t)fd, EVFILT_READ, EV_ADD|EV_ENABLE|EV_ONESHOT, 0, 0, (intptr_t)NULL);
+	EV_SET(&kev, (uintptr_t)1, EVFILT_TIMER, EV_ADD|EV_ENABLE, 0, 0, (intptr_t)NULL);
+#else
 	EV_SET(&kev, fd, EVFILT_READ, EV_ADD|EV_ENABLE|EV_ONESHOT, 0, 0, NULL);
-	EV_SET(&kev, 1, EVFILT_TIMER, EV_ADD|EV_ENABLE, 0, 1000, 0);
+	EV_SET(&kev, 1, EVFILT_TIMER, EV_ADD|EV_ENABLE, 0, 0, NULL);
+#endif
 	nev = kevent(kq, &kev, 1, &chg, 1, NULL);
 	return (chg.flags & EV_ERROR);
 }

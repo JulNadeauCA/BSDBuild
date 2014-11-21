@@ -208,7 +208,7 @@ sub TestPthreadsXOpenExt
 	MkPrintN('checking for the X/Open Threads Extension...');
 
 	MkCaseIn('${host}');
-	MkCaseBegin('*-*-freebsd*');
+	MkCaseBegin('*-*-freebsd* | *-*-dragonfly*');
 		MkDefine('PTHREADS_XOPEN_CFLAGS', '');
 		MkCaseEnd;
 	MkCaseBegin('*');

@@ -34,8 +34,15 @@ sub Test
 		MkDefine('MATH_C99_CFLAGS', '');
 		MkDefine('MATH_C99_LIBS', '-lm');
 	MkEndif;
-
-	MkCompileC('HAVE_MATH_C99', '${CFLAGS} ${MATH_C99_CFLAGS}', '${MATH_C99_LIBS}', << 'EOF');
+		
+	MkCaseIn('${host}');
+	MkCaseBegin('*-pc-mingw32*');
+		MkPrint('skipping (libmingwex linker errors)');
+		MkDefine('HAVE_MATH_C99', 'no');
+		MkSaveUndef('HAVE_MATH_C99');
+		MkCaseEnd;
+	MkCaseBegin('*');
+		MkCompileC('HAVE_MATH_C99', '${CFLAGS} ${MATH_C99_CFLAGS}', '${MATH_C99_LIBS}', << 'EOF');
 #include <math.h>
 
 int
@@ -45,10 +52,13 @@ main(int argc, char *argv[])
 	double d = 1.0;
 
 	d = fabs(d);
-	f = fabsf(f);
-	return (0);
+	f = sqrtf(fabsf(f));
+	return (f > d) ? 0 : 1;
 }
 EOF
+		MkCaseEnd;
+	MkEsac;
+
 	MkSaveIfTrue('${HAVE_MATH_C99}', 'MATH_C99_CFLAGS', 'MATH_C99_LIBS');
 	return (0);
 }

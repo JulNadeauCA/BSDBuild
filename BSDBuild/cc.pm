@@ -129,11 +129,13 @@ EOF
 		# XXX: should rename to HAVE_CC_LONG_DOUBLE
 		MkPrintN('cc: checking for long double...');
 		TryCompile('HAVE_LONG_DOUBLE', << 'EOF');
+#include <string.h>
 int
 main(int argc, char *argv[])
 {
 	long double ld = 0.1;
 
+	printf("%Lf", ld);
 	return (ld == 1.0);
 }
 EOF

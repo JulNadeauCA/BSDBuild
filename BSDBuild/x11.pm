@@ -24,6 +24,8 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 my @autoIncludeDirs = (
+	'/usr/local/include',
+	'/usr/include',
 	'/usr/include/X11',
 	'/usr/include/X11R6',
 	'/usr/include/X11R7',
@@ -39,6 +41,8 @@ my @autoIncludeDirs = (
 );
 
 my @autoLibDirs = (
+	'/usr/local/lib',
+	'/usr/lib',
 	'/usr/local/X11/lib',
 	'/usr/local/X11R6/lib',
 	'/usr/local/X11R7/lib',
@@ -63,17 +67,23 @@ sub Test
 			    MkDefine('X11_CFLAGS', "-I$pfx/include");
 			MkEndif;
 			MkIfExists("$pfx/lib");
-			    MkDefine('X11_LIBS', "-L$pfx/lib");
+			    MkDefine('X11_LIBS', "-L$pfx/lib -lX11");
 			MkEndif;
 		MkElse;
 			foreach my $dir (@autoIncludeDirs) {
 				MkIfExists("$dir/X11");
 				    MkDefine('X11_CFLAGS', "-I$dir");
+					MkBreak;
 				MkEndif;
 			}
 			foreach my $dir (@autoLibDirs) {
-				MkIfExists($dir);
-				    MkDefine('X11_LIBS', "\${X11_LIBS} -L$dir");
+				MkIfExists("$dir/libX11.so");
+				    MkDefine('X11_LIBS', "-L$dir -lX11");
+					MkBreak;
+				MkEndif;
+				MkIfExists("$dir/libX11.so.*");
+				    MkDefine('X11_LIBS', "-L$dir -lX11");
+					MkBreak;
 				MkEndif;
 			}
 #			MkIfNE('${X11_CFLAGS}', '');
@@ -83,7 +93,7 @@ sub Test
 		MkEndif;
 	MkEndif;
 
-	MkCompileC('HAVE_X11', '${X11_CFLAGS}', '${X11_LIBS} -lX11', << 'EOF');
+	MkCompileC('HAVE_X11', '${X11_CFLAGS}', '${X11_LIBS}', << 'EOF');
 #include <X11/Xlib.h>
 int main(int argc, char *argv[])
 {

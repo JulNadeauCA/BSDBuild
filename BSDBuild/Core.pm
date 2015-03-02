@@ -246,7 +246,11 @@ EOF
 
 sub MkIfPkgConfig
 {
-	print 'if [ "${PKGCONFIG}" != "" ]; then', "\n";
+	my ($pkg) = @_;
+
+	print << "EOF";
+if [ "\${PKGCONFIG}" != "" -a "`\${PKGCONFIG} --variable=prefix $pkg 2>/dev/null`" != "" ]; then
+EOF
 }
 
 # Variant of MkExecOutputPfx() for pkg-config.

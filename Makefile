@@ -63,7 +63,7 @@ uman: config-ok uman.pl
 	    -e s,%VERSION%,${VERSION}, \
 	    uman.pl > uman
 
-install: config-ok install-subdir
+install: all config-ok install-subdir
 	@if [ ! -d "${DESTDIR}${DATADIR}" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${DATADIR}"; \
 	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${DATADIR}"; \

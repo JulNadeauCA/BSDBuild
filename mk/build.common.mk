@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2001-2009 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2012 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@ SYSCONFDIR?=	${PREFIX}/etc
 DATADIR?=	${PREFIX}/share
 BINDIR?=	${PREFIX}/bin
 LIBDIR?=	${PREFIX}/lib
+MODULEDIR?=	${PREFIX}/lib
 INCLDIR?=	${PREFIX}/include
 MANDIR?=	${PREFIX}/man
 

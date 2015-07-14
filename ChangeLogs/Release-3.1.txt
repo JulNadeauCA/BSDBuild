@@ -3,6 +3,7 @@ Release Notes for BSDBuild 3.1
 
 - <build.man.mk>: Add support for OpenBSD's new mandoc(1). Add support
   for PDF and HTML output. Introduce new target: "make lint".
+- Document build.man.mk(5), which ironically was missing its own manpage.
 - <build.prog.mk>: Allow ${PROG_TYPE} dependent LDFLAGS to be defined.
 - <build.lib.mk>: Updated bundled libtool to 2.4.2. switch to libtool's
   LIB_{CURRENT,REVISION,AGE} versioning scheme.
@@ -11,8 +12,7 @@ Release Notes for BSDBuild 3.1
   charset variants are now written into ${CHARSETS} subdirectories.
 - mkconfigure(1): To make generated scripts smaller, the "--cache" code is
   no longer included by default. The directive CONFIG_CACHE(yes) can be used
-  to enable the "--cache" feature again.
-- mkconfigure(1): Produce ./config.status files by default.
+  to enable the "--cache" feature again. Produce config.status files.
 - a few more ${DESTDIR} fixes; thanks bonsaikitten!
 - Miscellaneous fixes and improvements to the manual pages.
 - BSDBuild: Various fixes in the test modules. Some tweaks to handle recently

@@ -52,8 +52,8 @@ HTML_OVERWRITE?=No
 HTML_INSTSOURCE?=Yes
 HTML_STRIP?=${PERL} ${TOP}/mk/hstrip.pl
 
-DTD?=		<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"  \
-		"http://www.w3.org/TR/html4/loose.dtd">
+DTD?=	<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"  \
+	"http://www.w3.org/TR/html4/loose.dtd">
 
 all: ${HTML} ${CSS} all-subdir
 clean: clean-www clean-subdir
@@ -73,22 +73,21 @@ depend: depend-subdir
 	@rm -f ${BASEDIR}/base.css
 
 .htm.html: ${BASEDIR}/${TEMPLATE}.m4 ${TEMPLATE_DEPS}
-	@if [ ! -e "utf8" ]; then mkdir utf8; fi
 	@cp -f $< ${BASEDIR}/base.htm
-	@export OUT=".$@.tmp"
+	@echo "${M4} $< | ${XSLTPROC} > $@"
+	@export OUT=".$@.tmp"; \
 	${M4} ${M4FLAGS} -D__BASE_DIR=${BASEDIR} -D__FILE=$@ \
 	    -D__TEMPLATE=${TEMPLATE} -D__LANG=${DEF_LANGUAGE} \
 	        ${BASEDIR}/${TEMPLATE}.m4 | \
 		${HTML_STRIP} > "$$OUT"; \
-	@echo '${DTD}' > $@
+	echo '${DTD}' > $@; \
 	${XSLTPROC} ${XSLTPROCFLAGS} --html --stringparam lang ${DEF_LANGUAGE} ${XSL} \
-	    "$$OUT" 2>/dev/null | ${HTML_STRIP} >> $@ 2>/dev/null
-	@cp "$@" "utf8/$@"
-	@rm -f "$$OUT" ${BASEDIR}/base.htm
+	    "$$OUT" 2>/dev/null | ${HTML_STRIP} >> $@ 2>/dev/null; \
+	rm -f "$$OUT" ${BASEDIR}/base.htm
 
 .htm.html.var: ${BASEDIR}/${TEMPLATE}.m4 ${TEMPLATE_DEPS}
 	@for CHARSET in ${CHARSETS}; do \
-	    if [ ! -e "$$CHARSET" ]; then mkdir $$CHARSET; fi
+	    if [ ! -e "$$CHARSET" ]; then mkdir $$CHARSET; fi; \
 	done
 	@cp -f $< ${BASEDIR}/base.htm
 	@export BASE="`echo $@ | sed s/\.var//`"; \
@@ -106,40 +105,18 @@ depend: depend-subdir
 	        $$OUT 2>/dev/null \
 		| ${HTML_STRIP} >> utf8/$$BASE.$$LANG; \
 	    rm -f $$OUT; \
-	    case "$$LANG" in \
-	    en) \
-	        echo "URI: utf8/$$BASE.$$LANG" >> $@; \
-	        echo "Content-language: $$LANG" >> $@; \
-	        echo "Content-type: text/html;encoding=UTF-8" >> $@; \
-	        echo "" >> $@; \
-	        echo "URI: $$BASE.$$LANG" >> $@; \
-	        echo "Content-language: $$LANG" >> $@; \
-	        echo "Content-type: text/html" >> $@; \
-	        echo "" >> $@; \
-	        cat utf8/$$BASE.$$LANG | \
-		    sed s/charset=UTF-8/charset=ISO-8859-1/ | \
-		    ${ICONV} -f UTF-8 -t ISO-8859-1 > \
-		    $$BASE.$$LANG; \
-	        ;; \
-	    ab|af|eu|ca|da|nl|fo|fr|fi|de|is|ga|it|no|nb|nn|pt|rm|gd|es|sv|sw) \
-	        echo "URI: utf8/$$BASE.$$LANG" >> $@; \
-	        echo "Content-language: $$LANG" >> $@; \
-	        echo "Content-type: text/html;encoding=UTF-8" >> $@; \
-	        echo "" >> $@; \
-	        echo "URI: iso8859-1/$$BASE.$$LANG" >> $@; \
-	        echo "Content-language: $$LANG" >> $@; \
-	        echo "Content-type: text/html;charset=ISO-8859-1" >> $@; \
-	        echo "" >> $@; \
-	        cat utf8/$$BASE.$$LANG | \
-		    sed s/charset=UTF-8/charset=ISO-8859-1/ | \
-		    ${ICONV} -f UTF-8 -t ISO-8859-1 > \
-		    iso8859-1/$$BASE.$$LANG; \
-		cp -f iso8859-1/$$BASE.$$LANG $$BASE.$$LANG; \
-	        ;; \
-	    *) \
-	        ;; \
-	    esac; \
-	    echo >> $@; \
+	    cat utf8/$$BASE.$$LANG | \
+		sed s/charset=UTF-8/charset=ISO-8859-1/ | \
+		${ICONV} -f UTF-8 -t ISO-8859-1 > \
+		iso8859-1/$$BASE.$$LANG; \
+	    echo "Content-Type: text/html; charset=UTF-8" >> $@; \
+	    echo "Content-Language: $$LANG" >> $@; \
+	    echo "URI: utf8/$$BASE.$$LANG" >> $@; \
+	    echo "" >> $@; \
+	    echo "Content-Type: text/html; charset=ISO-8859-1" >> $@; \
+	    echo "Content-Language: $$LANG" >> $@; \
+	    echo "URI: iso8859-1/$$BASE.$$LANG" >> $@; \
+	    echo "" >> $@; \
 	done; \
 	rm -f ${BASEDIR}/base.htm; \
 	echo "."
@@ -147,18 +124,24 @@ depend: depend-subdir
 clean-www:
 	@echo -n "Clean:"
 	@for F in ${HTML}; do \
-		export BASE="`echo $$F | sed s/\.var//`"; \
-		echo -n " $$BASE"; \
-		rm -f $$F; \
-		for LANG in ${LANGUAGES}; do \
-			rm -f $$BASE.$$LANG {utf8,iso8859-1}/$$BASE.$$LANG; \
-		done; \
-	done;
-	@echo "."
+		if [ "`echo $$F | sed s/\.var//`" != "$$F" ]; then \
+			export BASE="`echo $$F | sed s/\.var//`"; \
+			echo -n " $$BASE"; \
+			for LANG in ${LANGUAGES}; do \
+				for CHARSET in ${CHARSETS}; do \
+					rm -f $$CHARSET/$$BASE.$$LANG; \
+				done; \
+			done; \
+			rm -f $$F; \
+		else \
+			echo -n " $$F"; \
+		fi; \
+	done
 	@if [ "${CLEANFILES}" != "" ]; then \
-	    echo "rm -f ${CLEANFILES}"; \
+	    echo " ${CLEANFILES}"; \
 	    rm -f ${CLEANFILES}; \
 	fi
+	@echo "."
 
 install-www-makefile:
 	@export OUT=.Makefile.out; \
@@ -259,7 +242,7 @@ install-www:
 		export BASE="`echo $$F | sed s/\.var//`"; \
 		if [ "${HTML_INSTSOURCE}" = "Yes" ]; then \
 			${MAKE} install-www-source \
-			    SRCFILE="`echo $$BASE |sed s,.html$$,.htm,`"
+			    SRCFILE="`echo $$BASE |sed s,.html$$,.htm,`"; \
 		fi; \
 		if [ -e "${DESTDIR}${HTMLDIR}/$$F" \
 		     -a "${HTML_OVERWRITE}" = "" ]; then \

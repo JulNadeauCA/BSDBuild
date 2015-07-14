@@ -1,10 +1,14 @@
 # Public domain
+# Strip empty lines from HTML documents (except <pre> contents).
 #
-# hstrip.pl: Strip empty lines.
-#
+my $inPre = 0;
 while (<STDIN>) {
 	chop;
-	if (/^$/) {
+	if (/<\s*pre[[:print:]]*>/i) {
+		$inPre = 1;
+	}
+	if (/<\s*\/\s*pre\s*>/i) { $inPre = 0; }
+	if (!$inPre && /^\s*$/) {
 		next;
 	}
 	print $_, "\n";

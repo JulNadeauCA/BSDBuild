@@ -98,17 +98,15 @@ depend: depend-subdir
 	    echo -n " $$LANG"; \
 	    ${M4} ${M4FLAGS} -D__BASE_DIR=${BASEDIR} -D__FILE=$$BASE \
 	        -D__TEMPLATE=${TEMPLATE} -D__LANG=$$LANG \
-	        ${BASEDIR}/${TEMPLATE}.m4 \
-		| ${HTML_STRIP} > $$OUT; \
+	        ${BASEDIR}/${TEMPLATE}.m4 | ${HTML_STRIP} > $$OUT; \
 	    echo '${DTD}' > utf8/$$BASE.$$LANG; \
             ${XSLTPROC} --html ${XSLTPROCFLAGS} --stringparam lang $$LANG ${XSL} \
-	        $$OUT 2>/dev/null \
-		| ${HTML_STRIP} >> utf8/$$BASE.$$LANG; \
+	        $$OUT 2>/dev/null | ${HTML_STRIP} >> utf8/$$BASE.$$LANG; \
+	    cp -f utf8/$$BASE.$$LANG $$BASE.$$LANG; \
 	    rm -f $$OUT; \
 	    cat utf8/$$BASE.$$LANG | \
 		sed s/charset=UTF-8/charset=ISO-8859-1/ | \
-		${ICONV} -f UTF-8 -t ISO-8859-1 > \
-		iso8859-1/$$BASE.$$LANG; \
+		${ICONV} -f UTF-8 -t ISO-8859-1 > iso8859-1/$$BASE.$$LANG; \
 	    echo "Content-Type: text/html; charset=UTF-8" >> $@; \
 	    echo "Content-Language: $$LANG" >> $@; \
 	    echo "URI: utf8/$$BASE.$$LANG" >> $@; \

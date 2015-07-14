@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2010 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2010-2015 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,24 +29,47 @@ use BSDBuild::Core;
 sub BuiltinDoc
 {
 	print << 'EOF';
+cat << EOT > conftest.1
+.\" COMMENT
+.Dd 
+.Dd NOVEMBER 23, 2009
+.Dt TEST 1
+.Os
+.ds vT Test
+.ds oS Test 1.0
+.Sh NAME
+.Nm test
+.Nd Test document
+.Sh DESCRIPTION
+EOT
+
 HAVE_MANDOC="no"
-NROFF=""
+MANDOC=""
 for path in `echo $PATH | sed 's/:/ /g'`; do
-	if [ -x "${path}/nroff" ]; then
-		NROFF="${path}/nroff"
+	if [ -x "${path}/mandoc" ]; then
+		cat conftest.1 | ${path}/mandoc -Tascii >/dev/null
+		if [ "$?" = "0" ]; then
+			HAVE_MANDOC="yes"
+			MANDOC="${path}/mandoc"
+			break;
+		fi
+	elif [ -x "${path}/nroff" ]; then
+		cat conftest.1 | ${path}/nroff -Tmandoc >/dev/null
+		if [ "$?" = "0" ]; then
+			HAVE_MANDOC="yes"
+			MANDOC="${path}/nroff -Tmandoc"
+			break;
+		fi
 	fi
 done
-if [ "${NROFF}" != "" ]; then
-	echo | ${NROFF} -Tmandoc >/dev/null
-	if [ "$?" = "0" ]; then
-		HAVE_MANDOC="yes"
-	fi
-fi
+rm -f conftest.1
+
 if [ "${HAVE_MANDOC}" = "no" ]; then
 	if [ "${with_manpages}" = "yes" ]; then
 		echo "*"
-		echo "* --with-manpages was requested, but either the nroff(1)"
-		echo "* utility or the mdoc(7) macro package was not found."
+		echo "* --with-manpages was requested, but either the"
+		echo "* nroff(1)/mandoc(1) utility or the mdoc(7) macro"
+		echo "* package were not found."
 		echo "*"
 		exit 1
 	fi
@@ -55,6 +78,7 @@ if [ "${HAVE_MANDOC}" = "no" ]; then
 	echo "NOMANLINKS=yes" >> Makefile.config
 else
 	echo "HAVE_MANDOC=yes" >> Makefile.config
+	echo "MANDOC=${MANDOC}" >> Makefile.config
 	if [ "${with_catman}" = "no" ]; then
 		echo "NOCATMAN=yes" >> Makefile.config
 	else
@@ -98,6 +122,7 @@ msgfmt=""
 for path in `echo $PATH | sed 's/:/ /g'`; do
 	if [ -x "${path}/msgfmt" ]; then
 		msgfmt=${path}/msgfmt
+		break
 	fi
 done
 if [ "${msgfmt}" != "" ]; then
@@ -124,12 +149,14 @@ if [ "${with_ctags}" = "yes" ]; then
 	for path in `echo $PATH | sed 's/:/ /g'`; do
 		if [ -x "${path}/ectags" ]; then
 			CTAGS="${path}/ectags"
+			break
 		fi
 	done
 	if [ "${CTAGS}" = "" ]; then
 		for path in `echo $PATH | sed 's/:/ /g'`; do
 			if [ -x "${path}/ctags" ]; then
 				CTAGS="${path}/ctags"
+				break
 			fi
 		done
 	fi

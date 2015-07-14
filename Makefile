@@ -109,7 +109,6 @@ configure: configure.in
 	chmod 755 configure
 
 depend:
-	# nothing
 
 release:
 	env VERSION=`perl get-version.pl` RELEASE="`perl get-release.pl`" \

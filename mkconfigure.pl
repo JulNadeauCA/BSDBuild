@@ -1089,11 +1089,9 @@ EOF
 print << 'EOF';
 PERL=""
 for path in `echo $PATH | sed 's/:/ /g'`; do
-	if [ -x "${path}" ]; then
-		if [ -e "${path}/perl" ]; then
-			PERL="${path}/perl"
-			break
-		fi
+	if [ -x "${path}/perl" ]; then
+		PERL="${path}/perl"
+		break
 	fi
 done
 EOF
@@ -1104,11 +1102,9 @@ EOF
 print << 'EOF';
 PKGCONFIG=""
 for path in `echo $PATH | sed 's/:/ /g'`; do
-	if [ -x "${path}" ]; then
-		if [ -e "${path}/pkg-config" ]; then
-			PKGCONFIG="${path}/pkg-config"
-			break
-		fi
+	if [ -x "${path}/pkg-config" ]; then
+		PKGCONFIG="${path}/pkg-config"
+		break
 	fi
 done
 EOF

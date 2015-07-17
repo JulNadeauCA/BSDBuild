@@ -8,9 +8,7 @@ PROJ=bsdbuild
 VER=${VERSION}
 REL=${RELEASE}
 DISTNAME=${PROJ}-${VER}
-RHOST=resin.csoft.net
-RUSER=vedge
-MAKE=make
+RHOST=resin
 
 if [ "$1" != "" ]; then
 	PHASE="$1"
@@ -58,28 +56,21 @@ cp -fRp ${PROJ} ${DISTNAME}
 rm -fR `find ${DISTNAME} \( -name .svn -or -name \*~ -or -name .\*.swp \)`
 
 # ZIP: Prepare text files.
-if [ -e "`which unix2dos 2>/dev/null`" ]; then
-	(cd ${DISTNAME} &&
-	 cat INSTALL |unix2dos > INSTALL.txt;
-	 cat README |unix2dos > README.txt;
-	 cat ChangeLogs/Release-${VER}.txt |unix2dos > RELEASE-${VER}.txt;
-	 cat mk/LICENSE.txt |unix2dos > LICENSE.txt;
-	 rm -f INSTALL README)
-fi
+(cd ${DISTNAME} &&
+ cat INSTALL			   |sed "s/$/`echo -e \\\r`/" > INSTALL.txt;
+ cat README			   |sed "s/$/`echo -e \\\r`/" > README.txt;
+ cat ChangeLogs/Release-${VER}.txt |sed "s/$/`echo -e \\\r`/" > RELEASE-${VER}.txt;
+ cat mk/LICENSE.txt		   |sed "s/$/`echo -e \\\r`/" > LICENSE.txt;
+ rm -f INSTALL README)
 
 # ZIP: Compress archive
 zip -8 -q -r ${DISTNAME}.zip ${DISTNAME}
 
 echo "Updating checksums"
 openssl md5 ${DISTNAME}.tar.gz > ${DISTNAME}.tar.gz.md5
-openssl rmd160 ${DISTNAME}.tar.gz >> ${DISTNAME}.tar.gz.md5
-openssl sha1 ${DISTNAME}.tar.gz >> ${DISTNAME}.tar.gz.md5
+openssl sha256 ${DISTNAME}.tar.gz >> ${DISTNAME}.tar.gz.md5
 openssl md5 ${DISTNAME}.zip > ${DISTNAME}.zip.md5
-openssl rmd160 ${DISTNAME}.zip >> ${DISTNAME}.zip.md5
-openssl sha1 ${DISTNAME}.zip >> ${DISTNAME}.zip.md5
-
-echo "Press any key to continue"
-read FOO
+openssl sha256 ${DISTNAME}.zip >> ${DISTNAME}.zip.md5
 
 echo "Enter passphrase:"
 gpg -ab ${DISTNAME}.tar.gz
@@ -87,16 +78,15 @@ echo "Enter passphrase again:"
 gpg -ab ${DISTNAME}.zip
 
 if [ "$NOUPLOAD" != "Yes" ]; then
-	echo "Uploading to ${RHOST}"
-	scp -C ${DISTNAME}.* ${RUSER}@${RHOST}:${REMOTEDIR}
-	scp -C ${PROJ}/ChangeLogs/Release-${VER}.txt ${RUSER}@${RHOST}:${CHANGELOGDIR}
+	echo "Upload to ${RHOST}?"
+	scp -C ${DISTNAME}.* ${RHOST}:${REMOTEDIR}
+	scp -C ${PROJ}/ChangeLogs/Release-${VER}.txt ${RHOST}:${CHANGELOGDIR}
 fi
 
 if [ "$PHASE" = "stable" ]; then
 	echo "*********************************************************"
 	echo "TODO:"
 	echo "- Update http://sourceforge.net/projects/bsdbuild/"
-	echo "- Update http://freshmeat.net/projects/bsdbuild/"
-	echo "- Notify bsdbuild@hypertriton.com"
+	echo "- Notify <bsdbuild@hypertriton.com>"
 	echo "*********************************************************"
 fi

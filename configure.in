@@ -1,7 +1,7 @@
 # Public domain
 
 PACKAGE("BSDBuild")
-VERSION("3.1")
+VERSION("3.2")
 RELEASE("Blast of Ancient Atmospheres")
 DEFAULT_DIR(DATADIR, "$PREFIX/share/bsdbuild")
 MDEFINE(CONFIGURE_OK, "yes")

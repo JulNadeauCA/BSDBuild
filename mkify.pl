@@ -35,6 +35,7 @@
 	gen-includes.pl
 	gen-includelinks.pl
 	gen-dotdepend.pl
+	gen-wwwdepend.pl
 	install-manpages.sh);
 		  
 @LibtoolFiles = qw(

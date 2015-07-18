@@ -16,8 +16,8 @@ SCRIPTS=mkconfigure \
 
 DATAFILES=hstrip.pl mkdep mkconcurrent.pl manlinks.pl cmpfiles.pl cleanfiles.pl \
 	gen-includes.pl gen-declspecs.pl get-version.pl get-release.pl \
-	install-manpages.sh ml.xsl gen-dotdepend.pl config.guess \
-	gen-includelinks.pl \
+	install-manpages.sh ml.xsl gen-dotdepend.pl gen-wwwdepend.pl \
+	config.guess gen-includelinks.pl \
 	build.common.mk build.dep.mk build.lib.mk build.man.mk \
 	build.perl.mk build.prog.mk build.subdir.mk build.www.mk \
 	build.po.mk build.doc.mk build.proj.mk

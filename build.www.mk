@@ -22,8 +22,8 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #
-# Compile a set of HTML files (language and character set variants) from
-# source files processed by m4 and xsltproc.
+# Process a set of HTML source files (m4 + xsltproc). ${HTML} targets can be
+# .css, .html (single page) and .html.var (multiple languages / charsets).
 #
 
 M4?=		m4
@@ -35,7 +35,6 @@ ICONV?=		iconv
 BASEDIR?=	${TOP}/m4
 XSLDIR?=	${TOP}/xsl
 TEMPLATE?=	simple
-TEMPLATE_DEPS?=
 LANGUAGES?=	en fr
 CHARSETS?=	utf8 iso8859-1
 DEF_LANGUAGE?=	en
@@ -47,7 +46,6 @@ HTML?=
 HTML_EXTRA?=
 CSS?=
 CSS_TEMPLATE?=style
-CSS_TEMPLATE_DEPS?=
 HTML_OVERWRITE?=No
 HTML_INSTSOURCE?=Yes
 HTML_STRIP?=${PERL} ${TOP}/mk/hstrip.pl
@@ -57,22 +55,22 @@ DTD?=	<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"  \
 
 all: ${HTML} ${CSS} all-subdir
 clean: clean-www clean-subdir
-cleandir: clean-www clean-subdir cleandir-subdir
+cleandir: clean-www cleandir-www clean-subdir cleandir-subdir
 install: install-www install-subdir
 deinstall: deinstall-subdir
 regress: regress-subdir
-depend: depend-subdir
+depend: depend-www depend-subdir
 
 .SUFFIXES: .html.var .html .htm .jpg .jpeg .png .gif .m4 .css .css-in
 
-.css-in.css: ${BASEDIR}/${CSS_TEMPLATE}.m4 ${CSS_TEMPLATE_DEPS}
+.css-in.css: ${BASEDIR}/${CSS_TEMPLATE}.m4
 	@cp -f $< ${BASEDIR}/base.css
 	@echo -n "$@:"
 	${M4} ${M4FLAGS} -D__BASE_DIR=${BASEDIR} -D__FILE=$@ \
 	    -D__LANG=$$LANG ${BASEDIR}/${CSS_TEMPLATE}.m4 | ${HTML_STRIP} > $@
 	@rm -f ${BASEDIR}/base.css
 
-.htm.html: ${BASEDIR}/${TEMPLATE}.m4 ${TEMPLATE_DEPS}
+.htm.html: ${BASEDIR}/${TEMPLATE}.m4
 	@cp -f $< ${BASEDIR}/base.htm
 	@echo "${M4} $< | ${XSLTPROC} > $@"
 	@export OUT=".$@.tmp"; \
@@ -85,7 +83,7 @@ depend: depend-subdir
 	    "$$OUT" 2>/dev/null | ${HTML_STRIP} >> $@ 2>/dev/null; \
 	rm -f "$$OUT" ${BASEDIR}/base.htm
 
-.htm.html.var: ${BASEDIR}/${TEMPLATE}.m4 ${TEMPLATE_DEPS}
+.htm.html.var: ${BASEDIR}/${TEMPLATE}.m4
 	@for CHARSET in ${CHARSETS}; do \
 	    if [ ! -e "$$CHARSET" ]; then mkdir $$CHARSET; fi; \
 	done
@@ -140,6 +138,9 @@ clean-www:
 	    rm -f ${CLEANFILES}; \
 	fi
 	@echo "."
+
+cleandir-www:
+	echo -n >.depend
 
 install-www-makefile:
 	@export OUT=.Makefile.out; \
@@ -271,8 +272,19 @@ install-www:
 		done; \
 	done
 
-.PHONY: install deinstall clean cleandir regress depend clean-www
+depend-www:
+	@files="${HTML}"; \
+	if [ "$$files" != "" -a "$$files" != "none" ]; then \
+		echo "${PERL} ${TOP}/mk/gen-wwwdepend.pl $$files"; \
+		env M4=${M4} BASEDIR=${BASEDIR} TEMPLATE=${TEMPLATE} \
+		    CSS_TEMPLATE=${CSS_TEMPLATE} \
+		    ${PERL} ${TOP}/mk/gen-wwwdepend.pl $$files > .depend; \
+	fi
+
+.PHONY: install deinstall clean cleandir regress depend depend-www clean-www
 .PHONY: install-www install-www-makefile install-www-source install-www-base
+.PHONY: cleandir-www
 
 include ${TOP}/mk/build.common.mk
 include ${TOP}/mk/build.subdir.mk
+include .depend

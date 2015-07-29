@@ -127,6 +127,7 @@ clean-www:
 				for CHARSET in ${CHARSETS}; do \
 					rm -f $$CHARSET/$$BASE.$$LANG; \
 				done; \
+				rm -f $$BASE.$$LANG; \
 			done; \
 			rm -f $$F; \
 		else \

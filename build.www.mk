@@ -50,8 +50,9 @@ HTML_OVERWRITE?=No
 HTML_INSTSOURCE?=Yes
 HTML_STRIP?=${PERL} ${TOP}/mk/hstrip.pl
 
-DTD?=	<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"  \
-	"http://www.w3.org/TR/html4/loose.dtd">
+DTD?=	<!DOCTYPE html>
+#DTD?=	<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"  \
+#	"http://www.w3.org/TR/html4/loose.dtd">
 
 all: ${HTML} ${CSS} all-subdir
 clean: clean-www clean-subdir

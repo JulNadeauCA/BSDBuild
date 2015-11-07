@@ -1,6 +1,6 @@
-#!/usr/bin/perl
+#!%PERL%
 #
-# Copyright (c) 2001-2010 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2015 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@
 	manlinks.pl
 	cmpfiles.pl
 	cleanfiles.pl
+	gen-bundle.pl
 	gen-declspecs.pl
 	gen-includes.pl
 	gen-includelinks.pl

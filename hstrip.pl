@@ -1,3 +1,5 @@
+#!/usr/bin/env perl
+#
 # Public domain
 # Strip empty lines from HTML documents (except <pre> contents).
 #

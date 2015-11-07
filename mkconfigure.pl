@@ -1,6 +1,6 @@
-#!/usr/bin/perl -I%PREFIX%/share/bsdbuild
+#!%PERL% -I%PREFIX%/share/bsdbuild
 #
-# Copyright (c) 2001-2012 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2015 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -793,6 +793,7 @@ sub Help
 		'--with-manlinks' =>	'Add manual entries for every function',
 		'--with-ctags' =>	'Generate ctags(1) tag files',
 		'--with-docs' =>	'Generate printable documentation',
+		'--with-bundles' =>	'Generate application/library bundles',
 	);
 	my %stdDefaults = (
 		'--srcdir=p' =>		'.',
@@ -822,6 +823,7 @@ sub Help
 		'--with-manlinks' =>	'no',
 		'--with-ctags' =>	'no',
 		'--with-docs' =>	'no',
+		'--with-bundles' =>	'yes',
 	);
     
 	print << 'EOF';
@@ -910,7 +912,7 @@ EOF
 # Initialize and parse for command-line options.
 #
 print << 'EOF';
-# Copyright (c) 2001-2012 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2015 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -1320,7 +1322,19 @@ if [ "\${host}" != "\${build_guessed}" ]; then
 else
 	CROSS_COMPILING="no"
 fi
+if [ "\${with_bundles}" != "no" ]; then
+	case "\${host}" in
+	arm-apple-darwin*)
+		PROG_BUNDLE="iOS"
+		;;
+	*-*-darwin*)
+		PROG_BUNDLE="OSX"
+		;;
+	esac
+fi
 EOF
+
+MkSaveMK('PROG_BUNDLE');
 
 #
 # Output common code
@@ -1352,7 +1366,6 @@ do
 done
 echo "" >> config.log
 echo "" >> config.status
-
 EOF
 
 if ($OutputHeaderFile) {

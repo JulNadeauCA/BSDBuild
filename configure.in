@@ -4,4 +4,8 @@ PACKAGE("BSDBuild")
 VERSION("3.2")
 RELEASE("Blast of Ancient Atmospheres")
 DEFAULT_DIR(DATADIR, "$PREFIX/share/bsdbuild")
+
+CHECK(cc)
+CHECK(perl)
+
 MDEFINE(CONFIGURE_OK, "yes")

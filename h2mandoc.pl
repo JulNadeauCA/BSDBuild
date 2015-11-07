@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!%PERL%
 #
 # Copyright (c) 2008 Hypertriton, Inc. <http://hypertriton.com>
 # All rights reserved.

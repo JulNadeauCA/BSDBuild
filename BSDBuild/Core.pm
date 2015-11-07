@@ -371,7 +371,8 @@ sub Which
 {
 	my ($bin, $args, $define) = @_;
 
-	return << "EOF";
+	if ($args) {
+		return << "EOF";
 $define=""
 for path in `echo \$PATH | sed 's/:/ /g'`; do
 	if [ -e "\${path}/$bin" ]; then
@@ -380,6 +381,18 @@ for path in `echo \$PATH | sed 's/:/ /g'`; do
 	fi
 done
 EOF
+	} else {
+		return << "EOF";
+$define=""
+for path in `echo \$PATH | sed 's/:/ /g'`; do
+	if [ -e "\${path}/$bin" ]; then
+		$define=`\${path}/$bin`
+		break
+	fi
+done
+EOF
+	}
+
 }
 
 sub MkDefine

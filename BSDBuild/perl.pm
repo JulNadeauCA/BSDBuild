@@ -26,7 +26,7 @@
 sub Test
 {
 	my ($ver, $pfx) = @_;
-	
+
 	MkExecOutputPfx($pfx, 'perl', '-MExtUtils::Embed -e ccopts', 'PERL_CFLAGS');
 	MkExecOutputPfx($pfx, 'perl', '-MExtUtils::Embed -e ldopts', 'PERL_LIBS');
 	
@@ -60,9 +60,15 @@ main(int argc, char **argv, char **env)
 }
 EOF
 		MkSaveIfTrue('${HAVE_PERL}', 'PERL_CFLAGS', 'PERL_LIBS');
+		
+		Which('perl', undef, 'PERL');
+		MkSaveMK('PERL');
 	MkElse;
 		MkPrint('no');
 		MkSaveUndef('HAVE_PERL');
+
+		MkDefine('PERL', '/usr/bin/perl');
+		MkSaveMK('PERL');
 	MkEndif;
 	return (0);
 }

@@ -1,4 +1,4 @@
-#!/usr/bin/perl -I%PREFIX%/share/bsdbuild
+#!/usr/bin/perl
 #
 # Copyright (c) 2009 Hypertriton, Inc. <http://hypertriton.com>
 # All rights reserved.

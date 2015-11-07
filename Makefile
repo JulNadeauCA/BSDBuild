@@ -17,7 +17,7 @@ SCRIPTS=mkconfigure \
 DATAFILES=hstrip.pl mkdep mkconcurrent.pl manlinks.pl cmpfiles.pl cleanfiles.pl \
 	gen-includes.pl gen-declspecs.pl get-version.pl get-release.pl \
 	install-manpages.sh ml.xsl gen-dotdepend.pl gen-wwwdepend.pl \
-	config.guess gen-includelinks.pl \
+	config.guess gen-includelinks.pl gen-bundle.pl \
 	build.common.mk build.dep.mk build.lib.mk build.man.mk \
 	build.perl.mk build.prog.mk build.subdir.mk build.www.mk \
 	build.po.mk build.doc.mk build.proj.mk
@@ -26,7 +26,9 @@ LTFILES=Makefile Makefile.in aclocal.m4 config.guess config.sub configure \
 	configure.in install-sh ltmain.sh README
 LTFILES_M4=libtool.m4 ltoptions.m4 ltsugar.m4 ltversion.m4 lt~obsolete.m4
 
-all: all-subdir ${SCRIPTS}
+PERL?=/usr/bin/perl
+
+all: all-subdir all-scripts
 
 config-ok:
 	@if [ "${CONFIGURE_OK}" != "yes" ]; then \
@@ -34,36 +36,18 @@ config-ok:
 	    exit 1; \
 	fi
 
-mkconfigure: config-ok mkconfigure.pl
-	sed -e s,%PREFIX%,${PREFIX}, \
-	    -e s,%VERSION%,${VERSION}, \
-	    mkconfigure.pl > mkconfigure
+all-scripts: config-ok
+	@for F in ${SCRIPTS}; do \
+	    echo "sed $$F.pl > $$F"; \
+	    sed -e s,%PREFIX%,${PREFIX}, \
+	        -e s,%VERSION%,${VERSION}, \
+	        -e s,%PERL%,${PERL}, \
+	        -e s,%DATADIR%,${DATADIR}, \
+	        -e s,%BINDIR%,${BINDIR}, \
+	        $$F.pl > $$F; \
+	done
 
-mkprojfiles: config-ok mkprojfiles.pl
-	sed -e s,%PREFIX%,${PREFIX}, \
-	    -e s,%VERSION%,${VERSION}, \
-	    mkprojfiles.pl > mkprojfiles
-
-mkify: config-ok mkify.pl
-	sed -e s,%DATADIR%,${DATADIR}, \
-	    -e s,%BINDIR%,${BINDIR}, \
-	    mkify.pl > mkify
-
-h2mandoc: config-ok h2mandoc.pl
-	sed -e s,%VERSION%,${VERSION}, \
-	    h2mandoc.pl > h2mandoc
-
-man2wiki: config-ok man2wiki.pl
-	sed -e s,%PREFIX%,${PREFIX}, \
-	    -e s,%VERSION%,${VERSION}, \
-	    man2wiki.pl > man2wiki
-
-uman: config-ok uman.pl
-	sed -e s,%PREFIX%,${PREFIX}, \
-	    -e s,%VERSION%,${VERSION}, \
-	    uman.pl > uman
-
-install: all config-ok install-subdir
+install: all install-subdir
 	@if [ ! -d "${DESTDIR}${DATADIR}" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${DATADIR}"; \
 	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${DATADIR}"; \

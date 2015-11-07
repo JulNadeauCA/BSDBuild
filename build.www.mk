@@ -57,7 +57,7 @@ DTD?=	<!DOCTYPE html>
 all: ${HTML} ${CSS} all-subdir
 clean: clean-www clean-subdir
 cleandir: clean-www cleandir-www clean-subdir cleandir-subdir
-install: install-www install-subdir
+install: all install-www install-subdir
 deinstall: deinstall-subdir
 regress: regress-subdir
 depend: depend-www depend-subdir

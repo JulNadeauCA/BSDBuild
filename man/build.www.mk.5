@@ -92,7 +92,7 @@ target directory (including a Makefile).
 Uninstall documents from the installation directory.
 .El
 .Sh VARIABLES
-.Bl -tag -width "CONF_OVERWRITE "
+.Bl -tag -width "MINIFIERFLAGSCSS "
 .It Ev HTML
 Documents to generate and install.
 If multilingual support is not required, use the .html extension.
@@ -105,6 +105,13 @@ Path to the
 macro processor.
 .It Ev M4FLAGS
 Extra flags to pass to m4.
+.It Ev MINIFIER
+Path to HTML/CSS minifier (such as
+.Xr html-minifier 1 ) .
+.It Ev MINIFIERFLAGS
+Flags to minifier (for HTML).
+.It Ev MINIFIERFLAGSCSS
+Flags to minifier (for CSS).
 .It Ev XSLTPROC
 Path to the
 .Xr xsltproc 1

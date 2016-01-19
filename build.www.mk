@@ -36,7 +36,7 @@ BASEDIR?=	${TOP}/m4
 XSLDIR?=	${TOP}/xsl
 TEMPLATE?=	simple
 LANGUAGES?=	en fr
-CHARSETS?=	utf8 iso8859-1
+CHARSETS?=	utf8
 DEF_LANGUAGE?=	en
 XSL?=		${XSLDIR}/ml.xsl
 MKDEPS=		build.www.mk build.subdir.mk build.common.mk hstrip.pl
@@ -48,7 +48,10 @@ CSS?=
 CSS_TEMPLATE?=style
 HTML_OVERWRITE?=No
 HTML_INSTSOURCE?=Yes
-HTML_STRIP?=${PERL} ${TOP}/mk/hstrip.pl
+
+MINIFIER?=	cat
+MINIFIERFLAGS?=
+MINIFIERFLAGSCSS?=
 
 DTD?=	<!DOCTYPE html>
 #DTD?=	<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"  \
@@ -68,7 +71,8 @@ depend: depend-www depend-subdir
 	@cp -f $< ${BASEDIR}/base.css
 	@echo -n "$@:"
 	${M4} ${M4FLAGS} -D__BASE_DIR=${BASEDIR} -D__FILE=$@ \
-	    -D__LANG=$$LANG ${BASEDIR}/${CSS_TEMPLATE}.m4 | ${HTML_STRIP} > $@
+	    -D__LANG=$$LANG ${BASEDIR}/${CSS_TEMPLATE}.m4 | \
+	    ${MINIFIER} ${MINIFIERFLAGSCSS} > $@
 	@rm -f ${BASEDIR}/base.css
 
 .htm.html: ${BASEDIR}/${TEMPLATE}.m4
@@ -78,10 +82,10 @@ depend: depend-www depend-subdir
 	${M4} ${M4FLAGS} -D__BASE_DIR=${BASEDIR} -D__FILE=$@ \
 	    -D__TEMPLATE=${TEMPLATE} -D__LANG=${DEF_LANGUAGE} \
 	        ${BASEDIR}/${TEMPLATE}.m4 | \
-		${HTML_STRIP} > "$$OUT"; \
+		${MINIFIER} ${MINIFIERFLAGS} > "$$OUT"; \
 	echo '${DTD}' > $@; \
 	${XSLTPROC} ${XSLTPROCFLAGS} --html --stringparam lang ${DEF_LANGUAGE} ${XSL} \
-	    "$$OUT" 2>/dev/null | ${HTML_STRIP} >> $@ 2>/dev/null; \
+	    "$$OUT" 2>/dev/null | ${MINIFIER} ${MINIFIERFLAGS} >> $@ 2>/dev/null; \
 	rm -f "$$OUT" ${BASEDIR}/base.htm
 
 .htm.html.var: ${BASEDIR}/${TEMPLATE}.m4
@@ -97,22 +101,15 @@ depend: depend-www depend-subdir
 	    echo -n " $$LANG"; \
 	    ${M4} ${M4FLAGS} -D__BASE_DIR=${BASEDIR} -D__FILE=$$BASE \
 	        -D__TEMPLATE=${TEMPLATE} -D__LANG=$$LANG \
-	        ${BASEDIR}/${TEMPLATE}.m4 | ${HTML_STRIP} > $$OUT; \
+	        ${BASEDIR}/${TEMPLATE}.m4 | ${MINIFIER} ${MINIFIERFLAGS} > $$OUT; \
 	    echo '${DTD}' > utf8/$$BASE.$$LANG; \
             ${XSLTPROC} --html ${XSLTPROCFLAGS} --stringparam lang $$LANG ${XSL} \
-	        $$OUT 2>/dev/null | ${HTML_STRIP} >> utf8/$$BASE.$$LANG; \
+	        $$OUT 2>/dev/null | ${MINIFIER} ${MINIFIERFLAGS} >> utf8/$$BASE.$$LANG; \
 	    cp -f utf8/$$BASE.$$LANG $$BASE.$$LANG; \
 	    rm -f $$OUT; \
-	    cat utf8/$$BASE.$$LANG | \
-		sed s/charset=UTF-8/charset=ISO-8859-1/ | \
-		${ICONV} -f UTF-8 -t ISO-8859-1 > iso8859-1/$$BASE.$$LANG; \
 	    echo "Content-Type: text/html; charset=UTF-8" >> $@; \
 	    echo "Content-Language: $$LANG" >> $@; \
 	    echo "URI: utf8/$$BASE.$$LANG" >> $@; \
-	    echo "" >> $@; \
-	    echo "Content-Type: text/html; charset=ISO-8859-1" >> $@; \
-	    echo "Content-Language: $$LANG" >> $@; \
-	    echo "URI: iso8859-1/$$BASE.$$LANG" >> $@; \
 	    echo "" >> $@; \
 	done; \
 	rm -f ${BASEDIR}/base.htm; \
@@ -159,6 +156,9 @@ install-www-makefile:
 	echo "M4=${M4}" >> $$OUT; \
 	echo "PERL=${PERL}" >> $$OUT; \
 	echo "ICONV=${ICONV}" >> $$OUT; \
+	echo "MINIFIER=${MINIFIER}" >> $$OUT; \
+	echo "MINIFIERFLAGS=${MINIFIERFLAGS}" >> $$OUT; \
+	echo "MINIFIERFLAGSCSS=${MINIFIERFLAGSCSS}" >> $$OUT; \
 	echo "TEMPLATE=${TEMPLATE}" >> $$OUT; \
 	echo "CSS_TEMPLATE=${CSS_TEMPLATE}" >> $$OUT; \
 	echo "LANGUAGES=${LANGUAGES}" >> $$OUT; \

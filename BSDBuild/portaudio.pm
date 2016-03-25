@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2011 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2011-2016 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 
 my $testCode = << 'EOF';
 #include <stdio.h>
-#include <portaudio2/portaudio.h>
+#include <portaudio.h>
 
 int
 main(int argc, char *argv[])
@@ -67,9 +67,9 @@ sub Test
 			MkDefine('PORTAUDIO_VERSION', '${PORTAUDIO_VERSION}.0');
 		MkEndif;
 		foreach my $dir (@autoPrefixes) {
-			# XXX 
 			MkIfExists("$dir/include/portaudio2/portaudio.h");
-				MkDefine('PORTAUDIO_CFLAGS', "-I$dir/include \${PORTAUDIO_CFLAGS}");
+				MkDefine('PORTAUDIO_CFLAGS',
+				         "-I$dir/include/portaudio2 \${PORTAUDIO_CFLAGS}");
 			MkEndif;
 		}
 	MkElse;
@@ -77,15 +77,19 @@ sub Test
 		MkDefine('PORTAUDIO_LIBS', '');
 		MkIfNE($pfx, '');
 			MkIfExists("$pfx/include/portaudio.h");
-				MkDefine('PORTAUDIO_CFLAGS', "-I$pfx/include \${PTHREADS_CFLAGS}");
-			    MkDefine('PORTAUDIO_LIBS', "-L$pfx/lib -lportaudio \${PTHREADS_LIBS}");
+				MkDefine('PORTAUDIO_CFLAGS',
+				         "-I$pfx/include \${PTHREADS_CFLAGS}");
+			    MkDefine('PORTAUDIO_LIBS',
+				         "-L$pfx/lib -lportaudio \${PTHREADS_LIBS}");
 				MkDefine('PORTAUDIO_VERSION', "18.0");
 			MkEndif;
 		MkElse;
 			foreach my $dir (@autoPrefixes) {
 				MkIfExists("$dir/include/portaudio.h");
-					MkDefine('PORTAUDIO_CFLAGS', "-I$dir/include \${PTHREADS_CFLAGS}");
-				    MkDefine('PORTAUDIO_LIBS', "-L$dir/lib -lportaudio \${PTHREADS_LIBS}");
+					MkDefine('PORTAUDIO_CFLAGS',
+					         "-I$dir/include \${PTHREADS_CFLAGS}");
+				    MkDefine('PORTAUDIO_LIBS',
+					         "-L$dir/lib -lportaudio \${PTHREADS_LIBS}");
 					MkDefine('PORTAUDIO_VERSION', "18.0");
 				MkEndif;
 			}

@@ -1,6 +1,6 @@
 #!%PERL% -I%PREFIX%/share/bsdbuild
 #
-# Copyright (c) 2001-2015 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2016 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -1037,6 +1037,12 @@ do
 	    option=`echo $arg | sed -e 's/--without-//'`;
 	    option=`echo $option | sed 's/-/_/g'`
 	    eval "with_${option}=no"
+	    ;;
+	--x-includes=*)
+	    with_x_includes=$optarg
+	    ;;
+	--x-libraries=*)
+	    with_x_libraries=$optarg
 	    ;;
 	--help)
 	    show_help=yes

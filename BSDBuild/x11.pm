@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2002-2004 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2002-2016 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -23,32 +23,47 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# Match autoconf / libs.m4 / _AC_PATH_X_DIRECT
 my @autoIncludeDirs = (
 	'/usr/local/include',
 	'/usr/include',
 	'/usr/include/X11',
-	'/usr/include/X11R6',
 	'/usr/include/X11R7',
+	'/usr/include/X11R6',
+	'/usr/include/X11R5',
+	'/usr/include/X11R4',
 	'/usr/local/X11/include',
-	'/usr/local/X11R6/include',
 	'/usr/local/X11R7/include',
+	'/usr/local/X11R6/include',
+	'/usr/local/X11R5/include',
+	'/usr/local/X11R4/include',
 	'/usr/local/include/X11',
-	'/usr/local/include/X11R6',
 	'/usr/local/include/X11R7',
+	'/usr/local/include/X11R6',
+	'/usr/local/include/X11R5',
+	'/usr/local/include/X11R4',
 	'/usr/X11/include',
-	'/usr/X11R6/include',
 	'/usr/X11R7/include',
+	'/usr/X11R6/include',
+	'/usr/X11R5/include',
+	'/usr/X11R4/include',
+	'/opt/X11/include',
 );
 
 my @autoLibDirs = (
 	'/usr/local/lib',
 	'/usr/lib',
 	'/usr/local/X11/lib',
-	'/usr/local/X11R6/lib',
 	'/usr/local/X11R7/lib',
+	'/usr/local/X11R6/lib',
+	'/usr/local/X11R5/lib',
+	'/usr/local/X11R4/lib',
 	'/usr/X11/lib',
-	'/usr/X11R6/lib',
 	'/usr/X11R7/lib',
+	'/usr/X11R6/lib',
+	'/usr/X11R5/lib',
+	'/usr/X11R4/lib',
+	'/opt/X11/lib'
 );
 
 sub Test
@@ -70,26 +85,31 @@ sub Test
 			    MkDefine('X11_LIBS', "-L$pfx/lib -lX11");
 			MkEndif;
 		MkElse;
-			foreach my $dir (@autoIncludeDirs) {
-				MkIfExists("$dir/X11");
-				    MkDefine('X11_CFLAGS', "-I$dir");
-					MkBreak;
+			MkIfNE('${with_x_libraries}', '');
+				MkIfExists('${with_x_includes}/X11');
+				    MkDefine('X11_CFLAGS', '-I${with_x_includes}/X11');
+				MkElse;
+				    MkDefine('X11_CFLAGS', '-I${with_x_includes}');
 				MkEndif;
-			}
-			foreach my $dir (@autoLibDirs) {
-				MkIfExists("$dir/libX11.so");
-				    MkDefine('X11_LIBS', "-L$dir -lX11");
-					MkBreak;
-				MkEndif;
-				MkIfExists("$dir/libX11.so.*");
-				    MkDefine('X11_LIBS', "-L$dir -lX11");
-					MkBreak;
-				MkEndif;
-			}
-#			MkIfNE('${X11_CFLAGS}', '');
-#				MkPrint("trying autodetected path");
-#				MkPrint("WARNING: You should probably use --with-x=prefix");
-#			MkEndif;
+				MkDefine('X11_LIBS', '-L${with_x_libraries} -lX11');
+			MkElse;
+				foreach my $dir (@autoIncludeDirs) {
+					MkIfExists("$dir/X11");
+					    MkDefine('X11_CFLAGS', "-I$dir");
+						MkBreak;
+					MkEndif;
+				}
+				foreach my $dir (@autoLibDirs) {
+					MkIfExists("$dir/libX11.so");
+					    MkDefine('X11_LIBS', "-L$dir -lX11");
+						MkBreak;
+					MkEndif;
+					MkIfExists("$dir/libX11.so.*");
+					    MkDefine('X11_LIBS', "-L$dir -lX11");
+						MkBreak;
+					MkEndif;
+				}
+			MkEndif;
 		MkEndif;
 	MkEndif;
 

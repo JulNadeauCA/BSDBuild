@@ -418,7 +418,7 @@ install-lib: ${LIBTOOL_COOKIE}
 	fi
 	@if [ "${DATAFILES}" != "none" ]; then \
             if [ ! -d "${DESTDIR}${DATADIR}" ]; then \
-                echo "${INSTALL_DATA_DIR} ${DIR}"; \
+                echo "${INSTALL_DATA_DIR} ${DATADIR}"; \
                 ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${DATADIR}; \
             fi; \
             for F in ${DATAFILES}; do \

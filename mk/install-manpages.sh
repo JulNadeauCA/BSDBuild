@@ -10,7 +10,7 @@ for F in ${MAN} ignore; do
 	if [ "$F" = "ignore" ]; then continue; fi
 	if [ -e "$F" ]; then
 		echo "${INSTALL_DATA} $F ${MANDIR}"
-		${INSTALL_DATA} $F ${MANDIR}
+		${INSTALL_DATA} $F ${DESTDIR}${MANDIR}
 		if [ $? != 0 ]; then
 			exit 1;
 		fi
@@ -25,7 +25,7 @@ if [ "${NOCATMAN}" != "yes" ]; then
 		if [ -e "$F" ]; then
 			CAT=`echo $F | sed 's/.1$$/.cat1/'`
 			echo "${INSTALL_DATA} $CAT ${CATMANDIR}"
-			${INSTALL_DATA} $CAT ${CATMANDIR}
+			${INSTALL_DATA} $CAT ${DESTDIR}${CATMANDIR}
 			if [ $? != 0 ]; then
 				exit 1;
 			fi

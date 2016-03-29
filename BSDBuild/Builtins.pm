@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2010-2015 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2010-2016 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -45,12 +45,21 @@ EOT
 
 HAVE_MANDOC="no"
 MANDOC=""
-for path in `echo $PATH | sed 's/:/ /g'`; do
+bb_save_IFS=$IFS
+IFS=$PATH_SEPARATOR
+for path in $PATH; do
 	if [ -x "${path}/mandoc" ]; then
 		cat conftest.1 | ${path}/mandoc -Tascii >/dev/null
 		if [ "$?" = "0" ]; then
 			HAVE_MANDOC="yes"
 			MANDOC="${path}/mandoc"
+			break;
+		fi
+	elif [ -e "${path}/mandoc.exe" ]; then
+		cat conftest.1 | ${path}/mandoc.exe -Tascii >/dev/null
+		if [ "$?" = "0" ]; then
+			HAVE_MANDOC="yes"
+			MANDOC="${path}/mandoc.exe"
 			break;
 		fi
 	elif [ -x "${path}/nroff" ]; then
@@ -60,8 +69,17 @@ for path in `echo $PATH | sed 's/:/ /g'`; do
 			MANDOC="${path}/nroff -Tmandoc"
 			break;
 		fi
+	elif [ -e "${path}/nroff.exe" ]; then
+		cat conftest.1 | ${path}/nroff.exe -Tmandoc >/dev/null
+		if [ "$?" = "0" ]; then
+			HAVE_MANDOC="yes"
+			MANDOC="${path}/nroff.exe -Tmandoc"
+			break;
+		fi
 	fi
 done
+IFS=$bb_save_IFS
+
 rm -f conftest.1
 
 if [ "${HAVE_MANDOC}" = "no" ]; then
@@ -119,12 +137,19 @@ sub BuiltinNLS
 		# XXX
 		print << 'EOF';
 msgfmt=""
-for path in `echo $PATH | sed 's/:/ /g'`; do
+bb_save_IFS=$IFS
+IFS=$PATH_SEPARATOR
+for path in $PATH; do
 	if [ -x "${path}/msgfmt" ]; then
 		msgfmt=${path}/msgfmt
 		break
+	elif [ -e "${path}/msgfmt.exe" ]; then
+		msgfmt=${path}/msgfmt.exe
+		break
 	fi
 done
+IFS=$bb_save_IFS
+
 if [ "${msgfmt}" != "" ]; then
 	HAVE_GETTEXT="yes"
 else
@@ -145,22 +170,31 @@ sub BuiltinCtags
 {
 	print << 'EOF';
 CTAGS=""
+bb_save_IFS=$IFS
+IFS=$PATH_SEPARATOR
 if [ "${with_ctags}" = "yes" ]; then
-	for path in `echo $PATH | sed 's/:/ /g'`; do
+	for path in $PATH; do
 		if [ -x "${path}/ectags" ]; then
 			CTAGS="${path}/ectags"
+			break
+		elif [ -e "${path}/ectags.exe" ]; then
+			CTAGS="${path}/ectags.exe"
 			break
 		fi
 	done
 	if [ "${CTAGS}" = "" ]; then
-		for path in `echo $PATH | sed 's/:/ /g'`; do
+		for path in $PATH; do
 			if [ -x "${path}/ctags" ]; then
 				CTAGS="${path}/ctags"
+				break
+			elif [ -e "${path}/ctags.exe" ]; then
+				CTAGS="${path}/ctags.exe"
 				break
 			fi
 		done
 	fi
 fi
+IFS=$bb_save_IFS
 echo "CTAGS=${CTAGS}" >> Makefile.config
 EOF
 }

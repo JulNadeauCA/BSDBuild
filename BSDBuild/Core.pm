@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2002-2012 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2002-2016 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -149,13 +149,20 @@ if [ "\${cache}" != "" ]; then
 fi
 if [ "\${MK_CACHED}" = "No" ]; then
 	$define=""
-	for path in `echo \$PATH | sed 's/:/ /g'`; do
+	bb_save_IFS=\$IFS
+	IFS=\$PATH_SEPARATOR
+	for path in \$PATH; do
 		if [ -e "\${path}/$bin" ]; then
 			$define=`\${path}/$bin $args`
 			MK_EXEC_FOUND="Yes"
 			break
+		elif [ -e "\${path}/$bin.exe" ]; then
+			$define=`\${path}/$bin.exe $args`
+			MK_EXEC_FOUND="Yes"
+			break
 		fi
 	done
+	IFS=\$bb_save_IFS
 	if [ "\${cache}" != "" ]; then
 		echo "\$$define" > \${cache}/exec-$define
 		echo \$MK_EXEC_FOUND > \${cache}/exec-found-$define
@@ -166,13 +173,21 @@ EOF
 		print << "EOF";
 MK_EXEC_FOUND="No"
 $define=""
-for path in `echo \$PATH | sed 's/:/ /g'`; do
+bb_save_IFS=\$IFS
+IFS=\$PATH_SEPARATOR
+for path in \$PATH; do
 	if [ -e "\${path}/$bin" ]; then
 		$define=`\${path}/$bin $args`
 		MK_EXEC_FOUND="Yes"
 		break
+	elif [ -e "\${path}/$bin.exe" ]; then
+		$define=`\${path}/$bin.exe $args`
+		MK_EXEC_FOUND="Yes"
+		break
 	fi
 done
+IFS=\$bb_save_IFS
+
 if [ "\${cache}" != "" ]; then
 	echo "\$$define" > \${cache}/exec-$define
 	echo \$MK_EXEC_FOUND > \${cache}/exec-found-$define
@@ -207,13 +222,20 @@ else
 	fi
 	if [ "\${MK_CACHED}" = "No" ]; then
 		$define=""
-		for path in `echo \$PATH | sed 's/:/ /g'`; do
+		bb_save_IFS=\$IFS
+		IFS=\$PATH_SEPARATOR
+		for path in \$PATH; do
 			if [ -e "\${path}/$bin" ]; then
 				$define=`\${path}/$bin $args`
 				MK_EXEC_FOUND="Yes"
 				break
+			elif [ -e "\${path}/$bin.exe" ]; then
+				$define=`\${path}/$bin.exe $args`
+				MK_EXEC_FOUND="Yes"
+				break
 			fi
 		done
+		IFS=\$bb_save_IFS
 		if [ "\${cache}" != "" ]; then
 			echo "\$$define" > \${cache}/exec-$define
 			echo \$MK_EXEC_FOUND > \${cache}/exec-found-$define
@@ -229,16 +251,26 @@ if [ "$pfx" != "" ]; then
 	if [ -e "$pfx/bin/$bin" ]; then
 		$define=`$pfx/bin/$bin $args`
 		MK_EXEC_FOUND="Yes"
+	elif [ -e "$pfx/bin/$bin.exe" ]; then
+		$define=`$pfx/bin/$bin.exe $args`
+		MK_EXEC_FOUND="Yes"
 	fi
 else
 	$define=""
-	for path in `echo \$PATH | sed 's/:/ /g'`; do
+	bb_save_IFS=\$IFS
+	IFS=\$PATH_SEPARATOR
+	for path in \$PATH; do
 		if [ -e "\${path}/$bin" ]; then
 			$define=`\${path}/$bin $args`
 			MK_EXEC_FOUND="Yes"
 			break
+		elif [ -e "\${path}/$bin.exe" ]; then
+			$define=`\${path}/$bin.exe $args`
+			MK_EXEC_FOUND="Yes"
+			break
 		fi
 	done
+	IFS=\$bb_save_IFS
 fi
 EOF
 	}
@@ -304,19 +336,36 @@ if [ "\${cache}" != "" ]; then
 fi
 if [ "\${MK_CACHED}" = "No" ]; then
 	$define=""
-	for path in `echo \$PATH | sed 's/:/ /g'`; do
+	bb_save_IFS=\$IFS
+	IFS=\$PATH_SEPARATOR
+	for path in \$PATH; do
 		if [ -e "\${path}/$bin" ]; then
 			if [ "\$MK_EXEC_FOUND" = "Yes" ]; then
 				echo "yes."
-				echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)"
-				echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)" >> config.log
+				if [ "\$MK_EXEC_FOUND_PATH" != "\${path}/$bin.exe" ]; then
+					echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)"
+					echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)" >> config.log
+				fi
 				break
 			fi
 			$define=`\${path}/$bin $args`
 			MK_EXEC_FOUND="Yes"
 			MK_EXEC_FOUND_PATH="\${path}/$bin"
+		elif [ -e "\${path}/$bin.exe" ]; then
+			if [ "\$MK_EXEC_FOUND" = "Yes" ]; then
+				echo "yes."
+				if [ "\$MK_EXEC_FOUND_PATH" != "\${path}/$bin" ]; then
+					echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)"
+					echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)" >> config.log
+				fi
+				break
+			fi
+			$define=`\${path}/$bin.exe $args`
+			MK_EXEC_FOUND="Yes"
+			MK_EXEC_FOUND_PATH="\${path}/$bin.exe"
 		fi
 	done
+	IFS=\$bb_save_IFS
 	if [ "\${cache}" != "" ]; then
 		echo "\$$define" > \${cache}/exec-$define
 		echo \$MK_EXEC_FOUND > \${cache}/exec-found-$define
@@ -331,19 +380,36 @@ MK_CACHED="No"
 MK_EXEC_UNIQUE="No"
 MK_EXEC_FOUND_PATH=""
 $define=""
-for path in `echo \$PATH | sed 's/:/ /g'`; do
+bb_save_IFS=\$IFS
+IFS=\$PATH_SEPARATOR
+for path in \$PATH; do
 	if [ -e "\${path}/$bin" ]; then
 		if [ "\$MK_EXEC_FOUND" = "Yes" ]; then
 			echo "yes."
-			echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)"
-			echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)" >> config.log
+			if [ "\$MK_EXEC_FOUND_PATH" != "\${path}/$bin" ]; then
+				echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)"
+				echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)" >> config.log
+			fi
 			break
 		fi
 		$define=`\${path}/$bin $args`
 		MK_EXEC_FOUND="Yes"
 		MK_EXEC_FOUND_PATH="\${path}/$bin"
+	elif [ -e "\${path}/$bin.exe" ]; then
+		if [ "\$MK_EXEC_FOUND" = "Yes" ]; then
+			echo "yes."
+			if [ "\$MK_EXEC_FOUND_PATH" != "\${path}/$bin" ]; then
+				echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)"
+				echo "* Warning: Multiple '$bin' exist in PATH (using \$MK_EXEC_FOUND_PATH)" >> config.log
+			fi
+			break
+		fi
+		$define=`\${path}/$bin.exe $args`
+		MK_EXEC_FOUND="Yes"
+		MK_EXEC_FOUND_PATH="\${path}/$bin.exe"
 	fi
 done
+IFS=\$bb_save_IFS
 EOF
 	}
 }
@@ -374,22 +440,34 @@ sub Which
 	if ($args) {
 		return << "EOF";
 $define=""
-for path in `echo \$PATH | sed 's/:/ /g'`; do
+bb_save_IFS=\$IFS
+IFS=\$PATH_SEPARATOR
+for path in \$PATH; do
 	if [ -e "\${path}/$bin" ]; then
 		$define=`\${path}/$bin $args`
 		break
+	elif [ -e "\${path}/$bin.exe" ]; then
+		$define=`\${path}/$bin.exe $args`
+		break
 	fi
 done
+IFS=\$bb_save_IFS
 EOF
 	} else {
 		return << "EOF";
 $define=""
-for path in `echo \$PATH | sed 's/:/ /g'`; do
+bb_save_IFS=\$IFS
+IFS=\$PATH_SEPARATOR
+for path in \$PATH; do
 	if [ -e "\${path}/$bin" ]; then
 		$define=`\${path}/$bin`
 		break
+	elif [ -e "\${path}/$bin.exe" ]; then
+		$define=`\${path}/$bin.exe`
+		break
 	fi
 done
+IFS=\$bb_save_IFS
 EOF
 	}
 
@@ -533,7 +611,7 @@ sub MkSaveMK
 
 sub MkSaveMK_Commit
 {
-	foreach my $var (keys %MkDefinesToSave) {
+	foreach my $var (sort keys %MkDefinesToSave) {
 		print << "EOF";
 echo "$var=\$$var" >>Makefile.config
 echo "mdefs[\\"$var\\"] = \\"\$$var\\"" >>$OutputLUA
@@ -650,11 +728,11 @@ if [ "\${cache}" != "" ]; then
 	fi
 fi
 if [ "\${MK_CACHED}" = "No" ]; then
-	cat << EOT > conftest.c
+	cat << EOT > conftest\$\$.c
 $code
 EOT
 	echo "\$CC \$CFLAGS \$TEST_CFLAGS -o \$testdir/conftest conftest.c" >>config.log
-	\$CC \$CFLAGS \$TEST_CFLAGS -o \$testdir/conftest conftest.c 2>>config.log
+	\$CC \$CFLAGS \$TEST_CFLAGS -o \$testdir/conftest\$\$ conftest\$\$.c 2>>config.log
 	if [ \$? != 0 ]; then
 		echo "-> failed (\$?)" >> config.log
 		MK_COMPILE_STATUS="FAIL(\$?)"
@@ -664,11 +742,11 @@ EOF
 	} else {
 		print << "EOF";
 MK_COMPILE_STATUS="OK"
-cat << EOT > conftest.c
+cat << EOT > conftest\$\$.c
 $code
 EOT
 echo "\$CC \$CFLAGS \$TEST_CFLAGS -o \$testdir/conftest conftest.c" >>config.log
-\$CC \$CFLAGS \$TEST_CFLAGS -o \$testdir/conftest conftest.c 2>>config.log
+\$CC \$CFLAGS \$TEST_CFLAGS -o \$testdir/conftest\$\$ conftest\$\$.c 2>>config.log
 if [ \$? != 0 ]; then
 	echo "-> failed (\$?)" >> config.log
 	MK_COMPILE_STATUS="FAIL(\$?)"
@@ -694,7 +772,7 @@ if [ "\${cache}" != "" ]; then
 fi
 EOF
 	}
-	print "rm -f conftest.c \$testdir/conftest\$EXECSUFFIX\n";
+	print 'rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX',"\n";
 }
 
 sub BeginTestHeaders
@@ -786,24 +864,24 @@ sub DetectHeaderC
 {
 	my $def = shift;
 
-	print "echo > conftest.c\n";
+	print 'echo > conftest$$.c',"\n";
 	while (my $hdr = shift) {
 		print << "EOF";
-echo "#include $hdr" >> conftest.c
+echo "#include $hdr" >> conftest\$\$.c
 EOF
 	}
 	print << 'EOF';
-echo "int main (int argc, char *argv[]) { return (0); }" >> conftest.c
+echo "int main (int argc, char *argv[]) { return (0); }" >> conftest$$.c
 EOF
 	print << 'EOF';
 MK_COMPILE_STATUS="OK"
 echo "$CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest conftest.c" >>config.log
-$CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest conftest.c 2>>config.log
+$CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest$$ conftest$$.c 2>>config.log
 if [ $? != 0 ]; then
 	echo "-> failed ($?)" >> config.log
 	MK_COMPILE_STATUS="FAIL($?)"
 fi
-rm -f conftest.c $testdir/conftest$EXECSUFFIX
+rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
 EOF
 	MkIf('"${MK_COMPILE_STATUS}" = "OK"');
 		MkSetTrue($def);
@@ -848,18 +926,18 @@ sub MkCompileAndRunC
 	print << "EOF";
 MK_COMPILE_STATUS="OK"
 MK_RUN_STATUS="OK"
-cat << EOT > conftest.c
+cat << EOT > conftest\$\$.c
 $code
 EOT
 echo "\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest conftest.c $libs" >>config.log
-\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest conftest.c $libs 2>>config.log
+\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest\$\$ conftest\$\$.c $libs 2>>config.log
 if [ \$? != 0 ]; then
 	echo "-> failed (\$?)" >> config.log
 	MK_COMPILE_STATUS="FAIL(\$?)"
 fi
 EOF
 	MkIf('"${MK_COMPILE_STATUS}" = "OK"');
-		print '(cd $testdir && ./conftest$EXECSUFFIX) >> config.log', "\n";
+		print '(cd $testdir && ./conftest$$$EXECSUFFIX) >> config.log', "\n";
 		MkIf('"$?" = "0"');
 			MkPrint('yes');
 			MkSaveCompileSuccess($define);
@@ -873,6 +951,7 @@ EOF
 		MkDefine('MK_RUN_STATUS', 'FAIL(\$?)');
 		MkSaveCompileFailed($define);
 	MkEndif;
+	print 'rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX',"\n";
 }
 
 #
@@ -887,11 +966,11 @@ sub MkCompileAndRunCXX
 
 	print << "EOF";
 MK_COMPILE_STATUS="OK"
-cat << EOT > conftest.cpp
+cat << EOT > conftest\$\$.cpp
 $code
 EOT
 echo "\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $cxxflags -o \$testdir/conftest conftest.cpp $libs" >>config.log
-\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $cxxflags -o \$testdir/conftest conftest.cpp $libs 2>>config.log
+\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $cxxflags -o \$testdir/conftest\$\$ conftest\$\$.cpp $libs 2>>config.log
 if [ \$? != 0 ]; then
 	echo "-> failed (\$?)" >> config.log
 	MK_COMPILE_STATUS="FAIL(\$?)"
@@ -899,7 +978,7 @@ fi
 EOF
 
 	MkIf('"${MK_COMPILE_STATUS}" = "OK"');
-		print '(cd $testdir && ./conftest$EXECSUFFIX) >> config.log', "\n";
+		print '(cd $testdir && ./conftest$$$EXECSUFFIX) >> config.log', "\n";
 		MkIf('"$?" = "0"');
 			MkPrint('yes');
 			MkSaveCompileSuccess($define);
@@ -911,6 +990,7 @@ EOF
 		MkPrint('no (compilation failed)');
 		MkSaveCompileFailed($define);
 	MkEndif;
+	print 'rm -f conftest$$.cpp $testdir/conftest$$$EXECSUFFIX',"\n";
 }
 
 sub TryCompileFlagsC
@@ -929,11 +1009,11 @@ if [ "\${cache}" != "" ]; then
 	fi
 fi
 if [ "\${MK_CACHED}" = "No" ]; then
-	cat << EOT > conftest.c
+	cat << EOT > conftest\$\$.c
 $code
 EOT
 	echo "\$CC \$CFLAGS \$TEST_CFLAGS $flags -o \$testdir/conftest conftest.c" >>config.log
-	\$CC \$CFLAGS \$TEST_CFLAGS $flags -o \$testdir/conftest conftest.c 2>>config.log
+	\$CC \$CFLAGS \$TEST_CFLAGS $flags -o \$testdir/conftest\$\$ conftest\$\$.c 2>>config.log
 	if [ \$? != 0 ]; then
 		echo "-> failed (\$?)" >> config.log
 		MK_COMPILE_STATUS="FAIL(\$?)"
@@ -943,11 +1023,11 @@ EOF
 	} else {
 		print << "EOF";
 MK_COMPILE_STATUS="OK"
-cat << EOT > conftest.c
+cat << EOT > conftest\$\$.c
 $code
 EOT
 echo "\$CC \$CFLAGS \$TEST_CFLAGS $flags -o \$testdir/conftest conftest.c" >>config.log
-\$CC \$CFLAGS \$TEST_CFLAGS $flags -o \$testdir/conftest conftest.c 2>>config.log
+\$CC \$CFLAGS \$TEST_CFLAGS $flags -o \$testdir/conftest\$\$ conftest\$\$.c 2>>config.log
 if [ \$? != 0 ]; then
 	echo "-> failed (\$?)" >> config.log
 	MK_COMPILE_STATUS="FAIL(\$?)"
@@ -971,7 +1051,7 @@ if [ "\${cache}" != "" ]; then
 fi
 EOF
 	}
-	print "rm -f conftest.c \$testdir/conftest$EXECSUFFIX\n";
+	print 'rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX',"\n";
 }
 
 sub TryCompileFlagsCXX
@@ -1032,7 +1112,7 @@ if [ "\${cache}" != "" ]; then
 fi
 EOF
 	}
-	print "rm -f conftest.cpp \$testdir/conftest\$EXECSUFFIX\n";
+	print 'rm -f conftest$$.cpp $testdir/conftest$$$EXECSUFFIX',"\n";
 }
 
 #
@@ -1057,11 +1137,11 @@ if [ "\${cache}" != "" ]; then
 	fi
 fi
 if [ "\${MK_CACHED}" = "No" ]; then
-	cat << EOT > conftest.c
+	cat << EOT > conftest\$\$.c
 $code
 EOT
 	echo "\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest conftest.c $libs" >>config.log
-	\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest conftest.c $libs 2>>config.log
+	\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest\$\$ conftest\$\$.c $libs 2>>config.log
 	if [ \$? != 0 ]; then
 		echo "-> failed (\$?)" >> config.log
 		MK_COMPILE_STATUS="FAIL(\$?)"
@@ -1071,11 +1151,11 @@ EOF
 	} else {
 		print << "EOF";
 MK_COMPILE_STATUS="OK"
-cat << EOT > conftest.c
+cat << EOT > conftest\$\$.c
 $code
 EOT
 echo "\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest conftest.c $libs" >>config.log
-\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest conftest.c $libs 2>>config.log
+\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest\$\$ conftest\$\$.c $libs 2>>config.log
 if [ \$? != 0 ]; then
 	echo "-> failed (\$?)" >> config.log
 	MK_COMPILE_STATUS="FAIL(\$?)"
@@ -1099,7 +1179,7 @@ if [ "\${cache}" != "" ]; then
 fi
 EOF
 	}
-	print "rm -f conftest.c \$testdir/conftest\$EXECSUFFIX\n";
+	print 'rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX',"\n";
 }
 
 #
@@ -1124,11 +1204,11 @@ if [ "\${cache}" != "" ]; then
 	fi
 fi
 if [ "\${MK_CACHED}" = "No" ]; then
-	cat << EOT > conftest.m
+	cat << EOT > conftest\$\$.m
 $code
 EOT
 	echo "\$CC \$CFLAGS \$TEST_CFLAGS $cflags -x objective-c -o \$testdir/conftest conftest.m $libs" >>config.log
-	\$CC \$CFLAGS \$TEST_CFLAGS $cflags -x objective-c -o \$testdir/conftest conftest.m $libs 2>>config.log
+	\$CC \$CFLAGS \$TEST_CFLAGS $cflags -x objective-c -o \$testdir/conftest\$\$ conftest\$\$.m $libs 2>>config.log
 	if [ \$? != 0 ]; then
 		echo "-> failed (\$?)" >> config.log
 		MK_COMPILE_STATUS="FAIL(\$?)"
@@ -1138,11 +1218,11 @@ EOF
 	} else {
 		print << "EOF";
 MK_COMPILE_STATUS="OK"
-cat << EOT > conftest.m
+cat << EOT > conftest\$\$.m
 $code
 EOT
 echo "\$CC \$CFLAGS \$TEST_CFLAGS $cflags -x objective-c -o \$testdir/conftest conftest.m $libs" >>config.log
-\$CC \$CFLAGS \$TEST_CFLAGS $cflags -x objective-c -o \$testdir/conftest conftest.m $libs 2>>config.log
+\$CC \$CFLAGS \$TEST_CFLAGS $cflags -x objective-c -o \$testdir/conftest\$\$ conftest\$\$.m $libs 2>>config.log
 if [ \$? != 0 ]; then
 	echo "-> failed (\$?)" >> config.log
 	MK_COMPILE_STATUS="FAIL(\$?)"
@@ -1166,7 +1246,7 @@ if [ "\${cache}" != "" ]; then
 fi
 EOF
 	}
-	print "rm -f conftest.m \$testdir/conftest\$EXECSUFFIX\n";
+	print 'rm -f conftest$$.m $testdir/conftest$$$EXECSUFFIX',"\n";
 }
 
 #
@@ -1191,11 +1271,11 @@ if [ "\${cache}" != "" ]; then
 	fi
 fi
 if [ "\${MK_CACHED}" = "No" ]; then
-	cat << EOT > conftest.cpp
+	cat << EOT > conftest\$\$.cpp
 $code
 EOT
 	echo "\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $cxxflags -o \$testdir/conftest conftest.cpp $libs" >>config.log
-	\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $cxxflags -o \$testdir/conftest conftest.cpp $libs 2>>config.log
+	\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $cxxflags -o \$testdir/conftest\$\$ conftest\$\$.cpp $libs 2>>config.log
 	if [ \$? != 0 ]; then
 		echo "-> failed (\$?)" >> config.log
 		MK_COMPILE_STATUS="FAIL(\$?)"
@@ -1205,11 +1285,11 @@ EOF
 	} else {
 		print << "EOF";
 MK_COMPILE_STATUS="OK"
-cat << EOT > conftest.cpp
+cat << EOT > conftest\$\$.cpp
 $code
 EOT
 echo "\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $cxxflags -o \$testdir/conftest conftest.cpp $libs" >>config.log
-\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $cxxflags -o \$testdir/conftest conftest.cpp $libs 2>>config.log
+\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $cxxflags -o \$testdir/conftest\$\$ conftest\$\$.cpp $libs 2>>config.log
 if [ \$? != 0 ]; then
 	echo "-> failed (\$?)" >> config.log
 	MK_COMPILE_STATUS="FAIL(\$?)"
@@ -1233,7 +1313,7 @@ if [ "\${cache}" != "" ]; then
 fi
 EOF
 	}
-	print "rm -f conftest.cpp \$testdir/conftest\$EXECSUFFIX\n";
+	print 'rm -f conftest$$.cpp $testdir/conftest$$$EXECSUFFIX',"\n";
 }
 
 #
@@ -1250,10 +1330,10 @@ sub MkRunPerl
 	$code =~ s/\$/\\\$/g;
 
 	print << "EOF";
-cat << EOT > \$testdir/conftest.pl
+cat << EOT > \$testdir/conftest\$\$.pl
 $code
 EOT
-(cd \$testdir && perl conftest.pl) >> config.log
+(cd \$testdir && perl conftest\$\$.pl) >> config.log
 EOF
 	MkIf('"$?" = "0"');
 		MkPrint('yes');
@@ -1262,7 +1342,7 @@ EOF
 		MkPrint('no (script failed)');
 		MkSaveCompileFailed($define);
 	MkEndif;
-	print 'rm -f $testdir/conftest.pl', "\n";
+	print 'rm -f $testdir/conftest$$.pl', "\n";
 }
 
 # Specify module availability under Windows platforms in Emul()

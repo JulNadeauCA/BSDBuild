@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2002-2012 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2002-2016 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,9 @@ if [ "$OBJC" = "" ]; then
 		HAVE_OBJC="yes"
 		echo "using CC (${OBJC})"
 	else
-		for i in `echo $PATH |sed 's/:/ /g'`; do
+		bb_save_IFS=$IFS
+		IFS=$PATH_SEPARATOR
+		for i in $PATH; do
 			if [ -x "${i}/${CROSSPFX}cc" ]; then
 				if [ -f "${i}/${CROSSPFX}cc" ]; then
 					OBJC="${i}/${CROSSPFX}cc"
@@ -48,8 +50,19 @@ if [ "$OBJC" = "" ]; then
 					OBJC="${i}/${CROSSPFX}gcc"
 					break
 				fi
+			elif [ -e "${i}/${CROSSPFX}cc.exe" ]; then
+				if [ -f "${i}/${CROSSPFX}cc.exe" ]; then
+					OBJC="${i}/${CROSSPFX}cc.exe"
+					break
+				fi
+			elif [ -e "${i}/${CROSSPFX}gcc.exe" ]; then
+				if [ -f "${i}/${CROSSPFX}gcc.exe" ]; then
+					OBJC="${i}/${CROSSPFX}gcc.exe"
+					break
+				fi
 			fi
 		done
+		IFS=$bb_save_IFS
 		if [ "$OBJC" = "" ]; then
 		    echo "*"
 		    echo "* Cannot find ${CROSSPFX}objc or ${CROSSPFX}gcc in default PATH."

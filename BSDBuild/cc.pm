@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2002-2014 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2002-2016 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,19 +32,31 @@ else
 	CROSSPFX=""
 fi
 if [ "$CC" = "" ]; then
-	for i in `echo $PATH |sed 's/:/ /g'`; do
+	bb_save_IFS=$IFS
+	IFS=$PATH_SEPARATOR
+	for i in $PATH; do
 		if [ -x "${i}/${CROSSPFX}cc" ]; then
-			if [ -f "${i}/${CROSSPFX}cc" ]; then
-				CC="${i}/${CROSSPFX}cc"
-				break
-			fi
+			CC="${i}/${CROSSPFX}cc"
+			break
+		elif [ -x "${i}/${CROSSPFX}clang" ]; then
+			CC="${i}/${CROSSPFX}clang"
+			break
 		elif [ -x "${i}/${CROSSPFX}gcc" ]; then
-			if [ -f "${i}/${CROSSPFX}gcc" ]; then
-				CC="${i}/${CROSSPFX}gcc"
-				break
-			fi
+			CC="${i}/${CROSSPFX}gcc"
+			break
+		elif [ -e "${i}/${CROSSPFX}cc.exe" ]; then
+			CC="${i}/${CROSSPFX}cc.exe"
+			break
+		elif [ -e "${i}/${CROSSPFX}clang.exe" ]; then
+			CC="${i}/${CROSSPFX}clang.exe"
+			break
+		elif [ -e "${i}/${CROSSPFX}gcc.exe" ]; then
+			CC="${i}/${CROSSPFX}gcc.exe"
+			break
 		fi
 	done
+	IFS=$bb_save_IFS
+
 	if [ "$CC" = "" ]; then
 		echo "*"
 		echo "* Cannot find ${CROSSPFX}cc or ${CROSSPFX}gcc in default PATH."

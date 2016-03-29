@@ -32,19 +32,34 @@ else
 	CROSSPFX=""
 fi
 if [ "$CXX" = "" ]; then
-	for i in `echo $PATH |sed 's/:/ /g'`; do
+	bb_save_IFS=$IFS
+	IFS=$PATH_SEPARATOR
+	for i in $PATH; do
 		if [ -x "${i}/${CROSSPFX}c++" ]; then
-			if [ -f "${i}/${CROSSPFX}c++" ]; then
-				CXX="${i}/${CROSSPFX}c++"
-				break
-			fi
+			CXX="${i}/${CROSSPFX}c++"
+			break
+		elif [ -x "${i}/${CROSSPFX}clang++" ]; then
+			CXX="${i}/${CROSSPFX}clang++"
+			break
 		elif [ -x "${i}/${CROSSPFX}gcc" ]; then
-			if [ -f "${i}/${CROSSPFX}gcc" ]; then
-				CXX="${i}/${CROSSPFX}gcc"
-				break
-			fi
+			CXX="${i}/${CROSSPFX}gcc"
+			break
+		elif [ -x "${i}/${CROSSPFX}clang" ]; then
+			CXX="${i}/${CROSSPFX}clang"
+			break
+		elif [ -e "${i}/${CROSSPFX}c++.exe" ]; then
+			CXX="${i}/${CROSSPFX}c++.exe"
+			break
+		elif [ -e "${i}/${CROSSPFX}gcc.exe" ]; then
+			CXX="${i}/${CROSSPFX}gcc.exe"
+			break
+		elif [ -e "${i}/${CROSSPFX}clang.exe" ]; then
+			CXX="${i}/${CROSSPFX}clang.exe"
+			break
 		fi
 	done
+	IFS=$bb_save_IFS
+
 	if [ "$CXX" = "" ]; then
 		echo "*"
 		echo "* Cannot find ${CROSSPFX}c++ or ${CROSSPFX}gcc in default PATH."

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2001-2015 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2016 Hypertriton, Inc. <http://hypertriton.com/>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -52,6 +52,10 @@ PROG_TYPE?=	"CLI"
 PROG_GUID?=
 PROG_GUI_FLAGS?=
 PROG_CLI_FLAGS?=
+
+PROG_PREFIX?=
+PROG_SUFFIX?=
+PROG_TRANSFORM?=s,x,x,
 
 PROG_BUNDLE?=
 PROG_SIGNATURE?=	hytr
@@ -227,16 +231,12 @@ ${PROG}: _prog_objs ${OBJS}
 	    	    _objs="$$_objs $$F"; \
                 done; \
 		if [ "${WINRES}" != "" ]; then \
-	            echo "${CC} ${CFLAGS} ${LDFLAGS} $$_prog_ldflags \
-		        -o ${PROG} $$_objs ${LIBS} ${WINRES}.o"; \
-	            ${CC} ${CFLAGS} ${LDFLAGS} $$_prog_ldflags \
-		        -o ${PROG} $$_objs ${LIBS} ${WINRES}.o; \
-		else \
-	            echo "${CC} ${CFLAGS} ${LDFLAGS} $$_prog_ldflags \
-		        -o ${PROG} $$_objs ${LIBS}"; \
-	            ${CC} ${CFLAGS} ${LDFLAGS} $$_prog_ldflags \
-		        -o ${PROG} $$_objs ${LIBS}; \
+		    _objs="$$_objs ${WINRES}.o"; \
 		fi; \
+	        echo "${CC} ${CFLAGS} ${LDFLAGS} $$_prog_ldflags -o ${PROG} \
+		    $$_objs ${LIBS}"; \
+	        ${CC} ${CFLAGS} ${LDFLAGS} $$_prog_ldflags -o ${PROG} \
+		    $$_objs ${LIBS}; \
 	    else \
 		if [ "${WINRES}" != "" ]; then \
 	            echo "${CC} ${CFLAGS} ${LDFLAGS} $$_prog_ldflags \
@@ -372,8 +372,13 @@ install-prog:
 	    ${SUDO} ${INSTALL_PROG_DIR} ${DESTDIR}${BINDIR}; \
 	fi
 	@if [ "${PROG}" != "" -a "${PROG_INSTALL}" != "No" ]; then \
-	    echo "${INSTALL_PROG} ${PROG}${EXECSUFFIX} ${BINDIR}"; \
-	    ${SUDO} ${INSTALL_PROG} ${PROG}${EXECSUFFIX} ${DESTDIR}${BINDIR}; \
+	    if [ "${PROG_TRANSFORM}" != "s,x,x," ]; then \
+	    	export prog=`echo "${PROG}" |sed -e '${PROG_TRANSFORM}'`; \
+	    else \
+	        export prog="${PROG}"; \
+	    fi; \
+	    echo "${INSTALL_PROG} ${PROG} ${BINDIR}/${PROG_PREFIX}$$prog${PROG_SUFFIX}"; \
+	    ${SUDO} ${INSTALL_PROG} ${PROG} ${DESTDIR}${BINDIR}/${PROG_PREFIX}$$prog${PROG_SUFFIX}; \
 	fi
 	@if [ "${DATAFILES}" != "none" ]; then \
             if [ ! -d "${DESTDIR}${DATADIR}" ]; then \
@@ -431,8 +436,13 @@ install-prog:
 
 deinstall-prog:
 	@if [ "${PROG}" != "" -a "${PROG_INSTALL}" != "No" ]; then \
-	    echo "${DEINSTALL_PROG} ${BINDIR}/${PROG}${EXECSUFFIX}"; \
-	    ${SUDO} ${DEINSTALL_PROG} ${DESTDIR}${BINDIR}/${PROG}${EXECSUFFIX}; \
+	    if [ "${PROG_TRANSFORM}" != "s,x,x," ]; then \
+	    	export prog=`echo "${PROG}" |sed -e '${PROG_TRANSFORM}'`; \
+	    else \
+	        export prog="${PROG}"; \
+	    fi; \
+	    echo "${DEINSTALL_PROG} ${BINDIR}/${PROG_PREFIX}$$prog${PROG_SUFFIX}${EXECSUFFIX}"; \
+	    ${SUDO} ${DEINSTALL_PROG} ${DESTDIR}${BINDIR}/${PROG_PREFIX}$$prog${PROG_SUFFIX}${EXECSUFFIX}; \
 	fi
 	@if [ "${DATAFILES}" != "none" ]; then \
 	    for F in ${DATAFILES}; do \

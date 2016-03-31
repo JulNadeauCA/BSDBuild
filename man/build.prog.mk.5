@@ -56,6 +56,14 @@ Yacc (*.y)
 .Bl -tag -width "deinstall-prog "
 .It Ar ${PROG}
 Compile/link the ${PROG} executable from the specified source files.
+.It Ar ${PROG_PREFIX}
+Prepend string to installed executable name.
+.It Ar ${PROG_SUFFIX}
+Append string to installed executable name.
+.It Ar ${PROG_TRANSFORM}
+Apply
+.Xr sed 1
+expression to installed executable name.
 .It Ar ${GMONOUT}
 Compile/link a profiled version of ${PROG}.
 .It Ar clean-prog

@@ -120,7 +120,8 @@ DATAFILES=Core.pm \
 	etubestore.pm \
 	uim.pm \
 	xbox.pm \
-	csidl.pm
+	csidl.pm \
+	libircclient.pm
 
 all:
 

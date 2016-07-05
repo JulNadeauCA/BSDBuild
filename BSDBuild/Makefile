@@ -54,6 +54,7 @@ DATAFILES=Core.pm \
 	cg.pm \
 	cracklib.pm \
 	db4.pm \
+	db5.pm \
 	perl.pm \
 	libidn.pm \
 	getaddrinfo.pm \

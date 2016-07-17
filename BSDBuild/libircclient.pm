@@ -49,10 +49,14 @@ EOF
 sub Test
 {
 	my ($ver, $pfx) = @_;
+	my @pfxDirs = ();
 
 	# XXX TODO: detect if compiled against openssl
-	
-	foreach my $dir ($pfx, @autoPrefixDirs) {
+
+	push @pfxDirs, $pfx if $pfx;
+	push @pfxDirs, @autoPrefixDirs;
+
+	foreach my $dir (@pfxDirs) {
 		MkIfExists("$dir/include/libircclient.h");
 		    MkDefine('LIBIRCCLIENT_CFLAGS', "-I$dir/include");
 		    MkDefine('LIBIRCCLIENT_LIBS', "-L$dir/lib -lircclient");

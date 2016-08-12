@@ -122,7 +122,8 @@ DATAFILES=Core.pm \
 	uim.pm \
 	xbox.pm \
 	csidl.pm \
-	libircclient.pm
+	libircclient.pm \
+	pcre.pm
 
 all:
 

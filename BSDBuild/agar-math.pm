@@ -43,7 +43,7 @@ sub Test
 	
 	MkExecOutputPfx($pfx, 'agar-math-config', '--version', 'AGAR_MATH_VERSION');
 	MkIfFound($pfx, $ver, 'AGAR_MATH_VERSION');
-		MkPrintN('checking whether Agar-Math works...');
+		MkPrintSN('checking whether Agar-Math works...');
 		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
 		MkExecOutputPfx($pfx, 'agar-math-config', '--cflags', 'AGAR_MATH_CFLAGS');

@@ -42,7 +42,7 @@ sub Test
 	MkIfFound($pfx, $ver, 'PERCGI_VERSION');
 		MkExecOutputPfx($pfx, 'percgi-config', '--cflags', 'PERCGI_CFLAGS');
 		MkExecOutputPfx($pfx, 'percgi-config', '--libs', 'PERCGI_LIBS');
-		MkPrintN('checking whether PerCGI works...');
+		MkPrintSN('checking whether PerCGI works...');
 		MkCompileC('HAVE_PERCGI', '${PERCGI_CFLAGS}', '${PERCGI_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_PERCGI}', 'PERCGI_CFLAGS', 'PERCGI_LIBS');
 	MkElse;

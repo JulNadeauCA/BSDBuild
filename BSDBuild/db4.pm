@@ -40,55 +40,55 @@ sub Test
 	my ($ver, $pfx) = @_;
 
 	print << "EOF";
-DB4_CFLAGS=""
-DB4_LIBS=""
-DB4_VERSION=""
+DB4_CFLAGS=''
+DB4_LIBS=''
+DB4_VERSION=''
 
 for path in $pfx /usr /usr/local /opt; do
 EOF
 	print << 'EOF';
 	if [ -e "${path}/include/db4.8" ]; then
 		DB4_CFLAGS="-I${path}/include/db4.8 -I${path}/include"
-		DB4_VERSION="4.8"
+		DB4_VERSION='4.8'
 	elif [ -e "${path}/include/db4.7" ]; then
 		DB4_CFLAGS="-I${path}/include/db4.7 -I${path}/include"
-		DB4_VERSION="4.7"
+		DB4_VERSION='4.7'
 	elif [ -e "${path}/include/db4.6" ]; then
 		DB4_CFLAGS="-I${path}/include/db4.6 -I${path}/include"
-		DB4_VERSION="4.6"
+		DB4_VERSION='4.6'
 	elif [ -e "${path}/include/db4.5" ]; then
 		DB4_CFLAGS="-I${path}/include/db4.5 -I${path}/include"
-		DB4_VERSION="4.5"
+		DB4_VERSION='4.5'
 	elif [ -e "${path}/include/db4.4" ]; then
 		DB4_CFLAGS="-I${path}/include/db4.4 -I${path}/include"
-		DB4_VERSION="4.4"
+		DB4_VERSION='4.4'
 	elif [ -e "${path}/include/db4.3" ]; then
 		DB4_CFLAGS="-I${path}/include/db4.3 -I${path}/include"
-		DB4_VERSION="4.3"
+		DB4_VERSION='4.3'
 	elif [ -e "${path}/include/db4.2" ]; then
 		DB4_CFLAGS="-I${path}/include/db4.2 -I${path}/include"
-		DB4_VERSION="4.2"
+		DB4_VERSION='4.2'
 	elif [ -e "${path}/include/db47" ]; then
 		DB4_CFLAGS="-I${path}/include/db47 -I${path}/include"
-		DB4_VERSION="4.7"
+		DB4_VERSION='4.7'
 	elif [ -e "${path}/include/db46" ]; then
 		DB4_CFLAGS="-I${path}/include/db46 -I${path}/include"
-		DB4_VERSION="4.6"
+		DB4_VERSION='4.6'
 	elif [ -e "${path}/include/db45" ]; then
 		DB4_CFLAGS="-I${path}/include/db45 -I${path}/include"
-		DB4_VERSION="4.5"
+		DB4_VERSION='4.5'
 	elif [ -e "${path}/include/db44" ]; then
 		DB4_CFLAGS="-I${path}/include/db44 -I${path}/include"
-		DB4_VERSION="4.4"
+		DB4_VERSION='4.4'
 	elif [ -e "${path}/include/db43" ]; then
 		DB4_CFLAGS="-I${path}/include/db43 -I${path}/include"
-		DB4_VERSION="4.3"
+		DB4_VERSION='4.3'
 	elif [ -e "${path}/include/db42" ]; then
 		DB4_CFLAGS="-I${path}/include/db42 -I${path}/include"
-		DB4_VERSION="4.2"
+		DB4_VERSION='4.2'
 	elif [ -e "${path}/include/db4" ]; then
 		DB4_CFLAGS="-I${path}/include/db4 -I${path}/include"
-		DB4_VERSION="4"
+		DB4_VERSION='4'
 	fi
 	case "${DB4_VERSION}" in
 	4)
@@ -152,7 +152,7 @@ done
 EOF
 
 	MkIfFound($pfx, $ver, 'DB4_VERSION');
-		MkPrintN('checking whether DB4 works...');
+		MkPrintSN('checking whether DB4 works...');
 		MkCompileC('HAVE_DB4', '${DB4_CFLAGS}', '${DB4_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_DB4}', 'DB4_CFLAGS', 'DB4_LIBS');
 	MkElse;

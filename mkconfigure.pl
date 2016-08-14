@@ -132,7 +132,7 @@ sub check_header
 		$hdrDef =~ s/[\\\/\.]/_/g;
 		$hdrDef = 'HAVE_'.$hdrDef;
 
-		MkPrintN("checking for <$hdrFile> ($hdrDef)...");
+		MkPrintSN("checking for <$hdrFile> ($hdrDef)...");
 		MkCompileC $hdrDef, '', '', << "EOF";
 #include <$hdrFile>
 int main (int argc, char *argv[]) { return (0); }
@@ -151,7 +151,7 @@ sub check_header_opts
 		$hdrDef =~ s/[\\\/\.]/_/g;
 		$hdrDef = 'HAVE_'.$hdrDef;
 
-		MkPrintN("checking for <$hdrFile>...");
+		MkPrintSN("checking for <$hdrFile>...");
 		MkCompileC $hdrDef, $cflags, $libs, << "EOF";
 #include <$hdrFile>
 int main (int argc, char *argv[]) { return (0); }
@@ -167,7 +167,7 @@ sub check_func
 	    $funcDef =~ s/[\\\/\.]/_/g;
 	    $funcDef = 'HAVE_'.$funcDef;
 
-	    MkPrintN("checking for $funcList()...");
+	    MkPrintSN("checking for $funcList()...");
 	    MkDefine('TEST_CFLAGS', '-Wall');		# Avoid failing on "conflicting types blah"
 	    MkCompileC $funcDef, '', '', << "EOF";
 #ifdef __STDC__
@@ -203,42 +203,42 @@ sub check_perl_module
 	my $define = 'HAVE_'.uc($modname);
 	$define =~ s/::/_/;
 
-	MkPrintN("checking for Perl module $modname...");
+	MkPrintSN("checking for Perl module $modname...");
 	if ($Cache) {
 		print << "EOF";
-$define="No"
-MK_CACHED="No"
-if [ "\${cache}" != "" ]; then
+$define='No'
+MK_CACHED='No'
+if [ "\${cache}" != '' ]; then
 	if [ -e "\${cache}/perltest-$define" ]; then
 		$define=`cat \${cache}/perltest-$define`
-		MK_CACHED="Yes"
+		MK_CACHED='Yes'
 	fi
 fi
 if [ "\${MK_CACHED}" = "No" ]; then
 	cat /dev/null | \${PERL} -M$modname 2>/dev/null
 	if [ \$? != 0 ]; then
-		echo "-> not found (\$?)" >>config.log
-		$define="no"
-		echo "no"
+		echo ": not found, code \$?" >>config.log
+		$define='no'
+		echo 'no'
 	else
-		echo "-> found" >>config.log
-		$define="yes"
-		echo "yes"
+		echo ': found' >>config.log
+		$define='yes'
+		echo 'yes'
 	fi
 fi
 EOF
 	} else {
 		print << "EOF";
-$define="No"
+$define='No'
 cat /dev/null | \${PERL} -M$modname 2>/dev/null
 if [ \$? != 0 ]; then
-	echo "-> not found (\$?)" >>config.log
-	$define="no"
-	echo "no"
+	echo ": not found, code \$?" >>config.log
+	$define='no'
+	echo 'no'
 else
-	echo "-> found" >>config.log
-	$define="yes"
-	echo "yes"
+	echo ': found' >>config.log
+	$define='yes'
+	echo 'yes'
 fi
 EOF
 	}
@@ -254,10 +254,10 @@ sub require_perl_module
 	check_perl_module($modname);
 	
 	MkIf "\"\$\{$define\}\" != \"yes\"";
-		MkPrint('* ');
-		MkPrint("* This software requires the $modname module.");
-		MkPrint("* Get it from CPAN (http://cpan.org/).");
-		MkPrint('* ');
+		MkPrintS('* ');
+		MkPrintS("* This software requires the $modname module.");
+		MkPrintS("* Get it from CPAN (http://cpan.org/).");
+		MkPrintS('* ');
 		MkFail('configure failed!');
 	MkEndif;
 }
@@ -271,7 +271,7 @@ sub default_dir
 	if ($dir =~ /^"(.*)"$/) { $dir = $1; }
 	if ($default =~ /^"(.*)"$/) { $default = $1; }
 
-	MkIf "\"\$\{${dir}_SPECIFIED\}\" != \"yes\"";
+	MkIf "\"\$\{${dir}_SPECIFIED\}\" != 'yes'";
 		MkDefine($dir, $default);
 		MkSaveDefine($dir);
 		MkSaveMK($dir);
@@ -289,7 +289,7 @@ sub check_func_opts
 	    $funcDef =~ s/[\\\/\.]/_/g;
 	    $funcDef = 'HAVE_'.$funcDef;
 
-	    MkPrintN("checking for $funcList()...");
+	    MkPrintSN("checking for $funcList()...");
 	    MkDefine('TEST_CFLAGS', '-Wall');		# Avoid failing on "conflicting types blah"
 	    MkCompileC $funcDef, $cflags, $libs, << "EOF";
 #ifdef __STDC__
@@ -381,10 +381,10 @@ sub test
 		$c = $TESTS{$t};
 	}
 	if ($c) {
-		MkPrintN("checking for $DESCR{$t}...");
+		MkPrintSN("checking for $DESCR{$t}...");
 		&$c(@args);
 		if ($EmulOS) {
-			MkPrintN("ok\n");
+			MkPrintSN("ok\n");
 		}
 	}
 	$done{$t} = 1;
@@ -403,24 +403,24 @@ sub test_require
 	}
 
 	MkIf "\"\$\{$def\}\" != \"yes\"";
-		MkPrint('* ');
-		MkPrint("* This software requires $t installed on your system.");
+		MkPrintS('* ');
+		MkPrintS("* This software requires $t installed on your system.");
 		if (exists($URL{$t}) && defined($URL{$t})) {
-			MkPrint("* It is available from: $URL{$t}");
+			MkPrintS("* It is available from: $URL{$t}");
 		}
-		MkPrint('* ');
+		MkPrintS('* ');
 		MkFail('configure failed!');
 	MkEndif;
 
 	if ($ver) {
 		MkIf '"${MK_VERSION_OK}" != "yes"';
-			MkPrint('* ');
-			MkPrint("* This software requires $t version >= $ver,");
-			MkPrint("* please upgrade and try again.");
+			MkPrintS('* ');
+			MkPrintS("* This software requires $t version >= $ver,");
+			MkPrintS("* please upgrade and try again.");
 			if (exists($URL{$t}) && defined($URL{$t})) {
-				MkPrint("* $t is available from: $URL{$t}");
+				MkPrintS("* $t should be available from: $URL{$t}");
 			}
-			MkPrint('* ');
+			MkPrintS('* ');
 			MkFail('configure failed!');
 		MkEndif;
 	}
@@ -525,14 +525,14 @@ if [ "\${includes}" = "link" ]; then
 		echo "\${PERL} mk/gen-includelinks.pl failed"
 		exit 1
 	fi
-	echo "done"
+	echo 'done'
 else
-	if [ "\${PERL}" = "" ]; then
-		echo "*"
-		echo "* The --includes=yes option requires perl, but no perl"
-		echo "* interpreter was found. If perl is unavailable, please"
-		echo "* please rerun configure with --includes=link instead."
-		echo "*"
+	if [ "\${PERL}" = '' ]; then
+		echo '*'
+		echo '* The --includes=yes option requires perl, but no perl'
+		echo '* interpreter was found. If perl is unavailable, please'
+		echo '* please rerun configure with --includes=link'
+		echo '*'
 		exit 1
 	fi
 	\$ECHO_N "* Preprocessing C include files..."
@@ -545,7 +545,7 @@ else
 		echo "\${PERL} mk/gen-includes.pl failed"
 		exit 1
 	fi
-	echo "done"
+	echo 'done'
 fi
 EOF
 }
@@ -623,7 +623,7 @@ if [ -d "$config_script_out" ]; then
 	echo "rm -fR $config_script_out"
 	rm -fR $config_script_out
 fi
-if [ "${SRC}" != "" ]; then
+if [ "${SRC}" != '' ]; then
 	if [ -d "${SRC}/$config_script_out" ]; then
 		echo "rm -fR ${SRC}/$config_script_out"
 		rm -fR ${SRC}/$config_script_out
@@ -634,13 +634,13 @@ cat << EOT > $config_script_out
 # Generated for ${PACKAGE} by BSDBuild %VERSION%.
 # <http://bsdbuild.hypertriton.com>
 
-prefix="${PREFIX}"
-exec_prefix="${EXEC_PREFIX}"
-exec_prefix_set="no"
-libdir="${LIBDIR}"
+prefix='${PREFIX}'
+exec_prefix='${EXEC_PREFIX}'
+exec_prefix_set='no'
+libdir='${LIBDIR}'
 
-usage="\
-Usage: $config_script_out [--prefix[=DIR]] [--exec-prefix[=DIR]] [--version] [--cflags] [--libs]"
+usage='\
+Usage: $config_script_out [--prefix[=DIR]] [--exec-prefix[=DIR]] [--version] [--cflags] [--libs]'
 
 if test \$# -eq 0; then
 	echo "\${usage}" 1>&2
@@ -650,7 +650,7 @@ fi
 while test \$# -gt 0; do
 	case "\$1" in
 	-*=*)
-		optarg=\`echo "\$1" | LC_ALL="C" sed 's/[-_a-zA-Z0-9]*=//'\`
+		optarg=\`echo "\$1" | LC_ALL='C' sed 's/[-_a-zA-Z0-9]*=//'\`
 		;;
 	*)
 		optarg=
@@ -675,13 +675,13 @@ while test \$# -gt 0; do
 		echo "\$exec_prefix"
 		;;
 	--version)
-		echo "${VERSION}"
+		echo '${VERSION}'
 		;;
 	--cflags)
-		echo "$config_script_cflags"
+		echo '$config_script_cflags'
 		;;
 	--libs | --static-libs)
-		echo "$config_script_libs"
+		echo '$config_script_libs'
 		;;
 	*)
 		echo "\${usage}" 1>&2
@@ -707,7 +707,7 @@ sub pass1_register
 	if ($descr =~ /\"(.*)\"/) { $descr = $1; }
 
 	my $darg = pack('A' x 27, split('', $arg));
-	push @Help, "echo \"    $darg $descr\"";
+	push @Help, "echo '    $darg $descr'";
 }
 
 # Process REGISTER_SECTION() in first pass.
@@ -716,8 +716,8 @@ sub pass1_register_section
 	my ($s) = @_;
 
 	if ($s =~ /\"(.*)\"/) { $s = $1; }
-	push @Help, "echo \"\"";
-	push @Help, "echo \"$s\"";
+	push @Help, "echo ''";
+	push @Help, "echo '$s'";
 }
 
 # Process CONFIG_GUESS() in first pass.
@@ -752,7 +752,7 @@ sub pass1_c_include_config
 	if ($file) {
 		print << "EOF";
 if [ -e "$file" ]; then
-	echo "* Overwriting $file"
+	echo '* Overwriting $file'
 	rm -f "$file"
 fi
 EOF
@@ -768,7 +768,7 @@ sub Help
 		'--srcdir=p' =>		'Source directory for concurrent build',
 		'--build=s' =>		'Host environment for build',
 		'--host=s' =>		'Cross-compile for target environment',
-		'--byte-order=s' =>	'Byte order for build (LE|BE)',
+		'--byte-order=s' =>	'Byte order for build [LE|BE]',
 		'--prefix=p' =>		'Installation base',
 		'--exec-prefix=p' =>	'Machine-dependent installation base',
 		'--bindir=p' =>		'Executables for common users',
@@ -782,7 +782,7 @@ sub Help
 		'--mandir=p' =>		'Manual page documentation',
 		'--testdir=p' =>	'Execute all tests in this directory',
 		'--cache=p' =>		'Cache ./configure results in directory',
-		'--includes=s' =>	'Preprocess C headers (yes|no|link)',
+		'--includes=s' =>	'Preprocess C headers [yes|no|link]',
 		'--program-prefix=s' =>	'Prepend string to program name',
 		'--program-suffix=s' =>	'Append string to program name',
 		'--program-transform-name=s' =>	'Transform program name by expression',
@@ -793,7 +793,7 @@ sub Help
 		'--with-manpages' =>	'Generate Unix manual pages',
 		'--with-catman' =>	'Install cat files for manual pages',
 		'--with-manlinks' =>	'Add manual entries for every function',
-		'--with-ctags' =>	'Generate ctags(1) tag files',
+		'--with-ctags' =>	'Generate ctags tag files',
 		'--with-docs' =>	'Generate printable documentation',
 		'--with-bundles' =>	'Generate application/library bundles',
 	);
@@ -832,12 +832,12 @@ sub Help
 	);
     
 	print << 'EOF';
-echo "This configure script was generated by BSDBuild %VERSION%."
-echo "<http://bsdbuild.hypertriton.com/>"
-echo ""
-echo "Usage: ./configure [options]"
-echo ""
-echo "Standard build options:"
+echo 'This configure script was generated by BSDBuild %VERSION%.'
+echo '<http://bsdbuild.hypertriton.com/>'
+echo ''
+echo 'Usage: ./configure [options]'
+echo ''
+echo 'Standard build options:'
 EOF
 	foreach my $opt (sort keys %stdOpts) {
 		my ($optName, $optSpec) = split('=', $opt);
@@ -850,11 +850,11 @@ EOF
 			$optName = $optName.'=STRING';
 		}
 		my $optFmt = pack('A' x 26, split('', $optName));
-		print 'echo "    '.$optFmt.' '.$stdOpts{$opt};
+		print 'echo \'    '.$optFmt.' '.$stdOpts{$opt};
 		if (exists($stdDefaults{$opt})) {
 			print ' ['.$stdDefaults{$opt}.']';
 		}
-		print "\"\n";
+		print "'\n";
 	}
 	print join("\n",@Help),"\n";
 	print "exit 1\n";
@@ -863,10 +863,10 @@ EOF
 sub Version
 {
     print << "EOF";
-if [ "${PACKAGE}" != "" ]; then
+if [ "${PACKAGE}" != '' ]; then
 	echo "BSDBuild %VERSION%, for ${PACKAGE} ${VERSION}"
 else
-	echo "BSDBuild %VERSION%"
+	echo 'BSDBuild %VERSION%'
 fi
 exit 1
 EOF
@@ -891,7 +891,7 @@ print << 'EOF';
 # This file was generated from configure.in by BSDBuild %VERSION%.
 #
 # To regenerate this file, get the latest BSDBuild release from
-# http://hypertriton.com/bsdbuild/, and use the command:
+# http://bsdbuild.hypertriton.com/, and use the command:
 #
 #     $ cat configure.in | mkconfigure > configure
 #
@@ -917,12 +917,12 @@ EOF
 # Initialize and parse for command-line options.
 #
 print << 'EOF';
-echo "BSDBuild %VERSION% (http://bsdbuild.hypertriton.com)"
-echo "#!/bin/sh" > config.status
-echo "# Generated by configure script (BSDBuild %VERSION%)." >>config.status
-echo "Generated by configure script (BSDBuild %VERSION%)." >config.log
+echo 'BSDBuild %VERSION% <http://bsdbuild.hypertriton.com/>'
+echo '#!/bin/sh' > config.status
+echo '# Generated by BSDBuild %VERSION%.' >>config.status
+echo 'Generated by BSDBuild %VERSION%.' >config.log
 
-PACKAGE="Untitled"
+PACKAGE='Untitled'
 VERSION=
 RELEASE=
 PROG_PREFIX=
@@ -933,7 +933,7 @@ case "test" in
 *)
 	bb_sed_test=`echo foo-.bar |sed 's/[-.]/_/g'`
 	if [ "$bb_sed_test" != "foo__bar" ]; then
-		echo "The sed command (or $SHELL) is not working correctly."
+		echo "sed or $SHELL is not working correctly."
 		exit 1
 	fi
 esac
@@ -1093,7 +1093,7 @@ do
 	--config-cache | -C)
 	    ;;
 	*)
-	    echo "Invalid argument: $arg (see ./configure --help)"
+	    echo "Invalid argument: $arg, see ./configure --help"
 	    exit 1
 	    ;;
 	esac
@@ -1104,17 +1104,17 @@ print << 'EOF';
 if [ -e "/bin/echo" ]; then
     /bin/echo -n ""
     if [ $? = 0 ]; then
-    	ECHO_N="/bin/echo -n"
+    	ECHO_N='/bin/echo -n'
     else
-    	ECHO_N="echo -n"
+    	ECHO_N='echo -n'
     fi
 else
-    ECHO_N="echo -n"
+    ECHO_N='echo -n'
 fi
 
 if [ "${PATH_SEPARATOR+set}" != set ]; then
-	echo "#!/bin/sh" > conftest$$.sh
-	echo "exit 0" >> conftest$$.sh
+	echo '#!/bin/sh' > conftest$$.sh
+	echo 'exit 0' >> conftest$$.sh
 	chmod +x conftest$$.sh
 	if (PATH="/nonexistent;."; conftest$$.sh) >/dev/null 2>&1; then
 		PATH_SEPARATOR=';'
@@ -1127,7 +1127,7 @@ fi
 bb_save_IFS=$IFS
 IFS=$PATH_SEPARATOR
 
-PERL=""
+PERL=''
 for path in $PATH; do
 	if [ -x "${path}/perl" ]; then
 		PERL="${path}/perl"
@@ -1137,7 +1137,7 @@ for path in $PATH; do
 		break
 	fi
 done
-PKGCONFIG=""
+PKGCONFIG=''
 for path in $PATH; do
 	if [ -x "${path}/pkg-config" ]; then
 		PKGCONFIG="${path}/pkg-config"
@@ -1159,22 +1159,22 @@ MkSaveMK('PATH_SEPARATOR', 'PROG_PREFIX', 'PROG_SUFFIX', 'PROG_TRANSFORM');
 # the working directory using mkconcurrent.pl.
 #
 print << 'EOF';
-if [ "${prefix}" != "" ]; then
+if [ "${prefix}" != '' ]; then
     PREFIX="$prefix"
 else
-    PREFIX="/usr/local"
+    PREFIX='/usr/local'
 fi
-if [ "${exec_prefix}" != "" ]; then
+if [ "${exec_prefix}" != '' ]; then
     EXEC_PREFIX="$exec_prefix"
 else
     EXEC_PREFIX="${PREFIX}"
 fi
-if [ "${srcdir}" != "" ]; then
-	if [ "${PERL}" = "" ]; then
-		echo "*"
-		echo "* Separate build (--srcdir) requires perl, but there is"
-		echo "* no perl interpreter to be found in your PATH."
-		echo "*"
+if [ "${srcdir}" != '' ]; then
+	if [ "${PERL}" = '' ]; then
+		echo '*'
+		echo '* Separate build --srcdir requires perl, but there is'
+		echo '* no perl interpreter to be found in your PATH.'
+		echo '*'
 		exit 1
 	fi
 	SRC=${srcdir}
@@ -1185,14 +1185,14 @@ BLD=`pwd`
 SRCDIR="${SRC}"
 BLDDIR="${BLD}"
 
-if [ "${testdir}" != "" ]; then
+if [ "${testdir}" != '' ]; then
 	echo "Configure tests will be executed in ${testdir}"
 	if [ ! -e "${testdir}" ]; then
 		echo "Creating ${testdir}"
 		mkdir ${testdir}
 	fi
 else
-	testdir="."
+	testdir='.'
 fi
 EOF
 
@@ -1200,20 +1200,20 @@ EOF
 # Check for the --includes option.
 #
 print << 'EOF';
-if [ "${includes}" = "" ]; then
-	includes="yes"
+if [ "${includes}" = '' ]; then
+	includes='yes'
 fi
 case "${includes}" in
 yes|no)
 	;;
 link)
 	if [ "${with_proj_generation}" ]; then
-		echo "Cannot use --includes=link with --with-proj-generation!"
+		echo 'Cannot use --includes=link with --with-proj-generation'
 		exit 1
 	fi
 	;;
 *)
-	echo "Usage: --includes [yes|no|link]"
+	echo 'Usage: --includes (yes|no|link)'
 	exit 1
 	;;
 esac
@@ -1226,7 +1226,7 @@ EOF
 # files can still be created manually).
 #
 print << "EOF";
-if [ "\${srcdir}" = "" ]; then
+if [ "\${srcdir}" = '' ]; then
 	cat << EOT > configure.dep.pl
 EOF
 my @code = ();
@@ -1239,15 +1239,15 @@ foreach my $s (<SCRIPT>) {
 close(SCRIPT);
 print << "EOF";
 EOT
-	if [ "\${PERL}" != "" ]; then
+	if [ "\${PERL}" != '' ]; then
 		\${PERL} configure.dep.pl .
 		rm -f configure.dep.pl
 	else
-		echo "*"
-		echo "* Warning: No perl was found. Perl is required for automatic"
-		echo "* generation of .depend files. You may need to create empty"
-		echo "* .depend files where it is required."
-		echo "*"
+		echo '*'
+		echo '* Warning: No perl was found. Perl is required for automatic'
+		echo '* generation of .depend files. You may need to create empty'
+		echo '* .depend files where it is required.'
+		echo '*'
 	fi
 fi
 EOF
@@ -1332,45 +1332,45 @@ MkIf '"${show_help}" = "yes"';
 	Help();
 MkEndif;
 MkIf '"${show_version}" = "yes"';
-	print 'echo "BSDBuild %VERSION%"',"\n";
-	print 'exit 0',"\n";
+	print 'echo \'BSDBuild %VERSION%\'', "\n";
+	print 'exit 0', "\n";
 MkEndif;
 
 #
 # Figure out build and host platform.
 #
 print << "EOF";
-if [ "\${build_arg}" != "" ]; then
+if [ "\${build_arg}" != '' ]; then
 	build="\${build_arg}"
 else
-	if [ "\${srcdir}" != "" ]; then
+	if [ "\${srcdir}" != '' ]; then
 		build_guessed=`sh \${srcdir}/$ConfigGuess`
 	else
 		build_guessed=`sh $ConfigGuess`
 	fi
 	if [ \$? != 0 ]; then
-		echo "$ConfigGuess failed (please specify --build)"
+		echo '$ConfigGuess failed, please specify --build'
 		exit 1
 	fi
 	build="\${build_guessed}"
 fi
-if [ "\${host_arg}" != "" ]; then
+if [ "\${host_arg}" != '' ]; then
 	host="\${host_arg}"
 else
 	host="\${build}"
 fi
 if [ "\${host}" != "\${build}" ]; then
-	CROSS_COMPILING="yes"
+	CROSS_COMPILING='yes'
 else
-	CROSS_COMPILING="no"
+	CROSS_COMPILING='no'
 fi
 if [ "\${with_bundles}" != "no" ]; then
 	case "\${host}" in
 	arm-apple-darwin*)
-		PROG_BUNDLE="iOS"
+		PROG_BUNDLE='iOS'
 		;;
 	*-*-darwin*)
-		PROG_BUNDLE="OSX"
+		PROG_BUNDLE='OSX'
 		;;
 	esac
 fi
@@ -1380,44 +1380,44 @@ MkSaveMK('PROG_BUNDLE');
 
 print << 'EOF';
 if [ -e "Makefile.config" ]; then
-	echo "* Overwriting existing Makefile.config"
+	echo '* Overwriting existing Makefile.config'
 fi
-echo "# Generated by configure script (BSDBuild %VERSION%)." >Makefile.config
-echo "" >> Makefile.config
+echo '# Generated by BSDBuild %VERSION% configure script.' >Makefile.config
+echo '' >> Makefile.config
 echo "BUILD=${build}" >> Makefile.config
 echo "HOST=${host}" >> Makefile.config
 echo "CROSS_COMPILING=${CROSS_COMPILING}" >> Makefile.config
 echo "SRCDIR=${SRC}" >> Makefile.config
 echo "BLDDIR=${BLD}" >> Makefile.config
 
-$ECHO_N "./configure" >>config.log
-$ECHO_N "./configure" >>config.status
+$ECHO_N './configure' >>config.log
+$ECHO_N './configure' >>config.status
 for arg
 do
 	$ECHO_N " $arg" >>config.log
 	$ECHO_N " $arg" >>config.status
 done
-echo "" >>config.log
-echo "" >>config.status
+echo '' >>config.log
+echo '' >>config.status
 EOF
 
 if ($OutputHeaderFile) {
 	print << "EOF";
 if [ -e "$OutputHeaderFile" ]; then
-	echo "* Overwriting $OutputHeaderFile file"
+	echo '* Overwriting $OutputHeaderFile file'
 fi
-echo "/* Generated by configure script (BSDBuild %VERSION%). */" > $OutputHeaderFile
+echo '/* Generated by BSDBuild %VERSION% configure script. */' > $OutputHeaderFile
 EOF
 }
 if ($OutputHeaderDir) {
 	print << "EOF";
 if [ -e "$OutputHeaderDir" ]; then
-	echo "* Overwriting $OutputHeaderDir directory"
+	echo '* Overwriting $OutputHeaderDir directory'
 	rm -fR "$OutputHeaderDir"
 fi
 mkdir -p "$OutputHeaderDir"
 if [ \$? != 0 ]; then
-	echo "Could not create $OutputHeaderDir directory."
+	echo 'Could not create $OutputHeaderDir directory.'
 	exit 1
 fi
 EOF
@@ -1455,9 +1455,9 @@ foreach my $pathSpec (@defPaths) {
 	my $ucPath = uc($path);
 
 	print << "EOF";
-if [ "\${$path}" != "" ]; then
+if [ "\${$path}" != '' ]; then
 	$ucPath="\${$path}"
-	${ucPath}_SPECIFIED="yes"
+	${ucPath}_SPECIFIED='yes'
 else
 	$ucPath="$defPath"
 fi
@@ -1486,11 +1486,35 @@ foreach $_ (@INPUT) {
 		my $cmd = lc($1);
 		my $argspec = $2;
 		my @args = ();
-		foreach my $arg (split(',', $argspec)) {
+		my $inQuote = 0;
+		my @argsp = ();
+		foreach my $c (split('', $argspec)) {
+			if ($c eq '"') {
+				if ($inQuote) {
+					$inQuote = 0;
+				} else {
+					$inQuote = 1;
+				}
+				push @argsp, '"';
+				next;
+			}
+			if ($inQuote) {
+				if ($c eq ',') {
+					push @argsp, '_BBLDCOMMA_';
+				} else {
+					push @argsp, $c;
+				}
+			} else {
+				push @argsp, $c;
+			}
+		}
+		foreach my $arg (split(',', join('', @argsp))) {
+			$arg =~ s/_BBLDCOMMA_/,/g;
 			$arg =~ s/^\s+//;
 			$arg =~ s/\s+$//;
 			push @args, $arg;
 		}
+		#print STDERR "Calling $cmd(@args)\n";
 		if (!exists($Fns{$cmd})) {
 			print $s, "\n";
 			next DIRECTIVE;
@@ -1502,16 +1526,16 @@ foreach $_ (@INPUT) {
 MkSaveMK_Commit();
 
 print << 'EOF';
-if [ "${srcdir}" != "" ]; then
+if [ "${srcdir}" != '' ]; then
 	$ECHO_N "* Source is in ${srcdir}. Generating Makefiles..."
 	${PERL} ${SRC}/mk/mkconcurrent.pl ${SRC}
 	if [ $? != 0 ]; then
 		exit 1;
 	fi
-	echo "done"
+	echo 'done'
 fi
-echo "*"
-echo "* Configuration successful. Use \"make depend all\" to compile,"
-echo "* and \"make install\" to install this software under $PREFIX."
-echo "*"
+echo '*'
+echo '* Configuration successful. Use "make depend all" to compile,'
+echo '* and "make install" to install this software under $PREFIX.'
+echo '*'
 EOF

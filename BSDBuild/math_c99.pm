@@ -37,7 +37,7 @@ sub Test
 		
 	MkCaseIn('${host}');
 	MkCaseBegin('*-pc-mingw32*');
-		MkPrint('skipping (libmingwex linker errors)');
+		MkPrintS('skipping (libmingwex linker errors)');
 		MkDefine('HAVE_MATH_C99', 'no');
 		MkSaveUndef('HAVE_MATH_C99');
 		MkCaseEnd;

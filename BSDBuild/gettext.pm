@@ -52,7 +52,7 @@ sub Test
 
 	MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}', $testCode);
 	MkIfFalse('${HAVE_GETTEXT}');
-		MkPrintN('checking for a gettext library in -lintl...');
+		MkPrintSN('checking for a gettext library in -lintl...');
 		MkIfNE($pfx, '');
 			MkIfExists("$pfx/include/libintl.h");
 			    MkDefine('GETTEXT_CFLAGS', "-I$pfx/include");
@@ -71,7 +71,7 @@ sub Test
 		MkIfTrue('${HAVE_GETTEXT}');
 			MkSave('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
 		MkElse;
-			MkPrintN('checking whether -lintl requires -liconv...');
+			MkPrintSN('checking whether -lintl requires -liconv...');
 			MkIfNE($pfx, '');
 				MkIfExists("$pfx/include/iconv.h");
 				    MkDefine('GETTEXT_CFLAGS', "\${GETTEXT_CFLAGS} -I$pfx/include");

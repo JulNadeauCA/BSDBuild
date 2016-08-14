@@ -61,34 +61,34 @@ EOT
 echo "\$CC \$CFLAGS $cflags -o \$testdir/conftest conftest.c" >>config.log
 \$CC \$CFLAGS $cflags -o \$testdir/conftest conftest.c 2>>config.log
 if [ \$? != 0 ]; then
-	echo "Failed to compile test program for byte order (\$?)"
-	echo "Failed to compile test program for byte order (\$?)" >> config.log
+	echo "Failed to compile test for byte order, code \$?"
+	echo "Failed to compile test for byte order, code \$?" >> config.log
 	exit 1
 fi
 rm -f conftest.c
 
-_MK_BYTE_ORDER=""
-_MK_BYTE_ORDER_LESTRING="LiTTLeEnD"
-_MK_BYTE_ORDER_BESTRING="BiGEnDiAN"
+_MK_BYTE_ORDER=''
+_MK_BYTE_ORDER_LESTRING='LiTTLeEnD'
+_MK_BYTE_ORDER_BESTRING='BiGEnDiAN'
 od -tc \$testdir/conftest\$EXECSUFFIX | sed 's/ //g' > \$testdir/conftest.dump
 
 if grep "\$_MK_BYTE_ORDER_LESTRING" \$testdir/conftest.dump >/dev/null; then
 	_MK_BYTE_ORDER="LE"
 	if grep "\$_MK_BYTE_ORDER_BESTRING" \$testdir/conftest.dump >/dev/null; then
-		echo "*"
-		echo "* Unable to auto-determine host byte order. Please re-run ./configure"
-		echo "* with --byte-order=LE or --byte-order=BE."
-		echo "*"
+		echo '*'
+		echo '* Unable to auto-determine host byte order. Please re-run ./configure'
+		echo '* with --byte-order=LE or --byte-order=BE.'
+		echo '*'
 		exit 1
 	fi
 else
 	if grep "\$_MK_BYTE_ORDER_BESTRING" \$testdir/conftest.dump >/dev/null; then
 		_MK_BYTE_ORDER="BE"
 		if grep "\$_MK_BYTE_ORDER_LESTRING" \$testdir/conftest.dump >/dev/null; then
-			echo "*"
-			echo "* Unable to auto-determine host byte order. Please re-run ./configure"
-			echo "* with --byte-order=LE or --byte-order=BE."
-			echo "*"
+			echo '*'
+			echo '* Unable to auto-determine host byte order. Please re-run ./configure'
+			echo '* with --byte-order=LE or --byte-order=BE.'
+			echo '*'
 			exit 1
 		fi
 	fi
@@ -98,12 +98,12 @@ EOF
 	MkEndif;
 	
 	MkIfEQ('$_MK_BYTE_ORDER', 'LE');
-		MkPrint('little-endian');
+		MkPrintS('little-endian');
 		MkDefine('_MK_LITTLE_ENDIAN', 'yes');
 		MkSaveDefine('_MK_LITTLE_ENDIAN');
 		MkSaveUndef('_MK_BIG_ENDIAN');
 	MkElse;
-		MkPrint('big-endian');
+		MkPrintS('big-endian');
 		MkDefine('_MK_BIG_ENDIAN', 'yes');
 		MkSaveDefine('_MK_BIG_ENDIAN');
 		MkSaveUndef('_MK_LITTLE_ENDIAN');

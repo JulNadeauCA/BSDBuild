@@ -63,12 +63,12 @@ sub Test
 	MkEndif;
 
 	MkIfNE('${FASTCGI_LIBS}', '');
-		MkPrint('yes');
-		MkPrintN('checking whether fastcgi works...');
+		MkPrintS('yes');
+		MkPrintSN('checking whether fastcgi works...');
 		MkCompileC('HAVE_FASTCGI', '${FASTCGI_CFLAGS}', '${FASTCGI_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_FASTCGI}', 'FASTCGI_CFLAGS', 'FASTCGI_LIBS');
 	MkElse;
-		MkPrint('no');
+		MkPrintS('no');
 		MkSaveUndef('HAVE_FASTCGI', 'FASTCGI_CFLAGS', 'FASTCGI_LIBS');
 	MkEndif;
 }

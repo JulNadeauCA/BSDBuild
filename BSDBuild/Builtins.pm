@@ -43,36 +43,36 @@ cat << EOT > conftest.1
 .Sh DESCRIPTION
 EOT
 
-HAVE_MANDOC="no"
-MANDOC=""
+HAVE_MANDOC='no'
+MANDOC=''
 bb_save_IFS=$IFS
 IFS=$PATH_SEPARATOR
 for path in $PATH; do
 	if [ -x "${path}/mandoc" ]; then
 		cat conftest.1 | ${path}/mandoc -Tascii >/dev/null
-		if [ "$?" = "0" ]; then
-			HAVE_MANDOC="yes"
+		if [ "$?" = '0' ]; then
+			HAVE_MANDOC='yes'
 			MANDOC="${path}/mandoc"
 			break;
 		fi
 	elif [ -e "${path}/mandoc.exe" ]; then
 		cat conftest.1 | ${path}/mandoc.exe -Tascii >/dev/null
-		if [ "$?" = "0" ]; then
-			HAVE_MANDOC="yes"
+		if [ "$?" = '0' ]; then
+			HAVE_MANDOC='yes'
 			MANDOC="${path}/mandoc.exe"
 			break;
 		fi
 	elif [ -x "${path}/nroff" ]; then
 		cat conftest.1 | ${path}/nroff -Tmandoc >/dev/null
-		if [ "$?" = "0" ]; then
-			HAVE_MANDOC="yes"
+		if [ "$?" = '0' ]; then
+			HAVE_MANDOC='yes'
 			MANDOC="${path}/nroff -Tmandoc"
 			break;
 		fi
 	elif [ -e "${path}/nroff.exe" ]; then
 		cat conftest.1 | ${path}/nroff.exe -Tmandoc >/dev/null
-		if [ "$?" = "0" ]; then
-			HAVE_MANDOC="yes"
+		if [ "$?" = '0' ]; then
+			HAVE_MANDOC='yes'
 			MANDOC="${path}/nroff.exe -Tmandoc"
 			break;
 		fi
@@ -82,48 +82,48 @@ IFS=$bb_save_IFS
 
 rm -f conftest.1
 
-if [ "${HAVE_MANDOC}" = "no" ]; then
-	if [ "${with_manpages}" = "yes" ]; then
-		echo "*"
-		echo "* --with-manpages was requested, but either the"
-		echo "* nroff(1)/mandoc(1) utility or the mdoc(7) macro"
-		echo "* package were not found."
-		echo "*"
+if [ "${HAVE_MANDOC}" = 'no' ]; then
+	if [ "${with_manpages}" = 'yes' ]; then
+		echo '*'
+		echo '* --with-manpages was requested, but either the'
+		echo '* nroff/mandoc utility or the mdoc macro'
+		echo '* package were not found.'
+		echo '*'
 		exit 1
 	fi
-	echo "HAVE_MANDOC=no" >> Makefile.config
-	echo "NOMAN=yes" >> Makefile.config
-	echo "NOMANLINKS=yes" >> Makefile.config
+	echo 'HAVE_MANDOC=no' >> Makefile.config
+	echo 'NOMAN=yes' >> Makefile.config
+	echo 'NOMANLINKS=yes' >> Makefile.config
 else
-	echo "HAVE_MANDOC=yes" >> Makefile.config
+	echo 'HAVE_MANDOC=yes' >> Makefile.config
 	echo "MANDOC=${MANDOC}" >> Makefile.config
 	if [ "${with_catman}" = "no" ]; then
-		echo "NOCATMAN=yes" >> Makefile.config
+		echo 'NOCATMAN=yes' >> Makefile.config
 	else
 		if [ "${with_catman}" = "yes" ]; then
-			echo "NOCATMAN=no" >> Makefile.config
+			echo 'NOCATMAN=no' >> Makefile.config
 		else
 			case "${host}" in
 			*-*-freebsd*)
-				echo "NOCATMAN=yes" >> Makefile.config
+				echo 'NOCATMAN=yes' >> Makefile.config
 				;;
 			*)
-				echo "NOCATMAN=no" >> Makefile.config
+				echo 'NOCATMAN=no' >> Makefile.config
 				;;
 			esac
 		fi
 	fi
-	if [ "${with_manpages}" = "no" ]; then
-		echo "NOMAN=yes" >> Makefile.config
-		echo "NOMANLINKS=yes" >> Makefile.config
+	if [ "${with_manpages}" = 'no' ]; then
+		echo 'NOMAN=yes' >> Makefile.config
+		echo 'NOMANLINKS=yes' >> Makefile.config
 	else
-		if [ "${with_manlinks}" != "yes" ]; then
-			echo "NOMANLINKS=yes" >> Makefile.config
+		if [ "${with_manlinks}" != 'yes' ]; then
+			echo 'NOMANLINKS=yes' >> Makefile.config
 		fi
 	fi
 fi
-if [ "${with_docs}" = "no" ]; then
-	echo "NODOC=yes" >> Makefile.config
+if [ "${with_docs}" = 'no' ]; then
+	echo 'NODOC=yes' >> Makefile.config
 fi
 EOF
 }
@@ -136,7 +136,7 @@ sub BuiltinNLS
 		MkSaveDefine('ENABLE_NLS');
 		# XXX
 		print << 'EOF';
-msgfmt=""
+msgfmt=''
 bb_save_IFS=$IFS
 IFS=$PATH_SEPARATOR
 for path in $PATH; do
@@ -150,10 +150,10 @@ for path in $PATH; do
 done
 IFS=$bb_save_IFS
 
-if [ "${msgfmt}" != "" ]; then
-	HAVE_GETTEXT="yes"
+if [ "${msgfmt}" != '' ]; then
+	HAVE_GETTEXT='yes'
 else
-	HAVE_GETTEXT="no"
+	HAVE_GETTEXT='no'
 fi
 EOF
 		MkSaveDefine('ENABLE_NLS');
@@ -169,10 +169,10 @@ EOF
 sub BuiltinCtags
 {
 	print << 'EOF';
-CTAGS=""
+CTAGS=''
 bb_save_IFS=$IFS
 IFS=$PATH_SEPARATOR
-if [ "${with_ctags}" = "yes" ]; then
+if [ "${with_ctags}" = 'yes' ]; then
 	for path in $PATH; do
 		if [ -x "${path}/ectags" ]; then
 			CTAGS="${path}/ectags"
@@ -182,7 +182,7 @@ if [ "${with_ctags}" = "yes" ]; then
 			break
 		fi
 	done
-	if [ "${CTAGS}" = "" ]; then
+	if [ "${CTAGS}" = '' ]; then
 		for path in $PATH; do
 			if [ -x "${path}/ctags" ]; then
 				CTAGS="${path}/ctags"
@@ -203,11 +203,11 @@ sub BuiltinLibtool
 {
 	# Default to bundled libtool
 	print << 'EOF';
-if [ "${prefix_libtool}" != "" -a "${prefix_libtool}" != "bundled" ]; then
-	LIBTOOL_BUNDLED="no"
+if [ "${prefix_libtool}" != '' -a "${prefix_libtool}" != 'bundled' ]; then
+	LIBTOOL_BUNDLED='no'
 	LIBTOOL="${prefix_libtool}"
 else
-	LIBTOOL_BUNDLED="yes"
+	LIBTOOL_BUNDLED='yes'
 	LIBTOOL=\${TOP}/mk/libtool/libtool
 fi
 echo "LIBTOOL_BUNDLED=${LIBTOOL_BUNDLED}" >> Makefile.config

@@ -278,7 +278,7 @@ EOF
 		echo "${MSGFMT} -o $@ $<"; \
 		${MSGFMT} -o $@ $<; \
 	else \
-		echo "skipping $@ (no gettext)"; \
+		echo "skipping $@, no gettext"; \
 	fi
 
 EOF

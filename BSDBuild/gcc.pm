@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
-	MkPrintN('checking whether the Objective-C compiler is GCC...');
+	MkPrintSN('checking whether the Objective-C compiler is GCC...');
 	MkCompileOBJC('HAVE_GCC_OBJC', '', '', << 'EOF');
 #import <stdio.h>
 int main(int argc, char *argv[]) {
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 }
 EOF
 	
-	MkPrintN('checking whether the C++ compiler is GCC...');
+	MkPrintSN('checking whether the C++ compiler is GCC...');
 	MkCompileOBJC('HAVE_GCC_CXX', '', '', << 'EOF');
 #import <stdio.h>
 int main(int argc, char *argv[]) {

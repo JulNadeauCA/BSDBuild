@@ -60,12 +60,12 @@ sub Test
 		MkIfExists("$dir/include/libircclient.h");
 		    MkDefine('LIBIRCCLIENT_CFLAGS', "-I$dir/include");
 		    MkDefine('LIBIRCCLIENT_LIBS', "-L$dir/lib -lircclient");
-			MkPrint('yes');
+			MkPrintS('yes');
 			MkBreak;
 		MkEndif;
 	}
 	MkIfNE('${LIBIRCCLIENT_CFLAGS}', '');
-		MkPrintN('checking whether libircclient works...');
+		MkPrintSN('checking whether libircclient works...');
 		MkCompileC('HAVE_LIBIRCCLIENT', '${LIBIRCCLIENT_CFLAGS}',
 		    '${LIBIRCCLIENT_LIBS}', $testCode);
 		MkIfTrue('${HAVE_LIBIRCCLIENT}');
@@ -75,7 +75,7 @@ sub Test
 			            'LIBIRCCLIENT_LIBS');
 		MkEndif;
 	MkElse;
-		MkPrint('no');
+		MkPrintS('no');
 		MkSaveUndef('HAVE_LIBIRCCLIENT', 'LIBIRCCLIENT_CFLAGS',
 		            'LIBIRCCLIENT_LIBS');
 	MkEndif;

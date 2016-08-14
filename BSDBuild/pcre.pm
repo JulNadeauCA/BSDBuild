@@ -54,7 +54,7 @@ sub Test
 	MkExecOutputPfx($pfx, 'pcre-config', '--libs', 'PCRE_LIBS');
 
 	MkIfFound($pfx, $ver, 'PCRE_VERSION');
-		MkPrintN('checking whether PCRE works...');
+		MkPrintSN('checking whether PCRE works...');
 		MkCompileC('HAVE_PCRE', '${PCRE_CFLAGS}', '${PCRE_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_PCRE}', 'PCRE_CFLAGS', 'PCRE_LIBS');
 	MkElse;

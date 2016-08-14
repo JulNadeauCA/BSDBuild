@@ -52,7 +52,7 @@ main(int argc, char *argv[])
 EOF
 		MkSaveIfTrue('${HAVE_SDL_TTF}', 'SDL_TTF_CFLAGS', 'SDL_TTF_LIBS');
 	MkElse;
-		MkPrint('no');
+		MkPrintS('no');
 		MkSaveUndef('HAVE_SDL_TTF');
 	MkEndif;
 	return (0);

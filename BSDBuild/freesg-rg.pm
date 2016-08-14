@@ -43,7 +43,7 @@ sub Test
 	
 	MkExecOutputPfx($pfx, 'freesg-rg-config', '--version', 'FREESG_RG_VERSION');
 	MkIfFound($pfx, $ver, 'FREESG_RG_VERSION');
-		MkPrintN('checking whether FreeSG-RG works...');
+		MkPrintSN('checking whether FreeSG-RG works...');
 		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
 		MkExecOutputPfx($pfx, 'freesg-rg-config', '--cflags', 'FREESG_RG_CFLAGS');

@@ -49,7 +49,7 @@ main(int argc, char *argv[])
 EOF
 		MkSaveIfTrue('${HAVE_SDL_IMAGE}', 'SDL_IMAGE_CFLAGS', 'SDL_IMAGE_LIBS');
 	MkElse;
-		MkPrint('no');
+		MkPrintS('no');
 		MkSaveUndef('HAVE_SDL_IMAGE');
 	MkEndif;
 	return (0);

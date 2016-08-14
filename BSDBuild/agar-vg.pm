@@ -42,7 +42,7 @@ sub Test
 	
 	MkExecOutputPfx($pfx, 'agar-vg-config', '--version', 'AGAR_VG_VERSION');
 	MkIfFound($pfx, $ver, 'AGAR_VG_VERSION');
-		MkPrintN('checking whether agar-vg works...');
+		MkPrintSN('checking whether agar-vg works...');
 		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
 		MkExecOutputPfx($pfx, 'agar-vg-config', '--cflags', 'AGAR_VG_CFLAGS');

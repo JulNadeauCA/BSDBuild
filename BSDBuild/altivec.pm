@@ -46,13 +46,13 @@ EOF
 	print << 'EOF';
 case "$host" in
 powerpc-*-darwin*)
-	ALTIVEC_CFLAGS="-faltivec -maltivec"
-	ALTIVEC_CHECK_CFLAGS="-D_DARWIN_C_SOURCE"
+	ALTIVEC_CFLAGS='-faltivec -maltivec'
+	ALTIVEC_CHECK_CFLAGS='-D_DARWIN_C_SOURCE'
 	echo "ALTIVEC_CHECK_CFLAGS=${ALTIVEC_CHECK_CFLAGS}" >> Makefile.config
 	;;
 *)
-	ALTIVEC_CFLAGS="-mabi=altivec -maltivec"
-	ALTIVEC_CHECK_CFLAGS=""
+	ALTIVEC_CFLAGS='-mabi=altivec -maltivec'
+	ALTIVEC_CHECK_CFLAGS=''
 	echo "ALTIVEC_CHECK_CFLAGS=" >> Makefile.config
 	;;
 esac
@@ -66,7 +66,7 @@ EOF
 		MkDefine('HAVE_ALTIVEC_H');
 		MkSaveDefine('ALTIVEC_CFLAGS', 'HAVE_ALTIVEC_H');
 	MkElse;
-		MkPrintN('checking for AltiVec (without <altivec.h>)...');
+		MkPrintSN('checking for AltiVec (without <altivec.h>)...');
 		MkCompileC('HAVE_ALTIVEC', '${CFLAGS} ${ALTIVEC_CFLAGS}', '', $testCode);
 		MkIfTrue('${HAVE_ALTIVEC}');
 	   		MkSave('ALTIVEC_CFLAGS');

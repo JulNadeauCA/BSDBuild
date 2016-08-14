@@ -21,7 +21,7 @@ sub Test
 	MkExecPkgConfig($pfx, 'libbsd', '--cflags', 'LIBBSD_CFLAGS');
 	MkExecPkgConfig($pfx, 'libbsd', '--libs', 'LIBBSD_LIBS');
 	MkIfFound($pfx, $ver, 'LIBBSD_VERSION');
-		MkPrintN('checking whether libbsd works...');
+		MkPrintSN('checking whether libbsd works...');
 		MkCompileC('HAVE_LIBBSD',
 		           '${LIBBSD_CFLAGS}', '${LIBBSD_LIBS}',
 		           $testCode);

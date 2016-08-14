@@ -126,7 +126,7 @@ EOF
 	MkSaveIfTrue('${HAVE_X11}', 'X11_CFLAGS', 'X11_LIBS');
 
 	MkIfTrue('${HAVE_X11}');
-		MkPrintN('checking for the XKB extension...');
+		MkPrintSN('checking for the XKB extension...');
 		MkCompileC('HAVE_XKB', '${X11_CFLAGS}', '${X11_LIBS} -lX11', << 'EOF');
 #include <X11/Xlib.h>
 #include <X11/XKBlib.h>

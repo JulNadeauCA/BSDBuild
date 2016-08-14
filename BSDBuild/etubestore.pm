@@ -40,7 +40,7 @@ sub Test
 	
 	MkExecOutputPfx($pfx, 'etubestore-config', '--version', 'ETUBESTORE_VERSION');
 	MkIfFound($pfx, $ver, 'ETUBESTORE_VERSION');
-		MkPrintN('checking whether libetubestore works...');
+		MkPrintSN('checking whether libetubestore works...');
 		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
 		MkExecOutputPfx($pfx, 'etubestore-config', '--cflags', 'ETUBESTORE_CFLAGS');

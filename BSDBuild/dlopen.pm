@@ -50,7 +50,7 @@ sub Test
 	DetectHeaderC('HAVE_DLFCN_H',	'<dlfcn.h>');
 	TryCompile('HAVE_DLOPEN', $testCode);
 	MkIfFalse('${HAVE_DLOPEN}');
-		MkPrintN('checking for dlopen() in -ldl...');
+		MkPrintSN('checking for dlopen() in -ldl...');
 		TryCompileFlagsC('HAVE_DLOPEN', '-ldl', $testCode);
 		MkIfTrue('${HAVE_DLOPEN}');
 			MkDefine('DSO_CFLAGS', '');

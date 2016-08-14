@@ -44,7 +44,7 @@ main(int argc, char *argv[])
 EOF
 
 	MkIfTrue('${HAVE_DYLD}');
-		MkPrint('checking for NSLINKMODULE_OPTION_RETURN_ON_ERROR');
+		MkPrintS('checking for NSLINKMODULE_OPTION_RETURN_ON_ERROR');
 		TryCompile 'HAVE_DYLD_RETURN_ON_ERROR', << 'EOF';
 #ifdef HAVE_MACH_O_DYLD_H
 #include <mach-o/dyld.h>

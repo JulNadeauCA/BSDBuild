@@ -40,7 +40,7 @@ sub Test
 	
 	MkExecOutputPfx($pfx, 'edacious-config', '--version', 'EDACIOUS_VERSION');
 	MkIfFound($pfx, $ver, 'EDACIOUS_VERSION');
-		MkPrintN('checking whether Edacious works...');
+		MkPrintSN('checking whether Edacious works...');
 		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
 		MkExecOutputPfx($pfx, 'agar-vg-config', '--cflags', 'AGAR_VG_CFLAGS');

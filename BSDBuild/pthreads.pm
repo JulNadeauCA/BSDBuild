@@ -122,7 +122,7 @@ sub TestPthreadsStd
 		MkSaveDefine('PTHREADS_CFLAGS', 'PTHREADS_LIBS');
 	MkElse();
 		# Fallback to -pthread.
-		MkPrintN('checking for -pthread...');
+		MkPrintSN('checking for -pthread...');
 		MkDefine('PTHREADS_LIBS', '-pthread');
 		MkCompileC('HAVE_PTHREADS', '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', $testCodeStd);
 		MkIf('"${HAVE_PTHREADS}" = "yes"');
@@ -133,7 +133,7 @@ sub TestPthreadsStd
 			# Fallback to scanning libs and include files.
 			MkDefine('PTHREADS_CFLAGS', '');
 			MkDefine('PTHREADS_LIBS', '');
-			MkPrintN('checking for -pthread (common paths)...');
+			MkPrintSN('checking for -pthread (common paths)...');
 			SearchIncludes($pfx, 'PTHREADS_CFLAGS');
 			SearchLibs($pfx, 'PTHREADS_LIBS');
 			MkCompileC('HAVE_PTHREADS',
@@ -155,7 +155,7 @@ sub TestPthreadMutexRecursive
 	# Look for the PTHREAD_MUTEX_RECURSIVE flag of the function
 	# pthread_mutexattr_settype().
 	#
-	MkPrintN('checking for PTHREAD_MUTEX_RECURSIVE...');
+	MkPrintSN('checking for PTHREAD_MUTEX_RECURSIVE...');
 	MkCompileC('HAVE_PTHREAD_MUTEX_RECURSIVE',
 	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', << 'EOF');
 #include <pthread.h>
@@ -179,7 +179,7 @@ EOF
 	# Look for the PTHREAD_MUTEX_RECURSIVE_NP flag of the function
 	# pthread_mutexattr_settype().
 	#
-	MkPrintN('checking for PTHREAD_MUTEX_RECURSIVE_NP...');
+	MkPrintSN('checking for PTHREAD_MUTEX_RECURSIVE_NP...');
 	MkCompileC('HAVE_PTHREAD_MUTEX_RECURSIVE_NP',
 	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', << 'EOF');
 #include <pthread.h>
@@ -205,7 +205,7 @@ sub TestPthreadsXOpenExt
 {
 	my ($ver, $pfx) = @_;
 
-	MkPrintN('checking for the X/Open Threads Extension...');
+	MkPrintSN('checking for the X/Open Threads Extension...');
 
 	MkCaseIn('${host}');
 	MkCaseBegin('*-*-freebsd* | *-*-dragonfly*');
@@ -231,7 +231,7 @@ sub TestPthreadsXOpenExt
 	MkElse;
 		# Fallback to scanning libraries and includes.
 		MkDefine('PTHREADS_XOPEN_LIBS', '');
-		MkPrintN('checking for the X/Open Threads Extension (common paths)...');
+		MkPrintSN('checking for the X/Open Threads Extension (common paths)...');
 		SearchLibs($pfx, 'PTHREADS_XOPEN_LIBS');
 		SearchIncludes($pfx, 'PTHREADS_XOPEN_CFLAGS');
 		MkCompileC('HAVE_PTHREADS_XOPEN',

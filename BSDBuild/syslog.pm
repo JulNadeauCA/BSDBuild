@@ -36,7 +36,7 @@ main(int argc, char *argv[])
 }
 EOF
 	
-	MkPrintN('checking for syslog_r()...');
+	MkPrintSN('checking for syslog_r()...');
 	TryCompile 'HAVE_SYSLOG_R', << 'EOF';
 #include <syslog.h>
 #include <stdarg.h>
@@ -49,7 +49,7 @@ main(int argc, char *argv[])
 }
 EOF
 
-	MkPrintN('checking for vsyslog()...');
+	MkPrintSN('checking for vsyslog()...');
 	TryCompile 'HAVE_VSYSLOG', << 'EOF';
 #include <syslog.h>
 #include <stdarg.h>
@@ -70,7 +70,7 @@ main(int argc, char *argv[])
 }
 EOF
 	
-	MkPrintN('checking for vsyslog_r()...');
+	MkPrintSN('checking for vsyslog_r()...');
 	TryCompile 'HAVE_VSYSLOG_R', << 'EOF';
 #include <syslog.h>
 #include <stdarg.h>

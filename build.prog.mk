@@ -377,8 +377,9 @@ install-prog:
 	    else \
 	        export prog="${PROG}"; \
 	    fi; \
-	    echo "${INSTALL_PROG} ${PROG} ${BINDIR}/${PROG_PREFIX}$$prog${PROG_SUFFIX}"; \
-	    ${SUDO} ${INSTALL_PROG} ${PROG} ${DESTDIR}${BINDIR}/${PROG_PREFIX}$$prog${PROG_SUFFIX}; \
+	    export prog=${PROG_PREFIX}$$prog${PROG_SUFFIX}; \
+	    echo "${INSTALL_PROG} ${PROG} ${BINDIR}/$$prog${EXECSUFFIX}"; \
+	    ${SUDO} ${INSTALL_PROG} ${PROG} ${DESTDIR}${BINDIR}/$$prog${EXECSUFFIX}; \
 	fi
 	@if [ "${DATAFILES}" != "none" ]; then \
             if [ ! -d "${DESTDIR}${DATADIR}" ]; then \
@@ -441,8 +442,9 @@ deinstall-prog:
 	    else \
 	        export prog="${PROG}"; \
 	    fi; \
-	    echo "${DEINSTALL_PROG} ${BINDIR}/${PROG_PREFIX}$$prog${PROG_SUFFIX}${EXECSUFFIX}"; \
-	    ${SUDO} ${DEINSTALL_PROG} ${DESTDIR}${BINDIR}/${PROG_PREFIX}$$prog${PROG_SUFFIX}${EXECSUFFIX}; \
+	    export prog=${PROG_PREFIX}$$prog${PROG_SUFFIX}; \
+	    echo "${DEINSTALL_PROG} ${BINDIR}/$$prog${EXECSUFFIX}"; \
+	    ${SUDO} ${DEINSTALL_PROG} ${DESTDIR}${BINDIR}/$$prog${EXECSUFFIX}; \
 	fi
 	@if [ "${DATAFILES}" != "none" ]; then \
 	    for F in ${DATAFILES}; do \

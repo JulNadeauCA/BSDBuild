@@ -48,12 +48,12 @@ sub Test
 		MkElse;
 			MkDefine('_MK_HAVE_STRTOLD', 'no');
 			MkSaveUndef('_MK_HAVE_STRTOLD');
-			MkPrint('not checking (cygwin issues)');
+			MkPrintS('not checking (cygwin issues)');
 		MkEndif;
 	MkElse;
 		MkDefine('_MK_HAVE_STRTOLD', 'no');
 		MkSaveUndef('_MK_HAVE_STRTOLD');
-		MkPrint('skipping (no long double)');
+		MkPrintS('skipping (no long double)');
 	MkEndif;
 }
 

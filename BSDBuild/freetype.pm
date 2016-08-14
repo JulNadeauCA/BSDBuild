@@ -55,7 +55,7 @@ sub Test
 	MkEsac;
 
 	MkIfFound($pfx, $ver, 'FREETYPE_VERSION');
-		MkPrintN('checking whether FreeType works...');
+		MkPrintSN('checking whether FreeType works...');
 		MkCompileC('HAVE_FREETYPE', '${FREETYPE_CFLAGS}', '${FREETYPE_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_FREETYPE}', 'FREETYPE_CFLAGS', 'FREETYPE_LIBS');
 	MkElse;

@@ -42,9 +42,9 @@ sub Test
 	my ($ver, $pfx) = @_;
 
 	print << "EOF";
-DB5_CFLAGS=""
-DB5_LIBS=""
-DB5_VERSION=""
+DB5_CFLAGS=''
+DB5_LIBS=''
+DB5_VERSION=''
 
 for path in $pfx /usr /usr/local /opt; do
 EOF
@@ -54,7 +54,7 @@ EOF
 	if [ -e "\${path}/lib/db5/libdb-$dbRel.so" ]; then
 		DB5_LIBS="-L\${path}/lib/db5 -ldb-$dbRel"
 		DB5_CFLAGS="-I\${path}/include/db5 -I\${path}/include"
-		DB5_VERSION="$dbRel"
+		DB5_VERSION='$dbRel'
 		break
 	fi
 EOF
@@ -62,7 +62,7 @@ EOF
 	print "done\n";
 
 	MkIfFound($pfx, $ver, 'DB5_VERSION');
-		MkPrintN('checking whether DB5 works...');
+		MkPrintSN('checking whether DB5 works...');
 		MkCompileC('HAVE_DB5', '${DB5_CFLAGS}', '${DB5_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_DB5}', 'DB5_CFLAGS', 'DB5_LIBS');
 	MkElse;

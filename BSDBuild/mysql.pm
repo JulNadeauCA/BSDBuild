@@ -42,7 +42,7 @@ sub Test
 	
 	MkExecOutputUnique('mysql_config', '--version', 'MYSQL_VERSION');
 	MkIfFound($pfx, $ver, 'MYSQL_VERSION');
-		MkPrintN('checking whether MySQL works...');
+		MkPrintSN('checking whether MySQL works...');
 		MkExecOutput('mysql_config', '--cflags', 'MYSQL_CFLAGS');
 		MkExecOutput('mysql_config', '--libs', 'MYSQL_LIBS');
 		MkCompileC('HAVE_MYSQL', '${MYSQL_CFLAGS}', '${MYSQL_LIBS}', $testCode);

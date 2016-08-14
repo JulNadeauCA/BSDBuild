@@ -39,7 +39,7 @@ sub Test
 	MkExecPkgConfig($pfx, 'glib-2.0', '--cflags', 'GLIB2_CFLAGS');
 	MkExecPkgConfig($pfx, 'glib-2.0', '--libs', 'GLIB2_LIBS');
 	MkIfFound($pfx, $ver, 'GLIB2_VERSION');
-		MkPrintN('checking whether glib 2.x works...');
+		MkPrintSN('checking whether glib 2.x works...');
 		MkCompileC('HAVE_GLIB2',
 			   '${GLIB2_CFLAGS}', '${GLIB2_LIBS}',
 			    $testCode);

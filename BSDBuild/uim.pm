@@ -51,7 +51,7 @@ sub Test
 	MkExecPkgConfig($pfx, 'uim', '--cflags', 'UIM_CFLAGS');
 	MkExecPkgConfig($pfx, 'uim', '--libs', 'UIM_LIBS');
 	MkIfFound($pfx, $ver, 'UIM_VERSION');
-		MkPrintN('checking whether uim works...');
+		MkPrintSN('checking whether uim works...');
 		MkCompileC('HAVE_UIM', '${UIM_CFLAGS}', '${UIM_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_UIM}', 'UIM_CFLAGS', 'UIM_LIBS');
 	MkElse;

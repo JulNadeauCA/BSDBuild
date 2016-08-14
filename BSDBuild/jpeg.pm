@@ -52,8 +52,8 @@ sub Test
 	MkEndif;
 
 	MkIfNE('${JPEG_LIBS}', '');
-		MkPrint('yes');
-		MkPrintN('checking whether libjpeg works...');
+		MkPrintS('yes');
+		MkPrintSN('checking whether libjpeg works...');
 		MkCompileC('HAVE_JPEG', '${JPEG_CFLAGS}', '${JPEG_LIBS}', << 'EOF');
 #include <stdio.h>
 #include <jpeglib.h>
@@ -82,7 +82,7 @@ EOF
 		MkSaveIfTrue('${HAVE_JPEG}', 'JPEG_CFLAGS', 'JPEG_LIBS');
 	MkElse;
 		MkSaveUndef('HAVE_JPEG', 'JPEG_CFLAGS', 'JPEG_LIBS');
-		MkPrint('no');
+		MkPrintS('no');
 	MkEndif;
 	return (0);
 }

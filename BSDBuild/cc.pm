@@ -29,9 +29,9 @@ sub Test
 if [ "$CROSS_COMPILING" = "yes" ]; then
 	CROSSPFX="${host}-"
 else
-	CROSSPFX=""
+	CROSSPFX=''
 fi
-if [ "$CC" = "" ]; then
+if [ "$CC" = '' ]; then
 	bb_save_IFS=$IFS
 	IFS=$PATH_SEPARATOR
 	for i in $PATH; do
@@ -57,7 +57,7 @@ if [ "$CC" = "" ]; then
 	done
 	IFS=$bb_save_IFS
 
-	if [ "$CC" = "" ]; then
+	if [ "$CC" = '' ]; then
 		echo "*"
 		echo "* Cannot find ${CROSSPFX}cc or ${CROSSPFX}gcc in default PATH."
 		echo "* You may need to set the CC environment variable."
@@ -76,23 +76,23 @@ else
 fi
 
 if [ "${HAVE_CC}" = "yes" ]; then
-	$ECHO_N "checking whether the C compiler works..."
-	$ECHO_N "checking whether the C compiler works..." >> config.log
+	$ECHO_N 'checking whether the C compiler works...'
+	$ECHO_N 'checking whether the C compiler works...' >> config.log
 	cat << 'EOT' > conftest.c
 int main(int argc, char *argv[]) { return (0); }
 EOT
 	$CC -o conftest conftest.c 2>>config.log
 	if [ $? != 0 ]; then
 	    echo "no"
-	    echo "no (test failed to compile)" >> config.log
+	    echo "no, compile failed" >> config.log
 		HAVE_CC="no"
 	else
 		HAVE_CC="yes"
 	fi
 
 	if [ "${HAVE_CC}" = "yes" ]; then
-		if [ "${EXECSUFFIX}" = "" ]; then
-			EXECSUFFIX=""
+		if [ "${EXECSUFFIX}" = '' ]; then
+			EXECSUFFIX=''
 			for OUTFILE in conftest.exe conftest conftest.*; do
 				if [ -f $OUTFILE ]; then
 					case $OUTFILE in
@@ -106,9 +106,9 @@ EOT
 					esac;
 			    fi
 			done
-			if [ "$EXECSUFFIX" != "" ]; then
-				echo "yes (it outputs $EXECSUFFIX files)"
-				echo "yes (it outputs $EXECSUFFIX files)" >> config.log
+			if [ "$EXECSUFFIX" != '' ]; then
+				echo "yes, it outputs $EXECSUFFIX files"
+				echo "yes, it outputs $EXECSUFFIX files" >> config.log
 			else
 				echo "yes"
 				echo "yes" >> config.log
@@ -123,13 +123,13 @@ EOF
 		fi
 	fi
 	rm -f conftest.c conftest$EXECSUFFIX
-	TEST_CFLAGS=""
+	TEST_CFLAGS=''
 fi
 EOF
 	
 	MkIfTrue('${HAVE_CC}');
 
-		MkPrintN('cc: checking for compiler warning options...');
+		MkPrintSN('cc: checking for compiler warning options...');
 		MkCompileC('HAVE_CC_WARNINGS', '-Wall -Werror', '', << 'EOF');
 int main(int argc, char *argv[]) { return (0); }
 EOF
@@ -139,7 +139,7 @@ EOF
 	
 		# Check for long double type.
 		# XXX: should rename to HAVE_CC_LONG_DOUBLE
-		MkPrintN('cc: checking for long double...');
+		MkPrintSN('cc: checking for long double...');
 		TryCompile('HAVE_LONG_DOUBLE', << 'EOF');
 #include <stdio.h>
 int
@@ -154,7 +154,7 @@ EOF
 	
 		# Check for long long type.
 		# XXX: should rename to HAVE_CC_LONG_LONG
-		MkPrintN('cc: checking for long long...');
+		MkPrintSN('cc: checking for long long...');
 		TryCompile('HAVE_LONG_LONG', << 'EOF');
 int
 main(int argc, char *argv[])
@@ -167,7 +167,7 @@ main(int argc, char *argv[])
 EOF
 
 		# XXX: should rename to HAVE_CC_CYGWIN
-		MkPrintN('cc: checking for cygwin environment...');
+		MkPrintSN('cc: checking for cygwin environment...');
 		TryCompileFlagsC('HAVE_CYGWIN', '-mcygwin', << 'EOF');
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -182,7 +182,7 @@ main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-		MkPrintN('cc: checking for -mwindows option...');
+		MkPrintSN('cc: checking for -mwindows option...');
 		TryCompileFlagsC('HAVE_CC_MWINDOWS', '-mwindows', << 'EOF');
 #include <windows.h>
 int
@@ -196,7 +196,7 @@ EOF
 			MkDefine('PROG_GUI_FLAGS', '');
 		MkEndif;
 		
-		MkPrintN('cc: checking for -mconsole option...');
+		MkPrintSN('cc: checking for -mconsole option...');
 		TryCompileFlagsC('HAVE_CC_MCONSOLE', '-mconsole', << 'EOF');
 #include <windows.h>
 int
@@ -212,7 +212,7 @@ EOF
 		
 		MkCaseIn('${host}');
 		MkCaseBegin('*-*-cygwin* | *-*-mingw32*');
-			MkPrintN('cc: checking for linker -no-undefined option...');
+			MkPrintSN('cc: checking for linker -no-undefined option...');
 			TryCompileFlagsC('HAVE_LD_NO_UNDEFINED',
 			    '-Wl,--no-undefined', << 'EOF');
 int main(int argc, char *argv[]) { return (0); }
@@ -221,7 +221,7 @@ EOF
 				MkDefine('LIBTOOLOPTS_SHARED',
 				    '${LIBTOOLOPTS_SHARED} -no-undefined -Wl,--no-undefined');
 			MkEndif;
-			MkPrintN('cc: checking for linker -static-libgcc option...');
+			MkPrintSN('cc: checking for linker -static-libgcc option...');
 			TryCompileFlagsC('HAVE_LD_STATIC_LIBGCC',
 			    '-static-libgcc', << 'EOF');
 int main(int argc, char *argv[]) { return (0); }

@@ -46,7 +46,7 @@ sub Test
 	MkExecPkgConfig($pfx, 'sndfile', '--cflags', 'SNDFILE_CFLAGS');
 	MkExecPkgConfig($pfx, 'sndfile', '--libs', 'SNDFILE_LIBS');
 	MkIfFound($pfx, $ver, 'SNDFILE_VERSION');
-		MkPrintN('checking whether libsndfile works...');
+		MkPrintSN('checking whether libsndfile works...');
 		MkCompileC('HAVE_SNDFILE', '${SNDFILE_CFLAGS}', '${SNDFILE_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_SNDFILE}', 'SNDFILE_CFLAGS', 'SNDFILE_LIBS');
 	MkElse;

@@ -49,7 +49,7 @@ sub Test
 		MkDefine('CRYPT_CFLAGS', '');
 		MkDefine('CRYPT_LIBS', '-lcrypt');
 	MkElse;
-		MkPrintN('checking for crypt() in libc...');
+		MkPrintSN('checking for crypt() in libc...');
 		TryCompileFlagsC('HAVE_CRYPT', '', $testCode);
 		MkIfTrue('${HAVE_CRYPT}');
 			MkDefine('CRYPT_CFLAGS', '');

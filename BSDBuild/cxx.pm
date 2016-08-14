@@ -29,9 +29,9 @@ sub Test
 if [ "$CROSS_COMPILING" = "yes" ]; then
 	CROSSPFX="${host}-"
 else
-	CROSSPFX=""
+	CROSSPFX=''
 fi
-if [ "$CXX" = "" ]; then
+if [ "$CXX" = '' ]; then
 	bb_save_IFS=$IFS
 	IFS=$PATH_SEPARATOR
 	for i in $PATH; do
@@ -60,7 +60,7 @@ if [ "$CXX" = "" ]; then
 	done
 	IFS=$bb_save_IFS
 
-	if [ "$CXX" = "" ]; then
+	if [ "$CXX" = '' ]; then
 		echo "*"
 		echo "* Cannot find ${CROSSPFX}c++ or ${CROSSPFX}gcc in default PATH."
 		echo "* You may need to set the CXX environment variable."
@@ -79,8 +79,8 @@ else
 fi
 
 if [ "${HAVE_CXX}" = "yes" ]; then
-	$ECHO_N "checking whether the C++ compiler works..."
-	$ECHO_N "checking whether the C++ compiler works..." >> config.log
+	$ECHO_N 'checking whether the C++ compiler works...'
+	$ECHO_N 'checking whether the C++ compiler works...' >> config.log
 	cat << 'EOT' > conftest.cc
 #include <iostream>
 int main(void) { std::cout << "Hello world!" << std::endl; return 0; }
@@ -88,15 +88,15 @@ EOT
 	$CXX -o conftest conftest.cc -lstdc++ 2>>config.log
 	if [ $? != 0 ]; then
 	    echo "no"
-	    echo "no (test failed to compile)" >> config.log
+	    echo "no, compile failed" >> config.log
 		HAVE_CXX="no"
 	else
 		HAVE_CXX="yes"
 	fi
 
 	if [ "${HAVE_CXX}" = "yes" ]; then
-		if [ "${EXECSUFFIX}" = "" ]; then
-			EXECSUFFIX=""
+		if [ "${EXECSUFFIX}" = '' ]; then
+			EXECSUFFIX=''
 			for OUTFILE in conftest.exe conftest conftest.*; do
 				if [ -f $OUTFILE ]; then
 					case $OUTFILE in
@@ -110,9 +110,9 @@ EOT
 					esac;
 			    fi
 			done
-			if [ "$EXECSUFFIX" != "" ]; then
-				echo "yes (it outputs $EXECSUFFIX files)"
-				echo "yes (it outputs $EXECSUFFIX files)" >> config.log
+			if [ "$EXECSUFFIX" != '' ]; then
+				echo "yes, it outputs $EXECSUFFIX files"
+				echo "yes, it outputs $EXECSUFFIX files" >> config.log
 			else
 				echo "yes"
 				echo "yes" >> config.log
@@ -127,13 +127,13 @@ print << 'EOF';
 		fi
 	fi
 	rm -f conftest.cc conftest$EXECSUFFIX
-	TEST_CXXFLAGS=""
+	TEST_CXXFLAGS=''
 fi
 EOF
 
 	MkIfTrue('${HAVE_CXX}');
 
-		MkPrintN('cxx: checking for compiler warning options...');
+		MkPrintSN('cxx: checking for compiler warning options...');
 		MkCompileCXX('HAVE_CXX_WARNINGS', '-Wall -Werror', '-lstdc++', << 'EOF');
 int main(void) { return (0); }
 EOF

@@ -31,8 +31,8 @@ sub Test
 	MkExecOutputPfx($pfx, 'perl', '-MExtUtils::Embed -e ldopts', 'PERL_LIBS');
 	
 	MkIfNE('${PERL_LIBS}', '');
-		MkPrint('yes');
-		MkPrintN('checking whether libperl works...');
+		MkPrintS('yes');
+		MkPrintSN('checking whether libperl works...');
 		MkCompileC('HAVE_PERL', '${PERL_CFLAGS}', '${PERL_LIBS}', << 'EOF');
 #include <EXTERN.h>
 #include <perl.h>
@@ -64,7 +64,7 @@ EOF
 		Which('perl', undef, 'PERL');
 		MkSaveMK('PERL');
 	MkElse;
-		MkPrint('no');
+		MkPrintS('no');
 		MkSaveUndef('HAVE_PERL');
 
 		MkDefine('PERL', '/usr/bin/perl');

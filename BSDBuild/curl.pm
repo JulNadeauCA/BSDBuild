@@ -30,7 +30,7 @@ sub Test
 	MkExecOutputPfx($pfx, 'curl-config', '--version', 'CURL_VERSION');
 
 	MkIfFound($pfx, $ver, 'CURL_VERSION');
-		MkPrintN('checking whether libcurl works...');
+		MkPrintSN('checking whether libcurl works...');
 		MkExecOutputPfx($pfx, 'curl-config', '--cflags', 'CURL_CFLAGS');
 		MkExecOutputPfx($pfx, 'curl-config', '--libs', 'CURL_LIBS');
 		MkCompileC('HAVE_CURL', '${CURL_CFLAGS}', '${CURL_LIBS}', << 'EOF');

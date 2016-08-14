@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 }
 EOF
 
-		MkPrintN('checking for __bounded__ attribute...');
+		MkPrintSN('checking for __bounded__ attribute...');
 		MkCompileC('HAVE_BOUNDED_ATTRIBUTE', '', '', << 'EOF');
 void foostring(char *, int) __attribute__ ((__bounded__(__string__,1,2)));
 void foostring(char *a, int c) { }
@@ -48,7 +48,7 @@ int main(void)
 }
 EOF
 	
-		MkPrintN('checking for const attribute...');
+		MkPrintSN('checking for const attribute...');
 		TryCompileFlagsC('HAVE_CONST_ATTRIBUTE', '', << 'EOF');
 int foo(int) __attribute__ ((const));
 int foo(int x) { return (x*x); }
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 }
 EOF
 	
-		MkPrintN('checking for deprecated attribute...');
+		MkPrintSN('checking for deprecated attribute...');
 		TryCompileFlagsC('HAVE_DEPRECATED_ATTRIBUTE', '', << 'EOF');
 void foo(void) __attribute__ ((deprecated));
 void foo(void) { }
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 }
 EOF
 	
-		MkPrintN('checking for __format__ attribute...');
+		MkPrintSN('checking for __format__ attribute...');
 		MkCompileC('HAVE_FORMAT_ATTRIBUTE', '', '', << 'EOF');
 #include <stdarg.h>
 void foo1(char *, ...)
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 }
 EOF
 
-		MkPrintN('checking for __nonnull__ attribute...');
+		MkPrintSN('checking for __nonnull__ attribute...');
 		TryCompileFlagsC('HAVE_NONNULL_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 void foo(char *) __attribute__((__nonnull__ (1)));
 void foo(char *a) { }
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 }
 EOF
 	
-		MkPrintN('checking for noreturn attribute...');
+		MkPrintSN('checking for noreturn attribute...');
 		TryCompileFlagsC('HAVE_NORETURN_ATTRIBUTE', '', << 'EOF');
 #include <unistd.h>
 #include <stdlib.h>
@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
 }
 EOF
 
-		MkPrintN('checking for packed attribute...');
+		MkPrintSN('checking for packed attribute...');
 		TryCompileFlagsC('HAVE_PACKED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 int main(int argc, char *argv[])
 {
@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
 }
 EOF
 	
-		MkPrintN('checking for pure attribute...');
+		MkPrintSN('checking for pure attribute...');
 		TryCompileFlagsC('HAVE_PURE_ATTRIBUTE', '', << 'EOF');
 int foo(int) __attribute__ ((pure));
 int foo(int x) { return (x*x); }
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 }
 EOF
 	
-		MkPrintN('checking for warn_unused_result attribute...');
+		MkPrintSN('checking for warn_unused_result attribute...');
 		TryCompileFlagsC('HAVE_WARN_UNUSED_RESULT_ATTRIBUTE', '', << 'EOF');
 int foo(void) __attribute__ ((warn_unused_result));
 int foo(void) { return (1); }
@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
 }
 EOF
 		
-		MkPrintN('checking for unused variable attribute...');
+		MkPrintSN('checking for unused variable attribute...');
 		TryCompileFlagsC('HAVE_UNUSED_VARIABLE_ATTRIBUTE', '', << 'EOF');
 int main(int argc, char *argv[])
 {

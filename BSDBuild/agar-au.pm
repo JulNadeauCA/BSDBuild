@@ -41,7 +41,7 @@ sub Test
 	
 	MkExecOutputPfx($pfx, 'agar-au-config', '--version', 'AGAR_AU_VERSION');
 	MkIfFound($pfx, $ver, 'AGAR_AU_VERSION');
-		MkPrintN('checking whether agar-au works...');
+		MkPrintSN('checking whether agar-au works...');
 		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
 		MkExecOutputPfx($pfx, 'agar-au-config', '--cflags', 'AGAR_AU_CFLAGS');

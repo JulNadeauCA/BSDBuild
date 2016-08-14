@@ -34,7 +34,7 @@ sub Test
 	MkIfFound($pfx, $ver, 'GLIB_VERSION');
 		MkSave('HAVE_GLIB', 'GLIB_CFLAGS', 'GLIB_LIBS');
 	MkElse;
-		MkPrintN("checking for glib 1.2...");
+		MkPrintSN("checking for glib 1.2...");
 		MkExecOutputPfx($pfx, 'glib12-config', '--version', 'GLIB12_VERSION');
 		MkExecOutputPfx($pfx, 'glib12-config', '--cflags', 'GLIB12_CFLAGS');
 		MkExecOutputPfx($pfx, 'glib12-config', '--libs', 'GLIB12_LIBS');

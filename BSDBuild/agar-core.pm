@@ -57,7 +57,7 @@ sub Test
 	
 	MkExecOutputPfx($pfx, 'agar-core-config', '--version', 'AGAR_CORE_VERSION');
 	MkIfFound($pfx, $ver, 'AGAR_CORE_VERSION');
-		MkPrintN('checking whether Agar-Core works...');
+		MkPrintSN('checking whether Agar-Core works...');
 		MkExecOutputPfx($pfx, 'agar-core-config', '--cflags', 'AGAR_CORE_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-core-config', '--libs', 'AGAR_CORE_LIBS');
 		MkCompileC('HAVE_AGAR_CORE',

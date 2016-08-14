@@ -50,7 +50,7 @@ sub Test
 	MkExecOutputPfx($pfx, 'libpng-config', '--libs', 'PNG_LIBS');
 	MkDefine('PNG_LIBS', '${PNG_LOPTS} ${PNG_LIBS}');
 	MkIfFound($pfx, $ver, 'PNG_VERSION');
-		MkPrintN('checking whether libpng works...');
+		MkPrintSN('checking whether libpng works...');
 		MkCompileC('HAVE_PNG', '${PNG_CFLAGS}', '${PNG_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_PNG}', 'PNG_CFLAGS', 'PNG_LIBS');
 		

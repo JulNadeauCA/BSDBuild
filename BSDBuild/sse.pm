@@ -63,7 +63,7 @@ EOF
 	MkEndif;
 	MkSaveMK('SSE_CFLAGS');
 
-	MkPrintN('checking for SSE2 extensions...');
+	MkPrintSN('checking for SSE2 extensions...');
 	MkDefine('SSE2_CFLAGS', '-msse2');
 	MkCompileAndRunC('HAVE_SSE2', '${CFLAGS} ${SSE2_CFLAGS}', '',
 	    << 'EOF');
@@ -93,7 +93,7 @@ EOF
 	MkEndif;
 	MkSaveMK('SSE2_CFLAGS');
 	
-	MkPrintN('checking for SSE3 extensions...');
+	MkPrintSN('checking for SSE3 extensions...');
 	MkDefine('SSE3_CFLAGS', '-msse3');
 	MkCompileAndRunC('HAVE_SSE3', '${CFLAGS} ${SSE3_CFLAGS}', '',
 	    << 'EOF');

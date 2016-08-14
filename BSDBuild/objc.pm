@@ -29,13 +29,13 @@ sub Test
 if [ "$CROSS_COMPILING" = "yes" ]; then
 	CROSSPFX="${host}-"
 else
-	CROSSPFX=""
+	CROSSPFX=''
 fi
-if [ "$OBJC" = "" ]; then
-	if [ "$CC" != "" ]; then
+if [ "$OBJC" = '' ]; then
+	if [ "$CC" != '' ]; then
 		OBJC="$CC"
 		HAVE_OBJC="yes"
-		echo "using CC (${OBJC})"
+		echo "using CC, ${OBJC}"
 	else
 		bb_save_IFS=$IFS
 		IFS=$PATH_SEPARATOR
@@ -63,7 +63,7 @@ if [ "$OBJC" = "" ]; then
 			fi
 		done
 		IFS=$bb_save_IFS
-		if [ "$OBJC" = "" ]; then
+		if [ "$OBJC" = '' ]; then
 		    echo "*"
 		    echo "* Cannot find ${CROSSPFX}objc or ${CROSSPFX}gcc in default PATH."
 		    echo "* You may need to set the OBJC environment variable."
@@ -83,8 +83,8 @@ else
 fi
 
 if [ "${HAVE_OBJC}" = "yes" ]; then
-	$ECHO_N "checking whether the Objective-C compiler works..."
-	$ECHO_N "checking whether the Objective-C compiler works..." >> config.log
+	$ECHO_N 'checking whether the Objective-C compiler works...'
+	$ECHO_N 'checking whether the Objective-C compiler works...' >> config.log
 	cat << 'EOT' > conftest.m
 #import <stdio.h>
 int main(int argc, char *argv[]) { return (0); }
@@ -92,15 +92,15 @@ EOT
 	$OBJC -x objective-c -o conftest conftest.m 2>>config.log
 	if [ $? != 0 ]; then
 	    echo "no"
-	    echo "no (test failed to compile)" >> config.log
+	    echo "no, compile failed" >> config.log
 		HAVE_OBJC="no"
 	else
 		HAVE_OBJC="yes"
 	fi
 	
 	if [ "${HAVE_OBJC}" = "yes" ]; then
-		if [ "${EXECSUFFIX}" = "" ]; then
-			EXECSUFFIX=""
+		if [ "${EXECSUFFIX}" = '' ]; then
+			EXECSUFFIX=''
 			for OUTFILE in conftest.exe conftest conftest.*; do
 				if [ -f $OUTFILE ]; then
 					case $OUTFILE in
@@ -114,9 +114,9 @@ EOT
 					esac;
 			    fi
 			done
-			if [ "$EXECSUFFIX" != "" ]; then
-				echo "yes (it outputs $EXECSUFFIX files)"
-				echo "yes (it outputs $EXECSUFFIX files)" >> config.log
+			if [ "$EXECSUFFIX" != '' ]; then
+				echo "yes, it outputs $EXECSUFFIX files"
+				echo "yes, it outputs $EXECSUFFIX files" >> config.log
 			else
 				echo "yes"
 				echo "yes" >> config.log
@@ -131,12 +131,12 @@ EOF
 		fi
 	fi
 	rm -f conftest.m conftest$EXECSUFFIX
-	TEST_OBJCFLAGS=""
+	TEST_OBJCFLAGS=''
 fi
 EOF
 	
 	MkIfTrue('${HAVE_OBJC}');
-		MkPrintN('objc: checking for compiler warning options...');
+		MkPrintSN('objc: checking for compiler warning options...');
 		MkCompileOBJC('HAVE_OBJC_WARNINGS', '-Wall -Werror', '', << 'EOF');
 int main(int argc, char *argv[]) { return (0); }
 EOF

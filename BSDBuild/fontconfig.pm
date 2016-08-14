@@ -59,7 +59,7 @@ sub Test
 	MkExecPkgConfig($pfx, 'fontconfig', '--cflags', 'FONTCONFIG_CFLAGS');
 	MkExecPkgConfig($pfx, 'fontconfig', '--libs', 'FONTCONFIG_LIBS');
 	MkIfFound($pfx, $ver, 'FONTCONFIG_VERSION');
-		MkPrintN('checking whether fontconfig works...');
+		MkPrintSN('checking whether fontconfig works...');
 		MkCompileC('HAVE_FONTCONFIG',
 		           '${FONTCONFIG_CFLAGS}', '${FONTCONFIG_LIBS}',
 				   $testCode);

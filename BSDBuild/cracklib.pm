@@ -53,8 +53,8 @@ sub Test
 	MkEndif;
 		
 	MkIfNE('${CRACKLIB_LIBS}', '');
-		MkPrint('ok');
-		MkPrintN('checking whether cracklib works...');
+		MkPrintS('ok');
+		MkPrintSN('checking whether cracklib works...');
 		MkCompileC('HAVE_CRACKLIB', '${CRACKLIB_CFLAGS}', '${CRACKLIB_LIBS}',
 		    << 'EOF');
 #include <stdio.h>
@@ -75,7 +75,7 @@ EOF
 		MkEndif;
 	MkElse;
 		MkSaveUndef('HAVE_CRACKLIB');
-		MkPrint('no');
+		MkPrintS('no');
 	MkEndif;
 	return (0);
 }

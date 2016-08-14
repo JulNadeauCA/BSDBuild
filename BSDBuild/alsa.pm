@@ -71,12 +71,12 @@ sub Test
 	MkEndif;
 
 	MkIfNE('${ALSA_LIBS}', '');
-		MkPrint('yes');
-		MkPrintN('checking whether ALSA works...');
+		MkPrintS('yes');
+		MkPrintSN('checking whether ALSA works...');
 		MkCompileC('HAVE_ALSA', '${ALSA_CFLAGS}', '${ALSA_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_ALSA}', 'ALSA_CFLAGS', 'ALSA_LIBS');
 	MkElse;
-		MkPrint('no');
+		MkPrintS('no');
 	MkEndif;
 	return (0);
 }

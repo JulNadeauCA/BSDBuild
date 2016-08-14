@@ -65,7 +65,7 @@ sub Test
 				MkExecOutput('sdl-config', '--cflags', 'SDL_CFLAGS');
 				MkExecOutput('sdl-config', '--libs', 'SDL_LIBS');
 			MkElse;
-				MkPrintN('framework...');
+				MkPrintSN('framework...');
 				MkDefine('SDL_VERSION', '1.2.15');
 				MkDefine('SDL_CFLAGS', '-D_USE_SDL_FRAMEWORK');
 				MkDefine('SDL_LIBS', '-framework SDL');
@@ -94,7 +94,7 @@ sub Test
 	MkEndif;
 		
 	MkIfFound($pfx, $ver, 'SDL_VERSION');
-		MkPrintN('checking whether SDL works...');
+		MkPrintSN('checking whether SDL works...');
 		MkCompileC('HAVE_SDL', '${SDL_CFLAGS}', '${SDL_LIBS}', $testCode);
 		MkIfTrue('${HAVE_SDL}');
 			MkCaseIn('${host}');
@@ -113,7 +113,7 @@ sub Test
 			MkEsac;
 			MkSave('SDL_CFLAGS', 'SDL_LIBS');
 		MkElse;
-			MkPrintN('checking whether SDL works (with X11 libs)...');
+			MkPrintSN('checking whether SDL works (with X11 libs)...');
 			MkAppend('SDL_LIBS', '-L/usr/X11R6/lib -lX11 -lXext -lXrandr '.
 			                     '-lXrender');
 			MkCompileC('HAVE_SDL', '${SDL_CFLAGS}', '${SDL_LIBS}', $testCode);

@@ -27,7 +27,7 @@ sub CheckBoolOption
 {
 	my $opt = shift;
 
-	MkPrintN("checking for $opt...");
+	MkPrintSN("checking for $opt...");
 	TryCompile "HAVE_$opt", << "EOF";
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -67,7 +67,7 @@ EOF
 		CheckBoolOption('SO_TIMESTAMP');
 		CheckBoolOption('SO_NOSIGPIPE');
 
-		MkPrintN('checking for SO_LINGER...');
+		MkPrintSN('checking for SO_LINGER...');
 		TryCompile 'HAVE_SO_LINGER', << 'EOF';
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -83,7 +83,7 @@ main(int argc, char *argv[])
 	return (rv != 0);
 }
 EOF
-		MkPrintN('checking for SO_ACCEPTFILTER...');
+		MkPrintSN('checking for SO_ACCEPTFILTER...');
 		TryCompile 'HAVE_SO_ACCEPTFILTER', << 'EOF';
 #include <sys/types.h>
 #include <sys/socket.h>

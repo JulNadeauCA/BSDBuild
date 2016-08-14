@@ -84,7 +84,7 @@ sub Test
 	           '${ICONV_CFLAGS} -Wno-cast-qual',
 	           '${ICONV_LIBS}', $testCode);
 	MkIfFalse('${HAVE_ICONV}');
-		MkPrintN('checking for iconv() in -liconv...');
+		MkPrintSN('checking for iconv() in -liconv...');
 		MkIfNE($pfx, '');
 			MkIfExists("$pfx/include/iconv.h");
 			    MkDefine('ICONV_CFLAGS', "-I$pfx/include");
@@ -101,12 +101,12 @@ sub Test
 		MkCompileC('HAVE_ICONV', '${ICONV_CFLAGS} -Wno-cast-qual',
 		           '${ICONV_LIBS}', $testCode);
 		MkIfFalse('${HAVE_ICONV}');
-			MkPrintN('checking for iconv() in -liconv (const)...');
+			MkPrintSN('checking for iconv() in -liconv (const)...');
 			MkCompileC('HAVE_ICONV', '${ICONV_CFLAGS} -Wno-cast-qual',
 			           '${ICONV_LIBS}', $testConstCode);
 		MkEndif;
 	MkElse;
-			MkPrintN('checking for iconv() with const...');
+			MkPrintSN('checking for iconv() with const...');
 			MkCompileC('HAVE_ICONV', '${ICONV_CFLAGS} -Wno-cast-qual',
 			           '${ICONV_LIBS}', $testConstCode);
 	MkEndif;
@@ -115,7 +115,7 @@ sub Test
 
 	# Test for const-correctness
 	MkIfTrue('${HAVE_ICONV}');
-		MkPrintN('checking whether iconv() is const-correct...');
+		MkPrintSN('checking whether iconv() is const-correct...');
 		MkCompileC('HAVE_ICONV_CONST', '${ICONV_CFLAGS} -Wcast-qual -Werror',
 		           '${ICONV_LIBS}', $testConstCode);
 	MkElse;

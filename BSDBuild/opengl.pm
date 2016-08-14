@@ -79,7 +79,7 @@ sub Test
 	MkElse;
 		MkCaseIn('${host}');
 		MkCaseBegin('*-*-darwin*');
-			MkPrintN('framework...');
+			MkPrintSN('framework...');
 			MkDefine('OPENGL_CFLAGS', '-D_USE_OPENGL_FRAMEWORK');
 			MkDefine('OPENGL_LIBS', '-framework OpenGL');
 			MkSetTrue('GL_FOUND');
@@ -102,13 +102,13 @@ sub Test
 	MkEndif;
 
 	MkIfTrue('${GL_FOUND}');
-		MkPrint('yes');
+		MkPrintS('yes');
 
 		MkCaseIn('${host}');
 		MkCaseBegin('*-*-darwin*');
 			MkCaseEnd;
 		MkCaseBegin('*-*-cygwin* | *-*-mingw32*');
-			MkPrintN('checking whether -lopengl32 works...');
+			MkPrintSN('checking whether -lopengl32 works...');
 			MkCompileC('HAVE_LIBOPENGL32', '${OPENGL_CFLAGS}', '-lopengl32', $testCode);
 			MkIfTrue('${HAVE_LIBOPENGL32}');
 				MkDefine('OPENGL_LIBS', '${GL_LIBS} -lopengl32');
@@ -122,18 +122,18 @@ sub Test
 			MkCaseEnd;
 		MkEsac;
 
-		MkPrintN('checking whether OpenGL works...');
+		MkPrintSN('checking whether OpenGL works...');
 		MkCompileC('HAVE_OPENGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', $testCode);
 		MkIfTrue('${HAVE_OPENGL}');
 			MkSave('OPENGL_CFLAGS', 'OPENGL_LIBS');
 		MkElse;
-			MkPrintN('checking whether -lGL requires -lm...');
+			MkPrintSN('checking whether -lGL requires -lm...');
 			MkDefine('OPENGL_LIBS', '${OPENGL_LIBS} -lm');
 			MkCompileC('HAVE_OPENGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', $testCode);
 			MkSaveIfTrue('${HAVE_OPENGL}', 'OPENGL_CFLAGS', 'OPENGL_LIBS');
 		MkEndif;
 	MkElse;
-		MkPrint('no');
+		MkPrintS('no');
 	MkEndif;
 	return (0);
 }

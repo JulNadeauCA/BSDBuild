@@ -1,11 +1,17 @@
 # Public domain
 
+CONFIG_GUESS("mk/config.guess")
+
 PACKAGE("BSDBuild")
 VERSION("3.2")
 RELEASE("Blast of Ancient Atmospheres")
 DEFAULT_DIR(DATADIR, "$PREFIX/share/bsdbuild")
 
-CHECK(cc)
+REQUIRE(cc)
+CHECK(gettext)
 CHECK(perl)
+
+C_NO_SECURE_WARNINGS()
+C_INCDIR($SRC)
 
 MDEFINE(CONFIGURE_OK, "yes")

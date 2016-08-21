@@ -39,10 +39,10 @@ module is used to generate a set of HTML documents in different languages
 and character set variants from an HTML source file and one or more templates
 using the
 .Xr m4 1
-macro processor in conjunction with the
-.Xr xsltproc 1
-XSLT processor.
+macro processor in conjunction with the multilanguage preprocessor
+.Xr mlproc 1 .
 The following source types are recognized:
+.Pp
 .Bl -bullet -compact
 .It
 HTML+M4 documents (*.htm)
@@ -55,6 +55,7 @@ M4 macro packages (*.m4)
 From those sources,
 .Nm
 is able to generate:
+.Pp
 .Bl -bullet -compact
 .It
 Cascading style sheets (*.css)
@@ -66,8 +67,9 @@ HTTP variant data (*.html.var)
 .Sh TARGETS
 .Bl -tag -width "deinstall-www "
 .It Ar ${HTML}
-Source from which to generate HTML documents (may include M4 macro calls and
-use optional XSL transforms).
+Source from which to generate HTML documents.
+The source may include M4 macro calls, multi-language "<ml>" tags, and
+"$_(gettext)" blocks.
 .It Ar ${CSS}
 Source from which to generate cascading style sheets (may include M4 macro
 calls).
@@ -112,10 +114,18 @@ Path to HTML/CSS minifier (such as
 Flags to minifier (for HTML).
 .It Ev MINIFIERFLAGSCSS
 Flags to minifier (for CSS).
-.It Ev XSLTPROC
+.It Ev MLPROC
 Path to the
-.Xr xsltproc 1
-XSLT processor.
+.Xr mlproc 1
+preprocessor (part of BSDBuild).
+.It Ev MLPROCFLAGS
+Arguments to
+.Xr mlproc 1 .
+For gettext-style translation, the
+.Ar -L
+and
+.Ar -D
+arguments should be specified.
 .It Ev PERL
 Path to the
 .Xr perl 1
@@ -127,12 +137,6 @@ utility, needed to generate the character set variants.
 .It Ev BASEDIR
 Directory containing the macro files
 (Default = "m4").
-.It Ev XSLDIR
-Directory containing XSLT source files
-(Default = "xsl").
-Note that
-.Pa ml.xsl
-is required for multi-lingual support.
 .It Ev DTD
 Insert at beginning of generated documents (default: "<!DOCTYPE html>").
 .It Ev TEMPLATE
@@ -152,9 +156,6 @@ See the section
 for more details.
 .It Ev DEF_LANGUAGE
 The default language.
-.It Ev XSL
-Space-separated list of XSLT stylesheets to apply to the documents
-(Default = "ml.xsl").
 .It Ev CLEANFILES
 Extra files to remove in the
 .Sq clean
@@ -173,7 +174,7 @@ Don't overwrite existing documents in the
 phase
 (Default = "No").
 .It Ev HTML_INSTSOURCE
-Install the HTML source, templates, XSLT stylesheets and all other files
+Install the HTML source, templates, JS/stylesheets and all other files
 needed to be able to re-generate the documents in the installation directory,
 including a Makefile.
 (Default = "Yes").
@@ -184,17 +185,19 @@ The
 variable specifies a list of languages in which the documents specified in
 .Ev HTML
 are available.
-Since the
-.Pa ml.xsl
-XSLT stylesheet is applied by default, HTML documents (usually encoded in
-UTF-8) can contain multiple translations in a single file.
-Language-specific parts are separated using the
-.Sq <ml>
-tag, like so:
+If documents are fed to
+.Xr mlproc 1
+(the default), they may contain translations enclosed in <ml> tags, like so:
 .Bd -literal
 	<ml lang="en">Hello</ml>
 	<ml lang="fr">Bonjour</ml>
 .Ed
+.Pp
+Sequences such as "$_(foo)" will also be translated using
+.Xr gettext 3
+(see
+.Xr mlproc 1
+for details).
 .Sh SEE ALSO
 .Xr build.common.mk 5
 .Sh HISTORY

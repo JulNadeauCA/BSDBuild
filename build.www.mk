@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2001-2015 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2016 Julien Nadeau <vedge@hypertriton.com/>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,23 +22,21 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #
-# Process a set of HTML source files (m4 + xsltproc). ${HTML} targets can be
+# Process a set of HTML source files (m4 + mlproc). ${HTML} targets can be
 # .css, .html (single page) and .html.var (multiple languages / charsets).
 #
 
 M4?=		m4
 M4FLAGS?=
-XSLTPROC?=	xsltproc
-XSLTPROCFLAGS?=	--nonet
+MLPROC?=	mlproc
+MLPROCFLAGS?=
 PERL?=		perl
 ICONV?=		iconv
 BASEDIR?=	${TOP}/m4
-XSLDIR?=	${TOP}/xsl
 TEMPLATE?=	simple
 LANGUAGES?=	en fr
 CHARSETS?=	utf8
 DEF_LANGUAGE?=	en
-XSL?=		${XSLDIR}/ml.xsl
 MKDEPS=		build.www.mk build.subdir.mk build.common.mk hstrip.pl
 CLEANFILES?=
 HTMLDIR?=	none
@@ -77,15 +75,15 @@ depend: depend-www depend-subdir
 
 .htm.html: ${BASEDIR}/${TEMPLATE}.m4
 	@cp -f $< ${BASEDIR}/base.htm
-	@echo "${M4} $< | ${XSLTPROC} > $@"
+	@echo "${M4} $< | ${MLPROC} ${MLPROCFLAGS} -l ${DEF_LANGUAGE} > $@"
 	@export OUT=".$@.tmp"; \
 	${M4} ${M4FLAGS} -D__BASE_DIR=${BASEDIR} -D__FILE=$@ \
 	    -D__TEMPLATE=${TEMPLATE} -D__LANG=${DEF_LANGUAGE} \
 	        ${BASEDIR}/${TEMPLATE}.m4 | \
 		${MINIFIER} ${MINIFIERFLAGS} > "$$OUT"; \
 	echo '${DTD}' > $@; \
-	${XSLTPROC} ${XSLTPROCFLAGS} --html --stringparam lang ${DEF_LANGUAGE} ${XSL} \
-	    "$$OUT" 2>/dev/null | ${MINIFIER} ${MINIFIERFLAGS} >> $@ 2>/dev/null; \
+	${MLPROC} ${MLPROCFLAGS} -l ${DEF_LANGUAGE} "$$OUT" \
+	    |${MINIFIER} ${MINIFIERFLAGS} >> $@ 2>/dev/null; \
 	rm -f "$$OUT" ${BASEDIR}/base.htm
 
 .htm.html.var: ${BASEDIR}/${TEMPLATE}.m4
@@ -103,8 +101,8 @@ depend: depend-www depend-subdir
 	        -D__TEMPLATE=${TEMPLATE} -D__LANG=$$LANG \
 	        ${BASEDIR}/${TEMPLATE}.m4 | ${MINIFIER} ${MINIFIERFLAGS} > $$OUT; \
 	    echo '${DTD}' > utf8/$$BASE.$$LANG; \
-            ${XSLTPROC} --html ${XSLTPROCFLAGS} --stringparam lang $$LANG ${XSL} \
-	        $$OUT 2>/dev/null | ${MINIFIER} ${MINIFIERFLAGS} >> utf8/$$BASE.$$LANG; \
+            ${MLPROC} ${MLPROCFLAGS} -l $$LANG $$OUT \
+	        | ${MINIFIER} ${MINIFIERFLAGS} >> utf8/$$BASE.$$LANG; \
 	    cp -f utf8/$$BASE.$$LANG $$BASE.$$LANG; \
 	    rm -f $$OUT; \
 	    echo "Content-Type: text/html; charset=UTF-8" >> $@; \
@@ -147,12 +145,10 @@ install-www-makefile:
 	echo "TOP=." >> $$OUT; \
 	echo "HTMLDIR=none" >> $$OUT; \
 	echo "BASEDIR=m4" >> $$OUT; \
-	echo "XSLDIR=xsl" >> $$OUT; \
 	echo "HTML=${HTML}" >> $$OUT; \
 	echo "CSS=${CSS}" >> $$OUT; \
-	echo "XSL=${XSL}" >> $$OUT; \
-	echo "XSLTPROC=${XSLTPROC}" >> $$OUT; \
-	echo "XSLTPROCFLAGS=${XSLTPROCFLAGS}" >> $$OUT; \
+	echo "MLPROC=${MLPROC}" >> $$OUT; \
+	echo "MLPROCFLAGS=${MLPROCFLAGS}" >> $$OUT; \
 	echo "M4=${M4}" >> $$OUT; \
 	echo "PERL=${PERL}" >> $$OUT; \
 	echo "ICONV=${ICONV}" >> $$OUT; \
@@ -192,19 +188,6 @@ install-www-base:
 	@for MK in ${MKDEPS}; do \
 		echo "${INSTALL_DATA} ${TOP}/mk/$$MK ${HTMLDIR}/mk"; \
 		${SUDO} ${INSTALL_DATA} ${TOP}/mk/$$MK ${DESTDIR}${HTMLDIR}/mk; \
-	done
-	@if [ ! -d "${DESTDIR}${HTMLDIR}/xsl" ]; then \
-		echo "${INSTALL_DATA_DIR} ${HTMLDIR}/xsl"; \
-		${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${HTMLDIR}/xsl; \
-	fi
-	@for XSL in ${XSL}; do \
-		if [ -e "${DESTDIR}${HTMLDIR}/xsl/$$XSL" \
-		     -a "${HTML_OVERWRITE}" = "" ]; then \
-			echo "xsl/$$XSL: exists; preserving"; \
-		else \
-			echo "${INSTALL_DATA} $$XSL ${HTMLDIR}/xsl"; \
-			${SUDO} ${INSTALL_DATA} $$XSL ${DESTDIR}${HTMLDIR}/xsl; \
-		fi; \
 	done
 	@if [ ! -d "${DESTDIR}${HTMLDIR}/m4" ]; then \
 		echo "${INSTALL_DATA_DIR} ${HTMLDIR}/m4"; \

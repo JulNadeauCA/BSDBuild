@@ -1,0 +1,71 @@
+.\"
+.\" Copyright (c) 2016 Julien Nadeau <vedge@hypertriton.com>
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 
+.\" THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+.\" IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+.\" WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+.\" INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+.\" (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+.\" SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+.\" STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+.\" IN ANY WAY OUT OF THE USE OF THIS SOFTWARE EVEN IF ADVISED OF THE
+.\" POSSIBILITY OF SUCH DAMAGE.
+.\"
+.Dd AUGUST 21, 2016
+.Dt MLPROC 1
+.Os
+.ds vT BSDBuild Reference
+.ds oS BSDBuild 1.0
+.Sh NAME
+.Nm mlproc
+.Nd Multilanguage preprocessor
+.Sh SYNOPSIS
+.Nm
+.Op Fl l Ar lang
+.Op Fl o Ar outfile
+.Op Fl L Ar localedir
+.Op Fl D Ar textdomain
+.Ar infile
+.Sh DESCRIPTION
+The
+.Nm
+utility reads the contents of a file and outputs a version translated
+to the target language
+.Ar lang .
+The input file would typically be an HTML document or a source file, but
+it may be in any text-based language since
+.Nm
+does not attempt any parsing.
+.Pp
+The input may contain text enclosed in <ml> tags such as:
+.Bd -literal
+  <ml lang="en">English</ml>
+  <ml lang="fr">Francais</ml>
+.Ed
+.Pp
+The input may also contain instances of "$_(Some text)", which will be
+translated to the target language via
+.Xr gettext 3 .
+The arguments to 
+.Xr bindtextdomain 3
+should be specified with the
+.Ar localedir
+and
+.Xr textdomain
+arguments.
+.Sh SEE ALSO
+.Xr build.www.mk 5
+.Pp
+http://hypertriton.com/bsdbuild/

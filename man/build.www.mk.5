@@ -35,21 +35,23 @@
 .Sh DESCRIPTION
 The
 .Nm
-module is used to generate a set of HTML documents in different languages
-and character set variants from an HTML source file and one or more templates
-using the
+module generates a set of HTML documents (or code fragments), possibly in
+multiple language variants, from an HTML source file.
+The HTML source is processed by
 .Xr m4 1
-macro processor in conjunction with the multilanguage preprocessor
+macro processor in conjunction with the multi-language preprocessor
 .Xr mlproc 1 .
 The following source types are recognized:
 .Pp
 .Bl -bullet -compact
 .It
-HTML+M4 documents (*.htm)
-.It
-Cascading style sheets (*.css-in)
+HTML4/HTML5 + M4 sources (*.htm)
 .It
 M4 macro packages (*.m4)
+.It
+JavaScript sources (*.js)
+.It
+Cascading style sheets (*.css-in)
 .El
 .Pp
 From those sources,
@@ -58,18 +60,27 @@ is able to generate:
 .Pp
 .Bl -bullet -compact
 .It
-Cascading style sheets (*.css)
+Minified HTML documents/fragments (*.html.<lang>)
 .It
-HTML documents in multiple languages/character sets
+Matching HTTP variant data (*.html.var)
 .It
-HTTP variant data (*.html.var)
+Minified, translated JavaScript (*.<lang>.js)
+.It
+Minified cascading style sheets (*.css)
 .El
 .Sh TARGETS
 .Bl -tag -width "deinstall-www "
 .It Ar ${HTML}
 Source from which to generate HTML documents.
 The source may include M4 macro calls, multi-language "<ml>" tags, and
-"$_(gettext)" blocks.
+"$_(gettext)" sequences (see
+.Xr mlproc 1
+for details).
+.It Ar ${JS}
+JavaScript source files.
+The source is only fed through
+.Xr mlproc 1 ,
+and may include "$_(gettext)" sequences.
 .It Ar ${CSS}
 Source from which to generate cascading style sheets (may include M4 macro
 calls).

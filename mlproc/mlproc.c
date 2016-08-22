@@ -131,9 +131,14 @@ processInput(const char *data, size_t size, FILE *f)
 				}
 			}
 			*d = '\0';
-			fputs(gettext(cText), f);
+#ifdef HAVE_GETTEXT
+			fputs(dgettext(domainname,cText), f);
+#else
+			fputs(cText, f);
+#endif
 			free(cText);
 			c = &cEnd[1];
+			continue;
 		} else if (*c == '\n') {
 			curLine++;
 		}
@@ -234,10 +239,12 @@ main(int argc, char *argv[])
 
 #ifdef HAVE_GETTEXT
 	if (localedir && domainname) {
+		setlocale(LC_ALL, "");
 		setenv("LANG", lang, 1);
 		setenv("LANGUAGE", lang, 1);
 		bindtextdomain(domainname, localedir);
 		bind_textdomain_codeset(domainname, "UTF-8");
+		textdomain(domainname);
 	}
 #endif
 	if (processInput(indata, size, f) != 0) {

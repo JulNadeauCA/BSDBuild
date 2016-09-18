@@ -123,7 +123,8 @@ DATAFILES=Core.pm \
 	xbox.pm \
 	csidl.pm \
 	libircclient.pm \
-	pcre.pm
+	pcre.pm \
+	imagemagick.pm
 
 all:
 

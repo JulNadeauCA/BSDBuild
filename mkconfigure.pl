@@ -395,6 +395,7 @@ sub test_require
 {
 	my ($t, $ver) = @_;
 	my $def = 'HAVE_'.uc($t);
+	$def =~ tr/-/_/;
 
 	test(@_);
 	

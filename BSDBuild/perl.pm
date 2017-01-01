@@ -33,7 +33,7 @@ sub Test
 	MkIfNE('${PERL_LIBS}', '');
 		MkPrintS('yes');
 		MkPrintSN('checking whether libperl works...');
-		MkCompileC('HAVE_PERL', '${PERL_CFLAGS}', '${PERL_LIBS}', << 'EOF');
+		MkCompileC('HAVE_PERL', '${PERL_CFLAGS} -Wno-error', '${PERL_LIBS}', << 'EOF');
 #include <EXTERN.h>
 #include <perl.h>
 

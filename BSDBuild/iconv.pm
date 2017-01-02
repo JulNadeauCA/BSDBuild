@@ -52,75 +52,30 @@ int main(int argc, char *argv[])
 }
 EOF
 
-my $testConstCode = << "EOF";
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <iconv.h>
-
-int main(int argc, char *argv[])
-{
-	const char *inbuf = "foo";
-	size_t inlen = strlen(inbuf), rv;
-	char *outbuf = malloc(3);
-	size_t outbuflen = 3;
-	iconv_t cd;
-
-	cd = iconv_open("ISO-8859-1", "UTF-8");
-	rv = iconv(cd, &inbuf, &inlen, &outbuf, &outbuflen);
-	iconv_close(cd);
-	return ((rv == (size_t)-1));
-}
-EOF
-
 sub Test
 {
 	my ($ver, $pfx) = @_;
 
 	MkDefine('ICONV_CFLAGS', '');
 	MkDefine('ICONV_LIBS', '');
-
-	MkCompileC('HAVE_ICONV',
-	           '${ICONV_CFLAGS} -Wno-cast-qual',
-	           '${ICONV_LIBS}', $testCode);
-	MkIfFalse('${HAVE_ICONV}');
-		MkPrintSN('checking for iconv() in -liconv...');
-		MkIfNE($pfx, '');
-			MkIfExists("$pfx/include/iconv.h");
-			    MkDefine('ICONV_CFLAGS', "-I$pfx/include");
-			    MkDefine('ICONV_LIBS', "-L$pfx/lib -liconv");
+	
+	MkIfNE($pfx, '');
+		MkIfExists("$pfx/include/iconv.h");
+		    MkDefine('ICONV_CFLAGS', "-I$pfx/include");
+		    MkDefine('ICONV_LIBS', "-L$pfx/lib -liconv");
+		MkEndif;
+	MkElse;
+		foreach my $dir (@autoPrefixDirs) {
+			MkIfExists("$dir/include/iconv.h");
+			    MkDefine('ICONV_CFLAGS', "-I$dir/include");
+			    MkDefine('ICONV_LIBS', "-L$dir/lib -liconv");
 			MkEndif;
-		MkElse;
-			foreach my $dir (@autoPrefixDirs) {
-				MkIfExists("$dir/include/iconv.h");
-				    MkDefine('ICONV_CFLAGS', "-I$dir/include");
-				    MkDefine('ICONV_LIBS', "-L$dir/lib -liconv");
-				MkEndif;
-			}
-		MkEndif;
-		MkCompileC('HAVE_ICONV', '${ICONV_CFLAGS} -Wno-cast-qual',
-		           '${ICONV_LIBS}', $testCode);
-		MkIfFalse('${HAVE_ICONV}');
-			MkPrintSN('checking for iconv() in -liconv (const)...');
-			MkCompileC('HAVE_ICONV', '${ICONV_CFLAGS} -Wno-cast-qual',
-			           '${ICONV_LIBS}', $testConstCode);
-		MkEndif;
-	MkElse;
-			MkPrintSN('checking for iconv() with const...');
-			MkCompileC('HAVE_ICONV', '${ICONV_CFLAGS} -Wno-cast-qual',
-			           '${ICONV_LIBS}', $testConstCode);
+		}
 	MkEndif;
-		
-	MkSave('ICONV_CFLAGS', 'ICONV_LIBS');
+	MkCompileC('HAVE_ICONV', '${ICONV_CFLAGS} -Wno-cast-qual',
+	           '${ICONV_LIBS}', $testCode);
 
-	# Test for const-correctness
-	MkIfTrue('${HAVE_ICONV}');
-		MkPrintSN('checking whether iconv() is const-correct...');
-		MkCompileC('HAVE_ICONV_CONST', '${ICONV_CFLAGS} -Wcast-qual -Werror',
-		           '${ICONV_LIBS}', $testConstCode);
-	MkElse;
-		MkSaveUndef('HAVE_ICONV_CONST');
-	MkEndif;
+	MkSaveIfTrue('${HAVE_ICONV}', 'ICONV_CFLAGS', 'ICONV_LIBS');
 }
 
 sub Emul
@@ -134,7 +89,7 @@ sub Emul
 
 BEGIN
 {
-	$DESCR{'iconv'} = 'iconv() in libc';
+	$DESCR{'iconv'} = 'iconv()';
 	$TESTS{'iconv'} = \&Test;
 	$DEPS{'iconv'} = 'cc';
 	$EMUL{'iconv'} = \&Emul;

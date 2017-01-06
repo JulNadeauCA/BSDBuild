@@ -35,7 +35,6 @@ ICONV?=		iconv
 BASEDIR?=	${TOP}/m4
 TEMPLATE?=	simple
 LANGUAGES?=	en fr
-CHARSETS?=	utf8
 DEF_LANGUAGE?=	en
 MKDEPS=		build.www.mk build.subdir.mk build.common.mk hstrip.pl
 CLEANFILES?=
@@ -52,7 +51,7 @@ MINIFIER?=	cat
 MINIFIERFLAGS?=
 MINIFIERFLAGSCSS?=
 
-DTD?=	<!DOCTYPE html>
+#DTD?=	<!DOCTYPE html>
 #DTD?=	<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"  \
 #	"http://www.w3.org/TR/html4/loose.dtd">
 
@@ -76,21 +75,18 @@ depend: depend-www depend-subdir
 
 .htm.html: ${BASEDIR}/${TEMPLATE}.m4
 	@cp -f $< ${BASEDIR}/base.htm
-	@echo "${M4} $< | ${MLPROC} ${MLPROCFLAGS} -l ${DEF_LANGUAGE} > $@"
+	@echo "${M4} $< | ${MLPROC} -H ${MLPROCFLAGS} -l ${DEF_LANGUAGE} > $@"
 	@export out=".$@.tmp"; \
 	${M4} ${M4FLAGS} -D__BASE_DIR=${BASEDIR} -D__FILE=$@ \
 	    -D__TEMPLATE=${TEMPLATE} -D__LANG=${DEF_LANGUAGE} \
 	        ${BASEDIR}/${TEMPLATE}.m4 | \
 		${MINIFIER} ${MINIFIERFLAGS} > "$$out"; \
-	echo '${DTD}' > $@; \
-	${MLPROC} ${MLPROCFLAGS} -l ${DEF_LANGUAGE} "$$out" \
+	echo '' > $@; \
+	${MLPROC} -H ${MLPROCFLAGS} -l ${DEF_LANGUAGE} "$$out" \
 	    |${MINIFIER} ${MINIFIERFLAGS} >> $@ 2>/dev/null; \
 	rm -f "$$out" ${BASEDIR}/base.htm
 
 .htm.html.var: ${BASEDIR}/${TEMPLATE}.m4
-	@for CHARSET in ${CHARSETS}; do \
-	    if [ ! -e "$$CHARSET" ]; then mkdir $$CHARSET; fi; \
-	done
 	@cp -f $< ${BASEDIR}/base.htm
 	@export base="`echo $@ | sed s/\.var//`"; \
 	echo -n "$$base:"; \
@@ -101,14 +97,13 @@ depend: depend-www depend-subdir
 		${M4} ${M4FLAGS} -D__BASE_DIR=${BASEDIR} -D__FILE=$$base \
 		    -D__TEMPLATE=${TEMPLATE} -D__LANG=$$L \
 		    ${BASEDIR}/${TEMPLATE}.m4 | ${MINIFIER} ${MINIFIERFLAGS} > $$out; \
-		echo '${DTD}' > utf8/$$base.$$L; \
-		${MLPROC} ${MLPROCFLAGS} -l $$L $$out \
-		    | ${MINIFIER} ${MINIFIERFLAGS} >> utf8/$$base.$$L; \
-		cp -f utf8/$$base.$$L $$base.$$L; \
+		echo '' > $$base.$$L; \
+		${MLPROC} -H ${MLPROCFLAGS} -l $$L $$out \
+		    | ${MINIFIER} ${MINIFIERFLAGS} >> $$base.$$L; \
 		rm -f $$out; \
 		echo "Content-Type: text/html; charset=UTF-8" >> $@; \
 		echo "Content-Language: $$L" >> $@; \
-		echo "URI: utf8/$$base.$$L" >> $@; \
+		echo "URI: $$base.$$L" >> $@; \
 		echo "" >> $@; \
 	done; \
 	rm -f ${BASEDIR}/base.htm; \
@@ -121,9 +116,6 @@ clean-www:
 			export base="`echo $$F | sed s/\.var//`"; \
 			echo -n " $$base"; \
 			for L in ${LANGUAGES}; do \
-				for CHARSET in ${CHARSETS}; do \
-					rm -f $$CHARSET/$$base.$$L; \
-				done; \
 				rm -f $$base.$$L; \
 			done; \
 			rm -f $$F; \
@@ -159,7 +151,6 @@ install-www-makefile:
 	echo "TEMPLATE=${TEMPLATE}" >> $$out; \
 	echo "CSS_TEMPLATE=${CSS_TEMPLATE}" >> $$out; \
 	echo "LANGUAGES=${LANGUAGES}" >> $$out; \
-	echo "CHARSETS=${CHARSETS}" >> $$out; \
 	echo "DEF_LANGUAGE=${DEF_LANGUAGE}" >> $$out; \
 	echo "include mk/build.www.mk" >> $$out; \
 	echo "${INSTALL_DATA} $$out ${HTMLDIR}/Makefile"; \
@@ -208,10 +199,6 @@ install-www:
 	@if [ "${HTMLDIR}" = "none" ]; then \
 		exit 0; \
 	fi
-	@for CHARSET in ${CHARSETS}; do \
-		echo "${INSTALL_DATA_DIR} ${HTMLDIR}/$$CHARSET"; \
-		${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${HTMLDIR}/$$CHARSET; \
-	done
 	@if [ ! -d "${DESTDIR}${HTMLDIR}" ]; then \
 		echo "${INSTALL_DATA_DIR} ${HTMLDIR}"; \
 		${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${HTMLDIR}; \
@@ -240,17 +227,6 @@ install-www:
 				echo "${INSTALL_DATA} $$base.$$L ${HTMLDIR}"; \
 				${SUDO} ${INSTALL_DATA} $$base.$$L ${DESTDIR}${HTMLDIR}; \
 			fi; \
-			for CHARSET in ${CHARSETS}; do \
-				if [ -e "$$CHARSET/$$base.$$L" ]; then \
-					if [ -e "${DESTDIR}${HTMLDIR}/$$CHARSET/$$base.$$L" \
-					     -a "${HTML_OVERWRITE}" = "" ]; then \
-						echo "$$CHARSET/$$base.$$L exists; preserving"; \
-					else \
-						echo "${INSTALL_DATA} $$CHARSET/$$base.$$L ${HTMLDIR}/$$CHARSET"; \
-						${SUDO} ${INSTALL_DATA} $$CHARSET/$$base.$$L ${DESTDIR}${HTMLDIR}/$$CHARSET; \
-					fi; \
-				fi; \
-			done; \
 		done; \
 	done
 	@for F in ${HTML_EXTRA}; do \
@@ -275,10 +251,6 @@ deinstall-www:
 		for L in ${LANGUAGES}; do \
 			echo "${DEINSTALL_DATA} ${HTMLDIR}/$$base.$$L"; \
 			${SUDO} ${DEINSTALL_DATA} ${DESTDIR}${HTMLDIR}/$$base.$$L; \
-			for C in ${CHARSETS}; do \
-				echo "${DEINSTALL_DATA} ${HTMLDIR}/$$C/$$base.$$L"; \
-				${SUDO} ${DEINSTALL_DATA} ${DESTDIR}${HTMLDIR}/$$C/$$base.$$L; \
-			done; \
 		done; \
 	done
 	@for F in ${JS}; do \
@@ -289,10 +261,6 @@ deinstall-www:
 		done; \
 		echo "${DEINSTALL_DATA} ${DATADIR}/$$F.js"; \
 		${SUDO} ${DEINSTALL_DATA} ${DESTDIR}${HTMLDIR}/$$F.js; \
-	done
-	@for C in ${CHARSETS}; do \
-		echo "${DEINSTALL_DATA_DIR} ${HTMLDIR}/$$C"; \
-		${SUDO} ${DEINSTALL_DATA_DIR} ${DESTDIR}${HTMLDIR}/$$C; \
 	done
 	@echo "${DEINSTALL_DATA_DIR} ${HTMLDIR}"; \
 	@${SUDO} ${DEINSTALL_DATA_DIR} ${DESTDIR}${HTMLDIR}; \

@@ -36,6 +36,7 @@
 
 #include "config/have_gettext.h"
 
+static int htmlMode = 0;	/* Ignore anything before <!DOCTYPE html> */
 static int curLine = 0;
 static char curError[64];
 static char *lang = "en";
@@ -45,7 +46,7 @@ static char *domainname = NULL;
 static void
 printusage(void)
 {
-	fprintf(stderr, "Usage: mlproc [-l lang] [-o outfile] "
+	fprintf(stderr, "Usage: mlproc [-H] [-l lang] [-o outfile] "
 	                "[-L localedir] [-D textdomain] [infile]\n");
 }
 
@@ -55,9 +56,14 @@ processInput(const char *data, size_t size, FILE *f)
 	const char *c, *cEnd;
 	int inCurLang=0, inOtherLang=0;
 	char *cText, *d;
+	int seenDoctype = 0;
 
 	for (c=data; *c != '\0';) {
 		if (*c == '<') {
+			if (htmlMode && c[1] == '!' &&
+			    strncmp(&c[2],"DOCTYPE html>",13)==0) {
+				seenDoctype = 1;
+			}
 			/*
 			 * Process <ml lang="xx">Text</ml> blocks.
 			 * Nesting is not permitted.
@@ -143,7 +149,8 @@ processInput(const char *data, size_t size, FILE *f)
 			curLine++;
 		}
 		if (!inOtherLang) {
-			fputc(*c, f);
+			if (!htmlMode || seenDoctype)
+				fputc(*c, f);
 		}
 		c++;
 	}
@@ -175,10 +182,13 @@ main(int argc, char *argv[])
 
 	curError[0] = '\0';
 
-	while ((c = getopt(argc, argv, "?o:l:L:D:")) != -1) {
+	while ((c = getopt(argc, argv, "?Ho:l:L:D:")) != -1) {
 		switch (c) {
 		case 'o':
 			outfile = optarg;
+			break;
+		case 'H':
+			htmlMode = 1;
 			break;
 		case 'l':
 			lang = optarg;

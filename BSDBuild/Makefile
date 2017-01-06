@@ -124,7 +124,8 @@ DATAFILES=Core.pm \
 	csidl.pm \
 	libircclient.pm \
 	pcre.pm \
-	imagemagick.pm
+	imagemagick.pm \
+	zlib.pm
 
 all:
 

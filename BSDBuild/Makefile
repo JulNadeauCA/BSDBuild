@@ -125,7 +125,8 @@ DATAFILES=Core.pm \
 	libircclient.pm \
 	pcre.pm \
 	imagemagick.pm \
-	zlib.pm
+	zlib.pm \
+	fdclose.pm
 
 all:
 

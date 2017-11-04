@@ -53,7 +53,7 @@ printusage(void)
 static int
 processInput(const char *data, size_t size, FILE *f)
 {
-	const char *c, *cEnd;
+	const char *c, *cEnd, *msg;
 	int inCurLang=0, inOtherLang=0;
 	char *cText, *d;
 	int seenDoctype = 0;
@@ -156,16 +156,20 @@ processInput(const char *data, size_t size, FILE *f)
 	}
 	return (0);
 fail_nested:
-	strlcpy(curError, "Nested <ml> tags are not allowed", sizeof(curError));
+	msg = "Nested <ml> tags are not allowed";
+	memcpy(curError, msg, strlen(msg)+1);
 	return (-1);
 fail_closetag:
-	strlcpy(curError, "Unexpected </ml> tag", sizeof(curError));
+	msg = "Unexpected </ml> tag";
+	memcpy(curError, msg, strlen(msg)+1);
 	return (-1);
 fail_unterm:
-	strlcpy(curError, "Unterminated $_() sequence", sizeof(curError));
+	msg = "Unterminated $_() sequence";
+	memcpy(curError, msg, strlen(msg)+1);
 	return (-1);
 fail_mem:
-	strlcpy(curError, "Out of memory", sizeof(curError));
+	msg = "Out of memory";
+	memcpy(curError, msg, strlen(msg)+1);
 	return (-1);
 }
 

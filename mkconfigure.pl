@@ -1477,10 +1477,10 @@ foreach $_ (@INPUT) {
 	if (/^\s*#/) {
 	    next;
 	}
-	s/\;\;/\\{caseclose}/g;
+	s/\;\;/BSDBuild__keepcaseclose/g;
 	DIRECTIVE: foreach my $s (split(';')) {
 		if ($s !~ /([A-Z_]+)\((.*)\)/) {
-			$s =~ s/\\{caseclose\}/;;/g;
+			$s =~ s/BSDBuild__keepcaseclose/;;/g;
 			print $s, "\n";
 			next DIRECTIVE;
 		}

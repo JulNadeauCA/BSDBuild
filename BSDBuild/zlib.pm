@@ -73,11 +73,20 @@ EOF
 	return (0);
 }
 
+sub Emul
+{
+	my ($os, $osrel, $machine) = @_;
+
+	MkEmulUnavail('ZLIB');
+	return (1);
+}
+
 BEGIN
 {
 	$DESCR{'zlib'} = "zlib";
 	$DEPS{'zlib'} = 'cc';
 	$TESTS{'zlib'} = \&Test;
+	$EMUL{'zlib'} = \&Emul;
 }
 
 ;1

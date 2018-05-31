@@ -603,7 +603,7 @@ sub ld_option
 {
 	my $opt = shift;
 
-	MkDefine('LDFLAGS', '$LDFLAGS'.$opt);
+	MkDefine('LDFLAGS', '$LDFLAGS '.$opt);
 	MkSaveMK('LDFLAGS');
 }
 
@@ -1430,9 +1430,11 @@ BuiltinNLS();
 BuiltinCtags();
 BuiltinLibtool();
 
-# An "env PREFIX=foo make install" should override ./configure --prefix.
+# "env PREFIX=foo make install" overrides configure --prefix.
+# "env LDFLAGS=foo make" overrides configure's recorded LDFLAGS.
 print << 'EOF';
 echo "PREFIX?=${PREFIX}" >> Makefile.config
+echo "LDFLAGS?=${LDFLAGS}" >> Makefile.config
 EOF
 
 MkSaveDefine('PREFIX');
@@ -1501,7 +1503,7 @@ foreach $_ (@INPUT) {
 			}
 			if ($inQuote) {
 				if ($c eq ',') {
-					push @argsp, '_BBLDCOMMA_';
+					push @argsp, '_BSDBuild__COMMA_';
 				} else {
 					push @argsp, $c;
 				}
@@ -1510,7 +1512,7 @@ foreach $_ (@INPUT) {
 			}
 		}
 		foreach my $arg (split(',', join('', @argsp))) {
-			$arg =~ s/_BBLDCOMMA_/,/g;
+			$arg =~ s/_BSDBuild__COMMA_/,/g;
 			$arg =~ s/^\s+//;
 			$arg =~ s/\s+$//;
 			push @args, $arg;

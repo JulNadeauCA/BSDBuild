@@ -225,6 +225,7 @@ for path in $PATH; do
 		break
 	fi
 done
+
 PKGCONFIG=''
 for path in $PATH; do
 	if [ -x "${path}/pkg-config" ]; then
@@ -235,7 +236,6 @@ for path in $PATH; do
 		break
 	fi
 done
-
 IFS=$bb_save_IFS
 if [ "${prefix}" != '' ]; then
     PREFIX="$prefix"
@@ -670,6 +670,18 @@ fi
 echo "LIBTOOL_BUNDLED=${LIBTOOL_BUNDLED}" >> Makefile.config
 echo "LIBTOOL=${LIBTOOL}" >> Makefile.config
 echo "PREFIX?=${PREFIX}" >> Makefile.config
+echo "LDFLAGS?=${LDFLAGS}" >> Makefile.config
+
+if [ "${PKGCONFIG}" != "" ]; then
+	case "${host}" in
+	*-*-freebsd* | *-*-dragonfly*)
+		PKGCONFIG_LIBDIR="\${PREFIX}/libdata/pkgconfig"
+		;;
+	*)
+		PKGCONFIG_LIBDIR="\${PREFIX}/lib/pkgconfig"
+		;;
+	esac
+fi
 echo '#ifndef PREFIX' > config/prefix.h
 echo "#define PREFIX \"$PREFIX\"" >> config/prefix.h
 echo '#endif' >> config/prefix.h
@@ -774,7 +786,7 @@ echo '#ifndef VERSION' > config/version.h
 echo "#define VERSION \"$VERSION\"" >> config/version.h
 echo '#endif' >> config/version.h
 echo "hdefs[\"VERSION\"] = \"$VERSION\"" >>configure.lua
-RELEASE="Blast of Ancient Atmospheres"
+RELEASE="Hello bicycle"
 echo '#ifndef RELEASE' > config/release.h
 echo "#define RELEASE \"$RELEASE\"" >> config/release.h
 echo '#endif' >> config/release.h
@@ -1490,8 +1502,8 @@ main(int argc, char **argv, char **env)
 }
 
 EOT
-echo "$CC $CFLAGS $TEST_CFLAGS ${PERL_CFLAGS} -o $testdir/conftest conftest.c ${PERL_LIBS}" >>config.log
-$CC $CFLAGS $TEST_CFLAGS ${PERL_CFLAGS} -o $testdir/conftest$$ conftest$$.c ${PERL_LIBS} 2>>config.log
+echo "$CC $CFLAGS $TEST_CFLAGS ${PERL_CFLAGS} -Wno-error -o $testdir/conftest conftest.c ${PERL_LIBS}" >>config.log
+$CC $CFLAGS $TEST_CFLAGS ${PERL_CFLAGS} -Wno-error -o $testdir/conftest$$ conftest$$.c ${PERL_LIBS} 2>>config.log
 if [ $? != 0 ]; then
 	echo ": failed, code $?" >> config.log
 	MK_COMPILE_STATUS="FAIL $?"
@@ -1597,6 +1609,10 @@ echo "PERL_CFLAGS=$PERL_CFLAGS" >>Makefile.config
 echo "mdefs[\"PERL_CFLAGS\"] = \"$PERL_CFLAGS\"" >>configure.lua
 echo "PERL_LIBS=$PERL_LIBS" >>Makefile.config
 echo "mdefs[\"PERL_LIBS\"] = \"$PERL_LIBS\"" >>configure.lua
+echo "PKGCONFIG=$PKGCONFIG" >>Makefile.config
+echo "mdefs[\"PKGCONFIG\"] = \"$PKGCONFIG\"" >>configure.lua
+echo "PKGCONFIG_LIBDIR=$PKGCONFIG_LIBDIR" >>Makefile.config
+echo "mdefs[\"PKGCONFIG_LIBDIR\"] = \"$PKGCONFIG_LIBDIR\"" >>configure.lua
 echo "PROG_BUNDLE=$PROG_BUNDLE" >>Makefile.config
 echo "mdefs[\"PROG_BUNDLE\"] = \"$PROG_BUNDLE\"" >>configure.lua
 echo "PROG_CLI_FLAGS=$PROG_CLI_FLAGS" >>Makefile.config

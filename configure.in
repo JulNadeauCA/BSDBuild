@@ -4,7 +4,7 @@ CONFIG_GUESS("mk/config.guess")
 
 PACKAGE("BSDBuild")
 VERSION("3.2")
-RELEASE("Blast of Ancient Atmospheres")
+RELEASE("Hello bicycle")
 DEFAULT_DIR(DATADIR, "$PREFIX/share/bsdbuild")
 
 REQUIRE(cc)

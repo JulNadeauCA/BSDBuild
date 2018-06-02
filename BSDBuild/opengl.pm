@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2002-2010 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2002-2018 Julien Nadeau Carriere <vedge@hypertriton.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -134,6 +134,12 @@ sub Test
 		MkEndif;
 	MkElse;
 		MkPrintS('no');
+	MkEndif;
+	
+	MkIfTrue('${HAVE_OPENGL}');
+		MkDefine('OPENGL_PC', 'gl');
+	MkElse;
+		MkDefine('OPENGL_PC', '');
 	MkEndif;
 	return (0);
 }

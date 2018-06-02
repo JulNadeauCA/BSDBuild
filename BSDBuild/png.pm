@@ -64,6 +64,12 @@ sub Test
 	MkElse;
 		MkSaveUndef('HAVE_PNG', 'PNG_CFLAGS', 'PNG_LIBS', 'HAVE_LIBPNG14');
 	MkEndif;
+	
+	MkIfTrue('${HAVE_PNG}');
+		MkDefine('PNG_PC', 'libpng');
+	MkElse;
+		MkDefine('PNG_PC', '');
+	MkEndif;
 	return (0);
 }
 

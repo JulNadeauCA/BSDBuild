@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2002-2016 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2002-2018 Julien Nadeau Carriere <vedge@hypertriton.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -69,7 +69,7 @@ my @autoLibDirs = (
 sub Test
 {
 	my ($ver, $pfx) = @_;
-
+	
 	MkIfPkgConfig('x11');
 		MkExecPkgConfig($pfx, 'x11', '--modversion', 'X11_VERSION');
 		MkExecPkgConfig($pfx, 'x11', '--cflags', 'X11_CFLAGS');
@@ -126,6 +126,8 @@ EOF
 	MkSaveIfTrue('${HAVE_X11}', 'X11_CFLAGS', 'X11_LIBS');
 
 	MkIfTrue('${HAVE_X11}');
+		MkDefine('X11_PC', 'x11');
+
 		MkPrintSN('checking for the XKB extension...');
 		MkCompileC('HAVE_XKB', '${X11_CFLAGS}', '${X11_LIBS} -lX11', << 'EOF');
 #include <X11/Xlib.h>
@@ -142,6 +144,7 @@ int main(int argc, char *argv[])
 }
 EOF
 	MkElse;
+		MkDefine('X11_PC', '');
 		MkSaveUndef('HAVE_XKB');
 	MkEndif;
 }

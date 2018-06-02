@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2011 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2011-2018 Julien Nadeau Carriere <vedge@hypertriton.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -96,6 +96,12 @@ int main(int argc, char *argv[])
 }
 EOF
 	MkSaveIfTrue('${HAVE_XINERAMA}', 'XINERAMA_CFLAGS', 'XINERAMA_LIBS');
+
+	MkIfTrue('${HAVE_XINERAMA}');
+		MkDefine('XINERAMA_PC', 'xinerama');
+	MkElse;
+		MkDefine('XINERAMA_PC', '');
+	MkEndif;
 }
 
 sub Emul

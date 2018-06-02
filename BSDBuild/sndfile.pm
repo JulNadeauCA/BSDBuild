@@ -52,6 +52,12 @@ sub Test
 	MkElse;
 		MkSaveUndef('HAVE_SNDFILE');
 	MkEndif;
+	
+	MkIfTrue('${HAVE_SNDFILE}');
+		MkDefine('SNDFILE_PC', 'sndfile');
+	MkElse;
+		MkDefine('SNDFILE_PC', '');
+	MkEndif;
 	return (0);
 }
 

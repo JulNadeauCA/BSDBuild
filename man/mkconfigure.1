@@ -1,5 +1,5 @@
 .\"
-.\" Copyright (c) 2007-2012 Hypertriton, Inc. <http://www.hypertriton.com/>
+.\" Copyright (c) 2007-2018 Julien Nadeau Carriere <vedge@hypertriton.com>
 .\" All rights reserved.
 .\"
 .\" Redistribution and use in source and binary forms, with or without
@@ -264,6 +264,25 @@ The
 .Fa dirname
 argument may be one of: PREFIX, BINDIR, LIBDIR, LIBEXECDIR,
 DATADIR, STATEDIR, SYSCONFDIR, LOCALEDIR or MANDIR.
+.It Ev PKGCONFIG_MODULE(name, [args])
+Generate a
+.Xr pc 5
+file compatible with
+.Xr pkgconf 1
+and others into "name.pc" (which can be subsequently installed into
+.Dv PKGCONFIG_LIBDIR ) .
+The following arguments are
+.Va desc
+(description text),
+.Va requires
+(required pc modules),
+.Va conflicts
+(conflicting modules),
+.Va cflags ,
+.Va libs
+(libraries needed for dynamic linking) and
+.Va libsPvt
+(libraries needed for static linking).
 .El
 .\" .Sh ENVIRONMENT
 .\" .Sh FILES

@@ -103,6 +103,12 @@ sub Test
 	MkElse;
 		MkSaveUndef('HAVE_PORTAUDIO', 'PORTAUDIO_CFLAGS', 'PORTAUDIO_LIBS');
 	MkEndif;
+	
+	MkIfTrue('${HAVE_PORTAUDIO}');
+		MkDefine('PORTAUDIO_PC', 'portaudio-2.0');
+	MkElse;
+		MkDefine('PORTAUDIO_PC', '');
+	MkEndif;
 }
 
 sub Emul

@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2013 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2013-2018 Julien Nadeau Carriere <vedge@hypertriton.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -56,6 +56,12 @@ sub Test
 		MkSaveIfTrue('${HAVE_UIM}', 'UIM_CFLAGS', 'UIM_LIBS');
 	MkElse;
 		MkSaveUndef('HAVE_UIM');
+	MkEndif;
+
+	MkIfTrue('${HAVE_UIM}');
+		MkDefine('UIM_PC', 'uim');
+	MkElse;
+		MkDefine('UIM_PC', '');
 	MkEndif;
 	return (0);
 }

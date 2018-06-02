@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2002-2010 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2002-2018 Julien Nadeau Carriere <vedge@hypertriton.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -121,6 +121,12 @@ sub Test
 		MkEndif;
 	MkElse;
 		MkSaveUndef('HAVE_SDL', 'SDL_CFLAGS', 'SDL_LIBS');
+	MkEndif;
+
+	MkIfTrue('${HAVE_SDL}');
+		MkDefine('SDL_PC', 'sdl');
+	MkElse;
+		MkDefine('SDL_PC', '');
 	MkEndif;
 	return (0);
 }

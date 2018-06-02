@@ -84,6 +84,12 @@ EOF
 		MkSaveUndef('HAVE_JPEG', 'JPEG_CFLAGS', 'JPEG_LIBS');
 		MkPrintS('no');
 	MkEndif;
+	
+	MkIfTrue('${HAVE_JPEG}');
+		MkDefine('JPEG_PC', 'libjpeg');
+	MkElse;
+		MkDefine('JPEG_PC', '');
+	MkEndif;
 	return (0);
 }
 

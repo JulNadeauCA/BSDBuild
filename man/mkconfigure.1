@@ -27,7 +27,7 @@
 .Dt MKCONFIGURE 1
 .Os
 .ds vT BSDBuild Reference
-.ds oS BSDBuild 2.8
+.ds oS BSDBuild 3.2
 .Sh NAME
 .Nm mkconfigure
 .Nd Compile BSDBuild configure scripts
@@ -43,64 +43,23 @@ the standard output.
 .Pp
 The
 .Pa configure.in
-source can contain a number of special directives, along with Bourne shell
-code fragments that will be copied verbatim to the configure script.
-Long lines in the input script can be broken with end-of-line backslash
-(\\) characters.
-.Sh MKCONFIGURE DIRECTIVES
-.Nm
-directives are case-insensitive.
-The following directives are recognized:
-.Bl -tag -width "REQUIRE(package[,version[,prefix]]) "
+source may include valid Bourne shell script, along with special directives
+interpreted by
+.Nm .
+Directive names are case-insensitive.
+Long lines can be wrapped using terminating backslash (\\) character.
+.Sh INFORMATION DIRECTIVES
+The following directives provide information about the package:
+.Bl -tag -width "REGISTER_SECTION(text) "
 .It Ev PACKAGE(name)
-Short name for the software package.
+Short name for the package.
+Included in generated messages and comments.
 .It Ev VERSION(string)
-Specify software version.
+Specify current package version.
 .It Ev RELEASE(string)
-Specify release name.
-.It Ev CHECK(package[,version[,prefix]])
-Invoke one of the standard BSDBuild tests (see the BSDBuild website for a list).
-Most tests will set the
-.Dv HAVE_FOO
-(where
-.Dv FOO
-is the package name in upper-case) variable to indicate the results
-of the test.
-C/C++ libraries also typically set
-.Dv FOO_CFLAGS
-and
-.Dv FOO_LIBS .
-.Pp
-If the optional
-.Fa version
-argument is specified, the version number is verified as well and
-.Dv MK_VERSION_OK
-is defined to
-.Sq yes
-if the versions are compatible.
-A version argument of 0 indicates that no version checking should be done.
-.Pp
-If the optional
-.Fa prefix
-argument is defined, the test will look for the package only under the
-specified prefix, and the test will fail if it cannot be found under it.
-This is typically set to
-.Sq ${prefix_foo},
-which returns the value in
-.Sq --enable-foo=VALUE
-or
-.Sq --with-foo=VALUE
-options.
-.It Ev REQUIRE(package[,version[,prefix]])
-Same as the
-.Ev CHECK
-directive, except that the configure script will fail if the package is
-either not found, or if the version is too old.
-.It Ev TEST_DIR(path)
-Specify an extra directory in which to search for BSDBuild test modules
-(.pm files).
-.It Ev REGISTER(name,descr)
-Describe a configure script argument (for --help).
+Specify a release codename.
+.It Ev REGISTER(name,desc)
+Describe a configure script argument (for ./configure --help).
 The
 .Fa name
 argument is usually of the form
@@ -108,15 +67,172 @@ argument is usually of the form
 or
 .Ar --enable-foo ) ,
 and
-.Fa descr
+.Fa desc
 is a description of the option (it is also customary to mention the default
 value of this option in the description).
-.It Ev REGISTER_SECTION(string)
-Describe a section of configure script arguments (for --help).
+.It Ev REGISTER_SECTION(text)
+Describe a section of arguments in --help.
+.El
+.Sh CONFIGURE DIRECTIVES
+The following directives alter the operation of the configure script.
+.Bl -tag -width "DEFAULT_DIR(dirname, path) "
+.It Ev CONFIG_CACHE(yes|no)
+Enable support for caching of test results (./configure --cache option).
+By default, caching is disabled.
+.It Ev CONFIG_GUESS(path)
+Specify an alternate path to
+.Pa config.guess
+(default is
+.Pa mk/config.guess ) .
+.It Ev DEFAULT_DIR(dirname, path)
+Override one of the standard installation path defaults.
+.Fa dirname
+may be one of: PREFIX, BINDIR, LIBDIR, LIBEXECDIR,
+DATADIR, STATEDIR, SYSCONFDIR, LOCALEDIR or MANDIR.
+The
+.Fa path
+argument may include variable references such as "${PREFIX}".
+.It Ev SUCCESS_FN(fname)
+Instead of printing the default "Configuration successful" message at the
+end of the script, run the indicated Bourne shell function
+.Fa fname
+instead.
+.El
+.Sh MODULE DIRECTIVES
+The following directives invoke installed BSDBuild test modules.
+Modules generate Bourne script for performing tests and returning results
+as variables.
+For instance, a test for a package "foo" would set variable
+.Dv HAVE_FOO
+to "yes" or "no" and return detected compilation flags under
+.Dv FOO_CFLAGS
+and
+.Dv FOO_LIBS .
+.Pp
+.Bl -tag -width "REQUIRE(pkg[,ver[,pfx]]) "
+.It Ev CHECK(pkg[,ver[,pfx]])
+Invoke the BSDBuild module called
+.Fa pkg .
+A
+.Pa <pkg>.pm
+module file should exist under
+.Pa ${PREFIX}/share/bsdbuild/BSDBuild/ .
+.Pp
+If
+.Fa ver
+is given and non-zero, check the version and set
+.Dv MK_VERSION_OK
+to "yes" if the installed version is compatible with
+.Fa ver .
+.Pp
+If
+.Fa pfx
+is given, look under that installation prefix (and fail if it is not installed
+there).
+Typically, the value "${prefix_foo}" (from user-given
+.Sq --enable-foo=VALUE
+or
+.Sq --with-foo=VALUE )
+is used here.
+.It Ev REQUIRE(pkg[,ver[,pfx]])
+Variant of
+.Ev CHECK()
+which implicitely terminates the script with an error message if
+.Fa pkg
+is not found or the
+.Fa ver
+is incompatible.
+.It Ev TEST_DIR(path)
+Specify an extra directory in which to search for BSDBuild test modules
+(.pm files).
+The default module path is
+.Pa ${PREFIX}/share/bsdbuild/BSDBuild/ .
+.El
+.Sh C/C++ LANGUAGE DIRECTIVES
+The following directives apply to C, C++ and other C-like languages.
+.Bl -tag -width "CHECK_HEADER(name[, ...]) "
+.It Ev C_DEFINE(optname)
+Specify a global define that will be passed to the compiler.
+An
+.Fa optname
+of "FOO" would result in the
+.Ar -DFOO
+flag being passed to the compiler.
+This value is also used by
+.Xr build.proj.mk 5 .
+.It Ev C_INCDIR(dir)
+Specify a directory for include files.
+This results in the
+.Ar -Idir
+flag being added to the compiler command line.
+This value is also used by
+.Xr build.proj.mk 5 .
+.It Ev C_INCDIR_CONFIG(dir)
+Specify a target directory for individual include files with configure-script
+generated statements (i.e.,
+.Dv HAVE_FOO
+is written to
+.Pa have_foo.h
+in the specified directory).
+Pass an empty argument to disable.
+By default,
+.Pa config/
+is used.
+.It Ev C_INCLUDE_CONFIG(file)
+Specify a monolithic C include file which will contain configure-script
+generated statements (i.e.,
+.Dv HAVE_FOO
+defines).
+Pass an empty argument to disable (default).
+.It Ev C_INCPREP(dir)
+Specify a target directory for preprocessed C header files.
+The ./configure option
+.Sq --includes
+is a BSDBuild extension which gives the user the option of either generating
+preprocessed headers in the working directory ("--includes=yes", the default)
+or alternatively, to create a set of symbolic links to the original headers
+in the source directory ("--includes=link").
+.It Ev C_OPTION(option)
+Provide a gcc-style compiler option, such as
+.Ar -Wall ,
+.Ar -Werror
+or
+.Ar -Wmissing-prototypes .
+For environments using other compilers, BSDBuild will attempt to set
+equivalent options.
+.It Ev CHECK_FUNC(fn[, ...])
+Check for the existence of one or more C functions.
+If a function
+.Fa fn
+called
+.Fn foo
+exists, then
+.Dv HAVE_FUNCTION_FOO
+is set.
+.It Ev CHECK_FUNC_OPTS(cflags, libs, fn[, ...])
+Variant of
+.Ev CHECK_FUNCTION()
+with additional CFLAGS and LIBS arguments.
+.It Ev CHECK_HEADER(name[, ...])
+Check whether one or more header files are available (with the current CFLAGS).
+If a header such as
+.Pa sys/foo.h
+is found, then
+.Dv HAVE_SYS_FOO_H
+is set.
+.It Ev CHECK_HEADER_OPTS(cflags, libs, header[, ...])
+Variant of
+.Ev CHECK_HEADER() ,
+with additional CFLAGS and LIBS arguments.
+.It Ev C_EXTRA_WARNINGS()
+Request extra compiler warnings.
+Exact interpretation is compiler specific.
+.It Ev C_FATAL_WARNINGS()
+Fail compilation if warnings are encountered.
 .It Ev HDEFINE(opt,val)
 Define a C preprocessor style header option.
 .Fa opt
-is an unquoted, usually upper-case string and
+is an unquoted string (uppercase by convention), and the value
 .Fa val
 is a string enclosed in double quotes.
 For example, if
@@ -127,87 +243,54 @@ a file
 .Pa config/enable_foo.h
 will be generated by configure.
 .It Ev HDEFINE_UNQUOTED(opt,val)
-Same as
-.Ev HDEFINE() ,
-except that the value is left unquoted.
-.It Ev HUNDEF(opt)
-Similar to
-.Ev HDEFINE ,
-except that
-.Pa config/<option>.h
-will contain an #undef directive.
-.It Ev MDEFINE(opt,val)
-Define a
-.Xr make 1
-variable, which will be visible in the project's makefiles.
-.Fa opt
-is again an unquoted, usually upper-case string and
+Variant of
+.Ev HDEFINE()
+which keeps
 .Fa val
-is a value enclosed in double quotes.
-.It Ev MAPPEND(opt,val)
-Same effect as
-.Ev MDEFINE() ,
-except that the value is appended to the variable (following a space).
-.It Ev C_DEFINE(opt)
-(C-style compilers only) Specify a global define that will be passed to
-the compiler.
-This results in the
-.Ar -DFOO
-flag being used in compiler command lines, but it is also interpreted by
-.Xr build.proj.mk 5 .
-.It Ev C_INCDIR(dir)
-(C-style compilers only) Specify a directory for include files.
-This results in the
-.Ar -Idir
-flag being added to the compiler command line, but it is also interpreted
-by
-.Xr build.proj.mk 5 .
-.It Ev C_INCDIR_CONFIG(dir)
-(C-style compilers only) Specify a target directory for individual include
-files with configure-script generated statements (i.e.,
-.Dv HAVE_FOO
-is written to
-.Pa have_foo.h
-in the specified directory).
-Pass an empty argument to disable.
-By default,
-.Pa ./config
-is used.
-This directive should be only called once, and may be placed anywhere in
-configure.in.
-.It Ev C_INCLUDE_CONFIG(file)
-(C-style compilers only) Specify a monolithic C include file which will
-contain configure-script generated statements (i.e.,
-.Dv HAVE_FOO
-defines).
-Pass an empty argument to disable (default).
-This directive should be only called once, and may be placed anywhere in
-configure.in.
-.It Ev C_INCPREP(dir)
-(C-style compilers only) Specify absolute path to directory which will
-contain include files.
-The configure script provides the user with the option of either generating
-preprocessed header files into this directory (--includes=yes, the default),
-or create a set of symbolic links to the original include files in the
-source directory (--includes=link).
-.It Ev C_OPTION
-Provide a gcc-style compiler option, such as
-.Ar -Wall ,
-.Ar -Werror
-or
-.Ar -Wmissing-prototypes .
-For environments using other compilers, BSDBuild will attempt to set
-equivalent options.
-.It Ev LD_OPTION
+unquoted instead of interpreting it as a string.
+.It Ev HUNDEF(opt)
+Opposite of
+.Ev HDEFINE() ,
+which writes an #undef directive to
+.Pa config/<option>.h .
+.It Ev LD_OPTION(option)
 Provide a ld-style linker option, such as
 .Ar -g
 or
 .Ar -nostdlib .
-.It Ev C_EXTRA_WARNINGS
-Request extra compiler warnings.
-The exact meaning is compiler specific.
-.It Ev C_FATAL_WARNINGS
-Request that compilation fail if warnings are encountered.
+.It Ev MAPPEND(opt,val)
+Append a space and
+.Fa val
+to the exported
+.Xr make 1
+variable
+.Fa opt .
+.It Ev MDEFINE(opt,val)
+Define an exported
+.Xr make 1
+variable
+.Fa opt
+with value
+.Fa val .
+.El
+.Sh PERL LANGUAGE DIRECTIVES
+The following directives deal with the installation of Perl modules.
+.Bl -tag -width "REQUIRE_PERL_MODULE(mod) "
+.It Ev CHECK_PERL_MODULE(mod)
+Check that the specified Perl module is installed and functioning.
+For example, if
+.Fa mod
+is "Time::Zone", the macro will set the variable "HAVE_TIME_ZONE"
+accordingly.
+.It Ev REQUIRE_PERL_MODULE(mod)
+Same as
+.Ev CHECK_PERL_MODULE ,
+except that the configure script will abort if the module is not found.
+.El
+.Sh CONFIGURATION OUTPUT DIRECTIVES
+The following directives produce output scripts and modules for integration
+by external packages.
+.Bl -tag -width "CONFIG_SCRIPT(name[,args]) "
 .It Ev CONFIG_SCRIPT(name[,args])
 Generate a standard "foo-config" script.
 .Fa name
@@ -217,72 +300,25 @@ For C/C++ style packages, the arguments are usually the
 output, followed by the
 .Sq --libs
 output.
-.It Ev CONFIG_CACHE(yes|no)
-Enable support for caching of test results (./configure --cache option).
-By default, caching is disabled.
-.It Ev CONFIG_GUESS(path)
-Specify an alternate path to
-.Pa config.guess
-(default is
-.Pa mk/config.guess ) .
-.It Ev CHECK_HEADER(header[, ...])
-Check whether one or more header files are available under the current
-C/C++ compiler settings.
-If a header file such as
-.Pa sys/foo.h
-is found,
-.Dv HAVE_SYS_FOO_H
-is defined.
-.It Ev CHECK_HEADER_OPTS(cflags, libs, header[, ...])
-Same as
-.Ev CHECK_HEADER() ,
-except that the headers are tested using the provided CFLAGS and LIBS.
-.It Ev CHECK_FUNC(foofunction[, ...])
-Check for the existence of one or more functions.
-If a function
-.Fn foofunction
-is found,
-.Dv HAVE_FUNCTION_NAME
-is defined.
-.It Ev CHECK_FUNC_OPTS(cflags, libs, foofunction[, ...])
-Same as
-.Ev CHECK_FUNCTION() ,
-except that the function is tested using the provided CFLAGS and LIBS.
-.It Ev CHECK_PERL_MODULE(modulename)
-Check that the specified Perl module is installed and functioning.
-For example, if
-.Fa modulename
-is "Time::Zone", the macro will set the variable "HAVE_TIME_ZONE"
-accordingly.
-.It Ev REQUIRE_PERL_MODULE(modulename)
-Same as
-.Ev CHECK_PERL_MODULE ,
-except that the configure script will abort if the module is not found.
-.It Ev DEFAULT_DIR(dirname, path)
-Override one of the standard installation path defaults.
-The
-.Fa dirname
-argument may be one of: PREFIX, BINDIR, LIBDIR, LIBEXECDIR,
-DATADIR, STATEDIR, SYSCONFDIR, LOCALEDIR or MANDIR.
-.It Ev PKGCONFIG_MODULE(name, [args])
-Generate a
-.Xr pc 5
-file compatible with
+.It Ev PKGCONFIG_MODULE(name, desc, req, confl, cflags, libs, pvtLibs)
+Output a
 .Xr pkgconf 1
-and others into "name.pc" (which can be subsequently installed into
+compatible
+.Xr pc 5
+file to "name.pc" (which may be then installed into
 .Dv PKGCONFIG_LIBDIR ) .
-The following arguments are
 .Va desc
-(description text),
-.Va requires
-(required pc modules),
-.Va conflicts
-(conflicting modules),
-.Va cflags ,
+is the "Description" string,
+.Va req
+is the "Required" modules list (space-separated),
+.Va confl
+is the "Conflicts" list,
+.Va cflags
+is the "Cflags" field,
 .Va libs
-(libraries needed for dynamic linking) and
-.Va libsPvt
-(libraries needed for static linking).
+is Libs (for --libs) and
+.Va pvtLibs
+is Libs.private (for --static --libs).
 .El
 .\" .Sh ENVIRONMENT
 .\" .Sh FILES
@@ -291,4 +327,4 @@ The following arguments are
 .Xr build.lib.mk 5 ,
 .Xr build.prog.mk 5
 .Pp
-http://hypertriton.com/bsdbuild/
+http://bsdbuild.hypertriton.com/

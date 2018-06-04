@@ -58,6 +58,7 @@ my %Fns = (
 	'config_script'		=> \&config_script,
 	'pkgconfig_module'	=> \&pkgconfig_module,
 	'config_guess'		=> \&config_guess,
+	'success_fn'		=> \&success_fn,
 	'check_header'		=> \&check_header,
 	'check_header_opts'	=> \&check_header_opts,
 	'check_func'		=> \&check_func,
@@ -72,6 +73,7 @@ my @Help = ();
 my $ConfigGuess = 'mk/config.guess';
 my @TestDirs = ("$INSTALLDIR/BSDBuild");
 my %EmulDepsTested = ();
+my $SuccessFn = '';
 
 # Specify software package name
 sub package
@@ -116,6 +118,13 @@ sub config_cache
 	} else {
 		$Cache = 0;
 	}
+}
+
+# Set function to call when configure succeeds.
+sub success_fn
+{
+	my ($val) = @_;
+	$SuccessFn = $val;
 }
 
 # Directives used in first pass; no-ops as script directives
@@ -517,7 +526,7 @@ if [ ! -e "$dir" ]; then
 	mkdir -p "$dir"
 fi
 if [ "\${includes}" = "link" ]; then
-	\$ECHO_N "* Linking C include files..."
+	\$ECHO_N "linking header files..."
 	if [ "\${SRCDIR}" != "\${BLDDIR}" ]; then
 		(cd \${SRCDIR} && \${PERL} mk/gen-includelinks.pl "\${SRCDIR}" "$dir" 1>>\${BLDDIR}/config.log 2>&1)
 	else
@@ -537,7 +546,7 @@ else
 		echo '*'
 		exit 1
 	fi
-	\$ECHO_N "* Preprocessing C include files..."
+	\$ECHO_N "preprocessing header files..."
 	if [ "\${SRCDIR}" != "\${BLDDIR}" ]; then
 		(cd \${SRCDIR} && \${PERL} mk/gen-includes.pl "$dir" 1>>\${BLDDIR}/config.log 2>&1)
 	else
@@ -1584,15 +1593,25 @@ MkSaveMK_Commit();
 
 print << 'EOF';
 if [ "${srcdir}" != '' ]; then
-	$ECHO_N "* Source is in ${srcdir}. Generating Makefiles..."
+	$ECHO_N "preparing build environment (source in ${srcdir})..."
 	${PERL} ${SRC}/mk/mkconcurrent.pl ${SRC}
 	if [ $? != 0 ]; then
 		exit 1;
 	fi
-	echo 'done'
+	echo 'ok'
 fi
+EOF
+if ($SuccessFn) {
+	print $SuccessFn . "\n";
+} else {
+	print << "EOF";
 echo '*'
-echo '* Configuration successful. Use "make depend all" to compile,'
-echo '* and "make install" to install this software under $PREFIX.'
+echo '* Configuration successful. Compile with "make depend all" and use'
+$ECHO_N '* "make install" to install under '
+$ECHO_N $PREFIX
+$ECHO_N ' (or $DESTDIR'
+$ECHO_N $PREFIX
+echo ').'
 echo '*'
 EOF
+}

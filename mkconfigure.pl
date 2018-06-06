@@ -1607,10 +1607,10 @@ if ($SuccessFn) {
 	print << "EOF";
 echo '*'
 echo '* Configuration successful. Compile with "make depend all" and use'
-$ECHO_N '* "make install" to install under '
-$ECHO_N $PREFIX
-$ECHO_N ' (or $DESTDIR'
-$ECHO_N $PREFIX
+\$ECHO_N '* "make install" to install under '
+\$ECHO_N \$PREFIX
+\$ECHO_N ' (or \$DESTDIR'
+\$ECHO_N \$PREFIX
 echo ').'
 echo '*'
 EOF

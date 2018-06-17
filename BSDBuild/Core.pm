@@ -32,7 +32,12 @@ our $EmulOSRel = undef;
 our $EmulEnv = undef;
 our %MkDefinesToSave = ();
 our $Cache = 0;
-
+our %TESTS = ();
+our %DESCR = ();
+our %URL = ();
+our %EMUL = ();
+our %EMULDEPS = ();
+our %HELPENV = ();
 
 #
 # Bourne instructions.
@@ -1431,6 +1436,16 @@ sub MkEmulUnavailSYS
 	}
 }
 
+sub RegisterEnvVar
+{
+	my ($var, $desc) = @_;
+
+	if ($var =~ /\"(.*)\"/) { $var = $1; }
+	if ($desc =~ /\"(.*)\"/) { $desc = $1; }
+	my $dvar = pack('A' x 12, split('', $var));
+	$HELPENV{$var} = "echo '    $dvar $desc'";
+}
+
 BEGIN
 {
     require Exporter;
@@ -1438,7 +1453,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($Cache $OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR %URL MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSetTrue MkSetFalse MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveMK_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkPrint MkPrintN MkPrintS MkPrintSN MkIfFound MkIfVersionOK MkNotFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion MkEmulWindows MkEmulWindowsSYS MkEmulUnavail MkEmulUnavailSYS);
+    @EXPORT = qw($Cache $OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR %URL %HELPENV MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSetTrue MkSetFalse MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveMK_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkPrint MkPrintN MkPrintS MkPrintSN MkIfFound MkIfVersionOK MkNotFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion MkEmulWindows MkEmulWindowsSYS MkEmulUnavail MkEmulUnavailSYS RegisterEnvVar);
 }
 
 ;1

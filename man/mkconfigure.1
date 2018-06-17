@@ -36,7 +36,7 @@
 .Sh DESCRIPTION
 The
 .Nm
-program reads a
+program reads a BSDBuild
 .Pa configure.in
 source from the standard input and outputs a valid Bourne configure script to
 the standard output.
@@ -47,10 +47,10 @@ source may include valid Bourne shell script, along with special directives
 interpreted by
 .Nm .
 Directive names are case-insensitive.
-Long lines can be wrapped using terminating backslash (\\) character.
+Long lines can be wrapped with a terminating \\ character.
 .Sh INFORMATION DIRECTIVES
 The following directives provide information about the package:
-.Bl -tag -width "REGISTER_SECTION(text) "
+.Bl -tag -width "REGISTER_ENV_VAR(name,desc) "
 .It Ev PACKAGE(name)
 Short name for the package.
 Included in generated messages and comments.
@@ -59,19 +59,24 @@ Specify current package version.
 .It Ev RELEASE(string)
 Specify a release codename.
 .It Ev REGISTER(name,desc)
-Describe a configure script argument (for ./configure --help).
-The
+Describe a configure script argument to show in ./configure --help.
 .Fa name
-argument is usually of the form
-.Ar --with-foo
-or
-.Ar --enable-foo ) ,
+is the name of the
+.Xr getopt_long 3
+style argument (e.g.,
+.Ar --with-foo ,
+.Ar --enable-foo )
 and
 .Fa desc
-is a description of the option (it is also customary to mention the default
-value of this option in the description).
+is a one-line description.
+.It Ev REGISTER_ENV_VAR(name,desc)
+Describe an influencial environment variable to show in ./configure --help.
+.Fa name
+is the name of the environment variable and
+.Fa desc
+is a one-line description.
 .It Ev REGISTER_SECTION(text)
-Describe a section of arguments in --help.
+Provide a title for a section of arguments in ./configure --help.
 .El
 .Sh CONFIGURE DIRECTIVES
 The following directives alter the operation of the configure script.

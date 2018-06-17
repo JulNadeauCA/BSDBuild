@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2002-2016 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2002-2018 Julien Nadeau Carriere <vedge@hypertriton.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -264,6 +264,13 @@ BEGIN
 	$TESTS{'cc'} = \&Test;
 	$EMUL{'cc'} = \&Emul;
 	$DESCR{'cc'} = 'a C compiler';
+
+	RegisterEnvVar('CC',		'C compiler command (cc)');
+	RegisterEnvVar('CFLAGS',	'C compiler flags (-Ox -g -Dfoo)');
+	RegisterEnvVar('LDFLAGS',	'C linker flags (-L/foo)');
+	RegisterEnvVar('LIBS',		'Libraries to link against (-lfoo)');
+	RegisterEnvVar('CPP',		'C preprocessor');
+	RegisterEnvVar('CPPFLAGS',	'C preprocessor flags');
 }
 
 ;1

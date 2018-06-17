@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2002-2014 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2002-2018 Julien Nadeau Carriere <vedge@hypertriton.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -161,6 +161,10 @@ BEGIN
 	$EMUL{'cxx'} = \&Emul;
 	$DESCR{'cxx'} = 'a C++ compiler';
 	$DEPS{'cxx'} = 'cc';
+	
+	RegisterEnvVar('CXX',		'C++ compiler command (c++)');
+	RegisterEnvVar('CXXFLAGS',	'C compiler flags (-Ox -g -Dfoo)');
+	RegisterEnvVar('CXXCPP',	'C++ preprocessor');
 }
 
 ;1

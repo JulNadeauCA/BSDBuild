@@ -19,9 +19,8 @@ DATAFILES=mkdep mkconcurrent.pl manlinks.pl cmpfiles.pl cleanfiles.pl \
 	gen-includes.pl gen-declspecs.pl get-version.pl get-release.pl \
 	gen-dotdepend.pl gen-wwwdepend.pl gen-includelinks.pl gen-bundle.pl \
 	config.guess install-manpages.sh typesubst.sh \
-	build.common.mk build.dep.mk build.lib.mk build.man.mk \
-	build.perl.mk build.prog.mk build.subdir.mk build.www.mk \
-	build.po.mk build.doc.mk build.proj.mk
+	build.common.mk build.lib.mk build.man.mk build.perl.mk build.prog.mk \
+	build.subdir.mk build.www.mk build.po.mk build.doc.mk build.proj.mk
 
 LTFILES=Makefile Makefile.in aclocal.m4 config.guess config.sub configure \
 	configure.in install-sh ltmain.sh README

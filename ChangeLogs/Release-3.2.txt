@@ -6,4 +6,14 @@ Release Notes for BSDBuild 3.2
 - Added PKGCONFIG_MODULE() directive in mkconfigure(1). Set $PKGCONFIG_LIBDIR
   to simplify installation of .pc modules. Where appropriate, have test modules
   define $FOO_PC if a .pc module exists that can be used in "Requires".
-
+- Generated configures now show influential environment variables in --help.
+  Added REGISTER_ENV_VAR() directive to mkconfigure(1).
+- Don't include non-file args in "nothing to do" evaluation in bundled mkdep(1).
+- build.{prog,lib}.mk(5): Add support for the Ada language.
+- build.{prog,lib}.mk(5): Use {LIB,PROG}_PROFILE instead of separate .po targets.
+- Merge `depend' target into build.{prog,lib}.mk. Remove build.dep.mk.
+- New tests: ada, agar.types, agar-core.types, agar-core-ada.
+- mkconfigure(1): Add --keep-conftest option (preserve output test files).
+- mkconfigure(1): New directives: ADA_OPTION, ADA_BFLAG, 
+- build.lib.mk(5): Generate libtool .la library files even when USE_LIBTOOL=No.
+- build.lib.mk(5): Handle .dylib and .dll output correctly with USE_LIBTOOL=No.

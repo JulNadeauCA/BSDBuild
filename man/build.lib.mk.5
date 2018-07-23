@@ -1,5 +1,5 @@
 .\"
-.\" Copyright (c) 2007-2014 Hypertriton, Inc. <http://www.hypertriton.com/>
+.\" Copyright (c) 2007-2018 Julien Nadeau Carriere <vedge@hypertriton.com>
 .\" All rights reserved.
 .\"
 .\" Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 .Dt BUILD.LIB.MK 5
 .Os
 .ds vT BSDBuild Reference
-.ds oS BSDBuild 1.0
+.ds oS BSDBuild 3.2
 .Sh NAME
 .Nm build.lib.mk
 .Nd bsdbuild - compilation of libraries
@@ -40,13 +40,15 @@ For shared libraries, it uses a bundled copy of GNU libtool.
 The module provides built-in support for sources in the following languages:
 .Bl -bullet -compact
 .It
-C (*.c)
-.It
-C++ (*.cc or *.cpp)
-.It
-Objective C (*.m)
+Ada (*.adb, *.ads)
 .It
 Assembler (*.asm)
+.It
+C (*.c)
+.It
+C++ (*.cc, *.cpp)
+.It
+Objective C (*.m)
 .It
 Lex (*.l)
 .It
@@ -57,8 +59,9 @@ Yacc (*.y)
 .It Ar lib${LIB}.a
 Compile the source files into a static library.
 .It Ar lib${LIB}.la
-Compile the source files into static and shared libraries using libtool
-(libtool comes bundled with BSDBuild).
+Compile the source files into static and shared libraries using libtool.
+.It Ar lib${LIB}.so
+Compile the source files into static and shared libraries (without libtool).
 .It Ar clean-lib
 Clean up object and library files.
 .It Ar cleandir-lib
@@ -72,6 +75,11 @@ Uninstall libraries from the installation directory.
 .El
 .Sh VARIABLES
 .Bl -tag -width "LIBTOOLOPS_SHARED "
+.It Ev SRCS
+List of source files to compile into the library.
+.It Ev SRCS_GENERATED
+List of source files (appearing in ${SRCS}) are auto-generated.
+Files in this list will be processed before anything else is compiled.
 .It Ev LIB
 Name of target library.
 Platform-specific transforms will be applied to the name.
@@ -83,6 +91,9 @@ If set to Yes, the
 .Ar install
 target will install the library files, otherwise it will be a no-op.
 Defaults to No.
+.It Ev LIB_BUNDLE
+If set to an output filename, compile a library bundle or framework into
+the specified target.
 .It Ev LIB_SHARED
 If set to Yes, a shared library will be built.
 Default is No.
@@ -91,14 +102,16 @@ If set to Yes, a
 .Xr dlopen 3
 compatible module will be built.
 Default is No.
+.It Ev LIB_PROFILE
+If set to Yes, compile library with profiling instrumentation.
 .It Ev LIB_GUID
 A Global Unique Identifier (GUID) for the library.
 Exact interpretation is platform-specific.
-.It Ev LIB_MAJOR
+.It Ev LIB_CURRENT
 Major version number for shared libraries.
-.It Ev LIB_MINOR
-Minor version number for shared libraries.
 .It Ev LIB_REVISION
+Minor version number for shared libraries.
+.It Ev LIB_AGE
 Revision number for shared libraries.
 .It Ev LIBS
 Specify other libraries to link against this library.
@@ -164,11 +177,6 @@ Options for
 .Xr lex 1 ,
 defaults to
 .Sq .
-.It Ev YFLAGS
-Options for
-.Xr yacc 1 ,
-defaults to
-.Sq -d .
 .It Ev LIBL
 Libraries to use for Lex lexers.
 Defaults to
@@ -182,6 +190,11 @@ utility, which generates windows resource files.
 (Specific to the win32 platform)
 Resource file to use with
 .Xr windres 1 .
+.It Ev YFLAGS
+Options for
+.Xr yacc 1 ,
+defaults to
+.Sq -d .
 .It Ev DATAFILES
 List of data files to install into
 .Dv ${DATADIR} .

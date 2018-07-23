@@ -1,5 +1,5 @@
 .\"
-.\" Copyright (c) 2007 Hypertriton, Inc. <http://www.hypertriton.com/>
+.\" Copyright (c) 2007-2018 Julien Nadeau Carriere <vedge@hypertriton.com>
 .\" All rights reserved.
 .\"
 .\" Redistribution and use in source and binary forms, with or without
@@ -26,29 +26,31 @@
 .Dt BUILD.PROG.MK 5
 .Os
 .ds vT BSDBuild Reference
-.ds oS BSDBuild 1.0
+.ds oS BSDBuild 3.2
 .Sh NAME
 .Nm build.prog.mk
-.Nd bsdbuild - compilation of executables
+.Nd bsdbuild - build and install executable programs
 .Sh SYNOPSIS
 .Fd .include <bsd.prog.mk>
 .Sh DESCRIPTION
 The
 .Nm
-module is used to compile an executable program from a set of source
-files.
-The module provides built-in support for sources in the following languages:
+module compiles a set of source files and links the resulting object files
+with any required libraries into a target executable.
+It supports source in the following languages:
 .Bl -bullet -compact
+.It
+Ada (*.adb, *.ads)
+.It
+Assembler (*.asm)
 .It
 C (*.c)
 .It
 C++ (*.cc or *.cpp)
 .It
-Objective C (*.m)
-.It
-Assembler (*.asm)
-.It
 Lex (*.l)
+.It
+Objective C (*.m)
 .It
 Yacc (*.y)
 .El
@@ -56,16 +58,6 @@ Yacc (*.y)
 .Bl -tag -width "deinstall-prog "
 .It Ar ${PROG}
 Compile/link the ${PROG} executable from the specified source files.
-.It Ar ${PROG_PREFIX}
-Prepend string to installed executable name.
-.It Ar ${PROG_SUFFIX}
-Append string to installed executable name.
-.It Ar ${PROG_TRANSFORM}
-Apply
-.Xr sed 1
-expression to installed executable name.
-.It Ar ${GMONOUT}
-Compile/link a profiled version of ${PROG}.
 .It Ar clean-prog
 Clean up object and executable files.
 .It Ar cleandir-prog
@@ -78,67 +70,72 @@ Install program to the target installation directory
 Uninstall program from the installation directory.
 .El
 .Sh VARIABLES
-.Bl -tag -width "CONF_OVERWRITE "
+.Bl -tag -width "CONF_OVERWRITE  "
+.It Ev SRCS
+List of source files to compile into the target executable.
+.It Ev SRCS_GENERATED
+List of source files (subset of ${SRCS}) which are auto-generated.
+Files in this list will be processed before anything else is compiled.
 .It Ev PROG
 Filename of target executable.
 Platform-specific transforms may be applied to the name.
 .It Ev PROG_TYPE
-Type of application.
-Set to
-.Sq CLI
-for a command-line utility,
-.Sq GUI
-for a graphical interface and
-.Sq DAEMON
-for a server program.
-Defaults to
-.Sq CLI .
-The interpretation of this setting is platform-specific.
-On the Windows platform, this instructs the compiler to select the
-appropriate PE header subsystem.
-.It Ev BINDIR
-Target installation directory for executables
-(usually set by configure).
+Platform-specific program type.
+Set to "CLI" (command-line utility), "GUI" (graphical user interface) or
+"DAEMON" (server program).
+Defaults to "CLI".
 .It Ev PROG_INSTALL
-If set to
-.Sq Yes ,
-the
+Program can be installed.
+Defaults to "Yes". Setting this to "No" makes the
 .Ar install
-target will install the program, otherwise it will be a no-op.
-Defaults to
-.Sq Yes .
+target a no-op.
+.It Ev PROG_PREFIX
+Prepend this string to installed executable name.
+.It Ev PROG_SUFFIX
+Append this string to installed executable name.
+.It Ev PROG_TRANSFORM
+Apply this
+.Xr sed 1
+expression to installed executable name.
 .It Ev PROG_GUID
-A Global Unique Identifier (GUID) for the program.
-Exact interpretation is platform-specific.
-.It Ev GMONOUT
-Output filename for profiled version of the program.
+An optional Global Unique Identifier (GUID).
+.It Ev ADA
+Compiler for Ada sources.
+Defaults to "ada" or "gcc".
+.It Ev ADABIND
+Ada binder.
+Defaults to "gnatbind".
 .It Ev CC
 Compiler for C, C++ and Objective C sources.
-Defaults to
-.Sq cc .
+Defaults to "cc", "clang" or "gcc".
+.It Ev PROG_PROFILE
+Set "Yes" to compile with profiling instrumentation.
+.It Ev PROG_LINKER_TYPE
+Set to "C" for C-style linker or "ADA" to use the Ada linker.
+By default, select based on the exclusive presence of *.adb and *.ads
+files in ${SRCS}.
+.It Ev ADAFLAGS
+Compiler flags for Ada sources.
+.It Ev ADABFLAGS
+Flags to pass to the Ada binder.
 .It Ev CFLAGS
 Compiler flags for C sources.
-Defaults to
-.Sq -O2 -g .
+Defaults to "-O2 -g".
 .It Ev CXXFLAGS
 Compiler flags for C++ sources.
-Defaults to
-.Sq .
+Defaults to "".
 .It Ev OBJCFLAGS
 Compiler flags for Objective C sources.
-Defaults to
-.Sq ${CFLAGS} .
+Defaults to "${CFLAGS}".
 .It Ev CPPFLAGS
-Compiler preprocessor flags, for sources in all languages featuring
-a C preprocessor.
+C preprocessor flags.
+Defaults to "".
 .It Ev ASM
 Compiler for assembler sources.
-Defaults to
-.Sq nasm .
+Defaults to "nasm".
 .It Ev ASMFLAGS
 Compiler flags for assembler.
-Defaults to
-.Sq -g -w-orphan-labels .
+Defaults to "-g -w-orphan-labels".
 .It Ev LEX
 Path to the
 .Xr lex 1
@@ -149,45 +146,38 @@ Path to the
 parser generator.
 .It Ev LFLAGS
 Options for
-.Xr lex 1 ,
-defaults to
-.Sq .
+.Xr lex 1 .
+Defaults to "".
 .It Ev YFLAGS
 Options for
-.Xr yacc 1 ,
-defaults to
-.Sq -d .
+.Xr yacc 1 .
+Defaults to "-d".
 .It Ev LIBL
 Libraries to use for Lex lexers.
-Defaults to
-.Sq -ll .
+Defaults to "-ll".
 .It Ev WINDRES
-(Specific to the win32 platform)
-Path to the
+(win32) Path to the
 .Xr windres 1
-utility, which generates windows resource files.
+utility.
 .It Ev WINRES
-(Specific to the win32 platform)
-Resource file to use with
+(win32) Windows resource files for
 .Xr windres 1 .
 .It Ev DATAFILES
 List of data files to install into
 .Dv ${DATADIR} .
-The files must have been generated from the build process (i.e., if using a
-separate build with --srcdir, the specified files must exist in the build
-directory).
+The files must exist in the build directory (which may be separate from the
+source directory if configure --srcdir was used).
 .It Ev DATAFILES_SRC
 Files to install into
 .Dv ${DATADIR} .
 This variable is handled similarly to
 .Ev DATAFILES ,
 except that the specified files must exist in the source directory.
+.It Ev BINDIR
+Target installation directory for executables.
 .It Ev CONFDIR
 System-wide configuration files will be installed into this directory.
-It is usually set relative to
-.Sq ${SYSCONFDIR} ,
-for example
-.Sq ${SYSCONFDIR}/MyApplication .
+Typically set to "${SYSCONFDIR}" or "${SYSCONFDIR}/MyApplication".
 .It Ev CONF
 List of configuration files to install into
 .Dv ${CONFDIR}.

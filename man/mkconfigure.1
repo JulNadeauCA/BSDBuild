@@ -70,7 +70,7 @@ and
 .Fa desc
 is a one-line description.
 .It Ev REGISTER_ENV_VAR(name,desc)
-Describe an influencial environment variable to show in ./configure --help.
+Describe an influential environment variable to show in ./configure --help.
 .Fa name
 is the name of the environment variable and
 .Fa desc
@@ -152,6 +152,18 @@ Specify an extra directory in which to search for BSDBuild test modules
 (.pm files).
 The default module path is
 .Pa ${PREFIX}/share/bsdbuild/BSDBuild/ .
+.El
+.Sh ADA LANGUAGE DIRECTIVES
+The following directives deal with Ada code compilation.
+.Bl -tag -width "ADA_OPTION(option) "
+.It Ev ADA_OPTION(option)
+Append an option to the
+.Dv ADAFLAGS
+which will be passed to the Ada compiler.
+.It Ev ADA_BFLAG(option)
+Append an option to the
+.Dv ADABFLAGS
+which will be passed to the Ada binder.
 .El
 .Sh C/C++ LANGUAGE DIRECTIVES
 The following directives apply to C, C++ and other C-like languages.

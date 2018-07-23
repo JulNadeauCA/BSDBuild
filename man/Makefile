@@ -8,7 +8,6 @@ MAN1=	mkify.1 \
 	uman.1
 
 MAN5=	build.common.mk.5 \
-	build.dep.mk.5 \
 	build.lib.mk.5 \
 	build.man.mk.5 \
 	build.prog.mk.5 \

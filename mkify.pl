@@ -37,6 +37,7 @@
 	gen-includelinks.pl
 	gen-dotdepend.pl
 	gen-wwwdepend.pl
+	typesubst.sh
 	install-manpages.sh);
 		  
 @LibtoolFiles = qw(
@@ -97,7 +98,6 @@ sub CopyDepsWWW
 		}
 	}
 	InstallASIS('ml.xsl', 'xsl/ml.xsl') || return (0);
-	InstallASIS('hstrip.pl') || return (0);
 }
 
 #

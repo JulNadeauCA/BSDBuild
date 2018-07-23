@@ -15,10 +15,10 @@ SCRIPTS=mkconfigure \
 	man2wiki \
 	uman
 
-DATAFILES=hstrip.pl mkdep mkconcurrent.pl manlinks.pl cmpfiles.pl cleanfiles.pl \
+DATAFILES=mkdep mkconcurrent.pl manlinks.pl cmpfiles.pl cleanfiles.pl \
 	gen-includes.pl gen-declspecs.pl get-version.pl get-release.pl \
-	install-manpages.sh gen-dotdepend.pl gen-wwwdepend.pl \
-	config.guess gen-includelinks.pl gen-bundle.pl \
+	gen-dotdepend.pl gen-wwwdepend.pl gen-includelinks.pl gen-bundle.pl \
+	config.guess install-manpages.sh typesubst.sh \
 	build.common.mk build.dep.mk build.lib.mk build.man.mk \
 	build.perl.mk build.prog.mk build.subdir.mk build.www.mk \
 	build.po.mk build.doc.mk build.proj.mk

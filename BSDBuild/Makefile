@@ -2,6 +2,7 @@ TOP=..
 
 DATAFILES=Core.pm \
 	Builtins.pm \
+	ada.pm \
 	cc.pm \
 	cc_attributes.pm \
 	objc.pm \
@@ -47,7 +48,10 @@ DATAFILES=Core.pm \
 	sys_queue.pm \
 	free_null.pm \
 	agar.pm \
+	agar.types.pm \
 	agar-core.pm \
+	agar-core.types.pm \
+	agar-core-ada.pm \
 	agar-vg.pm \
 	agar-dev.pm \
 	agar-au.pm \

@@ -807,7 +807,11 @@ if [ "\${cache}" != '' ]; then
 fi
 EOF
 	}
-	print 'rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX',"\n";
+	print << 'EOF';
+if [ "${keep_conftest}" != "yes" ]; then
+	rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
+fi
+EOF
 }
 
 sub BeginTestHeaders
@@ -986,7 +990,11 @@ EOF
 		MkDefine('MK_RUN_STATUS', 'FAIL \$?');
 		MkSaveCompileFailed($define);
 	MkEndif;
-	print 'rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX',"\n";
+	print << 'EOF';
+if [ "${keep_conftest}" != "yes" ]; then
+	rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
+fi
+EOF
 }
 
 #
@@ -1025,7 +1033,91 @@ EOF
 		MkPrintS('no, compile failed');
 		MkSaveCompileFailed($define);
 	MkEndif;
-	print 'rm -f conftest$$.cpp $testdir/conftest$$$EXECSUFFIX',"\n";
+	print << 'EOF';
+if [ "${keep_conftest}" != "yes" ]; then
+	rm -f conftest$$.cpp $testdir/conftest$$$EXECSUFFIX
+fi
+EOF
+}
+
+sub TryCompileFlagsAda
+{
+	my ($define, $flags, $code) = @_;
+
+	if ($Cache) {
+		print << "EOF";
+MK_CACHED='No'
+MK_COMPILE_STATUS='OK'
+if [ "\${cache}" != '' ]; then
+	if [ -e "\${cache}/adatest-$define" ]; then
+		$define=`cat \${cache}/adatest-$define`
+		MK_COMPILE_STATUS=`cat \${cache}/adatest-status-$define`
+		MK_CACHED='Yes'
+	fi
+fi
+if [ "\${MK_CACHED}" = 'No' ]; then
+	cat << EOT > conftest.adb
+$code
+EOT
+	echo "\$ADA \$ADAFLAGS \$TEST_ADAFLAGS $flags -c conftest.adb" >>config.log
+	\$ADA \$ADAFLAGS \$TEST_ADAFLAGS $flags -c conftest.adb 2>>config.log
+	if [ \$? != 0 ]; then
+		echo ": failed, code \$?" >> config.log
+		MK_COMPILE_STATUS="FAIL \$?"
+	else
+		echo "\$ADABIND \$ADABFLAGS conftest"
+		\$ADABIND \$ADABFLAGS conftest 2>>config.log
+		if [ \$? != 0 ]; then
+			echo ": failed, code \$?" >> config.log
+			MK_COMPILE_STATUS="FAIL \$?"
+		fi
+	fi
+fi
+EOF
+	} else {
+		print << "EOF";
+MK_COMPILE_STATUS='OK'
+cat << EOT > conftest.adb
+$code
+EOT
+echo "\$ADA \$ADAFLAGS \$TEST_ADAFLAGS $flags -c conftest.adb" >>config.log
+\$ADA \$ADAFLAGS \$TEST_ADAFLAGS $flags -c conftest.adb 2>>config.log
+if [ \$? != 0 ]; then
+	echo ": failed, code \$?" >> config.log
+	MK_COMPILE_STATUS="FAIL \$?"
+else
+	echo "\$ADABIND \$ADABFLAGS conftest"
+	\$ADABIND \$ADABFLAGS conftest 2>>config.log
+	if [ \$? != 0 ]; then
+		echo ": failed, code \$?" >> config.log
+		MK_COMPILE_STATUS="FAIL \$?"
+	fi
+fi
+EOF
+	}
+
+	MkIf('"${MK_COMPILE_STATUS}" = \'OK\'');
+		MkPrintS('yes');
+		MkSaveCompileSuccess($define);
+	MkElse;
+		MkPrintS('no');
+		MkSaveCompileFailed($define);
+	MkEndif;
+	
+	if ($Cache) {
+		print << "EOF";
+if [ "\${cache}" != '' ]; then
+	echo "\$$define" > \${cache}/adatest-$define
+	echo \$MK_COMPILE_STATUS > \${cache}/adatest-status-$define
+fi
+EOF
+	}
+	print << 'EOF';
+if [ "${keep_conftest}" != "yes" ]; then
+	rm -f conftest.adb conftest.ali conftest.o conftest$EXECSUFFIX
+	rm -f "b~conftest.adb" "b~conftest.ads"
+fi
+EOF
 }
 
 sub TryCompileFlagsC
@@ -1086,7 +1178,11 @@ if [ "\${cache}" != '' ]; then
 fi
 EOF
 	}
-	print 'rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX',"\n";
+	print << 'EOF';
+if [ "${keep_conftest}" != "yes" ]; then
+	rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
+fi
+EOF
 }
 
 sub TryCompileFlagsCXX
@@ -1147,14 +1243,114 @@ if [ "\${cache}" != '' ]; then
 fi
 EOF
 	}
-	print 'rm -f conftest$$.cpp $testdir/conftest$$$EXECSUFFIX',"\n";
+	print << 'EOF';
+if [ "${keep_conftest}" != "yes" ]; then
+	rm -f conftest$$.cpp $testdir/conftest$$$EXECSUFFIX
+fi
+EOF
+}
+
+#
+# Compile a test Ada program. If compilation fails, the test fails. The
+# test program is never executed. Returns yes or no in $define.
+#
+sub MkCompileAda
+{
+	my ($define, $cflags, $libs, $code) = @_;
+
+	if ($Cache) {
+		print << "EOF";
+MK_CACHED='No'
+MK_COMPILE_STATUS='OK'
+if [ "\${cache}" != '' ]; then
+	if [ -e "\${cache}/adatest-$define" ]; then
+		$define=`cat \${cache}/adatest-$define`
+		MK_COMPILE_STATUS=`cat \${cache}/adatest-status-$define`
+		MK_CACHED='Yes'
+	fi
+fi
+if [ "\${MK_CACHED}" = 'No' ]; then
+	cat << EOT > conftest.adb
+$code
+EOT
+	echo "\$ADA \$ADAFLAGS \$TEST_ADAFLAGS $cflags -c conftest.adb" >>config.log
+	\$ADA \$ADAFLAGS \$TEST_ADAFLAGS $cflags -c conftest.adb 2>>config.log
+	if [ \$? != 0 ]; then
+		echo ": failed, code \$?" >>config.log
+		MK_COMPILE_STATUS="FAIL \$?"
+	else
+		echo "\$ADABIND \$ADABFLAGS $cflags conftest" >>config.log
+		\$ADABIND \$ADABFLAGS $cflags conftest 2>>config.log
+		if [ \$? != 0 ]; then
+			echo ": binder failed, code \$?" >> config.log
+			MK_COMPILE_STATUS="FAIL \$?"
+		else
+		    echo "\$ADALINK \$ADALFLAGS $cflags conftest $libs" >>config.log
+		    \$ADALINK \$ADALFLAGS $cflags conftest $libs 2>>config.log
+		    if [ \$? != 0 ]; then
+			    echo ": linker failed, code \$?" >> config.log
+			    MK_COMPILE_STATUS="FAIL \$?"
+		    fi
+		fi
+	fi
+fi
+EOF
+	} else {
+		print << "EOF";
+MK_COMPILE_STATUS='OK'
+cat << EOT > conftest.adb
+$code
+EOT
+echo "\$ADA \$ADAFLAGS \$TEST_ADAFLAGS $cflags -c conftest.adb" >>config.log
+\$ADA \$ADAFLAGS \$TEST_ADAFLAGS $cflags -c conftest.adb 2>>config.log
+if [ \$? != 0 ]; then
+	echo ": failed, code \$?" >> config.log
+	MK_COMPILE_STATUS="FAIL \$?"
+else
+	echo "\$ADABIND \$ADABFLAGS $cflags conftest" >>config.log
+	\$ADABIND \$ADABFLAGS $cflags conftest 2>>config.log
+	if [ \$? != 0 ]; then
+	    echo ": binder failed, code \$?" >> config.log
+		MK_COMPILE_STATUS="FAIL \$?"
+	else
+		echo "\$ADALINK \$ADALFLAGS $cflags conftest $libs" >>config.log
+		\$ADALINK \$ADALFLAGS $cflags conftest $libs 2>>config.log
+		if [ \$? != 0 ]; then
+			echo ": linker failed, code \$?" >> config.log
+			MK_COMPILE_STATUS="FAIL \$?"
+		fi
+	fi
+fi
+EOF
+	}
+
+	MkIf('"${MK_COMPILE_STATUS}" = \'OK\'');
+		MkPrintS('yes');
+		MkSaveCompileSuccess($define);
+	MkElse;
+		MkPrintS('no');
+		MkSaveCompileFailed($define);
+	MkEndif;
+
+	if ($Cache) {
+		print << "EOF";
+if [ "\${cache}" != '' ]; then
+	echo "\$$define" > \${cache}/adatest-$define
+	echo \$MK_COMPILE_STATUS > \${cache}/adatest-status-$define
+fi
+EOF
+	}
+	print << 'EOF';
+if [ "${keep_conftest}" != "yes" ]; then
+	rm -f conftest.adb conftest.ali conftest.o conftest$EXECSUFFIX
+	rm -f "b~conftest.adb" "b~conftest.ads"
+fi
+EOF
 }
 
 #
 # Compile a test C program. If compilation fails, the test fails. The
-# test program is never executed.
-#
-# Sets $define to "yes" or "no" and saves it to both MK and C defines.
+# test program is never executed. Returns yes or no in $define.
 #
 sub MkCompileC
 {
@@ -1214,14 +1410,16 @@ if [ "\${cache}" != '' ]; then
 fi
 EOF
 	}
-	print 'rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX',"\n";
+	print << 'EOF';
+if [ "${keep_conftest}" != "yes" ]; then
+	rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
+fi
+EOF
 }
 
 #
 # Compile a test Objective-C program. If compilation fails, the test fails.
-# The test program is never executed.
-#
-# Sets $define to "yes" or "no" and saves it to both MK and C defines.
+# The test program is never executed. Returns yes or no in $define.
 #
 sub MkCompileOBJC
 {
@@ -1281,14 +1479,16 @@ if [ "\${cache}" != '' ]; then
 fi
 EOF
 	}
-	print 'rm -f conftest$$.m $testdir/conftest$$$EXECSUFFIX',"\n";
+	print << 'EOF';
+if [ "${keep_conftest}" != "yes" ]; then
+	rm -f conftest$$.m $testdir/conftest$$$EXECSUFFIX
+fi
+EOF
 }
 
 #
 # Compile a test C++ program. If compilation fails, the test fails. The
-# test program is never executed.
-#
-# Sets $define to "yes" or "no" and saves it to both MK and C defines.
+# test program is never executed. Returns yes or no in $define.
 #
 sub MkCompileCXX
 {
@@ -1348,14 +1548,14 @@ if [ "\${cache}" != '' ]; then
 fi
 EOF
 	}
-	print 'rm -f conftest$$.cpp $testdir/conftest$$$EXECSUFFIX',"\n";
+	print << 'EOF';
+if [ "${keep_conftest}" != "yes" ]; then
+	rm -f conftest$$.cpp $testdir/conftest$$$EXECSUFFIX
+fi
+EOF
 }
 
-#
-# Run a test Perl script.
-#
-# Sets $define to "yes" or "no" and saves it to both MK and C defines.
-#
+# Run a test Perl script. Returns yes or no in $define.
 sub MkRunPerl
 {
 	my $define = shift;
@@ -1377,7 +1577,11 @@ EOF
 		MkPrintS('no (script failed)');
 		MkSaveCompileFailed($define);
 	MkEndif;
-	print 'rm -f $testdir/conftest$$.pl', "\n";
+	print << 'EOF';
+if [ "${keep_conftest}" != "yes" ]; then
+	rm -f $testdir/conftest$$.pl
+fi
+EOF
 }
 
 # Specify module availability under Windows platforms in Emul()
@@ -1453,7 +1657,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($Cache $OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR %URL %HELPENV MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSetTrue MkSetFalse MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveMK_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkPrint MkPrintN MkPrintS MkPrintSN MkIfFound MkIfVersionOK MkNotFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion MkEmulWindows MkEmulWindowsSYS MkEmulUnavail MkEmulUnavailSYS RegisterEnvVar);
+    @EXPORT = qw($Cache $OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR %URL %HELPENV MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileAda MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsAda TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSetTrue MkSetFalse MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveMK_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkPrint MkPrintN MkPrintS MkPrintSN MkIfFound MkIfVersionOK MkNotFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion MkEmulWindows MkEmulWindowsSYS MkEmulUnavail MkEmulUnavailSYS RegisterEnvVar);
 }
 
 ;1

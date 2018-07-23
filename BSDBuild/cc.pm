@@ -122,7 +122,9 @@ EOF
 			echo "yes" >> config.log
 		fi
 	fi
-	rm -f conftest.c conftest$EXECSUFFIX
+	if [ "${keep_conftest}" != "yes" ]; then
+		rm -f conftest.c conftest$EXECSUFFIX
+	fi
 	TEST_CFLAGS=''
 fi
 EOF
@@ -265,10 +267,10 @@ BEGIN
 	$EMUL{'cc'} = \&Emul;
 	$DESCR{'cc'} = 'a C compiler';
 
-	RegisterEnvVar('CC',		'C compiler command (cc)');
-	RegisterEnvVar('CFLAGS',	'C compiler flags (-Ox -g -Dfoo)');
-	RegisterEnvVar('LDFLAGS',	'C linker flags (-L/foo)');
-	RegisterEnvVar('LIBS',		'Libraries to link against (-lfoo)');
+	RegisterEnvVar('CC',		'C compiler command');
+	RegisterEnvVar('CFLAGS',	'C compiler flags');
+	RegisterEnvVar('LDFLAGS',	'C linker flags');
+	RegisterEnvVar('LIBS',		'Libraries to link against');
 	RegisterEnvVar('CPP',		'C preprocessor');
 	RegisterEnvVar('CPPFLAGS',	'C preprocessor flags');
 }

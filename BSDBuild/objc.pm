@@ -130,7 +130,9 @@ EOF
 			echo "yes" >> config.log
 		fi
 	fi
-	rm -f conftest.m conftest$EXECSUFFIX
+	if [ "${keep_conftest}" != "yes" ]; then
+		rm -f conftest.m conftest$EXECSUFFIX
+	fi
 	TEST_OBJCFLAGS=''
 fi
 EOF

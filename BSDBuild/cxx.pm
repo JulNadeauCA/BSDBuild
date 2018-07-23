@@ -126,7 +126,9 @@ print << 'EOF';
 			echo "yes" >> config.log
 		fi
 	fi
-	rm -f conftest.cc conftest$EXECSUFFIX
+	if [ "${keep_conftest}" != "yes" ]; then
+		rm -f conftest.cc conftest$EXECSUFFIX
+	fi
 	TEST_CXXFLAGS=''
 fi
 EOF
@@ -162,8 +164,8 @@ BEGIN
 	$DESCR{'cxx'} = 'a C++ compiler';
 	$DEPS{'cxx'} = 'cc';
 	
-	RegisterEnvVar('CXX',		'C++ compiler command (c++)');
-	RegisterEnvVar('CXXFLAGS',	'C compiler flags (-Ox -g -Dfoo)');
+	RegisterEnvVar('CXX',		'C++ compiler command');
+	RegisterEnvVar('CXXFLAGS',	'C++ compiler flags');
 	RegisterEnvVar('CXXCPP',	'C++ preprocessor');
 }
 

@@ -44,6 +44,7 @@ main(int argc, char *argv[])
 	AG_Object obj;
 
 	AG_InitCore("conf-test", 0);
+	AG_RegisterClass(&FooClass);
 	AG_ObjectInitStatic(&obj, &FooClass);
 	AG_ObjectDestroy(&obj);
 	AG_Quit();

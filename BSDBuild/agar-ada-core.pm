@@ -30,30 +30,28 @@ sub Test
 {
 	my ($ver, $pfx) = @_;
 	
-	MkExecOutputPfx($pfx, 'agar-core-ada-config', '--version', 'AGAR_CORE_ADA_VERSION');
-	MkIfFound($pfx, $ver, 'AGAR_CORE_ADA_VERSION');
+	MkExecOutputPfx($pfx, 'agar-ada-core-config', '--version', 'AGAR_ADA_CORE_VERSION');
+	MkIfFound($pfx, $ver, 'AGAR_ADA_CORE_VERSION');
 		MkPrintSN('checking whether Agar-Core Ada bindings work...');
-		MkExecOutputPfx($pfx, 'agar-core-ada-config', '--cflags', 'AGAR_CORE_ADA_CFLAGS');
-		MkExecOutputPfx($pfx, 'agar-core-ada-config', '--libs', 'AGAR_CORE_ADA_LIBS');
-		MkCompileAda('HAVE_AGAR_CORE_ADA',
-		           '${AGAR_CORE_ADA_CFLAGS}', '${AGAR_CORE_ADA_LIBS}', << "EOF");
-with Agar.Core;
-with Agar.Core.Init;
-with Agar.Core.Error;
+		MkExecOutputPfx($pfx, 'agar-ada-core-config', '--cflags', 'AGAR_ADA_CORE_CFLAGS');
+		MkExecOutputPfx($pfx, 'agar-ada-core-config', '--libs', 'AGAR_ADA_CORE_LIBS');
+		MkCompileAda('HAVE_AGAR_ADA_CORE',
+		           '${AGAR_ADA_CORE_CFLAGS}', '${AGAR_ADA_CORE_LIBS}', << "EOF");
+with Agar;
+with Agar.Init;
+with Agar.Error;
 
 procedure conftest is
-  package Init renames Agar.Core.Init;
-
-  Options: Init.Init_Flags_t := (False, False, False);
+  Options: Agar.Init.Init_Flags_t := (False, False, False);
 begin
-  if not Init.Init_Core ("conftest", Options) then
-    raise program_error with Agar.Core.Error.Get_Error;
+  if not Agar.Init.Init_Core ("conftest", Options) then
+    raise program_error with Agar.Error.Get_Error;
   end if;
 end conftest;
 EOF
-		MkSaveIfTrue('${HAVE_AGAR_CORE_ADA}', 'AGAR_CORE_ADA_CFLAGS', 'AGAR_CORE_ADA_LIBS');
+		MkSaveIfTrue('${HAVE_AGAR_ADA_CORE}', 'AGAR_ADA_CORE_CFLAGS', 'AGAR_ADA_CORE_LIBS');
 	MkElse;
-		MkSaveUndef('AGAR_CORE_ADA_CFLAGS', 'AGAR_CORE_ADA_LIBS');
+		MkSaveUndef('AGAR_ADA_CORE_CFLAGS', 'AGAR_ADA_CORE_LIBS');
 	MkEndif;
 	return (0);
 }
@@ -63,21 +61,21 @@ sub Emul
 	my ($os, $osrel, $machine) = @_;
 
 	if ($os =~ /^windows/) {
-		MkEmulWindows('AGAR_CORE_ADA', 'ag_core_ada');
+		MkEmulWindows('AGAR_ADA_CORE', 'ag_ada_core');
 	} else {
-		MkEmulUnavail('AGAR_CORE_ADA');
+		MkEmulUnavail('AGAR_ADA_CORE');
 	}
 	return (1);
 }
 
 BEGIN
 {
-	$DESCR{'agar-core-ada'} = 'Agar-Core Ada bindings';
-	$URL{'agar-core-ada'} = 'http://libagar.org';
+	$DESCR{'agar-ada-core'} = 'Ada bindings to Agar-Core';
+	$URL{'agar-ada-core'} = 'http://libagar.org';
 
-	$TESTS{'agar-core-ada'} = \&Test;
-	$DEPS{'agar-core-ada'} = 'cc';
-	$EMUL{'agar-core-ada'} = \&Emul;
+	$TESTS{'agar-ada-core'} = \&Test;
+	$DEPS{'agar-ada-core'} = 'cc';
+	$EMUL{'agar-ada-core'} = \&Emul;
 }
 
 ;1

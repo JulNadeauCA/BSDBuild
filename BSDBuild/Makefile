@@ -49,9 +49,9 @@ DATAFILES=Core.pm \
 	free_null.pm \
 	agar.pm \
 	agar.types.pm \
+	agar-ada-core.pm \
 	agar-core.pm \
 	agar-core.types.pm \
-	agar-core-ada.pm \
 	agar-vg.pm \
 	agar-dev.pm \
 	agar-au.pm \

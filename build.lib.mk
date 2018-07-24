@@ -44,6 +44,7 @@ ASM?=		nasm
 CC?=		cc
 CXX?=		c++
 LEX?=		lex
+LN?=		ln
 OBJC?=		cc
 RANLIB?=	ranlib
 SH?=		sh

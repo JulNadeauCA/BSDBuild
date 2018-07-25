@@ -42,9 +42,8 @@ with Agar.Init;
 with Agar.Error;
 
 procedure conftest is
-  Options: Agar.Init.Init_Flags_t := (False, False, False);
 begin
-  if not Agar.Init.Init_Core ("conftest", Options) then
+  if not Agar.Init.Init_Core then
     raise program_error with Agar.Error.Get_Error;
   end if;
 end conftest;

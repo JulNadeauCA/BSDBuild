@@ -1258,6 +1258,16 @@ sub MkCompileAda
 {
 	my ($define, $cflags, $libs, $code) = @_;
 
+	print << "EOF";
+ada_cflags=""
+for F in $cflags; do
+    case "\$F" in
+    -I*)
+        ada_cflags="\$ada_cflags \$F";
+        ;;
+    esac;
+done
+EOF
 	if ($Cache) {
 		print << "EOF";
 MK_CACHED='No'
@@ -1273,20 +1283,20 @@ if [ "\${MK_CACHED}" = 'No' ]; then
 	cat << EOT > conftest.adb
 $code
 EOT
-	echo "\$ADA \$ADAFLAGS \$TEST_ADAFLAGS $cflags -c conftest.adb" >>config.log
-	\$ADA \$ADAFLAGS \$TEST_ADAFLAGS $cflags -c conftest.adb 2>>config.log
+	echo "\$ADA \$ADAFLAGS \$TEST_ADAFLAGS \$ada_cflags -c conftest.adb" >>config.log
+	\$ADA \$ADAFLAGS \$TEST_ADAFLAGS \$ada_cflags -c conftest.adb 2>>config.log
 	if [ \$? != 0 ]; then
 		echo ": failed, code \$?" >>config.log
 		MK_COMPILE_STATUS="FAIL \$?"
 	else
-		echo "\$ADABIND \$ADABFLAGS $cflags conftest" >>config.log
-		\$ADABIND \$ADABFLAGS $cflags conftest 2>>config.log
+		echo "\$ADABIND \$ADABFLAGS \$ada_cflags conftest" >>config.log
+		\$ADABIND \$ADABFLAGS \$ada_cflags conftest 2>>config.log
 		if [ \$? != 0 ]; then
 			echo ": binder failed, code \$?" >> config.log
 			MK_COMPILE_STATUS="FAIL \$?"
 		else
-		    echo "\$ADALINK \$ADALFLAGS $cflags conftest $libs" >>config.log
-		    \$ADALINK \$ADALFLAGS $cflags conftest $libs 2>>config.log
+		    echo "\$ADALINK \$ADALFLAGS \$ada_cflags conftest $libs" >>config.log
+		    \$ADALINK \$ADALFLAGS \$ada_cflags conftest $libs 2>>config.log
 		    if [ \$? != 0 ]; then
 			    echo ": linker failed, code \$?" >> config.log
 			    MK_COMPILE_STATUS="FAIL \$?"
@@ -1301,20 +1311,20 @@ MK_COMPILE_STATUS='OK'
 cat << EOT > conftest.adb
 $code
 EOT
-echo "\$ADA \$ADAFLAGS \$TEST_ADAFLAGS $cflags -c conftest.adb" >>config.log
-\$ADA \$ADAFLAGS \$TEST_ADAFLAGS $cflags -c conftest.adb 2>>config.log
+echo "\$ADA \$ADAFLAGS \$TEST_ADAFLAGS \$ada_cflags -c conftest.adb" >>config.log
+\$ADA \$ADAFLAGS \$TEST_ADAFLAGS \$ada_cflags -c conftest.adb 2>>config.log
 if [ \$? != 0 ]; then
 	echo ": failed, code \$?" >> config.log
 	MK_COMPILE_STATUS="FAIL \$?"
 else
-	echo "\$ADABIND \$ADABFLAGS $cflags conftest" >>config.log
-	\$ADABIND \$ADABFLAGS $cflags conftest 2>>config.log
+	echo "\$ADABIND \$ADABFLAGS \$ada_cflags conftest" >>config.log
+	\$ADABIND \$ADABFLAGS \$ada_cflags conftest 2>>config.log
 	if [ \$? != 0 ]; then
 	    echo ": binder failed, code \$?" >> config.log
 		MK_COMPILE_STATUS="FAIL \$?"
 	else
-		echo "\$ADALINK \$ADALFLAGS $cflags conftest $libs" >>config.log
-		\$ADALINK \$ADALFLAGS $cflags conftest $libs 2>>config.log
+		echo "\$ADALINK \$ADALFLAGS \$ada_cflags conftest $libs" >>config.log
+		\$ADALINK \$ADALFLAGS \$ada_cflags conftest $libs 2>>config.log
 		if [ \$? != 0 ]; then
 			echo ": linker failed, code \$?" >> config.log
 			MK_COMPILE_STATUS="FAIL \$?"

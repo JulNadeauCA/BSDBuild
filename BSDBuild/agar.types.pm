@@ -34,8 +34,6 @@ static const struct {
 	unsigned    value;
 } constants[] = {
 	{ "AG_CONSOLE_LINE_MAX",	AG_CONSOLE_LINE_MAX },		/* console.h */
-	{ "AG_CURSOR_MAX_W",		AG_CURSOR_MAX_W },			/* cursors.h */
-	{ "AG_CURSOR_MAX_H",		AG_CURSOR_MAX_H },			/* cursors.h */
 	{ "AG_GRAPH_LABEL_MAX",		AG_GRAPH_LABEL_MAX },		/* graph.h */
 	{ "AG_LABEL_MAX",			AG_LABEL_MAX },				/* label.h */
 	{ "AG_LABEL_MAX_POLLPTRS",	AG_LABEL_MAX_POLLPTRS },	/* label.h */
@@ -108,13 +106,11 @@ PrintClass(FILE *f, AG_ObjectClass *C)
 {
 	AG_ObjectClass *Csub;
 
-	fprintf(f, "%17s[%36s]: %lu: %u.%u",
-	    C->name, C->hier, (unsigned long)C->size,
-		C->ver.major, C->ver.minor);
-	if (C->pvt.libs[0] != '\0') {
-		fprintf(f, ": %s", C->pvt.libs);
-	}
-	fprintf(f, "\n");
+	fprintf(f, "# %s [%s]: %u.%u%s%s\n", C->name, C->hier,
+	    C->ver.major, C->ver.minor,
+		(C->pvt.libs[0] != '\0') ? " @" : "", C->pvt.libs);
+	fprintf(f, "%s:%lu\n", C->name, (unsigned long)C->size);
+
 	AG_TAILQ_FOREACH(Csub, &C->pvt.sub, pvt.subclasses)
 		PrintClass(f, Csub);
 }

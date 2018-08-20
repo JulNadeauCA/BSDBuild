@@ -42,10 +42,16 @@ sub Test
 {
 	my ($ver, $pfx) = @_;
 
-	MkExecOutputPfx($pfx, 'freetype-config', '--version', 'FREETYPE_VERSION');
-	MkExecOutputPfx($pfx, 'freetype-config', '--cflags', 'FREETYPE_CFLAGS');
-	MkExecOutputPfx($pfx, 'freetype-config', '--libs', 'FREETYPE_LIBS');
-	
+	MkIfPkgConfig('freetype2');
+		MkExecPkgConfig($pfx, 'freetype2', '--modversion', 'FREETYPE_VERSION');
+		MkExecPkgConfig($pfx, 'freetype2', '--cflags', 'FREETYPE_CFLAGS');
+		MkExecPkgConfig($pfx, 'freetype2', '--libs', 'FREETYPE_LIBS');
+	MkElse;
+	    MkExecOutputPfx($pfx, 'freetype-config', '--version', 'FREETYPE_VERSION');
+	    MkExecOutputPfx($pfx, 'freetype-config', '--cflags', 'FREETYPE_CFLAGS');
+	    MkExecOutputPfx($pfx, 'freetype-config', '--libs', 'FREETYPE_LIBS');
+    MkEndif;
+
 	MkCaseIn('${host}');
 	MkCaseBegin('*-*-irix*');
 		MkIfExists('/usr/freeware/include');

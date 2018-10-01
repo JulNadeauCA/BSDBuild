@@ -810,7 +810,6 @@ includes:
 
 check-libtool:
 	@if [ "${USE_LIBTOOL}" = "Yes" -a "${LIBTOOL_BUNDLED}" = "yes" ]; then \
-	    echo "libtool check: ${LIBTOOL_COOKIE}"; \
 	    if [ ! -e "${LIBTOOL_COOKIE}" ]; then \
 	        echo "(cd ${LTBASE} && \
 	            ${SH} ./configure --build=${BUILD} --host=${HOST})"; \

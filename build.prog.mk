@@ -213,7 +213,6 @@ depend:	prog-tags depend-subdir
 	            env CC=${CC} ${MKDEP} -a -l $$_mkdep_cflags $$_srcs_c; \
 	        fi; \
 	    fi; \
-	    echo "srcs_ada=$$_srcs_ada"; \
 	    if [ "$$_srcs_ada" != "" ]; then \
 	        echo "${MKDEP_ADA} ${MKDEP_ADAFLAGS} ${CFLAGS} $$_srcs_ada >>.depend"; \
 	        env ADA=${ADA} ${MKDEP_ADA} ${MKDEP_ADAFLAGS} ${CFLAGS} $$_srcs_ada 1>.ada_depend 2>.ada_errors; \

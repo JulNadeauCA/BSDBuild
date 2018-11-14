@@ -201,17 +201,21 @@ EOF
 
 sub BuiltinLibtool
 {
-	# Default to bundled libtool
 	print << 'EOF';
-if [ "${prefix_libtool}" != '' -a "${prefix_libtool}" != 'bundled' ]; then
-	LIBTOOL_BUNDLED='no'
-	LIBTOOL="${prefix_libtool}"
+if [ "${with_libtool}" = "yes" ]; then
+	if [ "${prefix_libtool}" != '' -a "${prefix_libtool}" != 'bundled' ]; then
+		LIBTOOL_BUNDLED='no'
+		LIBTOOL="${prefix_libtool}"
+	else
+		LIBTOOL_BUNDLED='yes'
+		LIBTOOL=\${TOP}/mk/libtool/libtool
+	fi
+	echo "USE_LIBTOOL=Yes" >> Makefile.config
+	echo "LIBTOOL_BUNDLED=${LIBTOOL_BUNDLED}" >> Makefile.config
+	echo "LIBTOOL=${LIBTOOL}" >> Makefile.config
 else
-	LIBTOOL_BUNDLED='yes'
-	LIBTOOL=\${TOP}/mk/libtool/libtool
+	echo "USE_LIBTOOL=No" >> Makefile.config
 fi
-echo "LIBTOOL_BUNDLED=${LIBTOOL_BUNDLED}" >> Makefile.config
-echo "LIBTOOL=${LIBTOOL}" >> Makefile.config
 EOF
 }
 

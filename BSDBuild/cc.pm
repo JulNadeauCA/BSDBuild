@@ -1,29 +1,7 @@
+# Public domain
 # vim:ts=4
-#
-# Copyright (c) 2002-2018 Julien Nadeau Carriere <vedge@hypertriton.com>
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
-# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-# USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Test
+sub Test_CC
 {
 	print << 'EOF';
 if [ "$CROSS_COMPILING" = "yes" ]; then
@@ -31,38 +9,73 @@ if [ "$CROSS_COMPILING" = "yes" ]; then
 else
 	CROSSPFX=''
 fi
+HAVE_CC65="no"
 if [ "$CC" = '' ]; then
-	bb_save_IFS=$IFS
-	IFS=$PATH_SEPARATOR
-	for i in $PATH; do
-		if [ -x "${i}/${CROSSPFX}cc" ]; then
-			CC="${i}/${CROSSPFX}cc"
-			break
-		elif [ -x "${i}/${CROSSPFX}clang" ]; then
-			CC="${i}/${CROSSPFX}clang"
-			break
-		elif [ -x "${i}/${CROSSPFX}gcc" ]; then
-			CC="${i}/${CROSSPFX}gcc"
-			break
-		elif [ -e "${i}/${CROSSPFX}cc.exe" ]; then
-			CC="${i}/${CROSSPFX}cc.exe"
-			break
-		elif [ -e "${i}/${CROSSPFX}clang.exe" ]; then
-			CC="${i}/${CROSSPFX}clang.exe"
-			break
-		elif [ -e "${i}/${CROSSPFX}gcc.exe" ]; then
-			CC="${i}/${CROSSPFX}gcc.exe"
-			break
-		fi
-	done
-	IFS=$bb_save_IFS
+	case "${host}" in
+	apple2 | apple2enh | atari | atmos | c16 | c64 | c128 | cbm510 | cbm610 | geos | lunix | lynx | nes | pet | plus4 | supervision | vic20)
+		bb_save_IFS=$IFS
+		IFS=$PATH_SEPARATOR
+		for i in $PATH; do
+			if [ -x "${i}/cc65" ]; then
+				if ${i}/cc65 -V | grep ^cc65; then
+					CC="${i}/cc65"
+					HAVE_CC65="yes"
+					CROSS_COMPILING="yes"
+					break
+				fi
+			elif [ -x "${i}/cc65.exe" ]; then
+				if ${i}/cc65.exe -V | grep ^cc65; then
+					CC="${i}/cc65"
+					HAVE_CC65="yes"
+					CROSS_COMPILING="yes"
+					break
+				fi
+			fi
+		done
+		IFS=$bb_save_IFS
+		;;
+	*)
+		bb_save_IFS=$IFS
+		IFS=$PATH_SEPARATOR
+		for i in $PATH; do
+			if [ -x "${i}/${CROSSPFX}cc" ]; then
+				CC="${i}/${CROSSPFX}cc"
+				break
+			elif [ -x "${i}/${CROSSPFX}clang" ]; then
+				CC="${i}/${CROSSPFX}clang"
+				break
+			elif [ -x "${i}/${CROSSPFX}gcc" ]; then
+				CC="${i}/${CROSSPFX}gcc"
+				break
+			elif [ -e "${i}/${CROSSPFX}cc.exe" ]; then
+				CC="${i}/${CROSSPFX}cc.exe"
+				break
+			elif [ -e "${i}/${CROSSPFX}clang.exe" ]; then
+				CC="${i}/${CROSSPFX}clang.exe"
+				break
+			elif [ -e "${i}/${CROSSPFX}gcc.exe" ]; then
+				CC="${i}/${CROSSPFX}gcc.exe"
+				break
+			fi
+		done
+		IFS=$bb_save_IFS
+		;;
+	esac
 
 	if [ "$CC" = '' ]; then
-		echo "*"
-		echo "* Cannot find ${CROSSPFX}cc or ${CROSSPFX}gcc in default PATH."
-		echo "* You may need to set the CC environment variable."
-		echo "*"
-		echo "Cannot find ${CROSSPFX}cc or ${CROSSPFX}gcc in PATH." >> config.log
+		if [ "$HAVE_CC65" = "yes" ]; then
+			echo "*"
+			echo "* Cannot find cc65 in PATH. You may need to set CC."
+			echo "* You can download cc65 from: https://www.cc65.org/."
+			echo "*"
+			echo "Cannot find cc65 in PATH." >> config.log
+		else
+			echo "*"
+			echo "* Cannot find ${CROSSPFX}cc or ${CROSSPFX}gcc in PATH."
+			echo "* You may need to set the CC environment variable."
+			echo "*"
+			echo "Cannot find ${CROSSPFX}cc or ${CROSSPFX}gcc in PATH." >> config.log
+		fi
 		HAVE_CC="no"
 		echo "no"
 	else
@@ -72,7 +85,13 @@ if [ "$CC" = '' ]; then
 	fi
 else
 	HAVE_CC="yes"
-	echo "using ${CC}"
+	if ${CC} -V 2>&1 |grep -q ^cc65; then
+		echo "using cc65 (${CC})"
+		HAVE_CC65="yes"
+		CROSS_COMPILING="yes"
+	else
+		echo "using ${CC}"
+	fi
 fi
 
 if [ "${HAVE_CC}" = "yes" ]; then
@@ -138,6 +157,21 @@ EOF
 		MkIfTrue('${HAVE_CC_WARNINGS}');
 			MkDefine('TEST_CFLAGS', '-Wall -Werror');
 		MkEndif;
+		
+		# Check for float type.
+		MkPrintSN('cc: checking for float and double...');
+		TryCompile('HAVE_FLOAT', << 'EOF');
+#include <stdio.h>
+int
+main(int argc, char *argv[])
+{
+	float f = 0.1f;
+	double d = 0.2;
+
+	printf("%f", f);
+	return ((double)f + d) > 0.2 ? 1 : 0;
+}
+EOF
 	
 		# Check for long double type.
 		# XXX: should rename to HAVE_CC_LONG_DOUBLE
@@ -150,7 +184,7 @@ main(int argc, char *argv[])
 	long double ld = 0.1;
 
 	printf("%Lf", ld);
-	return (ld == 1.0);
+	return (ld + 0.1) > 0.2 ? 1 : 0;
 }
 EOF
 	
@@ -234,38 +268,56 @@ EOF
 			MkEndif;
 			MkCaseEnd;
 		MkEsac;
+		
+		MkSaveDefine('HAVE_CC', 'HAVE_CC65');
+		
+		MkIfTrue('${HAVE_CC65}');
+			MkDefine('CC_COMPILE', '');
+		MkElse;
+			MkDefine('CC_COMPILE', '-c');
+		MkEndif;
 
-		MkSaveMK('CC', 'CFLAGS', 'PROG_GUI_FLAGS', 'PROG_CLI_FLAGS',
-		         'LIBTOOLOPTS_SHARED');
+		MkSaveMK('HAVE_CC', 'HAVE_CC65', 'CC', 'CC_COMPILE', 'CFLAGS',
+                 'PROG_GUI_FLAGS', 'PROG_CLI_FLAGS', 'LIBTOOLOPTS_SHARED');
 
-	MkEndif; # HAVE_CC
+	MkElse;
+		Disable_CC();
+	MkEndif;
+}
+
+sub Disable_CC
+{
+	MkDefine('HAVE_CC', 'no');
+	MkDefine('HAVE_CC65', 'no');
+	MkDefine('HAVE_CC_WARNINGS', 'no');
+	MkDefine('CC', '');
+	MkDefine('CFLAGS', '');
+	MkDefine('PROG_GUI_FLAGS', '');
+	MkDefine('PROG_CLI_FLAGS', '');
+	MkDefine('LIBTOOLOPTS_SHARED', '');
+	
+	MkSaveUndef('HAVE_CC', 'HAVE_CC65', 'HAVE_CC_WARNINGS',
+	            'HAVE_FLOAT', 'HAVE_LONG_DOUBLE', 'HAVE_LONG_LONG',
+	            'HAVE_CYGWIN', 'HAVE_CC_MWINDOWS', 'HAVE_CC_MCONSOLE',
+	            'HAVE_LD_NO_UNDEFINED', 'HAVE_LD_STATIC_LIBGCC');
+
+	MkSaveMK('HAVE_CC', 'HAVE_CC65', 'HAVE_CC_WARNINGS', 'CC', 'CFLAGS',
+             'PROG_GUI_CFLAGS', 'PROG_CLI_CFLAGS', 'LIBTOOLOPTS_SHARED');
 }
 
 sub Emul
 {
-	my ($os, $osrel, $machine) = @_;
-
-	MkSaveUndef('HAVE_ALIGNED_ATTRIBUTE');
-	MkSaveUndef('HAVE_BOUNDED_ATTRIBUTE');
-	MkSaveUndef('HAVE_CONST_ATTRIBUTE');
-	MkSaveUndef('HAVE_DEPRECATED_ATTRIBUTE');
-	MkSaveUndef('HAVE_FORMAT_ATTRIBUTE');
-	MkSaveUndef('HAVE_NONNULL_ATTRIBUTE');
-	MkSaveUndef('HAVE_NORETURN_ATTRIBUTE');
-	MkSaveUndef('HAVE_PACKED_ATTRIBUTE');
-	MkSaveUndef('HAVE_PURE_ATTRIBUTE');
-	MkSaveUndef('HAVE_WARN_UNUSED_RESULT_ATTRIBUTE');
-	MkSaveUndef('HAVE_LONG_DOUBLE');
-	MkSaveUndef('HAVE_LONG_LONG');
-	MkSaveUndef('HAVE_CYGWIN');
+	Disable_CC();	
 	return (1);
 }
 
 BEGIN
 {
-	$TESTS{'cc'} = \&Test;
-	$EMUL{'cc'} = \&Emul;
 	$DESCR{'cc'} = 'a C compiler';
+
+	$TESTS{'cc'}   = \&Test_CC;
+	$DISABLE{'cc'} = \&Disable_CC;
+	$EMUL{'cc'}    = \&Emul;
 
 	RegisterEnvVar('CC',		'C compiler command');
 	RegisterEnvVar('CFLAGS',	'C compiler flags');

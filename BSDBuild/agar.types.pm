@@ -1,27 +1,4 @@
 # vim:ts=4
-#
-# Copyright (c) 2018 Julien Nadeau Carriere <vedge@hypertriton.com>
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
-# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-# USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 my $testCode = << 'EOF';
 #include <stdio.h>
@@ -56,6 +33,12 @@ static const struct {
 	const char *name;
 	size_t      size;
 } nonobject_types[] = {
+	{ "AG_Surface",				sizeof(AG_Surface) },			/* surface.h */
+	{ "AG_AnimFrame",			sizeof(AG_AnimFrame) },			/* surface.h */
+	{ "AG_Palette",				sizeof(AG_Palette) },			/* surface.h */
+	{ "AG_PixelFormat",			sizeof(AG_PixelFormat) },		/* surface.h */
+	{ "AG_Rect",				sizeof(AG_Rect) },				/* geometry.h */
+	{ "AG_Color",				sizeof(AG_Color) },				/* colors.h */
 	{ "AG_ConsoleLine",			sizeof(AG_ConsoleLine) },		/* console.h */
 	{ "AG_EditableBuffer",		sizeof(AG_EditableBuffer) },	/* editable.h */
 	{ "AG_EditableClipboard",	sizeof(AG_EditableClipboard) },
@@ -92,13 +75,15 @@ static const struct {
 	{ "AG_Unit",				sizeof(AG_Unit) },				/* units.h */
 	{ "AG_SizeReq",				sizeof(AG_SizeReq) },			/* widget.h */
 	{ "AG_SizeAlloc",			sizeof(AG_SizeAlloc) },
-	{ "AG_WidgetClass",			sizeof(AG_WidgetClass) },
 	{ "AG_FlagDescr",			sizeof(AG_FlagDescr) },
 	{ "AG_Action",				sizeof(AG_Action) },
 	{ "AG_ActionTie",			sizeof(AG_ActionTie) },
 	{ "AG_RedrawTie",			sizeof(AG_RedrawTie) },
 	{ "AG_CursorArea",			sizeof(AG_CursorArea) },
+	{ "AG_WidgetGL",			sizeof(AG_WidgetGL) },
 	{ "AG_WidgetPalette",		sizeof(AG_WidgetPalette) },
+	{ "AG_WidgetPvt",			sizeof(AG_WidgetPvt) },
+	{ "AG_WindowPvt",			sizeof(AG_WindowPvt) },
 };
 
 static void
@@ -160,7 +145,7 @@ main(int argc, char *argv[])
 }
 EOF
 
-sub Test
+sub Test_Agar_Types
 {
 	my ($ver, $pfx) = @_;
 	
@@ -171,17 +156,27 @@ sub Test
 		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
 		MkCompileAndRunC('HAVE_AGAR_TYPES', '${AGAR_CFLAGS}', '${AGAR_LIBS}',
 				         $testCode);
+	MkElse;
+		Disable_Agar_Types();
 	MkEndif;
 	return (0);
 }
 
-BEGIN
+sub Disable_Agar_Types
 {
-	$DESCR{'agar.types'} = 'Agar types';
-	$URL{'agar.types'} = 'http://libagar.org';
-
-	$TESTS{'agar.types'} = \&Test;
-	$DEPS{'agar.types'} = 'cc';
+	MkDefine('HAVE_AGAR_TYPES', 'no');
+	MkSaveUndef('HAVE_AGAR_TYPES');
 }
 
+BEGIN
+{
+	my $n = 'agar.types';
+
+	$DESCR{$n} = 'Agar types';
+	$URL{$n}   = 'http://libagar.org';
+	$DEPS{$n}  = 'cc';
+
+	$TESTS{$n}   = \&Test_Agar_Types;
+	$DISABLE{$n} = \&Disable_Agar_Types;
+}
 ;1

@@ -1,27 +1,5 @@
+# Public domain
 # vim:ts=4
-#
-# Copyright (c) 2012 Hypertriton, Inc. <http://www.hypertriton.com/>
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
-# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-# USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 sub CheckBoolOption
 {
@@ -100,31 +78,47 @@ main(int argc, char *argv[])
 	return (rv != 0);
 }
 EOF
+	MkElse;
+		Disable();
 	MkEndif;
+}
+
+sub Disable
+{
+	MkDefine('HAVE_SETSOCKOPT', 'no');
+	MkDefine('HAVE_SO_OOBINLINE', 'no');
+	MkDefine('HAVE_SO_REUSEPORT', 'no');
+	MkDefine('HAVE_SO_TIMESTAMP', 'no');
+	MkDefine('HAVE_SO_NOSIGPIPE', 'no');
+	MkDefine('HAVE_SO_LINGER', 'no');
+	MkDefine('HAVE_SO_ACCEPTFILTER', 'no');
+
+	MkSaveUndef('HAVE_SETSOCKOPT',
+                'HAVE_SO_OOBINLINE',
+	            'HAVE_SO_REUSEPORT',
+	            'HAVE_SO_TIMESTAMP',
+	            'HAVE_SO_NOSIGPIPE',
+	            'HAVE_SO_LINGER',
+	            'HAVE_SO_ACCEPTFILTER');
 }
 
 sub Emul
 {
-	my ($os, $osrel, $machine) = @_;
-	
 	MkEmulUnavailSYS('SETSOCKOPT');
-	MkSaveUndef(
-	    'HAVE_SO_OOBINLINE',
-	    'HAVE_SO_REUSEPORT',
-	    'HAVE_SO_TIMESTAMP',
-	    'HAVE_SO_NOSIGPIPE',
-	    'HAVE_SO_LINGER',
-	    'HAVE_SO_ACCEPTFILTER');
-
+	Disable();
 	return (1);
 }
 
 BEGIN
 {
-	$TESTS{'sockopts'} = \&Test;
-	$DEPS{'sockopts'} = 'cc';
-	$EMUL{'sockopts'} = \&Emul;
-	$DESCR{'sockopts'} = 'the setsockopt() interface';
-}
+	my $n = 'sockopts';
 
+	$DESCR{$n} = 'the setsockopt() interface';
+
+	$TESTS{$n}   = \&Test;
+	$DISABLE{$n} = \&Disable;
+	$EMUL{$n}    = \&Emul;
+	
+	$DEPS{$n} = 'cc';
+}
 ;1

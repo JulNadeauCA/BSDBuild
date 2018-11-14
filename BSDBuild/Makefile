@@ -44,6 +44,7 @@ DATAFILES=Core.pm \
 	sha1.pm \
 	rmd160.pm \
 	pthreads.pm \
+	sys_stat.pm \
 	sys_types.pm \
 	sys_queue.pm \
 	free_null.pm \

@@ -1,27 +1,5 @@
+# Public domain
 # vim:ts=4
-#
-# Copyright (c) 2002-2018 Julien Nadeau Carriere <vedge@hypertriton.com>
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
-# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-# USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 use BSDBuild::Core;
 
@@ -120,7 +98,7 @@ sub Test
 			MkSaveIfTrue('${HAVE_SDL}', 'SDL_CFLAGS', 'SDL_LIBS');
 		MkEndif;
 	MkElse;
-		MkSaveUndef('HAVE_SDL', 'SDL_CFLAGS', 'SDL_LIBS');
+		Disable();
 	MkEndif;
 
 	MkIfTrue('${HAVE_SDL}');
@@ -129,6 +107,12 @@ sub Test
 		MkDefine('SDL_PC', '');
 	MkEndif;
 	return (0);
+}
+
+sub Disable		
+{
+	MkDefine('SDL_PC', '');
+	MkSaveUndef('HAVE_SDL', 'SDL_CFLAGS', 'SDL_LIBS');
 }
 
 sub Emul
@@ -145,12 +129,15 @@ sub Emul
 
 BEGIN
 {
-	$DESCR{'sdl'} = 'SDL';
-	$URL{'sdl'} = 'http://www.libsdl.org';
+	my $n = 'sdl';
 
-	$EMUL{'sdl'} = \&Emul;
-	$TESTS{'sdl'} = \&Test;
-	$DEPS{'sdl'} = 'cc';
+	$DESCR{$n} = 'SDL';
+	$URL{$n}   = 'http://www.libsdl.org';
+
+	$TESTS{$n}   = \&Test;
+	$DISABLE{$n} = \&Disable;
+	$EMUL{$n}    = \&Emul;
+
+	$DEPS{$n}    = 'cc';
 }
-
 ;1

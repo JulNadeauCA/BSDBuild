@@ -36,9 +36,10 @@ my %Fns = (
 	'register_env_var'	=> \&register_env_var,
 	'register_section'	=> \&register_section,
 	'test'			=> \&test,
-	'check'			=> \&test,		# <2.8 compat
+	'check'			=> \&test,
 	'require'		=> \&test_require,
 	'test_dir'		=> \&test_dir,
+	'disable'		=> \&disable,
 	'mdefine'		=> \&mdefine,
 	'mappend'		=> \&mappend,
 	'hdefine'		=> \&hdefine,
@@ -403,7 +404,7 @@ sub test
 			MkPrintSN("ok\n");
 		}
 	} else {
-		MkFail("$t: not in %TESTS");
+		MkFail("$t: not in TESTS table");
 	}
 	$done{$t} = 1;
 }
@@ -442,6 +443,39 @@ sub test_require
 			MkPrintS('* ');
 			MkFail('configure failed!');
 		MkEndif;
+	}
+}
+
+# Call the "disable" function of one of the standard BSDBuild tests.
+# The disable function should emulate the results of a failed test
+# (without actually running any tests).
+sub disable
+{
+	my ($t) = @_;
+	my $mod = undef;
+	
+	if (!exists($TESTS{$t})) {
+		foreach my $dir (@TestDirs) {
+			my $path = $dir.'/'.$t.'.pm';
+			if (-e $path) {
+				$mod = $path;
+				last;
+			}
+		}
+		if (!defined($mod)) {
+			print STDERR "No such test module: $t\n";
+			exit (1);
+		}
+		do($mod);
+		if ($@) {
+			print STDERR $@;
+			exit (1);
+		}
+	}
+	my $c = $DISABLE{$t};
+	if ($c) {
+		MkPrintS("not enabling $DESCR{$t}");
+		&$c(1);
 	}
 }
 
@@ -885,7 +919,7 @@ sub Help
 		
 		'--enable-nls' =>	'Multi-language support',
 		'--with-gettext' =>	'Use gettext for multi-language',
-		'--with-libtool' =>	'Specify path to libtool',
+		'--with-libtool=s' =>	'Use GNU libtool [path or "bundled"]',
 		'--with-manpages' =>	'Generate Unix manual pages',
 		'--with-catman' =>	'Install cat files for manual pages',
 		'--with-manlinks' =>	'Add manual entries for every function',
@@ -1486,6 +1520,7 @@ if [ "\${with_bundles}" != "no" ]; then
 		;;
 	esac
 fi
+host_machine=`echo \${host} | cut -d- -f 1`
 EOF
 
 MkSaveMK('PROG_BUNDLE');
@@ -1666,12 +1701,8 @@ if ($SuccessFn) {
 } else {
 	print << "EOF";
 echo '*'
-echo '* Configuration successful. Compile with "make depend all" and use'
-\$ECHO_N '* "make install" to install under '
-\$ECHO_N \$PREFIX
-\$ECHO_N ' (or \$DESTDIR'
-\$ECHO_N \$PREFIX
-echo ').'
+echo '* Configuration successful. Use the "make" command to compile,'
+echo '* and complete the installation using "make install".'
 echo '*'
 EOF
 }

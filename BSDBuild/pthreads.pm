@@ -1,27 +1,5 @@
+# Public domain
 # vim:ts=4
-#
-# Copyright (c) 2005-2018 Julien Nadeau Carriere <vedge@hypertriton.com>
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
-# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-# USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 my @autoIncludeDirs = (
 	'/usr/include/pthreads',
@@ -256,6 +234,26 @@ sub TestPthreads
 	return (0);
 }
 
+sub Disable
+{
+	MkDefine('HAVE_PTHREADS', 'no');
+	MkDefine('HAVE_PTHREAD_MUTEX_RECURSIVE', 'no');
+	MkDefine('HAVE_PTHREAD_MUTEX_RECURSIVE_NP', 'no');
+	MkDefine('HAVE_PTHREADS_XOPEN', 'no');
+
+	MkDefine('PTHREADS_CFLAGS', '');
+	MkDefine('PTHREADS_LIBS', '');
+	MkDefine('PTHREADS_XOPEN_CFLAGS', '');
+	MkDefine('PTHREADS_XOPEN_LIBS', '');
+
+	MkSaveUndef('HAVE_PTHREADS',
+                'HAVE_PTHREAD_MUTEX_RECURSIVE',
+                'HAVE_PTHREAD_MUTEX_RECURSIVE_NP',
+	            'HAVE_PTHREADS_XOPEN',
+	            'PTHREADS_CFLAGS', 'PTHREADS_LIBS',
+	            'PTHREADS_XOPEN_CFLAGS', 'PTHREADS_XOPEN_LIBS');
+}
+
 sub Emul
 {
 	my ($os, $osrel, $machine) = @_;
@@ -270,22 +268,21 @@ sub Emul
 		                                  '-D_XOPEN_SOURCE=600');
 		MkSaveDefine('PTHREADS_XOPEN_CFLAGS');
 	} else {
-		MkEmulUnavail('PTHREADS');
-		MkEmulUnavail('PTHREADS_XOPEN');
-		MkEmulUnavailSYS('PTHREAD_MUTEX_RECURSIVE');
-		MkEmulUnavailSYS('PTHREAD_MUTEX_RECURSIVE_NP');
-		MkDefine('PTHREADS_XOPEN_CFLAGS', '');
-		MkSaveDefine('PTHREADS_XOPEN_CFLAGS');
+		Disable();
 	}
 	return (1);
 }
 
 BEGIN
 {
-	$DESCR{'pthreads'} = 'POSIX threads';
-	$TESTS{'pthreads'} = \&TestPthreads;
-	$EMUL{'pthreads'} = \&Emul;
-	$DEPS{'pthreads'} = 'cc';
-}
+	my $n = 'pthreads';
 
+	$DESCR{$n} = 'POSIX threads';
+
+	$TESTS{$n}   = \&TestPthreads;
+	$DISABLE{$n} = \&Disable;
+	$EMUL{$n}    = \&Emul;
+
+	$DEPS{$n} = 'cc';
+}
 ;1

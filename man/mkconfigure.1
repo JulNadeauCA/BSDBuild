@@ -147,6 +147,10 @@ which implicitely terminates the script with an error message if
 is not found or the
 .Fa ver
 is incompatible.
+.It Ev DISABLE(pkg)
+Short-circuit a test module.
+Emit the defines that would have resulted from a failed test, without
+actually running any tests.
 .It Ev TEST_DIR(path)
 Specify an extra directory in which to search for BSDBuild test modules
 (.pm files).

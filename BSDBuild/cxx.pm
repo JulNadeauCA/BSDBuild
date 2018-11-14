@@ -145,9 +145,19 @@ EOF
 
 		print 'rm -f conftest.cc $testdir/conftest$EXECSUFFIX', "\n";
 
-		MkSaveMK('CXX', 'CXXFLAGS');
+		MkSaveMK('HAVE_CXX', 'CXX', 'CXXFLAGS');
 
-	MkEndif; # HAVE_CXX
+	MkElse; # !HAVE_CXX
+
+		MkSaveUndef('HAVE_CXX', 'HAVE_CXX_WARNINGS');
+
+		MkDefine('CXX', '');
+		MkDefine('CXXFLAGS', '');
+		MkDefine('HAVE_CXX_WARNINGS', 'no');
+
+		MkSaveMK('HAVE_CXX', 'HAVE_CXX_WARNINGS', 'CXX', 'CXXFLAGS');
+
+	MkEndif;
 }
 
 sub Emul

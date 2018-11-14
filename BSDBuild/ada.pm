@@ -1,27 +1,5 @@
+# Public domain
 # vim:ts=4
-#
-# Copyright (c) 2018 Julien Nadeau Carriere <vedge@hypertriton.com>
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
-# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-# USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 my $adaHello = << 'EOF';
 with Ada.Text_IO; use Ada.Text_IO;
@@ -31,7 +9,7 @@ begin
 end conftest;
 EOF
 
-sub Test
+sub Test_Ada
 {
 	print << 'EOF';
 TEST_ADAFLAGS=''
@@ -266,14 +244,14 @@ EOF
 		MkCaseIn('${host}');
 		MkCaseBegin('*-*-cygwin* | *-*-mingw32*');
 			MkPrintSN('ada: checking for linker -no-undefined option...');
-			TryCompileFlagsAda('HAVE_LD_NO_UNDEFINED', '-Wl,--no-undefined', $adaHello);
-			MkIfTrue('${HAVE_LD_NO_UNDEFINED}');
+			TryCompileFlagsAda('HAVE_ADA_LD_NO_UNDEFINED', '-Wl,--no-undefined', $adaHello);
+			MkIfTrue('${HAVE_ADA_LD_NO_UNDEFINED}');
 				MkDefine('LIBTOOLOPTS_SHARED',
 				    '${LIBTOOLOPTS_SHARED} -no-undefined -Wl,--no-undefined');
 			MkEndif;
 			MkPrintSN('ada: checking for linker -static-libgcc option...');
-			TryCompileFlagsAda('HAVE_LD_STATIC_LIBGCC', '-static-libgcc', $adaHello);
-			MkIfTrue('${HAVE_LD_STATIC_LIBGCC}');
+			TryCompileFlagsAda('HAVE_ADA_LD_STATIC_LIBGCC', '-static-libgcc', $adaHello);
+			MkIfTrue('${HAVE_ADA_LD_STATIC_LIBGCC}');
 				MkDefine('LIBTOOLOPTS_SHARED', '${LIBTOOLOPTS_SHARED} ' .
 				                               '-XCClinker -static-libgcc');
 			MkEndif;
@@ -281,21 +259,40 @@ EOF
 		MkEsac;
 
 		MkSaveMK('ADA', 'ADAFLAGS', 'ADABIND', 'ADABFLAGS', 'ADALINK', 'ADALFLAGS',
-		         'ADAMKDEP', 'PROG_GUI_FLAGS', 'PROG_CLI_FLAGS', 'LIBTOOLOPTS_SHARED');
-
-	MkEndif; # HAVE_ADA
+		         'ADAMKDEP', 'PROG_GUI_FLAGS', 'PROG_CLI_FLAGS',
+		         'LIBTOOLOPTS_SHARED');
+	MkElse;
+		Disable_Ada();
+	MkEndif;
 }
 
-sub Emul {
-	my ($os, $osrel, $machine) = @_;
-	return (1);
+sub Disable_Ada
+{
+	MkDefine('HAVE_ADA', 'no');
+
+	MkDefine('ADA',       '');
+	MkDefine('ADAFLAGS',  '');
+	MkDefine('ADABIND',   '');
+	MkDefine('ADABFLAGS', '');
+	MkDefine('ADALINK',   '');
+	MkDefine('ADALFLAGS', '');
+	MkDefine('ADAMKDEP',  '');
+
+	MkSaveMK('ADA', 'ADAFLAGS',
+             'ADABIND', 'ADABFLAGS',
+             'ADALINK', 'ADALFLAGS',
+             'ADAMKDEP');
+
+	MkSaveUndef('HAVE_ADA',
+	            'HAVE_ADA_LD_NO_UNDEFINED',
+                'HAVE_ADA_LD_STATIC_LIBGCC');
 }
 
 BEGIN
 {
-	$TESTS{'ada'} = \&Test;
-	$EMUL{'ada'} = \&Emul;
-	$DESCR{'ada'} = 'Ada compiler';
+	$DESCR{'ada'}   = 'Ada compiler';
+	$TESTS{'ada'}   = \&Test_Ada;
+	$DISABLE{'ada'} = \&Disable_Ada;
 
 	RegisterEnvVar('ADA',		'Ada compiler command');
 	RegisterEnvVar('ADAFLAGS',	'Ada compiler flags');
@@ -306,5 +303,4 @@ BEGIN
 	RegisterEnvVar('ADAMKDEP',	'Ada dependency output command');
 	RegisterEnvVar('LIBS',		'Libraries passed to binder');
 }
-
 ;1

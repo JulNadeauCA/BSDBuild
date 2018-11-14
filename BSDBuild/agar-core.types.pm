@@ -1,27 +1,4 @@
 # vim:ts=4
-#
-# Copyright (c) 2018 Julien Nadeau Carriere <vedge@hypertriton.com>
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
-# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-# USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 my $testCode = << 'EOF';
 #include <stdio.h>
@@ -158,7 +135,7 @@ main(int argc, char *argv[])
 }
 EOF
 
-sub Test
+sub Test_AgarCore_Types
 {
 	my ($ver, $pfx) = @_;
 	
@@ -169,16 +146,28 @@ sub Test
 		MkExecOutputPfx($pfx, 'agar-core-config', '--libs', 'AGAR_CORE_LIBS');
 		MkCompileAndRunC('HAVE_AGAR_CORE_TYPES', '${AGAR_CORE_CFLAGS}',
 		    '${AGAR_CORE_LIBS}', $testCode);
+	MkElse;
+		Disable_AgarCore_Types();
 	MkEndif;
 	return (0);
 }
 
+sub Disable_AgarCore_Types
+{
+	MkDefine('HAVE_AGAR_CORE_TYPES', 'no');
+	MkSaveUndef('HAVE_AGAR_CORE_TYPES');
+}
+
 BEGIN
 {
-	$DESCR{'agar-core.types'} = 'Agar-Core types';
-	$URL{'agar-core.types'} = 'http://libagar.org';
-	$TESTS{'agar-core.types'} = \&Test;
-	$DEPS{'agar-core.types'} = 'cc';
+	my $n = 'agar-core.types';
+
+	$DESCR{$n} = 'Agar-Core types';
+	$URL{$n}   = 'http://libagar.org';
+	$DEPS{$n}  = 'cc';
+
+	$TESTS{$n}   = \&Test_AgarCore_Types;
+	$DISABLE{$n} = \&Disable_AgarCore_Types;
 }
 
 ;1

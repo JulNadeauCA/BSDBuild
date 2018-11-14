@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2002-2016 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2002-2018 Julien Nadeau Carriere <vedge@hypertriton.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@ our $EmulEnv = undef;
 our %MkDefinesToSave = ();
 our $Cache = 0;
 our %TESTS = ();
+our %DISABLE = ();
 our %DESCR = ();
 our %URL = ();
 our %EMUL = ();
@@ -986,7 +987,7 @@ EOF
 			MkSaveCompileFailed($define);
 		MkEndif;
 	MkElse;
-		MkPrintS('no, compile failed');
+		MkPrintS('no');
 		MkDefine('MK_RUN_STATUS', 'FAIL \$?');
 		MkSaveCompileFailed($define);
 	MkEndif;
@@ -1030,7 +1031,7 @@ EOF
 			MkSaveCompileFailed($define);
 		MkEndif;
 	MkElse;
-		MkPrintS('no, compile failed');
+		MkPrintS('no');
 		MkSaveCompileFailed($define);
 	MkEndif;
 	print << 'EOF';
@@ -1163,10 +1164,10 @@ EOF
 	}
 
 	MkIf('"${MK_COMPILE_STATUS}" = \'OK\'');
-		MkPrintS('yes');
+		MkPrintS('yes') unless $Quiet;
 		MkSaveCompileSuccess($define);
 	MkElse;
-		MkPrintS('no');
+		MkPrintS('no') unless $Quiet;
 		MkSaveCompileFailed($define);
 	MkEndif;
 	
@@ -1405,10 +1406,10 @@ EOF
 	}
 
 	MkIf('"${MK_COMPILE_STATUS}" = \'OK\'');
-		MkPrintS('yes');
+		MkPrintS('yes') unless $Quiet;
 		MkSaveCompileSuccess($define);
 	MkElse;
-		MkPrintS('no');
+		MkPrintS('no') unless $Quiet;
 		MkSaveCompileFailed($define);
 	MkEndif;
 
@@ -1667,7 +1668,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($Cache $OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DESCR %URL %HELPENV MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileAda MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsAda TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSetTrue MkSetFalse MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveMK_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkPrint MkPrintN MkPrintS MkPrintSN MkIfFound MkIfVersionOK MkNotFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion MkEmulWindows MkEmulWindowsSYS MkEmulUnavail MkEmulUnavailSYS RegisterEnvVar);
+    @EXPORT = qw($Quiet $Cache $OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DISABLE %DESCR %URL %HELPENV MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileAda MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsAda TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSetTrue MkSetFalse MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveMK_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkPrint MkPrintN MkPrintS MkPrintSN MkIfFound MkIfVersionOK MkNotFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion MkEmulWindows MkEmulWindowsSYS MkEmulUnavail MkEmulUnavailSYS RegisterEnvVar);
 }
 
 ;1

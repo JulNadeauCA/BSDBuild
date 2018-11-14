@@ -23,7 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Test
+sub Test_Objc
 {
 	print << 'EOF';
 if [ "$CROSS_COMPILING" = "yes" ]; then
@@ -138,6 +138,7 @@ fi
 EOF
 	
 	MkIfTrue('${HAVE_OBJC}');
+
 		MkPrintSN('objc: checking for compiler warning options...');
 		MkCompileOBJC('HAVE_OBJC_WARNINGS', '-Wall -Werror', '', << 'EOF');
 int main(int argc, char *argv[]) { return (0); }
@@ -145,27 +146,37 @@ EOF
 		MkIfTrue('${HAVE_OBJC_WARNINGS}');
 			MkDefine('TEST_OBJCFLAGS', '-Wall -Werror');
 		MkEndif;
-	
+
+		MkSaveDefine('HAVE_OBJC');
+
 		print 'rm -f conftest.m $testdir/conftest$EXECSUFFIX', "\n";
 
-		MkSaveMK('OBJC', 'OBJCFLAGS');
+	MkElse;
 
-	MkEndif; # HAVE_OBJC
+		Disable_Objc();
+
+	MkEndif;
 }
 
-sub Emul
+sub Disable_Objc
 {
-	my ($os, $osrel, $machine) = @_;
+	MkDefine('HAVE_OBJC', 'no');
+	MkDefine('HAVE_OBJC_WARNINGS', 'no');
+	MkDefine('OBJC', '');
+	MkDefine('OBJCFLAGS', '');
+	
+	MkSaveUndef('HAVE_OBJC', 'HAVE_OBJC_WARNINGS');
 
-	return (1);
+	MkSaveMK('HAVE_OBJC', 'HAVE_OBJC_WARNINGS', 'OBJC', 'OBJCFLAGS');
 }
 
 BEGIN
 {
-	$TESTS{'objc'} = \&Test;
-	$EMUL{'objc'} = \&Emul;
-	$DESCR{'objc'} = 'an Objective-C compiler';
-	$DEPS{'objc'} = 'cc';
+	$DESCR{'objc'} = 'Objective-C compiler';
+	$DEPS{'objc'}  = 'cc';
+
+	$TESTS{'objc'}   = \&Test_Objc;
+	$DISABLE{'objc'} = \&Disable_Objc;
 }
 
 ;1

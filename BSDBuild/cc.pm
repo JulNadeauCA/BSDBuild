@@ -269,12 +269,14 @@ EOF
 			MkCaseEnd;
 		MkEsac;
 		
-		MkSaveDefine('HAVE_CC', 'HAVE_CC65');
+		MkSaveDefine('HAVE_CC');
 		
 		MkIfTrue('${HAVE_CC65}');
 			MkDefine('CC_COMPILE', '');
+			MkSaveDefine('HAVE_CC65');
 		MkElse;
 			MkDefine('CC_COMPILE', '-c');
+			MkSaveUndef('HAVE_CC65');
 		MkEndif;
 
 		MkSaveMK('HAVE_CC', 'HAVE_CC65', 'CC', 'CC_COMPILE', 'CFLAGS',

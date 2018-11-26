@@ -43,16 +43,16 @@ sub Test
 				   $testCode);
 		MkSaveIfTrue('${HAVE_FONTCONFIG}', 'FONTCONFIG_CFLAGS', 'FONTCONFIG_LIBS');
 	MkElse;
-		Disable();
+		Disable_Fontconfig();
 	MkEndif;
 	return (0);
 }
 
-sub Disable
+sub Disable_Fontconfig
 {
+	MkDefine('HAVE_FONTCONFIG', 'no');
 	MkDefine('FONTCONFIG_CFLAGS', '');
 	MkDefine('FONTCONFIG_LIBS', '');
-
 	MkSaveUndef('HAVE_FONTCONFIG', 'FONTCONFIG_CFLAGS', 'FONTCONFIG_LIBS');
 }
 
@@ -72,7 +72,7 @@ BEGIN
 	$URL{$n}   = 'http://fontconfig.org';
 
 	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable;
+	$DISABLE{$n} = \&Disable_Fontconfig;
 	$EMUL{$n}    = \&Emul;
 	
 	$DEPS{$n} = 'cc';

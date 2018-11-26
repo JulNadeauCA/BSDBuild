@@ -56,6 +56,38 @@ int main(int argc, char *argv[])
 }
 EOF
 
+my $testIfMutexIsPointer = << 'EOF';
+#include <pthread.h>
+
+int main(int argc, char *argv[])
+{
+	pthread_mutex_t mutex = NULL;
+	pthread_mutex_init(&mutex, NULL);
+	return (mutex != NULL);
+}
+EOF
+
+my $testIfCondIsPointer = << 'EOF';
+#include <pthread.h>
+
+int main(int argc, char *argv[])
+{
+	pthread_cond_t cond = NULL;
+	pthread_cond_init(&cond, NULL);
+	return (cond != NULL);
+}
+EOF
+
+my $testIfThreadIsPointer = << 'EOF';
+#include <pthread.h>
+static void *start_routine(void *arg) { return (NULL); }
+int main(int argc, char *argv[])
+{
+	pthread_t th = NULL;
+	return pthread_create(&th, NULL, start_routine, NULL);
+}
+EOF
+
 sub SearchIncludes ($$)
 {
 	my ($pfx, $def) = @_;
@@ -179,6 +211,21 @@ EOF
 	return (0);
 }
 
+sub TestPthreadPointerness
+{
+	MkPrintSN('checking whether pthread_mutex_t is a pointer...');
+	MkCompileC('HAVE_PTHREAD_MUTEX_T_POINTER',
+	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', $testIfMutexIsPointer);
+	
+	MkPrintSN('checking whether pthread_cond_t is a pointer...');
+	MkCompileC('HAVE_PTHREAD_COND_T_POINTER',
+	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', $testIfCondIsPointer);
+	
+	MkPrintSN('checking whether pthread_t is a pointer...');
+	MkCompileC('HAVE_PTHREAD_T_POINTER',
+	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', $testIfThreadIsPointer);
+}
+
 sub TestPthreadsXOpenExt
 {
 	my ($ver, $pfx) = @_;
@@ -231,6 +278,7 @@ sub TestPthreads
 	TestPthreadsStd(@_);
 	TestPthreadsXOpenExt(@_);
 	TestPthreadMutexRecursive();
+	TestPthreadPointerness();
 	return (0);
 }
 
@@ -250,6 +298,9 @@ sub Disable
                 'HAVE_PTHREAD_MUTEX_RECURSIVE',
                 'HAVE_PTHREAD_MUTEX_RECURSIVE_NP',
 	            'HAVE_PTHREADS_XOPEN',
+	            'HAVE_PTHREAD_MUTEX_T_POINTER',
+	            'HAVE_PTHREAD_COND_T_POINTER',
+	            'HAVE_PTHREAD_T_POINTER',
 	            'PTHREADS_CFLAGS', 'PTHREADS_LIBS',
 	            'PTHREADS_XOPEN_CFLAGS', 'PTHREADS_XOPEN_LIBS');
 }

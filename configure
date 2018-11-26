@@ -815,8 +815,7 @@ echo "hdefs[\"DATADIR\"] = \"$DATADIR\"" >>configure.lua
 fi;
 $ECHO_N 'checking for a C compiler...'
 $ECHO_N 'checking for a C compiler...' >> config.log
-# BEGIN TEST cc()
-# (http://bsdbuild.hypertriton.com/mod/cc)
+# BEGIN cc()
 if [ "$CROSS_COMPILING" = "yes" ]; then
 CROSSPFX="${host}-"
 else
@@ -1378,7 +1377,7 @@ echo 'hdefs["HAVE_LD_NO_UNDEFINED"] = nil' >>configure.lua
 echo '#undef HAVE_LD_STATIC_LIBGCC' >config/have_ld_static_libgcc.h
 echo 'hdefs["HAVE_LD_STATIC_LIBGCC"] = nil' >>configure.lua
 fi;
-# END TEST cc
+# END cc
 if [ "${HAVE_CC}" != "yes" ]; then
 echo '* '
 echo '* ' >> config.log
@@ -1391,8 +1390,7 @@ exit 1
 fi;
 $ECHO_N 'checking for a gettext library in libc...'
 $ECHO_N 'checking for a gettext library in libc...' >> config.log
-# BEGIN TEST gettext()
-# (http://bsdbuild.hypertriton.com/mod/gettext)
+# BEGIN gettext()
 GETTEXT_CFLAGS=""
 GETTEXT_LIBS=""
 MK_COMPILE_STATUS='OK'
@@ -1610,11 +1608,10 @@ echo 'hdefs["GETTEXT_CFLAGS"] = nil' >>configure.lua
 echo '#undef GETTEXT_LIBS' >config/gettext_libs.h
 echo 'hdefs["GETTEXT_LIBS"] = nil' >>configure.lua
 fi;
-# END TEST gettext
+# END gettext
 $ECHO_N 'checking for Perl...'
 $ECHO_N 'checking for Perl...' >> config.log
-# BEGIN TEST perl()
-# (http://bsdbuild.hypertriton.com/mod/perl)
+# BEGIN perl()
 MK_EXEC_FOUND='No'
 
 if [ "" != '' ]; then
@@ -1750,7 +1747,7 @@ echo '#undef HAVE_PERL' >config/have_perl.h
 echo 'hdefs["HAVE_PERL"] = nil' >>configure.lua
 PERL="/usr/bin/perl"
 fi;
-# END TEST perl
+# END perl
 CFLAGS="$CFLAGS -I$SRC"
 CXXFLAGS="$CXXFLAGS -I$SRC"
 CONFIGURE_OK="yes"

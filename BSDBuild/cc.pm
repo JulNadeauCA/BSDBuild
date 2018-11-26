@@ -3,65 +3,63 @@
 
 sub Test_CC
 {
-	print << 'EOF';
-if [ "$CROSS_COMPILING" = "yes" ]; then
-	CROSSPFX="${host}-"
-else
-	CROSSPFX=''
-fi
-HAVE_CC65="no"
-if [ "$CC" = '' ]; then
-	case "${host}" in
-	apple2 | apple2enh | atari | atmos | c16 | c64 | c128 | cbm510 | cbm610 | geos | lunix | lynx | nes | pet | plus4 | supervision | vic20)
-		bb_save_IFS=$IFS
-		IFS=$PATH_SEPARATOR
-		for i in $PATH; do
-			if [ -x "${i}/cc65" ]; then
-				if ${i}/cc65 -V | grep ^cc65; then
-					CC="${i}/cc65"
-					HAVE_CC65="yes"
-					CROSS_COMPILING="yes"
-					break
-				fi
-			elif [ -x "${i}/cc65.exe" ]; then
-				if ${i}/cc65.exe -V | grep ^cc65; then
-					CC="${i}/cc65"
-					HAVE_CC65="yes"
-					CROSS_COMPILING="yes"
-					break
-				fi
-			fi
-		done
-		IFS=$bb_save_IFS
-		;;
-	*)
-		bb_save_IFS=$IFS
-		IFS=$PATH_SEPARATOR
-		for i in $PATH; do
-			if [ -x "${i}/${CROSSPFX}cc" ]; then
-				CC="${i}/${CROSSPFX}cc"
-				break
-			elif [ -x "${i}/${CROSSPFX}clang" ]; then
-				CC="${i}/${CROSSPFX}clang"
-				break
-			elif [ -x "${i}/${CROSSPFX}gcc" ]; then
-				CC="${i}/${CROSSPFX}gcc"
-				break
-			elif [ -e "${i}/${CROSSPFX}cc.exe" ]; then
-				CC="${i}/${CROSSPFX}cc.exe"
-				break
-			elif [ -e "${i}/${CROSSPFX}clang.exe" ]; then
-				CC="${i}/${CROSSPFX}clang.exe"
-				break
-			elif [ -e "${i}/${CROSSPFX}gcc.exe" ]; then
-				CC="${i}/${CROSSPFX}gcc.exe"
-				break
-			fi
-		done
-		IFS=$bb_save_IFS
-		;;
-	esac
+	my @cc_try = ('clang', 'clang70', 'clang60', 'cc',
+                  'gcc', 'gcc-6', 'gcc7', 'gcc8', 'gcc5', 'gcc49', 'gcc48',
+                  'clang.exe', 'cc.exe', 'gcc.exe');
+	my $cc65_tgts = 'apple2 | apple2enh | atari | atmos | c16 | '.
+                    'c64 | c128 | cbm510 | cbm610 | geos | lunix | '.
+                    'lynx | nes | pet | plus4 | supervision | vic20';
 
+	MkIfTrue('$CROSS_COMPILING');
+		MkDefine('CROSSPFX', '${host}-');
+	MkElse;
+		MkDefine('CROSSPFX', '');
+	MkEndif;
+
+	MkDefine('HAVE_CC65', 'no');
+	MkIfEQ('$CC', '');										# Unspecified CC
+		MkCaseIn('${host}');
+			MkCaseBegin($cc65_tgts);						# cc65-only targets
+				MkPushIFS('$PATH_SEPARATOR');
+				MkFor('i', '$PATH');
+					MkIf('-x "${i}/cc65"');
+						MkIfExec('${i}/cc65 -V |grep ^cc65');
+							MkDefine('CC', '${i}/cc65');
+							MkDefine('HAVE_CC65', 'yes');
+							MkDefine('CROSS_COMPILING', 'yes');
+							MkBreak;
+						MkEndif;
+					MkElif('-x "${i}/cc65.exe"');
+						MkIfExec('${i}/cc65.exe -V |grep ^cc65');
+							MkDefine('CC', '${i}/cc65.exe');
+							MkDefine('HAVE_CC65', 'yes');
+							MkDefine('CROSS_COMPILING', 'yes');
+							MkBreak;
+						MkEndif;
+					MkEndif;
+				MkDone;
+				MkPopIFS();
+			MkCaseEnd();
+			MkCaseBegin('*');								# any other target
+				MkPushIFS('$PATH_SEPARATOR');
+				MkFor('i', '$PATH');
+	my @try = @cc_try;
+	my $cc = shift(@try);
+					MkIf('-x "${i}/${CROSSPFX}'.$cc.'"');
+					MkDefine('CC', '${i}/${CROSSPFX}'.$cc);
+					MkBreak;
+	foreach $cc (@try) {
+					MkElif('-x "${i}/${CROSSPFX}'.$cc.'"');
+					MkDefine('CC', '${i}/${CROSSPFX}'.$cc);
+					MkBreak;
+	}
+				MkEndif;
+				MkDone;
+				MkPopIFS();
+			MkCaseEnd();
+		MkEsac();
+
+	print << 'EOF';
 	if [ "$CC" = '' ]; then
 		if [ "$HAVE_CC65" = "yes" ]; then
 			echo "*"
@@ -71,10 +69,15 @@ if [ "$CC" = '' ]; then
 			echo "Cannot find cc65 in PATH." >> config.log
 		else
 			echo "*"
-			echo "* Cannot find ${CROSSPFX}cc or ${CROSSPFX}gcc in PATH."
+EOF
+	print 'echo "* Cannot find one of ' . join(', ',@cc_try) . '"', "\n";
+	print << 'EOF';
+			echo "* under the current PATH, which is:"
+			echo "* $PATH"
+			echo "*"
 			echo "* You may need to set the CC environment variable."
 			echo "*"
-			echo "Cannot find ${CROSSPFX}cc or ${CROSSPFX}gcc in PATH." >> config.log
+			echo "Cannot find C compiler in PATH." >> config.log
 		fi
 		HAVE_CC="no"
 		echo "no"

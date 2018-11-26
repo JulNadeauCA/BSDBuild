@@ -45,6 +45,7 @@ our %HELPENV = ();
 #
 sub MkBreak { print "break\n"; }
 sub MkIf { print 'if [ ',shift,' ]; then',"\n"; }
+sub MkIfExec { print 'if ',shift,'; then',"\n"; }
 sub MkElif { print 'elif [ ',shift,' ]; then',"\n"; }
 sub MkElse { print 'else',"\n"; }
 sub MkEndif { print 'fi;',"\n"; }
@@ -134,6 +135,14 @@ sub PmLink {
 	print << "EOF";
 table.insert(package.links,{"$link"})
 EOF
+}
+
+# Emit a comment
+sub MkComment
+{
+	foreach my $line (@_) {
+		print '# ' . $line . "\n";
+	}
 }
 
 # Write the standard output of a program into variable "$define".
@@ -483,6 +492,31 @@ sub MkDefine
 {
 	my ($arg, $val) = @_;
 	print "$arg=\"$val\"\n";
+}
+
+sub MkPushIFS
+{
+	my ($ifs) = shift;
+
+	print 'bb_save_IFS=$IFS' . "\n";
+	print 'IFS=' . $ifs . "\n";
+}
+
+sub MkPopIFS
+{
+	print 'IFS=$bb_save_IFS' . "\n";
+}
+
+sub MkFor
+{
+	my ($i, $what) = @_;
+
+	print 'for '.$i.' in '.$what.'; do' . "\n";
+}
+
+sub MkDone
+{
+	print 'done' . "\n";
 }
 
 sub MkAppend
@@ -1668,7 +1702,7 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($Quiet $Cache $OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DISABLE %DESCR %URL %HELPENV MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileAda MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsAda TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSetTrue MkSetFalse MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveMK_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkPrint MkPrintN MkPrintS MkPrintSN MkIfFound MkIfVersionOK MkNotFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion MkEmulWindows MkEmulWindowsSYS MkEmulUnavail MkEmulUnavailSYS RegisterEnvVar);
+    @EXPORT = qw($Quiet $Cache $OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DISABLE %DESCR %URL %HELPENV MkComment MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileAda MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsAda TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSetTrue MkSetFalse MkPushIFS MkPopIFS MkFor MkDone MkAppend MkBreak MkIfExec MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveMK_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkPrint MkPrintN MkPrintS MkPrintSN MkIfFound MkIfVersionOK MkNotFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion MkEmulWindows MkEmulWindowsSYS MkEmulUnavail MkEmulUnavailSYS RegisterEnvVar);
 }
 
 ;1

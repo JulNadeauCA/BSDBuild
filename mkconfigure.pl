@@ -399,7 +399,10 @@ sub test
 	}
 	if ($c) {
 		MkPrintSN("checking for $DESCR{$t}...");
+		MkComment("BEGIN TEST $t(@args)");
+		MkComment("(http://bsdbuild.hypertriton.com/mod/$t)");
 		&$c(@args);
+		MkComment("END TEST $t");
 		if ($EmulOS) {
 			MkPrintSN("ok\n");
 		}

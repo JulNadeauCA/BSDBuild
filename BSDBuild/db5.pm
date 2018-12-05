@@ -1,29 +1,7 @@
 # vim:ts=4
-#
-# Copyright (c) 2016 Hypertriton, Inc. <http://hypertriton.com/>
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
-# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-# USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# Public domain
 
-my @db5_releases = ('5.0', '5.1', '5.2', '5.3');
+my @db5_releases = ('5.0', '5.1', '5.2', '5.3', '5');
 
 my $testCode = << 'EOF';
 #include <db5/db.h>
@@ -37,56 +15,60 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
-sub Test
+sub Test_DB5
 {
 	my ($ver, $pfx) = @_;
+	
+	MkSetS('DB5_CFLAGS', '');
+	MkSetS('DB5_LIBS', '');
+	MkSetS('DB5_VERSION', '');
+	MkSetS('DB5_VERSION_J', '');
 
-	print << "EOF";
-DB5_CFLAGS=''
-DB5_LIBS=''
-DB5_VERSION=''
-
-for path in $pfx /usr /usr/local /opt; do
-EOF
-
-	foreach my $dbRel (@db5_releases) {
-		print << "EOF";
-	if [ -e "\${path}/lib/db5/libdb-$dbRel.so" ]; then
-		DB5_LIBS="-L\${path}/lib/db5 -ldb-$dbRel"
-		DB5_CFLAGS="-I\${path}/include/db5 -I\${path}/include"
-		DB5_VERSION='$dbRel'
-		break
-	fi
-EOF
-	}
-	print "done\n";
+	MkFor('path', $pfx.' /usr/local /usr /opt');
+		MkFor('dbver', join(' ',@db5_releases));
+			MkSetExec('DB5_VERSION_J', 'echo "${dbver}" | sed "s/\.//"');
+			MkIfExists('${path}/lib/db5/libdb-$dbver.so');
+				MkIfExists('${path}/include/db${DB5_VERSION_J}');
+					MkSetS('DB5_CFLAGS', '-I${path}/include/db${DB5_VERSION_J} '.
+  					                     '-I${path}/include');			# XXX
+				MkElse;
+					MkSetS('DB5_CFLAGS', '-I${path}/include/db5 '.
+  					                     '-I${path}/include');			# XXX
+				MkEndif;
+				MkSetS('DB5_LIBS', '-L${path}/lib/db5 -ldb-$dbver');
+				MkSetS('DB5_VERSION', '${dbver}');
+				MkBreak;
+			MkEndif;
+		MkDone;
+	MkDone;
 
 	MkIfFound($pfx, $ver, 'DB5_VERSION');
 		MkPrintSN('checking whether DB5 works...');
 		MkCompileC('HAVE_DB5', '${DB5_CFLAGS}', '${DB5_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_DB5}', 'DB5_CFLAGS', 'DB5_LIBS');
 	MkElse;
-		MkSaveUndef('HAVE_DB5');
+		MkPrint('no');
+		Disable_DB5();
 	MkEndif;
 	return (0);
 }
 
-sub Emul
+sub Disable_DB5
 {
-	my ($os, $osrel, $machine) = @_;
-	
-	MkEmulUnavail('DB5');
-	return (1);
+	MkSetS('HAVE_DB5', 'no');
+	MkSetS('DB5_CFLAGS', '');
+	MkSetS('DB5_LIBS', '');
+	MkSaveUndef('HAVE_DB5', 'DB5_CFLAGS', 'DB5_LIBS');
 }
 
 BEGIN
 {
-	$DESCR{'db5'} = 'Berkeley DB 5';
-	$URL{'db5'} = 'http://www.oracle.com/technology/products/berkeley-db';
+	my $n = 'db5';
 
-	$TESTS{'db5'} = \&Test;
-	$DEPS{'db5'} = 'cc';
-	$EMUL{'db5'} = \&Emul;
+	$DESCR{$n}   = 'Berkeley DB 5.x';
+	$URL{$n}     = 'http://www.oracle.com/technology/products/berkeley-db';
+	$TESTS{$n}   = \&Test_DB5;
+	$DISABLE{$n} = \&Disable_DB5;
+	$DEPS{$n}    = 'cc';
 }
-
 ;1

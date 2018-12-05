@@ -25,57 +25,51 @@
 
 sub Test_Objc
 {
+	my @objc_try = ('clang', 'clang70', 'clang60',
+                    'gcc', 'gcc-6', 'gcc7', 'gcc8', 'gcc5', 'gcc49', 'gcc48',
+                    'clang.exe', 'cc.exe', 'gcc.exe');
+	
+	MkIfTrue('$CROSS_COMPILING');
+		MkDefine('CROSSPFX', '${host}-');
+	MkElse;
+		MkDefine('CROSSPFX', '');
+	MkEndif;
+	
+	MkIfEQ('$OBJC', '');										# Unspecified OBJC
+		MkPushIFS('$PATH_SEPARATOR');
+		MkFor('i', '$PATH');
+	my @try = @objc_try;
+	my $objc = shift(@try);
+			MkIf('-x "${i}/${CROSSPFX}'.$objc.'"');
+			MkDefine('OBJC', '${i}/${CROSSPFX}'.$objc);
+			MkBreak;
+	foreach $objc (@try) {
+			MkElif('-x "${i}/${CROSSPFX}'.$objc.'"');
+			MkDefine('OBJC', '${i}/${CROSSPFX}'.$objc);
+			MkBreak;
+	}
+			MkEndif;
+		MkDone;
+		MkPopIFS();
+
 	print << 'EOF';
-if [ "$CROSS_COMPILING" = "yes" ]; then
-	CROSSPFX="${host}-"
-else
-	CROSSPFX=''
-fi
-if [ "$OBJC" = '' ]; then
-	if [ "$CC" != '' ]; then
-		OBJC="$CC"
-		HAVE_OBJC="yes"
-		echo "using CC, ${OBJC}"
+	if [ "$OBJC" = '' ]; then
+	    echo "*"
+EOF
+	print 'echo "* Cannot find one of ' . join(', ',@objc_try) . '"', "\n";
+	print << 'EOF';
+		echo "* under the current PATH, which is:"
+		echo "* $PATH"
+		echo "*"
+	    echo "* You may need to set the OBJC environment variable."
+	    echo "*"
+	    echo "Cannot find Objective C compiler in PATH." >> config.log
+		HAVE_OBJC="no"
+		echo "no"
 	else
-		bb_save_IFS=$IFS
-		IFS=$PATH_SEPARATOR
-		for i in $PATH; do
-			if [ -x "${i}/${CROSSPFX}cc" ]; then
-				if [ -f "${i}/${CROSSPFX}cc" ]; then
-					OBJC="${i}/${CROSSPFX}cc"
-					break
-				fi
-			elif [ -x "${i}/${CROSSPFX}gcc" ]; then
-				if [ -f "${i}/${CROSSPFX}gcc" ]; then
-					OBJC="${i}/${CROSSPFX}gcc"
-					break
-				fi
-			elif [ -e "${i}/${CROSSPFX}cc.exe" ]; then
-				if [ -f "${i}/${CROSSPFX}cc.exe" ]; then
-					OBJC="${i}/${CROSSPFX}cc.exe"
-					break
-				fi
-			elif [ -e "${i}/${CROSSPFX}gcc.exe" ]; then
-				if [ -f "${i}/${CROSSPFX}gcc.exe" ]; then
-					OBJC="${i}/${CROSSPFX}gcc.exe"
-					break
-				fi
-			fi
-		done
-		IFS=$bb_save_IFS
-		if [ "$OBJC" = '' ]; then
-		    echo "*"
-		    echo "* Cannot find ${CROSSPFX}objc or ${CROSSPFX}gcc in default PATH."
-		    echo "* You may need to set the OBJC environment variable."
-		    echo "*"
-		    echo "Cannot find ${CROSSPFX}objc or ${CROSSPFX}gcc in PATH." >> config.log
-			HAVE_OBJC="no"
-			echo "no"
-		else
-			HAVE_OBJC="yes"
-			echo "yes, ${OBJC}"
-			echo "yes, ${OBJC}" >> config.log
-		fi
+		HAVE_OBJC="yes"
+		echo "yes, ${OBJC}"
+		echo "yes, ${OBJC}" >> config.log
 	fi
 else
 	HAVE_OBJC="yes"

@@ -23,49 +23,47 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-sub Test
+sub Test_CXX
 {
-	print << 'EOF';
-if [ "$CROSS_COMPILING" = "yes" ]; then
-	CROSSPFX="${host}-"
-else
-	CROSSPFX=''
-fi
-if [ "$CXX" = '' ]; then
-	bb_save_IFS=$IFS
-	IFS=$PATH_SEPARATOR
-	for i in $PATH; do
-		if [ -x "${i}/${CROSSPFX}c++" ]; then
-			CXX="${i}/${CROSSPFX}c++"
-			break
-		elif [ -x "${i}/${CROSSPFX}clang++" ]; then
-			CXX="${i}/${CROSSPFX}clang++"
-			break
-		elif [ -x "${i}/${CROSSPFX}gcc" ]; then
-			CXX="${i}/${CROSSPFX}gcc"
-			break
-		elif [ -x "${i}/${CROSSPFX}clang" ]; then
-			CXX="${i}/${CROSSPFX}clang"
-			break
-		elif [ -e "${i}/${CROSSPFX}c++.exe" ]; then
-			CXX="${i}/${CROSSPFX}c++.exe"
-			break
-		elif [ -e "${i}/${CROSSPFX}gcc.exe" ]; then
-			CXX="${i}/${CROSSPFX}gcc.exe"
-			break
-		elif [ -e "${i}/${CROSSPFX}clang.exe" ]; then
-			CXX="${i}/${CROSSPFX}clang.exe"
-			break
-		fi
-	done
-	IFS=$bb_save_IFS
+	my @cxx_try = ('clang++', 'clang++70', 'clang++60', 'c++',
+                   'gcc', 'gcc-6', 'gcc7', 'gcc8', 'gcc5', 'gcc49', 'gcc48',
+                   'clang.exe', 'c++.exe', 'gcc.exe');
 
+	MkIfTrue('$CROSS_COMPILING');
+		MkDefine('CROSSPFX', '${host}-');
+	MkElse;
+		MkDefine('CROSSPFX', '');
+	MkEndif;
+	
+	MkIfEQ('$CXX', '');										# Unspecified CXX
+		MkPushIFS('$PATH_SEPARATOR');
+		MkFor('i', '$PATH');
+	my @try = @cxx_try;
+	my $cxx = shift(@try);
+			MkIf('-x "${i}/${CROSSPFX}'.$cxx.'"');
+			MkDefine('CXX', '${i}/${CROSSPFX}'.$cxx);
+			MkBreak;
+	foreach $cxx (@try) {
+			MkElif('-x "${i}/${CROSSPFX}'.$cxx.'"');
+			MkDefine('CXX', '${i}/${CROSSPFX}'.$cxx);
+			MkBreak;
+	}
+			MkEndif;
+		MkDone;
+		MkPopIFS();
+
+	print << 'EOF';
 	if [ "$CXX" = '' ]; then
 		echo "*"
-		echo "* Cannot find ${CROSSPFX}c++ or ${CROSSPFX}gcc in default PATH."
+EOF
+	print 'echo "* Cannot find one of ' . join(', ',@cxx_try) . '"', "\n";
+	print << 'EOF';
+		echo "* under the current PATH, which is:"
+		echo "* $PATH"
+		echo "*"
 		echo "* You may need to set the CXX environment variable."
 		echo "*"
-		echo "Cannot find ${CROSSPFX}c++ or ${CROSSPFX}gcc in PATH." >> config.log
+		echo "Cannot find C++ compiler in PATH." >> config.log
 		HAVE_CXX="no"
 		echo "no"
 	else
@@ -147,8 +145,13 @@ EOF
 
 		MkSaveMK('HAVE_CXX', 'CXX', 'CXXFLAGS');
 
-	MkElse; # !HAVE_CXX
+	MkElse;
+		Disable_CXX();
+	MkEndif;
+}
 
+sub Disable_CXX
+{
 		MkSaveUndef('HAVE_CXX', 'HAVE_CXX_WARNINGS');
 
 		MkDefine('CXX', '');
@@ -156,23 +159,14 @@ EOF
 		MkDefine('HAVE_CXX_WARNINGS', 'no');
 
 		MkSaveMK('HAVE_CXX', 'HAVE_CXX_WARNINGS', 'CXX', 'CXXFLAGS');
-
-	MkEndif;
-}
-
-sub Emul
-{
-	my ($os, $osrel, $machine) = @_;
-
-	return (1);
 }
 
 BEGIN
 {
-	$TESTS{'cxx'} = \&Test;
-	$EMUL{'cxx'} = \&Emul;
-	$DESCR{'cxx'} = 'a C++ compiler';
-	$DEPS{'cxx'} = 'cc';
+	$DESCR{'cxx'}	= 'a C++ compiler';
+	$TESTS{'cxx'}	= \&Test_CXX;
+	$DISABLE{'cxx'}	= \&Disable_CXX;
+	$DEPS{'cxx'}	= 'cc';
 	
 	RegisterEnvVar('CXX',		'C++ compiler command');
 	RegisterEnvVar('CXXFLAGS',	'C++ compiler flags');

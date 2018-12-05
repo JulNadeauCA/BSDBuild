@@ -269,6 +269,13 @@ Variant of
 which keeps
 .Fa val
 unquoted instead of interpreting it as a string.
+.It Ev HDEFINE_IF(condition,opt)
+If
+.Fa condition
+evaluates true, then call
+.Ev HDEFINE(opt)
+otherwise call
+.Ev HUNDEF(opt) .
 .It Ev HUNDEF(opt)
 Opposite of
 .Ev HDEFINE() ,

@@ -44,6 +44,7 @@ my %Fns = (
 	'mappend'		=> \&mappend,
 	'hdefine'		=> \&hdefine,
 	'hdefine_unquoted'	=> \&hdefine_unquoted,
+	'hdefine_if'		=> \&hdefine_if,
 	'hundef'		=> \&hundef,
 	'ada_option'		=> \&ada_option,
 	'ada_bflag'		=> \&ada_bflag,
@@ -524,6 +525,20 @@ sub hdefine_unquoted
 	MkDefine($def, $val);
 	MkSaveDefineUnquoted($def);
 }
+
+# Header define conditionally
+sub hdefine_if
+{
+	my ($cond, $def) = @_;
+
+	MkIf($cond);
+		MkDefine($def, "yes");
+		MkSaveDefine($def);
+	MkElse;
+		MkSaveUndef($def);
+	MkEndif;
+}
+
 # Header undef
 sub hundef
 {

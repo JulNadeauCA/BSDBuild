@@ -38,27 +38,26 @@ The
 .Nm
 program reads a BSDBuild
 .Pa configure.in
-source from the standard input and outputs a valid Bourne configure script to
-the standard output.
+source from the standard input and produces a portable Bourne configure script.
 .Pp
 The
 .Pa configure.in
 source may include valid Bourne shell script, along with special directives
 interpreted by
 .Nm .
-Directive names are case-insensitive.
+Directives are case-insensitive.
 Long lines can be wrapped with a terminating \\ character.
 .Sh INFORMATION DIRECTIVES
 The following directives provide information about the package:
-.Bl -tag -width "REGISTER_ENV_VAR(name,desc) "
-.It Ev PACKAGE(name)
+.Bl -tag -width "register_env_var(name, desc) "
+.It Fn package "name"
 Short name for the package.
 Included in generated messages and comments.
-.It Ev VERSION(string)
+.It Fn version "string"
 Specify current package version.
-.It Ev RELEASE(string)
+.It Fn release "string"
 Specify a release codename.
-.It Ev REGISTER(name,desc)
+.It Fn register "name, desc"
 Describe a configure script argument to show in ./configure --help.
 .Fa name
 is the name of the
@@ -69,27 +68,27 @@ style argument (e.g.,
 and
 .Fa desc
 is a one-line description.
-.It Ev REGISTER_ENV_VAR(name,desc)
+.It Fn register_env_var "name, desc"
 Describe an influential environment variable to show in ./configure --help.
 .Fa name
 is the name of the environment variable and
 .Fa desc
 is a one-line description.
-.It Ev REGISTER_SECTION(text)
+.It Fn register_section "text"
 Provide a title for a section of arguments in ./configure --help.
 .El
 .Sh CONFIGURE DIRECTIVES
 The following directives alter the operation of the configure script.
-.Bl -tag -width "DEFAULT_DIR(dirname, path) "
-.It Ev CONFIG_CACHE(yes|no)
+.Bl -tag -width "default_dir(dirname, path) "
+.It Fn config_cache "bool"
 Enable support for caching of test results (./configure --cache option).
-By default, caching is disabled.
-.It Ev CONFIG_GUESS(path)
+Set to "yes" (enable caching) or "no" (the default).
+.It Fn config_guess "path"
 Specify an alternate path to
 .Pa config.guess
 (default is
 .Pa mk/config.guess ) .
-.It Ev DEFAULT_DIR(dirname, path)
+.It Fn default_dir "dirname, path"
 Override one of the standard installation path defaults.
 .Fa dirname
 may be one of: PREFIX, BINDIR, LIBDIR, LIBEXECDIR,
@@ -97,7 +96,7 @@ DATADIR, STATEDIR, SYSCONFDIR, LOCALEDIR or MANDIR.
 The
 .Fa path
 argument may include variable references such as "${PREFIX}".
-.It Ev SUCCESS_FN(fname)
+.It Fn success_fn "fname"
 Instead of printing the default "Configuration successful" message at the
 end of the script, run the indicated Bourne shell function
 .Fa fname
@@ -115,7 +114,7 @@ and
 .Dv FOO_LIBS .
 .Pp
 .Bl -tag -width "REQUIRE(pkg[,ver[,pfx]]) "
-.It Ev CHECK(pkg[,ver[,pfx]])
+.It Fn check "pkg[,ver[,pfx]]"
 Invoke the BSDBuild module called
 .Fa pkg .
 A
@@ -139,19 +138,19 @@ Typically, the value "${prefix_foo}" (from user-given
 or
 .Sq --with-foo=VALUE )
 is used here.
-.It Ev REQUIRE(pkg[,ver[,pfx]])
+.It Fn require "pkg[,ver[,pfx]]"
 Variant of
-.Ev CHECK()
+.Fn check
 which implicitely terminates the script with an error message if
 .Fa pkg
 is not found or the
 .Fa ver
 is incompatible.
-.It Ev DISABLE(pkg)
+.It Fn disable "pkg"
 Short-circuit a test module.
 Emit the defines that would have resulted from a failed test, without
 actually running any tests.
-.It Ev TEST_DIR(path)
+.It Fn test_dir "path"
 Specify an extra directory in which to search for BSDBuild test modules
 (.pm files).
 The default module path is
@@ -160,11 +159,11 @@ The default module path is
 .Sh ADA LANGUAGE DIRECTIVES
 The following directives deal with Ada code compilation.
 .Bl -tag -width "ADA_OPTION(option) "
-.It Ev ADA_OPTION(option)
+.It Fn ada_option "option"
 Append an option to the
 .Dv ADAFLAGS
 which will be passed to the Ada compiler.
-.It Ev ADA_BFLAG(option)
+.It Fn ada_bflag "option"
 Append an option to the
 .Dv ADABFLAGS
 which will be passed to the Ada binder.
@@ -172,7 +171,7 @@ which will be passed to the Ada binder.
 .Sh C/C++ LANGUAGE DIRECTIVES
 The following directives apply to C, C++ and other C-like languages.
 .Bl -tag -width "CHECK_HEADER(name[, ...]) "
-.It Ev C_DEFINE(optname)
+.It Fn c_define "optname"
 Specify a global define that will be passed to the compiler.
 An
 .Fa optname
@@ -181,14 +180,14 @@ of "FOO" would result in the
 flag being passed to the compiler.
 This value is also used by
 .Xr build.proj.mk 5 .
-.It Ev C_INCDIR(dir)
+.It Fn c_incdir "dir"
 Specify a directory for include files.
 This results in the
 .Ar -Idir
 flag being added to the compiler command line.
 This value is also used by
 .Xr build.proj.mk 5 .
-.It Ev C_INCDIR_CONFIG(dir)
+.It Fn c_incdir_config "dir"
 Specify a target directory for individual include files with configure-script
 generated statements (i.e.,
 .Dv HAVE_FOO
@@ -199,13 +198,13 @@ Pass an empty argument to disable.
 By default,
 .Pa config/
 is used.
-.It Ev C_INCLUDE_CONFIG(file)
+.It Fn c_include_config "file"
 Specify a monolithic C include file which will contain configure-script
 generated statements (i.e.,
 .Dv HAVE_FOO
 defines).
 Pass an empty argument to disable (default).
-.It Ev C_INCPREP(dir)
+.It Fn c_incprep "dir"
 Specify a target directory for preprocessed C header files.
 The ./configure option
 .Sq --includes
@@ -213,7 +212,7 @@ is a BSDBuild extension which gives the user the option of either generating
 preprocessed headers in the working directory ("--includes=yes", the default)
 or alternatively, to create a set of symbolic links to the original headers
 in the source directory ("--includes=link").
-.It Ev C_OPTION(option)
+.It Fn c_option "option"
 Provide a gcc-style compiler option, such as
 .Ar -Wall ,
 .Ar -Werror
@@ -221,7 +220,7 @@ or
 .Ar -Wmissing-prototypes .
 For environments using other compilers, BSDBuild will attempt to set
 equivalent options.
-.It Ev CHECK_FUNC(fn[, ...])
+.It Fn check_func "fn[, ...]"
 Check for the existence of one or more C functions.
 If a function
 .Fa fn
@@ -230,27 +229,33 @@ called
 exists, then
 .Dv HAVE_FUNCTION_FOO
 is set.
-.It Ev CHECK_FUNC_OPTS(cflags, libs, fn[, ...])
+.It Fn check_func_opts "cflags, libs, fn[, ...]"
 Variant of
-.Ev CHECK_FUNCTION()
-with additional CFLAGS and LIBS arguments.
-.It Ev CHECK_HEADER(name[, ...])
+.Fn check_function
+with additional
+.Ev CFLAGS
+and
+.Ev LIBS .
+.It Fn check_header "name[, ...]"
 Check whether one or more header files are available (with the current CFLAGS).
 If a header such as
 .Pa sys/foo.h
 is found, then
 .Dv HAVE_SYS_FOO_H
 is set.
-.It Ev CHECK_HEADER_OPTS(cflags, libs, header[, ...])
+.It Fn check_header_opts "cflags, libs, header[, ...]"
 Variant of
-.Ev CHECK_HEADER() ,
-with additional CFLAGS and LIBS arguments.
-.It Ev C_EXTRA_WARNINGS()
+.Fn check_header
+with additional
+.Ev CFLAGS
+and
+.Ev LIBS .
+.It Fn c_extra_warnings
 Request extra compiler warnings.
 Exact interpretation is compiler specific.
-.It Ev C_FATAL_WARNINGS()
+.It Fn c_fatal_warnings
 Fail compilation if warnings are encountered.
-.It Ev HDEFINE(opt,val)
+.It Fn hdefine "opt, val"
 Define a C preprocessor style header option.
 .Fa opt
 is an unquoted string (uppercase by convention), and the value
@@ -263,37 +268,44 @@ is
 a file
 .Pa config/enable_foo.h
 will be generated by configure.
-.It Ev HDEFINE_UNQUOTED(opt,val)
+.It Fn hdefine_unquoted "opt, val"
 Variant of
-.Ev HDEFINE()
+.Fn hdefine
 which keeps
 .Fa val
 unquoted instead of interpreting it as a string.
-.It Ev HDEFINE_IF(condition,opt)
+.It Fn hdefine_if "condition, opt"
+If
+.Fa condition
+evaluates true, then generate a define with
+.Fn hdefine "opt"
+otherwise call
+.Fn hundef "opt" .
+to generate an #undef.
+.It Fn hundef "opt"
+Write an #undef directive to
+which writes an #undef directive to
+.Pa config/<option>.h
+(the opposite of
+.Fn hdefine ) .
+.It Fn hundef_if "condition, opt"
 If
 .Fa condition
 evaluates true, then call
-.Ev HDEFINE(opt)
-otherwise call
-.Ev HUNDEF(opt) .
-.It Ev HUNDEF(opt)
-Opposite of
-.Ev HDEFINE() ,
-which writes an #undef directive to
-.Pa config/<option>.h .
-.It Ev LD_OPTION(option)
+.Fn hundef "opt" .
+.It Fn ld_option "option"
 Provide a ld-style linker option, such as
 .Ar -g
 or
 .Ar -nostdlib .
-.It Ev MAPPEND(opt,val)
+.It Fn mappend "opt, val"
 Append a space and
 .Fa val
 to the exported
 .Xr make 1
 variable
 .Fa opt .
-.It Ev MDEFINE(opt,val)
+.It Fn mdefine "opt, val"
 Define an exported
 .Xr make 1
 variable
@@ -304,22 +316,22 @@ with value
 .Sh PERL LANGUAGE DIRECTIVES
 The following directives deal with the installation of Perl modules.
 .Bl -tag -width "REQUIRE_PERL_MODULE(mod) "
-.It Ev CHECK_PERL_MODULE(mod)
+.It Fn check_perl_module "mod"
 Check that the specified Perl module is installed and functioning.
 For example, if
 .Fa mod
 is "Time::Zone", the macro will set the variable "HAVE_TIME_ZONE"
 accordingly.
-.It Ev REQUIRE_PERL_MODULE(mod)
-Same as
-.Ev CHECK_PERL_MODULE ,
-except that the configure script will abort if the module is not found.
+.It Fn require_perl_module "mod"
+Variant of
+.Fn check_perl_module
+which aborts the configure script if the module is not found.
 .El
 .Sh CONFIGURATION OUTPUT DIRECTIVES
 The following directives produce output scripts and modules for integration
 by external packages.
 .Bl -tag -width "CONFIG_SCRIPT(name[,args]) "
-.It Ev CONFIG_SCRIPT(name[,args])
+.It Fn config_script "name[,args]"
 Generate a standard "foo-config" script.
 .Fa name
 specifies the name of the script.
@@ -328,7 +340,7 @@ For C/C++ style packages, the arguments are usually the
 output, followed by the
 .Sq --libs
 output.
-.It Ev PKGCONFIG_MODULE(name, desc, req, confl, cflags, libs, pvtLibs)
+.It Fn pkgconfig_module "name, desc, req, confl, cflags, libs, pvtLibs"
 Output a
 .Xr pkgconf 1
 compatible

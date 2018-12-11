@@ -815,7 +815,7 @@ echo "hdefs[\"DATADIR\"] = \"$DATADIR\"" >>configure.lua
 fi;
 $ECHO_N 'checking for a C compiler...'
 $ECHO_N 'checking for a C compiler...' >> config.log
-# BEGIN cc()
+# BEGIN cc
 if [ "$CROSS_COMPILING" = "yes" ]; then
 CROSSPFX="${host}-"
 else
@@ -987,18 +987,17 @@ fi
 if [ "${HAVE_CC}" = "yes" ]; then
 $ECHO_N 'cc: checking for compiler warning options...'
 $ECHO_N 'cc: checking for compiler warning options...' >> config.log
-MK_COMPILE_STATUS='OK'
+MK_COMPILE_STATUS="OK"
 cat << EOT > conftest$$.c
 int main(int argc, char *argv[]) { return (0); }
 
 EOT
-echo "$CC $CFLAGS $TEST_CFLAGS -Wall -Werror -o $testdir/conftest conftest.c " >>config.log
 $CC $CFLAGS $TEST_CFLAGS -Wall -Werror -o $testdir/conftest$$ conftest$$.c  2>>config.log
-if [ $? != 0 ]; then
-	echo ": failed, code $?" >> config.log
-	MK_COMPILE_STATUS="FAIL $?"
-fi
-if [ "${MK_COMPILE_STATUS}" = 'OK' ]; then
+if [ "$?" != "0" ]; then
+echo "cc failed, code $?" >> config.log
+MK_COMPILE_STATUS="FAIL $?"
+fi;
+if [ "${MK_COMPILE_STATUS}" = "OK" ]; then
 echo 'yes'
 echo 'yes' >> config.log
 HAVE_CC_WARNINGS='yes'
@@ -1014,7 +1013,7 @@ echo '#undef HAVE_CC_WARNINGS' >config/have_cc_warnings.h
 echo 'hdefs["HAVE_CC_WARNINGS"] = nil' >>configure.lua
 fi;
 if [ "${keep_conftest}" != "yes" ]; then
-	rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
+rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
 fi
 if [ "${HAVE_CC_WARNINGS}" = "yes" ]; then
 TEST_CFLAGS="-Wall -Werror"
@@ -1035,13 +1034,12 @@ main(int argc, char *argv[])
 }
 
 EOT
-echo "$CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest conftest.c" >>config.log
 $CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest$$ conftest$$.c 2>>config.log
 if [ $? != 0 ]; then
 	echo ": failed, code $?" >> config.log
 	MK_COMPILE_STATUS="FAIL $?"
 fi
-if [ "${MK_COMPILE_STATUS}" = 'OK' ]; then
+if [ "${MK_COMPILE_STATUS}" = "OK" ]; then
 echo 'yes'
 echo 'yes' >> config.log
 HAVE_FLOAT='yes'
@@ -1074,13 +1072,12 @@ main(int argc, char *argv[])
 }
 
 EOT
-echo "$CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest conftest.c" >>config.log
 $CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest$$ conftest$$.c 2>>config.log
 if [ $? != 0 ]; then
 	echo ": failed, code $?" >> config.log
 	MK_COMPILE_STATUS="FAIL $?"
 fi
-if [ "${MK_COMPILE_STATUS}" = 'OK' ]; then
+if [ "${MK_COMPILE_STATUS}" = "OK" ]; then
 echo 'yes'
 echo 'yes' >> config.log
 HAVE_LONG_DOUBLE='yes'
@@ -1112,13 +1109,12 @@ main(int argc, char *argv[])
 }
 
 EOT
-echo "$CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest conftest.c" >>config.log
 $CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest$$ conftest$$.c 2>>config.log
 if [ $? != 0 ]; then
 	echo ": failed, code $?" >> config.log
 	MK_COMPILE_STATUS="FAIL $?"
 fi
-if [ "${MK_COMPILE_STATUS}" = 'OK' ]; then
+if [ "${MK_COMPILE_STATUS}" = "OK" ]; then
 echo 'yes'
 echo 'yes' >> config.log
 HAVE_LONG_LONG='yes'
@@ -1154,13 +1150,12 @@ main(int argc, char *argv[]) {
 }
 
 EOT
-echo "$CC $CFLAGS $TEST_CFLAGS -mcygwin -o $testdir/conftest conftest.c" >>config.log
 $CC $CFLAGS $TEST_CFLAGS -mcygwin -o $testdir/conftest$$ conftest$$.c 2>>config.log
 if [ $? != 0 ]; then
 	echo ": failed, code $?" >> config.log
 	MK_COMPILE_STATUS="FAIL $?"
 fi
-if [ "${MK_COMPILE_STATUS}" = 'OK' ]; then
+if [ "${MK_COMPILE_STATUS}" = "OK" ]; then
 echo 'yes'
 echo 'yes' >> config.log
 HAVE_CYGWIN='yes'
@@ -1189,13 +1184,12 @@ main(int argc, char *argv[]) {
 }
 
 EOT
-echo "$CC $CFLAGS $TEST_CFLAGS -mwindows -o $testdir/conftest conftest.c" >>config.log
 $CC $CFLAGS $TEST_CFLAGS -mwindows -o $testdir/conftest$$ conftest$$.c 2>>config.log
 if [ $? != 0 ]; then
 	echo ": failed, code $?" >> config.log
 	MK_COMPILE_STATUS="FAIL $?"
 fi
-if [ "${MK_COMPILE_STATUS}" = 'OK' ]; then
+if [ "${MK_COMPILE_STATUS}" = "OK" ]; then
 echo 'yes'
 echo 'yes' >> config.log
 HAVE_CC_MWINDOWS='yes'
@@ -1229,13 +1223,12 @@ main(int argc, char *argv[]) {
 }
 
 EOT
-echo "$CC $CFLAGS $TEST_CFLAGS -mconsole -o $testdir/conftest conftest.c" >>config.log
 $CC $CFLAGS $TEST_CFLAGS -mconsole -o $testdir/conftest$$ conftest$$.c 2>>config.log
 if [ $? != 0 ]; then
 	echo ": failed, code $?" >> config.log
 	MK_COMPILE_STATUS="FAIL $?"
 fi
-if [ "${MK_COMPILE_STATUS}" = 'OK' ]; then
+if [ "${MK_COMPILE_STATUS}" = "OK" ]; then
 echo 'yes'
 echo 'yes' >> config.log
 HAVE_CC_MCONSOLE='yes'
@@ -1267,13 +1260,12 @@ cat << EOT > conftest$$.c
 int main(int argc, char *argv[]) { return (0); }
 
 EOT
-echo "$CC $CFLAGS $TEST_CFLAGS -Wl,--no-undefined -o $testdir/conftest conftest.c" >>config.log
 $CC $CFLAGS $TEST_CFLAGS -Wl,--no-undefined -o $testdir/conftest$$ conftest$$.c 2>>config.log
 if [ $? != 0 ]; then
 	echo ": failed, code $?" >> config.log
 	MK_COMPILE_STATUS="FAIL $?"
 fi
-if [ "${MK_COMPILE_STATUS}" = 'OK' ]; then
+if [ "${MK_COMPILE_STATUS}" = "OK" ]; then
 echo 'yes'
 echo 'yes' >> config.log
 HAVE_LD_NO_UNDEFINED='yes'
@@ -1301,13 +1293,12 @@ cat << EOT > conftest$$.c
 int main(int argc, char *argv[]) { return (0); }
 
 EOT
-echo "$CC $CFLAGS $TEST_CFLAGS -static-libgcc -o $testdir/conftest conftest.c" >>config.log
 $CC $CFLAGS $TEST_CFLAGS -static-libgcc -o $testdir/conftest$$ conftest$$.c 2>>config.log
 if [ $? != 0 ]; then
 	echo ": failed, code $?" >> config.log
 	MK_COMPILE_STATUS="FAIL $?"
 fi
-if [ "${MK_COMPILE_STATUS}" = 'OK' ]; then
+if [ "${MK_COMPILE_STATUS}" = "OK" ]; then
 echo 'yes'
 echo 'yes' >> config.log
 HAVE_LD_STATIC_LIBGCC='yes'
@@ -1349,11 +1340,10 @@ else
 HAVE_CC="no"
 HAVE_CC65="no"
 HAVE_CC_WARNINGS="no"
-CC=""
-CFLAGS=""
 PROG_GUI_FLAGS=""
 PROG_CLI_FLAGS=""
 LIBTOOLOPTS_SHARED=""
+TEST_CFLAGS=""
 echo '#undef HAVE_CC' >config/have_cc.h
 echo 'hdefs["HAVE_CC"] = nil' >>configure.lua
 echo '#undef HAVE_CC65' >config/have_cc65.h
@@ -1390,10 +1380,10 @@ exit 1
 fi;
 $ECHO_N 'checking for a gettext library in libc...'
 $ECHO_N 'checking for a gettext library in libc...' >> config.log
-# BEGIN gettext()
+# BEGIN gettext
 GETTEXT_CFLAGS=""
 GETTEXT_LIBS=""
-MK_COMPILE_STATUS='OK'
+MK_COMPILE_STATUS="OK"
 cat << EOT > conftest$$.c
 #include <libintl.h>
 int main(int argc, char *argv[])
@@ -1407,13 +1397,12 @@ int main(int argc, char *argv[])
 }
 
 EOT
-echo "$CC $CFLAGS $TEST_CFLAGS ${GETTEXT_CFLAGS} -o $testdir/conftest conftest.c ${GETTEXT_LIBS}" >>config.log
 $CC $CFLAGS $TEST_CFLAGS ${GETTEXT_CFLAGS} -o $testdir/conftest$$ conftest$$.c ${GETTEXT_LIBS} 2>>config.log
-if [ $? != 0 ]; then
-	echo ": failed, code $?" >> config.log
-	MK_COMPILE_STATUS="FAIL $?"
-fi
-if [ "${MK_COMPILE_STATUS}" = 'OK' ]; then
+if [ "$?" != "0" ]; then
+echo "cc failed, code $?" >> config.log
+MK_COMPILE_STATUS="FAIL $?"
+fi;
+if [ "${MK_COMPILE_STATUS}" = "OK" ]; then
 echo 'yes'
 echo 'yes' >> config.log
 HAVE_GETTEXT='yes'
@@ -1429,43 +1418,43 @@ echo '#undef HAVE_GETTEXT' >config/have_gettext.h
 echo 'hdefs["HAVE_GETTEXT"] = nil' >>configure.lua
 fi;
 if [ "${keep_conftest}" != "yes" ]; then
-	rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
+rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
 fi
 if [ "${HAVE_GETTEXT}" = "no" ]; then
 $ECHO_N 'checking for a gettext library in -lintl...'
 $ECHO_N 'checking for a gettext library in -lintl...' >> config.log
 if [ "" != "" ]; then
-if [ -e  "/include/libintl.h" ]; then
+if [ -e "/include/libintl.h" ]; then
 GETTEXT_CFLAGS="-I/include"
 GETTEXT_LIBS="-L/lib -lintl"
 fi;
 else
-if [ -e  "/include/libintl.h" ]; then
+if [ -e "/include/libintl.h" ]; then
 GETTEXT_CFLAGS="-I/include"
 GETTEXT_LIBS="-L/lib -lintl"
 fi;
-if [ -e  "/usr/include/libintl.h" ]; then
+if [ -e "/usr/include/libintl.h" ]; then
 GETTEXT_CFLAGS="-I/usr/include"
 GETTEXT_LIBS="-L/usr/lib -lintl"
 fi;
-if [ -e  "/usr/local/include/libintl.h" ]; then
+if [ -e "/usr/local/include/libintl.h" ]; then
 GETTEXT_CFLAGS="-I/usr/local/include"
 GETTEXT_LIBS="-L/usr/local/lib -lintl"
 fi;
-if [ -e  "/opt/include/libintl.h" ]; then
+if [ -e "/opt/include/libintl.h" ]; then
 GETTEXT_CFLAGS="-I/opt/include"
 GETTEXT_LIBS="-L/opt/lib -lintl"
 fi;
-if [ -e  "/opt/local/include/libintl.h" ]; then
+if [ -e "/opt/local/include/libintl.h" ]; then
 GETTEXT_CFLAGS="-I/opt/local/include"
 GETTEXT_LIBS="-L/opt/local/lib -lintl"
 fi;
-if [ -e  "/usr/pkg/include/libintl.h" ]; then
+if [ -e "/usr/pkg/include/libintl.h" ]; then
 GETTEXT_CFLAGS="-I/usr/pkg/include"
 GETTEXT_LIBS="-L/usr/pkg/lib -lintl"
 fi;
 fi;
-MK_COMPILE_STATUS='OK'
+MK_COMPILE_STATUS="OK"
 cat << EOT > conftest$$.c
 #include <libintl.h>
 int main(int argc, char *argv[])
@@ -1479,13 +1468,12 @@ int main(int argc, char *argv[])
 }
 
 EOT
-echo "$CC $CFLAGS $TEST_CFLAGS ${GETTEXT_CFLAGS} -o $testdir/conftest conftest.c ${GETTEXT_LIBS}" >>config.log
 $CC $CFLAGS $TEST_CFLAGS ${GETTEXT_CFLAGS} -o $testdir/conftest$$ conftest$$.c ${GETTEXT_LIBS} 2>>config.log
-if [ $? != 0 ]; then
-	echo ": failed, code $?" >> config.log
-	MK_COMPILE_STATUS="FAIL $?"
-fi
-if [ "${MK_COMPILE_STATUS}" = 'OK' ]; then
+if [ "$?" != "0" ]; then
+echo "cc failed, code $?" >> config.log
+MK_COMPILE_STATUS="FAIL $?"
+fi;
+if [ "${MK_COMPILE_STATUS}" = "OK" ]; then
 echo 'yes'
 echo 'yes' >> config.log
 HAVE_GETTEXT='yes'
@@ -1501,7 +1489,7 @@ echo '#undef HAVE_GETTEXT' >config/have_gettext.h
 echo 'hdefs["HAVE_GETTEXT"] = nil' >>configure.lua
 fi;
 if [ "${keep_conftest}" != "yes" ]; then
-	rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
+rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
 fi
 if [ "${HAVE_GETTEXT}" = "yes" ]; then
 echo '#ifndef GETTEXT_CFLAGS' > config/gettext_cflags.h
@@ -1516,37 +1504,37 @@ else
 $ECHO_N 'checking whether -lintl requires -liconv...'
 $ECHO_N 'checking whether -lintl requires -liconv...' >> config.log
 if [ "" != "" ]; then
-if [ -e  "/include/iconv.h" ]; then
+if [ -e "/include/iconv.h" ]; then
 GETTEXT_CFLAGS="${GETTEXT_CFLAGS} -I/include"
 GETTEXT_LIBS="${GETTEXT_LIBS} -L/lib -liconv"
 fi;
 else
-if [ -e  "/include/iconv.h" ]; then
+if [ -e "/include/iconv.h" ]; then
 GETTEXT_CFLAGS="${GETTEXT_CFLAGS} -I/include"
 GETTEXT_LIBS="${GETTEXT_LIBS} -L/lib -liconv"
 fi;
-if [ -e  "/usr/include/iconv.h" ]; then
+if [ -e "/usr/include/iconv.h" ]; then
 GETTEXT_CFLAGS="${GETTEXT_CFLAGS} -I/usr/include"
 GETTEXT_LIBS="${GETTEXT_LIBS} -L/usr/lib -liconv"
 fi;
-if [ -e  "/usr/local/include/iconv.h" ]; then
+if [ -e "/usr/local/include/iconv.h" ]; then
 GETTEXT_CFLAGS="${GETTEXT_CFLAGS} -I/usr/local/include"
 GETTEXT_LIBS="${GETTEXT_LIBS} -L/usr/local/lib -liconv"
 fi;
-if [ -e  "/opt/include/iconv.h" ]; then
+if [ -e "/opt/include/iconv.h" ]; then
 GETTEXT_CFLAGS="${GETTEXT_CFLAGS} -I/opt/include"
 GETTEXT_LIBS="${GETTEXT_LIBS} -L/opt/lib -liconv"
 fi;
-if [ -e  "/opt/local/include/iconv.h" ]; then
+if [ -e "/opt/local/include/iconv.h" ]; then
 GETTEXT_CFLAGS="${GETTEXT_CFLAGS} -I/opt/local/include"
 GETTEXT_LIBS="${GETTEXT_LIBS} -L/opt/local/lib -liconv"
 fi;
-if [ -e  "/usr/pkg/include/iconv.h" ]; then
+if [ -e "/usr/pkg/include/iconv.h" ]; then
 GETTEXT_CFLAGS="${GETTEXT_CFLAGS} -I/usr/pkg/include"
 GETTEXT_LIBS="${GETTEXT_LIBS} -L/usr/pkg/lib -liconv"
 fi;
 fi;
-MK_COMPILE_STATUS='OK'
+MK_COMPILE_STATUS="OK"
 cat << EOT > conftest$$.c
 #include <libintl.h>
 int main(int argc, char *argv[])
@@ -1560,13 +1548,12 @@ int main(int argc, char *argv[])
 }
 
 EOT
-echo "$CC $CFLAGS $TEST_CFLAGS ${GETTEXT_CFLAGS} -o $testdir/conftest conftest.c ${GETTEXT_LIBS}" >>config.log
 $CC $CFLAGS $TEST_CFLAGS ${GETTEXT_CFLAGS} -o $testdir/conftest$$ conftest$$.c ${GETTEXT_LIBS} 2>>config.log
-if [ $? != 0 ]; then
-	echo ": failed, code $?" >> config.log
-	MK_COMPILE_STATUS="FAIL $?"
-fi
-if [ "${MK_COMPILE_STATUS}" = 'OK' ]; then
+if [ "$?" != "0" ]; then
+echo "cc failed, code $?" >> config.log
+MK_COMPILE_STATUS="FAIL $?"
+fi;
+if [ "${MK_COMPILE_STATUS}" = "OK" ]; then
 echo 'yes'
 echo 'yes' >> config.log
 HAVE_GETTEXT='yes'
@@ -1582,7 +1569,7 @@ echo '#undef HAVE_GETTEXT' >config/have_gettext.h
 echo 'hdefs["HAVE_GETTEXT"] = nil' >>configure.lua
 fi;
 if [ "${keep_conftest}" != "yes" ]; then
-	rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
+rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
 fi
 if [ "${HAVE_GETTEXT}" = "yes" ]; then
 echo '#ifndef GETTEXT_CFLAGS' > config/gettext_cflags.h
@@ -1609,69 +1596,45 @@ echo '#undef GETTEXT_LIBS' >config/gettext_libs.h
 echo 'hdefs["GETTEXT_LIBS"] = nil' >>configure.lua
 fi;
 # END gettext
-$ECHO_N 'checking for Perl...'
-$ECHO_N 'checking for Perl...' >> config.log
-# BEGIN perl()
-MK_EXEC_FOUND='No'
-
-if [ "" != '' ]; then
-	if [ -e "/bin/perl" ]; then
-		PERL_CFLAGS=`/bin/perl -MExtUtils::Embed -e ccopts`
-		MK_EXEC_FOUND='Yes'
-	elif [ -e "/bin/perl.exe" ]; then
-		PERL_CFLAGS=`/bin/perl.exe -MExtUtils::Embed -e ccopts`
-		MK_EXEC_FOUND='Yes'
-	fi
-else
-	PERL_CFLAGS=''
-	bb_save_IFS=$IFS
-	IFS=$PATH_SEPARATOR
-	for path in $PATH; do
-		if [ -e "${path}/perl" ]; then
-			PERL_CFLAGS=`${path}/perl -MExtUtils::Embed -e ccopts`
-			MK_EXEC_FOUND='Yes'
-			break
-		elif [ -e "${path}/perl.exe" ]; then
-			PERL_CFLAGS=`${path}/perl.exe -MExtUtils::Embed -e ccopts`
-			MK_EXEC_FOUND='Yes'
-			break
-		fi
-	done
-	IFS=$bb_save_IFS
-fi
-MK_EXEC_FOUND='No'
-
-if [ "" != '' ]; then
-	if [ -e "/bin/perl" ]; then
-		PERL_LIBS=`/bin/perl -MExtUtils::Embed -e ldopts`
-		MK_EXEC_FOUND='Yes'
-	elif [ -e "/bin/perl.exe" ]; then
-		PERL_LIBS=`/bin/perl.exe -MExtUtils::Embed -e ldopts`
-		MK_EXEC_FOUND='Yes'
-	fi
-else
-	PERL_LIBS=''
-	bb_save_IFS=$IFS
-	IFS=$PATH_SEPARATOR
-	for path in $PATH; do
-		if [ -e "${path}/perl" ]; then
-			PERL_LIBS=`${path}/perl -MExtUtils::Embed -e ldopts`
-			MK_EXEC_FOUND='Yes'
-			break
-		elif [ -e "${path}/perl.exe" ]; then
-			PERL_LIBS=`${path}/perl.exe -MExtUtils::Embed -e ldopts`
-			MK_EXEC_FOUND='Yes'
-			break
-		fi
-	done
-	IFS=$bb_save_IFS
-fi
+$ECHO_N 'checking for perl...'
+$ECHO_N 'checking for perl...' >> config.log
+# BEGIN perl
+PERL_CFLAGS=""
+bb_save_IFS=$IFS
+IFS=$PATH_SEPARATOR
+for path in $PATH; do
+if [ -e "${path}/perl" ]; then
+PERL_CFLAGS=`${path}/perl -MExtUtils::Embed -e ccopts`
+MK_EXEC_FOUND="Yes"
+break
+elif [ -e "${path}/perl.exe" ]; then
+PERL_CFLAGS=`${path}/perl.exe -MExtUtils::Embed -e ccopts`
+MK_EXEC_FOUND="Yes"
+break
+fi;
+done
+IFS=$bb_save_IFS
+PERL_LIBS=""
+bb_save_IFS=$IFS
+IFS=$PATH_SEPARATOR
+for path in $PATH; do
+if [ -e "${path}/perl" ]; then
+PERL_LIBS=`${path}/perl -MExtUtils::Embed -e ldopts`
+MK_EXEC_FOUND="Yes"
+break
+elif [ -e "${path}/perl.exe" ]; then
+PERL_LIBS=`${path}/perl.exe -MExtUtils::Embed -e ldopts`
+MK_EXEC_FOUND="Yes"
+break
+fi;
+done
+IFS=$bb_save_IFS
 if [ "${PERL_LIBS}" != "" ]; then
 echo 'yes'
 echo 'yes' >> config.log
 $ECHO_N 'checking whether libperl works...'
 $ECHO_N 'checking whether libperl works...' >> config.log
-MK_COMPILE_STATUS='OK'
+MK_COMPILE_STATUS="OK"
 cat << EOT > conftest$$.c
 #include <EXTERN.h>
 #include <perl.h>
@@ -1699,13 +1662,12 @@ main(int argc, char **argv, char **env)
 }
 
 EOT
-echo "$CC $CFLAGS $TEST_CFLAGS ${PERL_CFLAGS} -Wno-error -o $testdir/conftest conftest.c ${PERL_LIBS}" >>config.log
 $CC $CFLAGS $TEST_CFLAGS ${PERL_CFLAGS} -Wno-error -o $testdir/conftest$$ conftest$$.c ${PERL_LIBS} 2>>config.log
-if [ $? != 0 ]; then
-	echo ": failed, code $?" >> config.log
-	MK_COMPILE_STATUS="FAIL $?"
-fi
-if [ "${MK_COMPILE_STATUS}" = 'OK' ]; then
+if [ "$?" != "0" ]; then
+echo "cc failed, code $?" >> config.log
+MK_COMPILE_STATUS="FAIL $?"
+fi;
+if [ "${MK_COMPILE_STATUS}" = "OK" ]; then
 echo 'yes'
 echo 'yes' >> config.log
 HAVE_PERL='yes'
@@ -1721,7 +1683,7 @@ echo '#undef HAVE_PERL' >config/have_perl.h
 echo 'hdefs["HAVE_PERL"] = nil' >>configure.lua
 fi;
 if [ "${keep_conftest}" != "yes" ]; then
-	rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
+rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
 fi
 if [ "${HAVE_PERL}" = "yes" ]; then
 echo '#ifndef PERL_CFLAGS' > config/perl_cflags.h
@@ -1743,9 +1705,12 @@ fi;
 else
 echo 'no'
 echo 'no' >> config.log
+HAVE_PERL="no"
+PERL_CFLAGS=""
+PERL_LIBS=""
 echo '#undef HAVE_PERL' >config/have_perl.h
 echo 'hdefs["HAVE_PERL"] = nil' >>configure.lua
-PERL="/usr/bin/perl"
+PERL="/usr/bin/env perl"
 fi;
 # END perl
 CFLAGS="$CFLAGS -I$SRC"

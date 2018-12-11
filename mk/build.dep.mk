@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2001-2007 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2001-2018 Julien Nadeau Carriere <vedge@hypertriton.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,21 +26,10 @@
 # Get object file dependency information from the compiler.
 #
 
-MKDEP=	sh ${TOP}/mk/mkdep
-CC?=	cc
+MKDEP=		sh ${TOP}/mk/mkdep
+ADAMKDEP?=	gnatmake
+CC?=		cc
 
-depend:	${DPADD} depend-subdir
-	@echo > .depend
-	@files="${SRCS}"; \
-	if [ "$$files" != "" -a "$$files" != "none" ]; then \
-	    if [ "${BUILD}" != "" ]; then \
-	   	env CC=${CC} ${MKDEP} ${CFLAGS} -I${BUILD} $$files; \
-	   	env CC=${CC} ${MKDEP} -a -l ${CFLAGS} -I${BUILD} $$files; \
-	    else \
-	   	env CC=${CC} ${MKDEP} ${CFLAGS} $$files; \
-	   	env CC=${CC} ${MKDEP} -a -l ${CFLAGS} $$files; \
-	    fi; \
-	fi
 
 clean-depend:
 	echo > .depend

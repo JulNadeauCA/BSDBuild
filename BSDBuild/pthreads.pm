@@ -1,5 +1,27 @@
-# Public domain
 # vim:ts=4
+#
+# Copyright (c) 2005-2018 Julien Nadeau Carriere <vedge@csoft.net>
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+# USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 my @autoIncludeDirs = (
 	'/usr/include/pthreads',
@@ -112,7 +134,7 @@ sub SearchLibs ($$)
 	}
 }
 
-sub TestPthreadsStd
+sub TEST_pthreads_std
 {
 	my ($ver, $pfx) = @_;
 
@@ -156,10 +178,9 @@ sub TestPthreadsStd
 			MkEndif();
 		MkEndif();
 	MkEndif();
-	return (0);
 }
 
-sub TestPthreadMutexRecursive
+sub TEST_pthreads_recursive_mutex
 {
 	#
 	# Look for the PTHREAD_MUTEX_RECURSIVE flag of the function
@@ -208,10 +229,9 @@ EOF
 	MkElse;
 		MkSaveUndef('HAVE_PTHREAD_MUTEX_RECURSIVE_NP');
 	MkEndif;
-	return (0);
 }
 
-sub TestPthreadPointerness
+sub TEST_pthreads_pointerness
 {
 	MkPrintSN('checking whether pthread_mutex_t is a pointer...');
 	MkCompileC('HAVE_PTHREAD_MUTEX_T_POINTER',
@@ -226,7 +246,7 @@ sub TestPthreadPointerness
 	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', $testIfThreadIsPointer);
 }
 
-sub TestPthreadsXOpenExt
+sub TEST_pthreads_xopen
 {
 	my ($ver, $pfx) = @_;
 
@@ -270,19 +290,17 @@ sub TestPthreadsXOpenExt
 			MkSaveUndef('HAVE_PTHREADS_XOPEN');
 		MkEndif;
 	MkEndif;
-	return (0);
 }
 
-sub TestPthreads
+sub TEST_pthreads
 {
-	TestPthreadsStd(@_);
-	TestPthreadsXOpenExt(@_);
-	TestPthreadMutexRecursive();
-	TestPthreadPointerness();
-	return (0);
+	TEST_pthreads_std(@_);
+	TEST_pthreads_xopen(@_);
+	TEST_pthreads_recursive_mutex();
+	TEST_pthreads_pointerness();
 }
 
-sub Disable
+sub DISABLE_pthreads
 {
 	MkDefine('HAVE_PTHREADS', 'no');
 	MkDefine('HAVE_PTHREAD_MUTEX_RECURSIVE', 'no');
@@ -301,11 +319,11 @@ sub Disable
 	            'HAVE_PTHREAD_MUTEX_T_POINTER',
 	            'HAVE_PTHREAD_COND_T_POINTER',
 	            'HAVE_PTHREAD_T_POINTER',
-	            'PTHREADS_CFLAGS', 'PTHREADS_LIBS',
+	            'PTHREADS_CFLAGS',       'PTHREADS_LIBS',
 	            'PTHREADS_XOPEN_CFLAGS', 'PTHREADS_XOPEN_LIBS');
 }
 
-sub Emul
+sub EMUL_pthreads
 {
 	my ($os, $osrel, $machine) = @_;
 
@@ -319,7 +337,7 @@ sub Emul
 		                                  '-D_XOPEN_SOURCE=600');
 		MkSaveDefine('PTHREADS_XOPEN_CFLAGS');
 	} else {
-		Disable();
+		DISABLE_pthreads();
 	}
 	return (1);
 }
@@ -328,12 +346,10 @@ BEGIN
 {
 	my $n = 'pthreads';
 
-	$DESCR{$n} = 'POSIX threads';
-
-	$TESTS{$n}   = \&TestPthreads;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-
-	$DEPS{$n} = 'cc';
+	$DESCR{$n}   = 'POSIX threads';
+	$TESTS{$n}   = \&TEST_pthreads;
+	$DISABLE{$n} = \&DISABLE_pthreads;
+	$EMUL{$n}    = \&EMUL_pthreads;
+	$DEPS{$n}    = 'cc';
 }
 ;1

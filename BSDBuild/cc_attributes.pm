@@ -1,7 +1,7 @@
 # Public domain
 # vim:ts=4
 
-sub Test_CC_Attributes
+sub TEST_cc_attributes
 {
 	$Quiet = 1;
 
@@ -189,7 +189,7 @@ EOF
 	$Quiet = 0;
 }
 
-sub Disable_CC_Attributes
+sub DISABLE_cc_attributes
 {
 	MkSaveUndef('HAVE_ALIGNED_ATTRIBUTE');
 	MkSaveUndef('HAVE_BOUNDED_ATTRIBUTE');
@@ -204,23 +204,13 @@ sub Disable_CC_Attributes
 	MkSaveUndef('HAVE_WARN_UNUSED_RESULT_ATTRIBUTE');
 }
 
-sub Emul
-{
-	Disable_CC_Attributes();
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'cc_attributes';
 
 	$DESCR{$n}   = 'C compiler attributes';
-
-	$TESTS{$n}   = \&Test_CC_Attributes;
-	$DISABLE{$n} = \&Disable_CC_Attributes;
-	$EMUL{$n}    = \&Emul;
-
+	$TESTS{$n}   = \&TEST_cc_attributes;
+	$DISABLE{$n} = \&DISABLE_cc_attributes;
 	$DEPS{$n}    = 'cc';
 }
-
 ;1

@@ -1,27 +1,5 @@
 # vim:ts=4
-#
-# Copyright (c) 2007 Hypertriton, Inc. <http://hypertriton.com/>
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
-# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-# USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# Public domain
 
 my %autoIncludeDirs = (
 	'/usr/include'				=> '/usr/lib',
@@ -36,7 +14,7 @@ my %autoIncludeDirs = (
 	'/usr/X11R6/include'		=> '/usr/X11R6/lib',
 );
 
-sub Test
+sub TEST_glu
 {
 	my ($ver, $pfx) = @_;
 	
@@ -93,10 +71,17 @@ int main(int argc, char *argv[]) {
 }
 EOF
 	MkSaveIfTrue('${HAVE_GLU}', 'GLU_CFLAGS', 'GLU_LIBS');
-	return (0);
 }
 
-sub Emul
+sub DISABLE_glu
+{
+	MkDefine('HAVE_GLU', 'no');
+	MkDefine('GLU_CFLAGS', '');
+	MkDefine('GLU_LIBS', '');
+	MkSaveUndef('HAVE_GLU', 'GLU_CFLAGS', 'GLU_LIBS');
+}
+
+sub EMUL_glu
 {
 	my ($os, $osrel, $machine) = @_;
 	
@@ -110,12 +95,13 @@ sub Emul
 
 BEGIN
 {
-	$DESCR{'glu'} = 'GLU';
-	$URL{'glu'} = 'http://www.opengl.org';
+	my $n = 'glu';
 
-	$TESTS{'glu'} = \&Test;
-	$EMUL{'glu'} = \&Emul;
-	$DEPS{'glu'} = 'cc,opengl,math';
+	$DESCR{$n}   = 'GLU';
+	$URL{$n}     = 'http://www.opengl.org';
+	$TESTS{$n}   = \&TEST_glu;
+	$DISABLE{$n} = \&DISABLE_glu;
+	$EMUL{$n}    = \&EMUL_glu;
+	$DEPS{$n}    = 'cc,opengl,math';
 }
-
 ;1

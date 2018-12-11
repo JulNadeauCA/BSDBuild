@@ -1,21 +1,20 @@
-# Public domain
 # vim:ts=4
+# Public domain
 
-sub Test
+sub TEST_winsock
 {
 	MkPrintS("not checking");
-	Disable_WinSock();
-	return (0);
+	DISABLE_winsock();
 }
 
-sub Disable_WinSock
+sub DISABLE_winsock
 {
 	MkDefine('HAVE_WINSOCK1', 'no');
 	MkDefine('HAVE_WINSOCK2', 'no');
 	MkSaveUndef('HAVE_WINSOCK1', 'HAVE_WINSOCK2');
 }
 
-sub Emul
+sub EMUL_winsock
 {
 	my ($os, $osrel, $machine) = @_;
 	
@@ -33,11 +32,9 @@ BEGIN
 {
 	my $n = 'winsock';
 
-	$DESCR{$n} = 'the WinSock interface';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable_WinSock;
-	$EMUL{$n}    = \&Emul;
+	$DESCR{$n}   = 'WinSock';
+	$TESTS{$n}   = \&TEST_winsock;
+	$DISABLE{$n} = \&DISABLE_winsock;
+	$EMUL{$n}    = \&EMUL_winsock;
 }
-
 ;1

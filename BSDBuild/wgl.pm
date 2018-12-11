@@ -1,5 +1,5 @@
-# Public domain
 # vim:ts=4
+# Public domain
 
 my $testCode = << 'EOF';
 #include <windows.h>
@@ -21,28 +21,24 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
-sub Test
+sub TEST_wgl
 {
 	my ($ver) = @_;
 
-	MkCompileC('HAVE_WGL',
-	           '${OPENGL_CFLAGS}',
-			   '${OPENGL_LIBS} -lgdi32',
-	           $testCode);
+	MkCompileC('HAVE_WGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS} -lgdi32', $testCode);
 	MkIfTrue('${HAVE_WGL}');
 		MkDefine('OPENGL_LIBS', '${OPENGL_LIBS} -lgdi32');
 		MkSave('OPENGL_LIBS');
 	MkEndif;
-
-	return (0);
 }
 
-sub Disable
+sub DISABLE_wgl
 {
+	MkDefine('HAVE_WGL', 'no');
 	MkSaveUndef('HAVE_WGL');
 }
 
-sub Emul
+sub EMUL_wgl
 {
 	my ($os, $osrel, $machine) = @_;
 	
@@ -58,13 +54,10 @@ BEGIN
 {
 	my $n = 'wgl';
 
-	$DESCR{$n} = 'the WGL interface';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-
-	$DEPS{$n} = 'cc';
+	$DESCR{$n}   = 'the WGL interface';
+	$TESTS{$n}   = \&TEST_wgl;
+	$DISABLE{$n} = \&DISABLE_wgl;
+	$EMUL{$n}    = \&EMUL_wgl;
+	$DEPS{$n}    = 'cc';
 }
-
 ;1

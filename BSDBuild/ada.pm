@@ -9,7 +9,7 @@ begin
 end conftest;
 EOF
 
-sub Test_Ada
+sub TEST_ada
 {
 	print << 'EOF';
 TEST_ADAFLAGS=''
@@ -262,26 +262,25 @@ EOF
 		         'ADAMKDEP', 'PROG_GUI_FLAGS', 'PROG_CLI_FLAGS',
 		         'LIBTOOLOPTS_SHARED');
 	MkElse;
-		Disable_Ada();
+		DISABLE_ada();
 	MkEndif;
 }
 
-sub Disable_Ada
+sub DISABLE_ada
 {
 	MkDefine('HAVE_ADA', 'no');
 
-	MkDefine('ADA',       '');
-	MkDefine('ADAFLAGS',  '');
-	MkDefine('ADABIND',   '');
+	MkDefine('ADA', '');
+	MkDefine('ADAFLAGS', '');
+	MkDefine('ADABIND', '');
 	MkDefine('ADABFLAGS', '');
-	MkDefine('ADALINK',   '');
+	MkDefine('ADALINK', '');
 	MkDefine('ADALFLAGS', '');
-	MkDefine('ADAMKDEP',  '');
+	MkDefine('ADAMKDEP', '');
+	MkDefine('TEST_ADAFLAGS', '');
 
-	MkSaveMK('ADA', 'ADAFLAGS',
-             'ADABIND', 'ADABFLAGS',
-             'ADALINK', 'ADALFLAGS',
-             'ADAMKDEP');
+	MkSaveMK('ADA', 'ADAFLAGS', 'ADABIND', 'ADABFLAGS', 'ADALINK',
+             'ADALFLAGS', 'ADAMKDEP');
 
 	MkSaveUndef('HAVE_ADA',
 	            'HAVE_ADA_LD_NO_UNDEFINED',
@@ -291,8 +290,8 @@ sub Disable_Ada
 BEGIN
 {
 	$DESCR{'ada'}   = 'Ada compiler';
-	$TESTS{'ada'}   = \&Test_Ada;
-	$DISABLE{'ada'} = \&Disable_Ada;
+	$TESTS{'ada'}   = \&TEST_ada;
+	$DISABLE{'ada'} = \&DISABLE_ada;
 
 	RegisterEnvVar('ADA',		'Ada compiler command');
 	RegisterEnvVar('ADAFLAGS',	'Ada compiler flags');

@@ -44,7 +44,7 @@ my @autoLibDirs = (
 	'/opt/X11/lib'
 );
 
-sub Test
+sub TEST_x11
 {
 	my ($ver, $pfx) = @_;
 	
@@ -122,39 +122,28 @@ int main(int argc, char *argv[])
 }
 EOF
 	MkElse;
-		Disable();
+		DISABLE_x11();
 	MkEndif;
 }
 
-sub Disable
+sub DISABLE_x11
 {
-	MkDefine('X11_PC', '');
+	MkDefine('HAVE_X11', 'no');
+	MkDefine('HAVE_XKB', 'no');
 	MkDefine('X11_CFLAGS', '');
 	MkDefine('X11_LIBS', '');
-
+	MkDefine('X11_PC', '');
 	MkSaveUndef('HAVE_X11', 'HAVE_XKB', 'X11_CFLAGS', 'X11_LIBS');
-}
-
-sub Emul
-{
-	my ($os, $osrel, $machine) = @_;
-
-	MkEmulUnavail('X11');
-	return (1);
 }
 
 BEGIN
 {
 	my $n = 'x11';
 
-	$DESCR{$n} = 'the X window system';
-	$URL{$n}   = 'http://x.org';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-
-	$DEPS{$n} = 'cc';
+	$DESCR{$n}   = 'the X window system';
+	$URL{$n}     = 'http://x.org';
+	$TESTS{$n}   = \&TEST_x11;
+	$DISABLE{$n} = \&DISABLE_x11;
+	$DEPS{$n}    = 'cc';
 }
-
 ;1

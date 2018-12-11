@@ -1,7 +1,7 @@
 # Public domain
 # vim:ts=4
 
-sub Test_Altivec
+sub TEST_altivec
 {
 	my ($ver) = @_;
 	my $testCode = << 'EOF';
@@ -55,37 +55,23 @@ EOF
 		MkEndif;
 		MkSaveUndef('HAVE_ALTIVEC_H');
 	MkEndif;
-
-	return (0);
 }
 
-sub Disable_Altivec
+sub DISABLE_altivec
 {
 	MkDefine('HAVE_ALTIVEC', 'no');
 	MkDefine('HAVE_ALTIVEC_H', 'no');
 	MkDefine('ALTIVEC_CFLAGS', '');
-
 	MkSaveUndef('HAVE_ALTIVEC', 'HAVE_ALTIVEC_H', 'ALTIVEC_CFLAGS');
-}
-
-sub Emul
-{
-	my ($os, $osrel, $machine) = @_;
-
-	Disable();
-	return (1);
 }
 
 BEGIN
 {
 	my $n = 'altivec';
 
-	$DESCR{$n} = 'AltiVec (with <altivec.h>)';
-
-	$TESTS{$n}   = \&Test_Altivec;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-	
-	$DEPS{$n} = 'cc';
+	$DESCR{$n}   = 'AltiVec (with <altivec.h>)';
+	$TESTS{$n}   = \&TEST_altivec;
+	$DISABLE{$n} = \&DISABLE_altivec;
+	$DEPS{$n}    = 'cc';
 }
 ;1

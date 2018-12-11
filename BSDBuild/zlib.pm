@@ -1,12 +1,12 @@
-# Public domain
 # vim:ts=4
+# Public domain
 
 my @autoPrefixDirs = (
 	'/usr/local',
 	'/usr'
 );
 
-sub Test
+sub TEST_zlib
 {
 	my ($ver, $pfx) = @_;
 
@@ -44,13 +44,12 @@ int main(int argc, char *argv[]) {
 EOF
 		MkSaveIfTrue('${HAVE_ZLIB}', 'ZLIB_CFLAGS', 'ZLIB_LIBS');
 	MkElse;
-		Disable();
 		MkPrintS('no');
+		DISABLE_zlib();
 	MkEndif;
-	return (0);
 }
 
-sub Disable
+sub DISABLE_zlib
 {
 	MkDefine('HAVE_ZLIB', 'no');
 	MkDefine('ZLIB_CFLAGS', '');
@@ -58,23 +57,13 @@ sub Disable
 	MkSaveUndef('HAVE_ZLIB', 'ZLIB_CFLAGS', 'ZLIB_LIBS');
 }
 
-sub Emul
-{
-	MkEmulUnavail('ZLIB');
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'zlib';
 
-	$DESCR{$n} = 'zlib';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-
-	$DEPS{$n} = 'cc';
+	$DESCR{$n}   = 'zlib';
+	$TESTS{$n}   = \&TEST_zlib;
+	$DISABLE{$n} = \&DISABLE_zlib;
+	$DEPS{$n}    = 'cc';
 }
-
 ;1

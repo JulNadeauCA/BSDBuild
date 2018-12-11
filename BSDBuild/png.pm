@@ -1,5 +1,5 @@
-# Public domain
 # vim:ts=4
+# Public domain
 
 use BSDBuild::Core;
 
@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 }
 EOF
 
-sub Test
+sub TEST_png
 {
 	my ($ver, $pfx) = @_;
 	
@@ -40,7 +40,7 @@ sub Test
 			MkSaveUndef('HAVE_LIBPNG14');
 		MkEndif;
 	MkElse;
-		Disable();
+		DISABLE_png();
 	MkEndif;
 	
 	MkIfTrue('${HAVE_PNG}');
@@ -48,43 +48,26 @@ sub Test
 	MkElse;
 		MkDefine('PNG_PC', '');
 	MkEndif;
-	return (0);
 }
 
-sub Disable
+sub DISABLE_png
 {
 	MkDefine('HAVE_PNG', 'no');
 	MkDefine('HAVE_LIBPNG14', 'no');
 	MkDefine('PNG_CFLAGS', '');
 	MkDefine('PNG_LIBS', '');
 	MkDefine('PNG_PC', '');
-
 	MkSaveUndef('HAVE_PNG', 'HAVE_LIBPNG14', 'PNG_CFLAGS', 'PNG_LIBS');
-}
-
-sub Emul
-{
-	my ($os, $osrel, $machine) = @_;
-
-	MkEmulUnavail('PNG');
-
-	MkDefine('HAVE_LIBPNG14', 'no');
-	MkSaveMK('HAVE_LIBPNG14');
-	MkSaveUndef('HAVE_LIBPNG14');
-	return (1);
 }
 
 BEGIN
 {
 	my $n = 'png';
 
-	$DESCR{$n} = 'libpng';
-	$URL{$n}   = 'http://www.libpng.org';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-
-	$DEPS{$n} = 'cc';
+	$DESCR{$n}   = 'libpng';
+	$URL{$n}     = 'http://www.libpng.org';
+	$TESTS{$n}   = \&TEST_png;
+	$DISABLE{$n} = \&DISABLE_png;
+	$DEPS{$n}    = 'cc';
 }
 ;1

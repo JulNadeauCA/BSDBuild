@@ -1,18 +1,15 @@
 # Public domain
 # vim:ts=4
 
-sub Test_AgarAdaCore
+sub TEST_agar_ada_core
 {
 	my ($ver, $pfx) = @_;
 	
-	MkExecOutputPfx($pfx, 'agar-ada-core-config', '--version',
-                    'AGAR_ADA_CORE_VERSION');
+	MkExecOutputPfx($pfx, 'agar-ada-core-config', '--version', 'AGAR_ADA_CORE_VERSION');
 	MkIfFound($pfx, $ver, 'AGAR_ADA_CORE_VERSION');
 		MkPrintSN('checking whether Agar-Core Ada bindings work...');
-		MkExecOutputPfx($pfx, 'agar-ada-core-config', '--cflags',
-                        'AGAR_ADA_CORE_CFLAGS');
-		MkExecOutputPfx($pfx, 'agar-ada-core-config', '--libs',
-                        'AGAR_ADA_CORE_LIBS');
+		MkExecOutputPfx($pfx, 'agar-ada-core-config', '--cflags', 'AGAR_ADA_CORE_CFLAGS');
+		MkExecOutputPfx($pfx, 'agar-ada-core-config', '--libs', 'AGAR_ADA_CORE_LIBS');
 		MkCompileAda('HAVE_AGAR_ADA_CORE',
 		             '${AGAR_ADA_CORE_CFLAGS}', '${AGAR_ADA_CORE_LIBS}', << "EOF");
 with Agar;
@@ -29,18 +26,19 @@ EOF
 		MkSaveIfTrue('${HAVE_AGAR_ADA_CORE}',
                      'AGAR_ADA_CORE_CFLAGS', 'AGAR_ADA_CORE_LIBS');
 	MkElse;
-		Disable_Agar_Ada_Core();
+		DISABLE_agar_ada_core();
 	MkEndif;
-	return (0);
 }
 
-sub Disable_AgarAdaCore
+sub DISABLE_agar_ada_core
 {
-	MkSaveUndef('HAVE_AGAR_ADA_CORE');
-	MkSaveUndef('AGAR_ADA_CORE_CFLAGS', 'AGAR_ADA_CORE_LIBS');
+	MkDefine('HAVE_AGAR_ADA_CORE', 'no');
+	MkDefine('AGAR_ADA_CORE_CFLAGS', '');
+	MkDefine('AGAR_ADA_CORE_LIBS', '');
+	MkSaveUndef('HAVE_AGAR_ADA_CORE', 'AGAR_ADA_CORE_CFLAGS', 'AGAR_ADA_CORE_LIBS');
 }
 
-sub Emul
+sub EMUL_agar_ada_core
 {
 	my ($os, $osrel, $machine) = @_;
 
@@ -56,12 +54,13 @@ BEGIN
 {
 	my $n = 'agar-ada-core';
 
-	$DESCR{$n} = 'Ada bindings to Agar-Core';
-	$URL{$n}   = 'http://libagar.org';
-	$DEPS{$n}  = 'cc';
+	$DESCR{$n}   = 'Ada bindings to Agar-Core';
+	$URL{$n}     = 'http://libagar.org';
 
-	$TESTS{$n}   = \&Test_AgarAdaCore;
-	$DISABLE{$n} = \&Disable_AgarAdaCore;
-	$EMUL{$n}    = \&Emul;
+	$TESTS{$n}   = \&TEST_agar_ada_core;
+	$DISABLE{$n} = \&DISABLE_agar_ada_core;
+	$EMUL{$n}    = \&EMUL_agar_ada_core;
+
+	$DEPS{$n}    = 'cc';
 }
 ;1

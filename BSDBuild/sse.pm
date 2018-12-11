@@ -1,7 +1,7 @@
-# Public domain
 # vim:ts=4
+# Public domain
 
-sub Test
+sub TEST_sse
 {
 	my ($ver) = @_;
 
@@ -102,11 +102,9 @@ EOF
 		MkDefine('SSE3_CFLAGS', '');
 	MkEndif;
 	MkSaveMK('SSE3_CFLAGS');
-	
-	return (0);
 }
 
-sub Disable
+sub DISABLE_sse
 {
 	MkDefine('HAVE_SSE', 'no');
 	MkDefine('HAVE_SSE2', 'no');
@@ -115,33 +113,17 @@ sub Disable
 	MkDefine('SSE_CFLAGS', '');
 	MkDefine('SSE2_CFLAGS', '');
 	MkDefine('SSE3_CFLAGS', '');
-
-	MkSaveUndef('HAVE_SSE',
-                'HAVE_SSE2',
-                'HAVE_SSE3',
-                'INLINE_SSE',
-                'SSE_CFLAGS',
-                'SSE2_CFLAGS',
-                'SSE3_CFLAGS');
-}
-
-sub Emul
-{
-	Disable();
-	return (1);
+	MkSaveUndef('HAVE_SSE', 'HAVE_SSE2', 'HAVE_SSE3', 'INLINE_SSE',
+                'SSE_CFLAGS', 'SSE2_CFLAGS', 'SSE3_CFLAGS');
 }
 
 BEGIN
 {
 	my $n = 'sse';
 
-	$DESCR{$n} = 'SSE extensions';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-
-	$DEPS{$n} = 'cc';
+	$DESCR{$n}   = 'SSE extensions';
+	$TESTS{$n}   = \&TEST_sse;
+	$DISABLE{$n} = \&DISABLE_sse;
+	$DEPS{$n}    = 'cc';
 }
-
 ;1

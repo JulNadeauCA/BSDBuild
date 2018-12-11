@@ -16,7 +16,7 @@ main(int argc, char *argv[])
 }
 EOF
 
-sub Test
+sub TEST_freetype
 {
 	my ($ver, $pfx) = @_;
 
@@ -43,7 +43,7 @@ sub Test
 		MkCompileC('HAVE_FREETYPE', '${FREETYPE_CFLAGS}', '${FREETYPE_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_FREETYPE}', 'FREETYPE_CFLAGS', 'FREETYPE_LIBS');
 	MkElse;
-		Disable();
+		DISABLE_freetype();
 	MkEndif;
 	
 	MkIfTrue('${HAVE_FREETYPE}');
@@ -51,19 +51,18 @@ sub Test
 	MkElse;
 		MkDefine('FREETYPE_PC', '');
 	MkEndif;
-	return (0);
 }
 
-sub Disable
+sub DISABLE_freetype
 {
+	MkDefine('HAVE_FREETYPE', 'no');
 	MkDefine('FREETYPE_CFLAGS', '');
 	MkDefine('FREETYPE_LIBS', '');
 	MkDefine('FREETYPE_PC', '');
-
 	MkSaveUndef('HAVE_FREETYPE', 'FREETYPE_CFFLAGS', 'FREETYPE_LIBS');
 }
 
-sub Emul
+sub EMUL_freetype
 {
 	my ($os, $osrel, $machine) = @_;
 
@@ -79,14 +78,11 @@ BEGIN
 {
 	my $n = 'freetype';
 
-	$DESCR{$n} = 'FreeType';
-	$URL{$n}   = 'http://www.freetype.org';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-
-	$DEPS{$n} = 'cc';
+	$DESCR{$n}   = 'FreeType';
+	$URL{$n}     = 'http://www.freetype.org';
+	$TESTS{$n}   = \&TEST_freetype;
+	$DISABLE{$n} = \&DISABLE_freetype;
+	$EMUL{$n}    = \&EMUL_freetype;
+	$DEPS{$n}    = 'cc';
 }
-
 ;1

@@ -19,7 +19,7 @@ main(int argc, char *argv[])
 }
 EOF
 
-sub Test_ByteOrder
+sub TEST_byte_order
 {
 	MkIfNE('${byte_order}', '');
 		MkIfEQ('${byte_order}', 'LE');
@@ -88,7 +88,7 @@ EOF
 	MkEndif;
 }
 
-sub Emul
+sub EMUL_byte_order
 {
 	my ($os, $osrel, $machine) = @_;
 
@@ -109,10 +109,8 @@ BEGIN
 	my $n = 'byte_order';
 
 	$DESCR{$n} = 'byte order';
+	$TESTS{$n} = \&TEST_byte_order;
+	$EMUL{$n}  = \&EMUL_byte_order;
 	$DEPS{$n}  = 'cc';
-
-	$TESTS{$n} = \&Test_ByteOrder;
-	$EMUL{$n}  = \&Emul;
 }
-
 ;1

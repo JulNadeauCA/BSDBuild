@@ -1,3 +1,4 @@
+# Public domain
 # vim:ts=4
 
 my $testCode = << 'EOF';
@@ -145,7 +146,7 @@ main(int argc, char *argv[])
 }
 EOF
 
-sub Test_Agar_Types
+sub TEST_agar_types
 {
 	my ($ver, $pfx) = @_;
 	
@@ -157,12 +158,11 @@ sub Test_Agar_Types
 		MkCompileAndRunC('HAVE_AGAR_TYPES', '${AGAR_CFLAGS}', '${AGAR_LIBS}',
 				         $testCode);
 	MkElse;
-		Disable_Agar_Types();
+		DISABLE_agar_types();
 	MkEndif;
-	return (0);
 }
 
-sub Disable_Agar_Types
+sub DISABLE_agar_types
 {
 	MkDefine('HAVE_AGAR_TYPES', 'no');
 	MkSaveUndef('HAVE_AGAR_TYPES');
@@ -172,11 +172,12 @@ BEGIN
 {
 	my $n = 'agar.types';
 
-	$DESCR{$n} = 'Agar types';
-	$URL{$n}   = 'http://libagar.org';
-	$DEPS{$n}  = 'cc';
+	$DESCR{$n}   = 'Agar types';
+	$URL{$n}     = 'http://libagar.org';
 
-	$TESTS{$n}   = \&Test_Agar_Types;
-	$DISABLE{$n} = \&Disable_Agar_Types;
+	$TESTS{$n}   = \&TEST_agar_types;
+	$DISABLE{$n} = \&DISABLE_agar_types;
+	
+	$DEPS{$n}    = 'cc';
 }
 ;1

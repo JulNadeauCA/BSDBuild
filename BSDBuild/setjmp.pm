@@ -1,29 +1,7 @@
 # vim:ts=4
-#
-# Copyright (c) 2007 Hypertriton, Inc. <http://hypertriton.com/>
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
-# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-# USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# Public domain
 
-sub Test
+sub TEST_setjmp
 {
 	TryCompile '_MK_HAVE_SETJMP', << 'EOF';
 #include <setjmp.h>
@@ -38,11 +16,15 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-
-	return (0);
 }
 
-sub Emul
+sub DISABLE_setjmp
+{
+	MkDefine('_MK_HAVE_SETJMP', 'no');
+	MkSaveUndef('_MK_HAVE_SETJMP');
+}
+
+sub EMUL_setjmp
 {
 	my ($os, $osrel, $machine) = @_;
 
@@ -57,10 +39,12 @@ sub Emul
 
 BEGIN
 {
-	$DESCR{'setjmp'} = 'setjmp() and longjmp()';
-	$TESTS{'setjmp'} = \&Test;
-	$EMUL{'setjmp'} = \&Emul;
-	$DEPS{'setjmp'} = 'cc';
-}
+	my $n = 'setjmp';
 
+	$DESCR{$n}   = 'setjmp() and longjmp()';
+	$TESTS{$n}   = \&TEST_setjmp;
+	$DISABLE{$n} = \&DISABLE_setjmp;
+	$EMUL{$n}    = \&EMUL_setjmp;
+	$DEPS{$n}    = 'cc';
+}
 ;1

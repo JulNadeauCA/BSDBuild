@@ -10,7 +10,7 @@ my @dictPaths = (
 	'/usr/local/share/cracklib/cracklib-small',
 );
 
-sub Test_Cracklib
+sub TEST_cracklib
 {
 	my ($ver, $pfx) = @_;
 
@@ -54,10 +54,9 @@ EOF
 		MkSaveUndef('HAVE_CRACKLIB');
 		MkPrintS('no');
 	MkEndif;
-	return (0);
 }
 
-sub Disable_Cracklib
+sub DISABLE_cracklib
 {
 	MkDefine('HAVE_CRACKLIB', 'no');
 	MkDefine('CRACKLIB_CFLAGS', '');
@@ -71,10 +70,9 @@ BEGIN
 {
 	my $n = 'cracklib';
 
-	$DESCR{$n} = 'cracklib';
-	$DEPS{$n}  = 'cc';
-
-	$TESTS{$n}   = \&Test_Cracklib;
-	$DISABLE{$n} = \&Disable_Cracklib;
+	$DESCR{$n}   = 'cracklib';
+	$TESTS{$n}   = \&TEST_cracklib;
+	$DISABLE{$n} = \&DISABLE_cracklib;
+	$DEPS{$n}    = 'cc';
 }
 ;1

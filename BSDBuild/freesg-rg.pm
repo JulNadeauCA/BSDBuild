@@ -1,27 +1,5 @@
 # vim:ts=4
-#
-# Copyright (c) 2013 Hypertriton, Inc. <http://hypertriton.com/>
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
-# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-# USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# Public domain
 
 my $testCode = << 'EOF';
 #include <agar/core.h>
@@ -37,7 +15,7 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
-sub Test
+sub TEST_freesg_rg
 {
 	my ($ver, $pfx) = @_;
 	
@@ -54,12 +32,19 @@ sub Test
 				   $testCode);
 		MkSaveIfTrue('${HAVE_FREESG_RG}', 'FREESG_RG_CFLAGS', 'FREESG_RG_LIBS');
 	MkElse;
-		MkSaveUndef('HAVE_FREESG_RG', 'FREESG_RG_CFLAGS', 'FREESG_RG_LIBS');
+		DISABLE_freesg_rg();
 	MkEndif;
-	return (0);
 }
 
-sub Emul
+sub DISABLE_freesg_rg
+{
+	MkDefine('HAVE_FREESG_RG', 'no');
+	MkDefine('FREESG_RG_CFLAGS', '');
+	MkDefine('FREESG_RG_LIBS', '');
+	MkSaveUndef('HAVE_FREESG_RG', 'FREESG_RG_CFLAGS', 'FREESG_RG_LIBS');
+}
+
+sub EMUL_freesg_rg
 {
 	my ($os, $osrel, $machine) = @_;
 
@@ -73,12 +58,13 @@ sub Emul
 
 BEGIN
 {
-	$DESCR{'freesg-rg'} = 'FreeSG-RG';
-	$URL{'freesg-rg'} = 'http://freesg.org';
+	my $n = 'freesg-rg';
 
-	$DEPS{'freesg-rg'} = 'cc,agar';
-	$TESTS{'freesg-rg'} = \&Test;
-	$EMUL{'freesg-rg'} = \&Emul;
+	$DESCR{$n}   = 'FreeSG-RG';
+	$URL{$n}     = 'http://freesg.org';
+	$TESTS{$n}   = \&TEST_freesg_rg;
+	$DISABLE{$n} = \&DISABLE_freesg_rg;
+	$EMUL{$n}    = \&EMUL_freesg_rg;
+	$DEPS{$n}    = 'cc,agar';
 }
-
 ;1

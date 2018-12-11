@@ -1,5 +1,5 @@
-# Public domain
 # vim:ts=4
+# Public domain
 
 sub CheckBoolOption
 {
@@ -21,7 +21,7 @@ main(int argc, char *argv[])
 EOF
 }
 
-sub Test
+sub TEST_setsockopt
 {
 	TryCompile 'HAVE_SETSOCKOPT', << 'EOF';
 #include <sys/types.h>
@@ -79,11 +79,11 @@ main(int argc, char *argv[])
 }
 EOF
 	MkElse;
-		Disable();
+		DISABLE_setsockopt();
 	MkEndif;
 }
 
-sub Disable
+sub DISABLE_setsockopt
 {
 	MkDefine('HAVE_SETSOCKOPT', 'no');
 	MkDefine('HAVE_SO_OOBINLINE', 'no');
@@ -102,23 +102,13 @@ sub Disable
 	            'HAVE_SO_ACCEPTFILTER');
 }
 
-sub Emul
-{
-	MkEmulUnavailSYS('SETSOCKOPT');
-	Disable();
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'sockopts';
 
-	$DESCR{$n} = 'the setsockopt() interface';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-	
-	$DEPS{$n} = 'cc';
+	$DESCR{$n}   = 'setsockopt()';
+	$TESTS{$n}   = \&TEST_setsockopt;
+	$DISABLE{$n} = \&DISABLE_setsockopt;
+	$DEPS{$n}    = 'cc';
 }
 ;1

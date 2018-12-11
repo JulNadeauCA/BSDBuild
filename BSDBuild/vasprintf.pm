@@ -1,29 +1,7 @@
 # vim:ts=4
-#
-# Copyright (c) 2002-2009 Hypertriton, Inc. <http://hypertriton.com/>
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
-# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-# USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# Public domain
 
-sub Test
+sub TEST_vasprintf
 {
 	TryCompileFlagsC('HAVE_VASPRINTF', '-D_GNU_SOURCE', << 'EOF');
 #include <stdio.h>
@@ -50,20 +28,19 @@ main(int argc, char *argv[])
 EOF
 }
 
-sub Emul
+sub DISABLE_vasprintf
 {
-	my ($os, $osrel, $machine) = @_;
-
-	MkEmulUnavailSYS('VASPRINTF');
-	return (1);
+	MkDefine('HAVE_VASPRINTF', 'no');
+	MkSaveUndef('HAVE_VASPRINTF');
 }
 
 BEGIN
 {
-	$DESCR{'vasprintf'} = 'a vasprintf() function';
-	$TESTS{'vasprintf'} = \&Test;
-	$EMUL{'vasprintf'} = \&Emul;
-	$DEPS{'vasprintf'} = 'cc';
-}
+	my $n = 'vasprintf';
 
+	$DESCR{$n}   = 'vasprintf()';
+	$TESTS{$n}   = \&TEST_vasprintf;
+	$DISABLE{$n} = \&DISABLE_vasprintf;
+	$DEPS{$n}    = 'cc';
+}
 ;1

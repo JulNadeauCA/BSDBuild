@@ -1,3 +1,6 @@
+# vim:ts=4
+# Public domain
+
 my $testCode = << 'EOF';
 #include <bsd/bsd.h>
 
@@ -13,7 +16,7 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
-sub Test
+sub TEST_libbsd
 {
 	my ($ver, $pfx) = @_;
 	
@@ -22,23 +25,29 @@ sub Test
 	MkExecPkgConfig($pfx, 'libbsd', '--libs', 'LIBBSD_LIBS');
 	MkIfFound($pfx, $ver, 'LIBBSD_VERSION');
 		MkPrintSN('checking whether libbsd works...');
-		MkCompileC('HAVE_LIBBSD',
-		           '${LIBBSD_CFLAGS}', '${LIBBSD_LIBS}',
-		           $testCode);
+		MkCompileC('HAVE_LIBBSD', '${LIBBSD_CFLAGS}', '${LIBBSD_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_LIBBSD}', 'LIBBSD_CFLAGS', 'LIBBSD_LIBS');
 	MkElse;
-		MkSaveUndef('HAVE_LIBBSD', 'LIBBSD_CFLAGS', 'LIBBSD_LIBS');
+		DISABLE_libbsd();
 	MkEndif;
-	return (0);
+}
+
+sub DISABLE_libbsd
+{
+	MkDefine('HAVE_LIBBSD', 'no');
+	MkDefine('LIBBSD_CFLAGS', '');
+	MkDefine('LIBBSD_LIBS', '');
+	MkSaveUndef('HAVE_LIBBSD', 'LIBBSD_CFLAGS', 'LIBBSD_LIBS');
 }
 
 BEGIN
 {
-	$DESCR{'libbsd'} = 'Libbsd';
-	$URL{'libbsd'} = 'http://libbsd.freedesktop.org';
+	my $n = 'libbsd';
 
-	$TESTS{'libbsd'} = \&Test;
-	$DEPS{'libbsd'} = 'cc';
+	$DESCR{$n}   = 'libbsd';
+	$URL{$n}     = 'http://libbsd.freedesktop.org';
+	$TESTS{$n}   = \&TEST_libbsd;
+	$DISABLE{$n} = \&DISABLE_libbsd;
+	$DEPS{$n}    = 'cc';
 }
-
 ;1

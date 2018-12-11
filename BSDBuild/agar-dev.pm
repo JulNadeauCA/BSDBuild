@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
-sub Test_AgarDEV
+sub TEST_agar_dev
 {
 	my ($ver, $pfx) = @_;
 	
@@ -34,19 +34,19 @@ sub Test_AgarDEV
 				   $testCode);
 		MkSaveIfTrue('${HAVE_AGAR_DEV}', 'AGAR_DEV_CFLAGS', 'AGAR_DEV_LIBS');
 	MkElse;
-		Disable_AgarDEV();
+		DISABLE_agar_dev();
 	MkEndif;
-	return (0);
 }
 
-sub Disable_AgarDEV
+sub DISABLE_agar_dev
 {
-	MkSaveUndef('HAVE_AGAR_DEV',
-	            'AGAR_DEV_CFLAGS',
-	            'AGAR_DEV_LIBS');
+	MkDefine('HAVE_AGAR_DEV', 'no');
+	MkDefine('AGAR_DEV_CFLAGS', '');
+	MkDefine('AGAR_DEV_LIBS', '');
+	MkSaveUndef('HAVE_AGAR_DEV', 'AGAR_DEV_CFLAGS', 'AGAR_DEV_LIBS');
 }
 
-sub Emul
+sub EMUL_agar_dev
 {
 	my ($os, $osrel, $machine) = @_;
 
@@ -64,10 +64,11 @@ BEGIN
 
 	$DESCR{$n} = 'Agar-DEV';
 	$URL{$n}   = 'http://libagar.org';
-	$DEPS{$n}  = 'cc,agar';
 
-	$TESTS{$n}   = \&Test_AgarDEV;
-	$DISABLE{$n} = \&Disable_AgarDEV;
-	$EMUL{$n}    = \&Emul;
+	$TESTS{$n}   = \&TEST_agar_dev;
+	$DISABLE{$n} = \&DISABLE_agar_dev;
+	$EMUL{$n}    = \&EMUL_agar_dev;
+	
+	$DEPS{$n}  = 'cc,agar';
 }
 ;1

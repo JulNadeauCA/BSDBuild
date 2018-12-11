@@ -1,7 +1,7 @@
 # Public domain
 # vim:ts=4
 
-sub Test_AgarAda
+sub TEST_agar_ada
 {
 	my ($ver, $pfx) = @_;
 	
@@ -29,19 +29,19 @@ end conftest;
 EOF
 		MkSaveIfTrue('${HAVE_AGAR_ADA}', 'AGAR_ADA_CFLAGS', 'AGAR_ADA_LIBS');
 	MkElse;
-		Disable_AgarAda();
+		DISABLE_agar_ada();
 	MkEndif;
-	return (0);
 }
 
-sub Disable_AgarAda
+sub DISABLE_agar_ada
 {
-	MkSaveUndef('HAVE_AGAR_ADA',
-	            'AGAR_ADA_CFLAGS',
-	            'AGAR_ADA_LIBS');
+	MkDefine('HAVE_AGAR_ADA', 'no');
+	MkDefine('AGAR_ADA_CFLAGS', '');
+	MkDefine('AGAR_ADA_LIBS', '');
+	MkSaveUndef('HAVE_AGAR_ADA', 'AGAR_ADA_CFLAGS', 'AGAR_ADA_LIBS');
 }
 
-sub Emul
+sub EMUL_agar_ada
 {
 	my ($os, $osrel, $machine) = @_;
 
@@ -57,13 +57,13 @@ BEGIN
 {
 	my $n = 'agar-ada';
 
-	$DESCR{$n} = 'Ada bindings to Agar-GUI';
-	$URL{$n}   = 'http://libagar.org';
-	$DEPS{$n}  = 'cc,agar,agar-ada-core';
+	$DESCR{$n}   = 'Ada bindings to Agar-GUI';
+	$URL{$n}     = 'http://libagar.org';
 
-	$TESTS{$n}   = \&Test_AgarAda;
-	$DISABLE{$n} = \&Disable_AgarAda;
-	$EMUL{$n}    = \&Emul;
+	$TESTS{$n}   = \&TEST_agar_ada;
+	$DISABLE{$n} = \&DISABLE_agar_ada;
+	$EMUL{$n}    = \&EMUL_agar_ada;
+
+	$DEPS{$n}    = 'cc,agar,agar-ada-core';
 }
-
 ;1

@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 }
 EOF
 
-sub Test
+sub TEST_gettext
 {
 	my ($ver, $pfx) = @_;
 
@@ -71,7 +71,7 @@ sub Test
 	MkEndif;
 }
 
-sub Disable
+sub DISABLE_gettext
 {
 	MkDefine('HAVE_GETTEXT', 'no');
 	MkDefine('GETTEXT_CFLAGS', '');
@@ -79,23 +79,13 @@ sub Disable
 	MkSaveUndef('HAVE_GETTEXT', 'GETTEXT_CFLAGS', 'GETTEXT_LIBS');
 }
 
-sub Emul
-{
-	MkEmulUnavail('GETTEXT');
-	return (1);
-}
-
-
 BEGIN
 {
 	my $n = 'gettext';
 
-	$DESCR{$n} = 'a gettext library in libc';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-	
-	$DEPS{$n} = 'cc';
+	$DESCR{$n}   = 'a gettext library in libc';
+	$TESTS{$n}   = \&TEST_gettext;
+	$DISABLE{$n} = \&DISABLE_gettext;
+	$DEPS{$n}    = 'cc';
 }
 ;1

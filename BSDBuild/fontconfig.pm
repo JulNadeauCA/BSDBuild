@@ -29,7 +29,7 @@ main(int argc, char *argv[])
 }
 EOF
 
-sub Test
+sub TEST_fontconfig
 {
 	my ($ver, $pfx) = @_;
 	
@@ -43,12 +43,11 @@ sub Test
 				   $testCode);
 		MkSaveIfTrue('${HAVE_FONTCONFIG}', 'FONTCONFIG_CFLAGS', 'FONTCONFIG_LIBS');
 	MkElse;
-		Disable_Fontconfig();
+		DISABLE_fontconfig();
 	MkEndif;
-	return (0);
 }
 
-sub Disable_Fontconfig
+sub DISABLE_fontconfig
 {
 	MkDefine('HAVE_FONTCONFIG', 'no');
 	MkDefine('FONTCONFIG_CFLAGS', '');
@@ -56,26 +55,14 @@ sub Disable_Fontconfig
 	MkSaveUndef('HAVE_FONTCONFIG', 'FONTCONFIG_CFLAGS', 'FONTCONFIG_LIBS');
 }
 
-sub Emul
-{
-	my ($os, $osrel, $machine) = @_;
-	
-	MkEmulUnavail('FONTCONFIG');
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'fontconfig';
 
-	$DESCR{$n} = 'fontconfig';
-	$URL{$n}   = 'http://fontconfig.org';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable_Fontconfig;
-	$EMUL{$n}    = \&Emul;
-	
-	$DEPS{$n} = 'cc';
+	$DESCR{$n}   = 'fontconfig';
+	$URL{$n}     = 'http://fontconfig.org';
+	$TESTS{$n}   = \&TEST_fontconfig;
+	$DISABLE{$n} = \&DISABLE_fontconfig;
+	$DEPS{$n}    = 'cc';
 }
-
 ;1

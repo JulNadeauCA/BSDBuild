@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
-sub Test
+sub TEST_opengl
 {
 	my ($ver, $pfx) = @_;
 
@@ -119,19 +119,18 @@ sub Test
 	MkElse;
 		MkDefine('OPENGL_PC', '');
 	MkEndif;
-	return (0);
 }
 
-sub Disable
+sub DISABLE_opengl
 {
-	MkDefine('OPENGL_PC', '');
+	MkDefine('HAVE_OPENGL', 'no');
 	MkDefine('OPENGL_CFLAGS', '');
 	MkDefine('OPENGL_LIBS', '');
-
+	MkDefine('OPENGL_PC', '');
 	MkSaveUndef('HAVE_OPENGL', 'OPENGL_CFLAGS', 'OPENGL_LIBS');
 }
 
-sub Emul
+sub EMUL_opengl
 {
 	my ($os, $osrel, $machine) = @_;
 	
@@ -147,14 +146,11 @@ BEGIN
 {
 	my $n = 'opengl';
 
-	$DESCR{$n} = 'OpenGL';
-	$URL{$n}   = 'http://www.opengl.org';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-
-	$DEPS{$n} = 'cc';
+	$DESCR{$n}   = 'OpenGL';
+	$URL{$n}     = 'http://www.OpenGL.org';
+	$TESTS{$n}   = \&TEST_opengl;
+	$DISABLE{$n} = \&DISABLE_opengl;
+	$EMUL{$n}    = \&EMUL_opengl;
+	$DEPS{$n}    = 'cc';
 }
-
 ;1

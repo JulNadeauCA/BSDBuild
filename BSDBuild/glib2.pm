@@ -1,27 +1,6 @@
 # vim:ts=4
-#
-# Copyright (c) 2002-2011 Hypertriton, Inc. <http://hypertriton.com/>
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
-# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-# USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# Public domain
+
 my $testCode = << 'EOF';
 #include <glib.h>
 int main(int argc, char *argv[]) {
@@ -31,7 +10,7 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
-sub Test
+sub TEST_glib2
 {
 	my ($ver, $pfx) = @_;
 	
@@ -47,15 +26,24 @@ sub Test
 	MkElse;
 		MkSaveUndef('HAVE_GLIB2');
 	MkEndif;
-	return (0);
+}
+
+sub DISABLE_glib2
+{
+	MkDefine('HAVE_GLIB2', 'no');
+	MkDefine('GLIB2_CFLAGS', '');
+	MkDefine('GLIB2_LIBS', '');
+	MkSaveUndef('HAVE_GLIB2', 'GLIB2_CFLAGS', 'GLIB2_LIBS');
 }
 
 BEGIN
 {
-	$DESCR{'glib2'} = 'Glib 2.x';
-	$URL{'glib2'} = 'http://www.gtk.org';
+	my $n = 'glib2';
 
-	$TESTS{'glib2'} = \&Test;
-	$DEPS{'glib2'} = 'cc';
+	$DESCR{$n}   = 'Glib 2.x';
+	$URL{$n}     = 'http://www.gtk.org';
+	$TESTS{$n}   = \&TEST_glib2;
+	$DISABLE{$n} = \&DISABLE_glib2;
+	$DEPS{$n}    = 'cc';
 }
 ;1

@@ -1,7 +1,7 @@
 # vim:ts=4
 # Public domain
 
-sub Test
+sub TEST_limits_h
 {
 	MkCompileC('_MK_HAVE_LIMITS_H', '', '', << 'EOF');
 #include <limits.h>
@@ -18,10 +18,15 @@ int main(int argc, char *argv[]) {
 	return (i != INT_MAX || u != UINT_MAX || l != LONG_MAX || ul != LONG_MAX);
 }
 EOF
-	return (0);
 }
 
-sub Emul
+sub DISABLE_limits_h
+{
+	MkDefine('_MK_HAVE_LIMITS_H', 'no');
+	MkSaveUndef('_MK_HAVE_LIMITS_H');
+}
+
+sub EMUL_limits_h
 {
 	my ($os, $osrel, $machine) = @_;
 	
@@ -36,10 +41,12 @@ sub Emul
 
 BEGIN
 {
-	$DESCR{'limits_h'} = 'compatible <limits.h>';
-	$TESTS{'limits_h'} = \&Test;
-	$EMUL{'limits_h'} = \&Emul;
-	$DEPS{'limits_h'} = 'cc';
-}
+	my $n = 'limits_h';
 
+	$DESCR{$n}   = 'compatible <limits.h>';
+	$TESTS{$n}   = \&TEST_limits_h;
+	$DISABLE{$n} = \&DISABLE_limits_h;
+	$EMUL{$n}    = \&EMUL_limits_h;
+	$DEPS{$n}    = 'cc';
+}
 ;1

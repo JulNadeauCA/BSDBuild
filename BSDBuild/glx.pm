@@ -1,7 +1,7 @@
 # vim:ts=4
 # Public domain
 
-sub Test
+sub TEST_glx
 {
 	my ($ver, $pfx) = @_;
 	
@@ -35,36 +35,24 @@ int main(int argc, char *argv[]) {
 }
 EOF
 	MkSaveIfTrue('${HAVE_GLX}', 'GLX_CFLAGS', 'GLX_LIBS');
-	return (0);
 }
 
-sub Disable
+sub DISABLE_glx
 {
+	MkDefine('HAVE_GLX', 'no');
 	MkDefine('GLX_CFLAGS', '');
 	MkDefine('GLX_LIBS', '');
-
-	MkSaveUndef('HAVE_GLX');
-}
-
-sub Emul
-{
-	my ($os, $osrel, $machine) = @_;
-
-	MkEmulUnavail('GLX');
-	return (1);
+	MkSaveUndef('HAVE_GLX', 'GLX_CFLAGS', 'GLX_LIBS');
 }
 
 BEGIN
 {
 	my $n = 'glx';
 
-	$DESCR{$n} = 'the GLX interface';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-
-	$DEPS{$n} = 'cc,opengl,x11,math';
+	$DESCR{$n}   = 'the GLX interface';
+	$TESTS{$n}   = \&TEST_glx;
+	$DISABLE{$n} = \&DISABLE_glx;
+	$EMUL{$n}    = \&EMUL_glx;
+	$DEPS{$n}    = 'cc,opengl,x11,math';
 }
-
 ;1

@@ -1,7 +1,7 @@
-# Public domain
 # vim:ts=4
+# Public domain
 
-sub Test
+sub TEST_unistd_h
 {
 	MkCompileC('_MK_HAVE_UNISTD_H', '', '', << 'EOF');
 #include <sys/types.h>
@@ -16,23 +16,21 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-	return (0);
 }
 
-sub Emul
+sub DISABLE_unistd_h
 {
-	my ($os, $osrel, $machine) = @_;
-
-	MkEmulUnavailSYS('_MK_HAVE_UNISTD_H');
-	return (1);
+	MkDefine('_MK_HAVE_UNISTD_H', 'no');
+	MkSaveUndef('_MK_HAVE_UNISTD_H');
 }
 
 BEGIN
 {
-	$DESCR{'unistd_h'} = '<unistd.h>';
-	$TESTS{'unistd_h'} = \&Test;
-	$EMUL{'unistd_h'} = \&Emul;
-	$DEPS{'unistd_h'} = 'cc';
-}
+	my $n = 'unistd_h';
 
+	$DESCR{$n}   = '<unistd.h>';
+	$TESTS{$n}   = \&TEST_unistd_h;
+	$DISABLE{$n} = \&DISABLE_unistd_h;
+	$DEPS{$n}    = 'cc';
+}
 ;1

@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
-sub Test_AgarAU
+sub TEST_agar_au
 {
 	my ($ver, $pfx) = @_;
 	
@@ -25,23 +25,22 @@ sub Test_AgarAU
 		MkExecOutputPfx($pfx, 'agar-au-config', '--libs', 'AGAR_AU_LIBS');
 		MkCompileC('HAVE_AGAR_AU',
 		           '${AGAR_AU_CFLAGS} ${AGAR_CFLAGS}',
-		           '${AGAR_AU_LIBS} ${AGAR_LIBS}',
-				   $testCode);
+		           '${AGAR_AU_LIBS} ${AGAR_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_AGAR_AU}', 'AGAR_AU_CFLAGS', 'AGAR_AU_LIBS');
 	MkElse;
-		Disable_AgarAU();
+		DISABLE_agar_au();
 	MkEndif;
-	return (0);
 }
 
-sub Disable_AgarAU
+sub DISABLE_agar_au
 {
-	MkSaveUndef('HAVE_AGAR_AU',
-	            'AGAR_AU_CFLAGS',
-	            'AGAR_AU_LIBS');
+	MkDefine('HAVE_AGAR_AU', 'no');
+	MkDefine('AGAR_AU_CFLAGS', '');
+	MkDefine('AGAR_AU_LIBS', '');
+	MkSaveUndef('HAVE_AGAR_AU', 'AGAR_AU_CFLAGS', 'AGAR_AU_LIBS');
 }
 
-sub Emul
+sub EMUL_agar_au
 {
 	my ($os, $osrel, $machine) = @_;
 
@@ -57,13 +56,13 @@ BEGIN
 {
 	my $n = 'agar-au';
 
-	$DESCR{$n} = 'Agar-AU';
-	$URL{$n}   = 'http://libagar.org';
-	$DEPS{$n}  = 'cc,agar';
+	$DESCR{$n}   = 'Agar-AU';
+	$URL{$n}     = 'http://libagar.org';
 
-	$TESTS{$n}   = \&Test_AgarAU;
-	$DISABLE{$n} = \&Disable_AgarAU;
-	$EMUL{$n}    = \&Emul;
+	$TESTS{$n}   = \&TEST_agar_au;
+	$DISABLE{$n} = \&DISABLE_agar_au;
+	$EMUL{$n}    = \&EMUL_agar_au;
+
+	$DEPS{$n}    = 'cc,agar';
 }
-
 ;1

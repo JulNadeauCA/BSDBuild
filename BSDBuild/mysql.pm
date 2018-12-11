@@ -14,7 +14,7 @@ main(int argc, char *argv[])
 }
 EOF
 
-sub Test
+sub TEST_mysql
 {
 	my ($ver, $pfx) = @_;
 	
@@ -26,12 +26,11 @@ sub Test
 		MkCompileC('HAVE_MYSQL', '${MYSQL_CFLAGS}', '${MYSQL_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_MYSQL}', 'MYSQL_CFLAGS', 'MYSQL_LIBS');
 	MkElse;
-		Disable();
+		DISABLE_mysql();
 	MkEndif;
-	return (0);
 }
 
-sub Disable
+sub DISABLE_mysql
 {
 	MkDefine('HAVE_MYSQL', 'no');
 	MkDefine('MYSQL_CFLAGS', '');
@@ -39,23 +38,14 @@ sub Disable
 	MkSaveUndef('HAVE_MYSQL', 'MYSQL_CFLAGS', 'MYSQL_LIBS');
 }
 
-sub Emul
-{
-	MkEmulUnavail('MYSQL');
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'mysql';
 
-	$DESCR{$n} = 'MySQL';
-	$URL{$n}   = 'http://dev.mysql.com';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-	
-	$DEPS{$n} = 'cc';
+	$DESCR{$n}   = 'MySQL';
+	$URL{$n}     = 'http://dev.mysql.com';
+	$TESTS{$n}   = \&TEST_mysql;
+	$DISABLE{$n} = \&DISABLE_mysql;
+	$DEPS{$n}    = 'cc';
 }
 ;1

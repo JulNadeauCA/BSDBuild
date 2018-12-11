@@ -1,7 +1,7 @@
 # Public domain
 # vim:ts=4
 
-sub Test_CC
+sub TEST_cc
 {
 	my @cc_try = ('clang', 'clang70', 'clang60', 'cc',
                   'gcc', 'gcc-6', 'gcc7', 'gcc8', 'gcc5', 'gcc49', 'gcc48',
@@ -286,21 +286,20 @@ EOF
                  'PROG_GUI_FLAGS', 'PROG_CLI_FLAGS', 'LIBTOOLOPTS_SHARED');
 
 	MkElse;
-		Disable_CC();
+		DISABLE_cc();
 	MkEndif;
 }
 
-sub Disable_CC
+sub DISABLE_cc
 {
 	MkDefine('HAVE_CC', 'no');
 	MkDefine('HAVE_CC65', 'no');
 	MkDefine('HAVE_CC_WARNINGS', 'no');
-	MkDefine('CC', '');
-	MkDefine('CFLAGS', '');
 	MkDefine('PROG_GUI_FLAGS', '');
 	MkDefine('PROG_CLI_FLAGS', '');
 	MkDefine('LIBTOOLOPTS_SHARED', '');
-	
+	MkDefine('TEST_CFLAGS', '');
+
 	MkSaveUndef('HAVE_CC', 'HAVE_CC65', 'HAVE_CC_WARNINGS',
 	            'HAVE_FLOAT', 'HAVE_LONG_DOUBLE', 'HAVE_LONG_LONG',
 	            'HAVE_CYGWIN', 'HAVE_CC_MWINDOWS', 'HAVE_CC_MCONSOLE',
@@ -310,19 +309,11 @@ sub Disable_CC
              'PROG_GUI_CFLAGS', 'PROG_CLI_CFLAGS', 'LIBTOOLOPTS_SHARED');
 }
 
-sub Emul
-{
-	Disable_CC();	
-	return (1);
-}
-
 BEGIN
 {
-	$DESCR{'cc'} = 'a C compiler';
-
-	$TESTS{'cc'}   = \&Test_CC;
-	$DISABLE{'cc'} = \&Disable_CC;
-	$EMUL{'cc'}    = \&Emul;
+	$DESCR{'cc'}   = 'a C compiler';
+	$TESTS{'cc'}   = \&TEST_cc;
+	$DISABLE{'cc'} = \&DISABLE_cc;
 
 	RegisterEnvVar('CC',		'C compiler command');
 	RegisterEnvVar('CFLAGS',	'C compiler flags');
@@ -331,5 +322,4 @@ BEGIN
 	RegisterEnvVar('CPP',		'C preprocessor');
 	RegisterEnvVar('CPPFLAGS',	'C preprocessor flags');
 }
-
 ;1

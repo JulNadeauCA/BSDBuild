@@ -1,7 +1,7 @@
 # Public domain
 # vim:ts=4
 
-sub Test
+sub TEST_getaddrinfo
 {
 	TryCompile 'HAVE_GETADDRINFO', << 'EOF';
 #include <string.h>
@@ -27,33 +27,19 @@ main(int argc, char *argv[])
 EOF
 }
 
-sub Disable
+sub DISABLE_getaddrinfo
 {
 	MkDefine('HAVE_GETADDRINFO', 'no');
 	MkSaveUndef('HAVE_GETADDRINFO');
-}
-
-sub Emul
-{
-	my ($os, $osrel, $machine) = @_;
-
-	# Note: This is available in the "winsock" test.
-
-	MkEmulUnavail('GETADDRINFO');
-	return (1);
 }
 
 BEGIN
 {
 	my $n = 'getaddrinfo';
 	
-	$DESCR{$n} = 'getaddrinfo()';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-	
-	$DEPS{$n} = 'cc';
+	$DESCR{$n}   = 'getaddrinfo()';
+	$TESTS{$n}   = \&TEST_getaddrinfo;
+	$DISABLE{$n} = \&DISABLE_getaddrinfo;
+	$DEPS{$n}    = 'cc';
 }
-
 ;1

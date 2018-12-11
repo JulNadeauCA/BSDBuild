@@ -10,7 +10,7 @@ my @autoPrefixDirs = (
 	'/opt'
 );
 
-sub Test
+sub TEST_jpeg
 {
 	my ($ver, $pfx) = @_;
 
@@ -60,7 +60,7 @@ EOF
 		MkSaveIfTrue('${HAVE_JPEG}', 'JPEG_CFLAGS', 'JPEG_LIBS');
 	MkElse;
 		MkPrintS('no');
-		Disable();
+		DISABLE_jpeg();
 	MkEndif;
 	
 	MkIfTrue('${HAVE_JPEG}');
@@ -68,38 +68,25 @@ EOF
 	MkElse;
 		MkDefine('JPEG_PC', '');
 	MkEndif;
-	return (0);
 }
 
-sub Disable
+sub DISABLE_jpeg
 {
+	MkDefine('HAVE_JPEG', 'no');
 	MkDefine('JPEG_CFLAGS', '');
 	MkDefine('JPEG_LIBS', '');
 	MkDefine('JPEG_PC', '');
-
 	MkSaveUndef('HAVE_JPEG', 'JPEG_CFLAGS', 'JPEG_LIBS');
-}
-
-sub Emul
-{
-	my ($os, $osrel, $machine) = @_;
-	
-	MkEmulUnavail('JPEG');
-	return (1);
 }
 
 BEGIN
 {
 	my $n = 'jpeg';
 
-	$DESCR{$n} = 'libjpeg';
-	$URL{$n}   = 'ftp://ftp.uu.net/graphics/jpeg';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-
-	$DEPS{$n} = 'cc';
+	$DESCR{$n}   = 'libjpeg';
+	$URL{$n}     = 'ftp://ftp.uu.net/graphics/jpeg';
+	$TESTS{$n}   = \&TEST_jpeg;
+	$DISABLE{$n} = \&DISABLE_jpeg;
+	$DEPS{$n}    = 'cc';
 }
-
 ;1

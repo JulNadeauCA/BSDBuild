@@ -12,7 +12,7 @@ main(int argc, char *argv[])
 }
 EOF
 
-sub Test_Clock_Gettime
+sub TEST_clock_gettime
 {
 	MkDefine('CLOCK_CFLAGS', '');
 	MkDefine('CLOCK_LIBS', '');
@@ -35,7 +35,7 @@ sub Test_Clock_Gettime
 	MkEndif;
 }
 
-sub Disable_Clock_Gettime
+sub DISABLE_clock_gettime
 {
 	MkDefine('HAVE_CLOCK_GETTIME', 'no');
 	MkDefine('CLOCK_CFLAGS', '');
@@ -43,22 +43,13 @@ sub Disable_Clock_Gettime
 	MkSaveUndef('HAVE_CLOCK_GETTIME', 'CLOCK_CFLAGS', 'CLOCK_LIBS');
 }
 
-sub Emul
-{
-	Disable_Clock_Gettime();
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'clock_gettime';
 
-	$DESCR{$n} = 'clock_gettime() interface (w/o -lrt)';
-	$DEPS{$n}  = 'cc';
-
-	$TESTS{$n}   = \&Test_Clock_Gettime;
-	$DISABLE{$n} = \&Disable_Clock_Gettime;
-	$EMUL{$n}    = \&Emul;
+	$DESCR{$n}   = 'clock_gettime() interface (w/o -lrt)';
+	$TESTS{$n}   = \&TEST_clock_gettime;
+	$DISABLE{$n} = \&DISABLE_clock_gettime;
+	$DEPS{$n}    = 'cc';
 }
-
 ;1

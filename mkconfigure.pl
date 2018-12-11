@@ -44,8 +44,9 @@ my %Fns = (
 	'mappend'		=> \&mappend,
 	'hdefine'		=> \&hdefine,
 	'hdefine_unquoted'	=> \&hdefine_unquoted,
-	'hdefine_if'		=> \&hdefine_if,
 	'hundef'		=> \&hundef,
+	'hdefine_if'		=> \&hdefine_if,
+	'hundef_if'		=> \&hundef_if,
 	'ada_option'		=> \&ada_option,
 	'ada_bflag'		=> \&ada_bflag,
 	'c_define'		=> \&c_define,
@@ -79,6 +80,16 @@ my $ConfigGuess = 'mk/config.guess';
 my @TestDirs = ("$INSTALLDIR/BSDBuild");
 my %EmulDepsTested = ();
 my $SuccessFn = '';
+my $ParserError = '';
+my $lineNo = 1;
+
+$SIG{__WARN__} = sub {
+	print STDERR 'warning: configure.in:' . $lineNo . ': ' . @_, "\n";
+};
+$SIG{__DIE__} = sub {
+	print STDERR 'configure.in:' . $lineNo . ': ' . shift . " (near \"$_\")\n";
+	exit(1);
+};
 
 # Specify software package name
 sub package
@@ -89,6 +100,7 @@ sub package
 	MkDefine('PACKAGE', $val);
 	MkSaveMK('PACKAGE');
 	MkSaveDefine('PACKAGE');
+	return (0);
 }
 
 # Specify software package version
@@ -100,6 +112,7 @@ sub version
 	MkDefine('VERSION', $val);
 	MkSaveMK('VERSION');
 	MkSaveDefine('VERSION');
+	return (0);
 }
 
 # Specify software package release name
@@ -111,6 +124,7 @@ sub release
 	MkDefine('RELEASE', $val);
 	MkSaveMK('RELEASE');
 	MkSaveDefine('RELEASE');
+	return (0);
 }
 
 # Enable/disable support for the ./configure --cache option.
@@ -120,9 +134,13 @@ sub config_cache
 
 	if (lc($val) eq 'yes' || lc($val) eq 'on') {
 		$Cache = 1;
-	} else {
+	} elsif (lc($val) eq 'no' || lc($val) eq 'off') {
 		$Cache = 0;
+	} else {
+		$ParserError = 'Syntax error: "'.$val.'" (should be yes or no)';
+		return (-1);
 	}
+	return (0);
 }
 
 # Set function to call when configure succeeds.
@@ -130,6 +148,7 @@ sub success_fn
 {
 	my ($val) = @_;
 	$SuccessFn = $val;
+	return (0);
 }
 
 # Directives used in first pass; no-ops as script directives
@@ -154,6 +173,7 @@ sub check_header
 int main (int argc, char *argv[]) { return (0); }
 EOF
 	}
+	return (0);
 }
 
 # Check for a header file, with specific CFLAGS/LIBS.
@@ -173,19 +193,20 @@ sub check_header_opts
 int main (int argc, char *argv[]) { return (0); }
 EOF
 	}
+	return (0);
 }
 
 # Check for a function
 sub check_func
 {
 	foreach my $funcList (@_) {
-	    $funcDef = uc($funcList);
-	    $funcDef =~ s/[\\\/\.]/_/g;
-	    $funcDef = 'HAVE_'.$funcDef;
+		$funcDef = uc($funcList);
+		$funcDef =~ s/[\\\/\.]/_/g;
+		$funcDef = 'HAVE_'.$funcDef;
 
-	    MkPrintSN("checking for $funcList()...");
-	    MkDefine('TEST_CFLAGS', '-Wall');		# Avoid failing on "conflicting types blah"
-	    MkCompileC $funcDef, '', '', << "EOF";
+		MkPrintSN("checking for $funcList()...");
+		MkDefine('TEST_CFLAGS', '-Wall');
+		MkCompileC $funcDef, '', '', << "EOF";
 #ifdef __STDC__
 # include <limits.h>
 #else
@@ -210,6 +231,7 @@ int main() {
 }
 EOF
 	}
+	return (0);
 }
 
 # Check for a Perl module.
@@ -258,6 +280,7 @@ else
 fi
 EOF
 	}
+	return (0);
 }
 
 # Check for a Perl module and fail if not found.
@@ -276,6 +299,8 @@ sub require_perl_module
 		MkPrintS('* ');
 		MkFail('configure failed!');
 	MkEndif;
+
+	return (0);
 }
 
 # Specify an alternate installation directory default.
@@ -292,6 +317,8 @@ sub default_dir
 		MkSaveDefine($dir);
 		MkSaveMK($dir);
 	MkEndif;
+	
+	return (0);
 }
 
 # Check for a function with CFLAGS and LIBS
@@ -332,6 +359,8 @@ int main() {
 }
 EOF
 	}
+	
+	return (0);
 }
 
 # Add a directory containing extra test modules.
@@ -344,6 +373,7 @@ sub test_dir
 		}
 		push @TestDirs, $dir;
 	}
+	return (0);
 }
 
 # Execute one of the standard BSDBuild tests.
@@ -362,28 +392,32 @@ sub test
 			}
 		}
 		if (!defined($mod)) {
-			print STDERR "No such test module: $t\n";
-			exit (1);
+			$ParserError = 'No such module: '.$t;
+			return (-1);
 		}
 		do($mod);
 		if ($@) {
-			print STDERR $@;
-			exit (1);
+			$ParserError = $t.' module: '.$@;
+			return (-1);
 		}
 	}
 	if (exists($DEPS{$t})) {
 		foreach my $dep (split(',', $DEPS{$t})) {
 			if (!exists($done{$dep})) {
-				print STDERR "$t depends on: $dep\n";
-				exit(1);
+				$ParserError = $t.' depends on: '.$dep;
+				return (-1);
 			}
 		}
 	}
 	my $c;
 	if ($EmulOS) {
+		my $noEmul = 0;
 		unless (exists($EMUL{$t}) && defined($EMUL{$t})) {
-			print STDERR "Missing EMUL for $t\n";
-			exit(1);
+			$noEmul = 1;
+			unless (exists($DISABLE{$t}) && defined($DISABLE{$t})) {
+				$ParserError = $t.': missing EMUL/DISABLE hook';
+				return (-1);
+			}
 		}
 		if (exists($EMULDEPS{$t})) {
 	 		foreach my $ed (@{$EMULDEPS{$t}}) {
@@ -393,7 +427,11 @@ sub test
 				}
 			}
 		}
-		$c = $EMUL{$t};
+		if ($noEmul) {
+			$c = $EMUL{$t};
+		} else {
+			$c = $DISABLE{$t};
+		}
 		@args = ($EmulOS, $EmulOSRel, '');
 	} else {
 		$c = $TESTS{$t};
@@ -414,6 +452,7 @@ sub test
 		MkFail("$t: not in TESTS table");
 	}
 	$done{$t} = 1;
+	return (0);
 }
 
 # Execute one of the standard BSDBuild tests, abort if the test fails.
@@ -426,7 +465,7 @@ sub test_require
 	test(@_);
 	
 	if ($EmulOS) {
-		return;
+		return (0);
 	}
 
 	MkIf "\"\$\{$def\}\" != \"yes\"";
@@ -451,11 +490,11 @@ sub test_require
 			MkFail('configure failed!');
 		MkEndif;
 	}
+	return (0);
 }
 
-# Call the "disable" function of one of the standard BSDBuild tests.
-# The disable function should emulate the results of a failed test
-# (without actually running any tests).
+# Call the "disable" function to short-circuit a test module. It should
+# emulate the results of a failed test without actually running any tests.
 sub disable
 {
 	my ($t) = @_;
@@ -470,13 +509,13 @@ sub disable
 			}
 		}
 		if (!defined($mod)) {
-			print STDERR "No such test module: $t\n";
-			exit (1);
+			$ParserError = 'No such module: '.$t;
+			return (-1);
 		}
 		do($mod);
 		if ($@) {
-			print STDERR $@;
-			exit (1);
+			$ParserError = $t.' module: '.$@;
+			return (-1);
 		}
 	}
 	my $c = $DISABLE{$t};
@@ -484,6 +523,7 @@ sub disable
 		MkPrintS("not enabling $DESCR{$t}");
 		&$c(1);
 	}
+	return (0);
 }
 
 # Make environment define
@@ -494,6 +534,7 @@ sub mdefine
 	if ($val =~ /^"(.*)"$/) { $val = $1; }
 	MkDefine($def, $val);
 	MkSaveMK($def);
+	return (0);
 }
 
 # Append to make environment define
@@ -504,6 +545,7 @@ sub mappend
 	if ($val =~ /^"(.*)"$/) { $val = $1; }
 	MkDefine($def, "\${$def} $val");
 	MkSaveMK($def);
+	return (0);
 }
 
 # Header define
@@ -514,6 +556,7 @@ sub hdefine
 	if ($val =~ /^"(.*)"$/) { $val = $1; }
 	MkDefine($def, $val);
 	MkSaveDefine($def);
+	return (0);
 }
 
 # Header define unquoted
@@ -524,9 +567,10 @@ sub hdefine_unquoted
 	if ($val =~ /^"(.+)"$/) { $val = $1; }
 	MkDefine($def, $val);
 	MkSaveDefineUnquoted($def);
+	return (0);
 }
 
-# Header define conditionally
+# Conditional header define
 sub hdefine_if
 {
 	my ($cond, $def) = @_;
@@ -537,12 +581,25 @@ sub hdefine_if
 	MkElse;
 		MkSaveUndef($def);
 	MkEndif;
+	return (0);
 }
 
 # Header undef
 sub hundef
 {
 	MkSaveUndef(@_);
+	return (0);
+}
+
+# Conditional header undef
+sub hundef_if
+{
+	my ($cond, $def) = @_;
+
+	MkIf($cond);
+		MkSaveUndef($def);
+	MkEndif;
+	return (0);
 }
 
 # C/C++ define
@@ -555,6 +612,7 @@ sub c_define
 	MkSaveMK('CFLAGS');
 	MkSaveMK('CXXFLAGS');
 	print {$LUA} "table.insert(package.defines,{\"$def\"})\n";
+	return (0);
 }
 
 # C/C++ include directory
@@ -577,6 +635,7 @@ sub c_incdir
 		$dir =~ s/\$BLD/\.\./g;
 	}
 	print {$LUA} "table.insert(package.includepaths,{\"$dir\"})\n";
+	return (0);
 }
 
 # Include file preprocessing
@@ -622,6 +681,7 @@ else
 	echo 'done'
 fi
 EOF
+	return (0);
 }
 
 # C/C++ library directory
@@ -635,18 +695,21 @@ sub c_libdir
 
 	$dir =~ s/\$SRC/\./g;
 	print {$LUA} "table.insert(package.libpaths,{\"$dir\"})\n";
+	return (0);
 }
 
 # Extra compiler warnings
 sub c_extra_warnings
 {
 	print {$LUA} 'table.insert(package.buildflags,{"extra-warnings"})'."\n";
+	return (0);
 }
 
 # Fatal warnings
 sub c_fatal_warnings
 {
 	print {$LUA} 'table.insert(package.buildflags,{"extra-warnings"})'."\n";
+	return (0);
 }
 
 # Disable _CRT_SECURE warnings (win32)
@@ -658,6 +721,7 @@ if (windows) then
 	table.insert(package.defines,{"_CRT_SECURE_NO_DEPRECATE"})
 end
 EOF
+	return (0);
 }
 
 # Ada compiler option
@@ -667,6 +731,7 @@ sub ada_option
 
 	MkDefine('ADAFLAGS', '$ADAFLAGS '.$opt);
 	MkSaveMK('ADAFLAGS');
+	return (0);
 }
 
 # Ada binder option flag
@@ -676,6 +741,7 @@ sub ada_bflag
 
 	MkDefine('ADABFLAGS', '$ADABFLAGS '.$opt);
 	MkSaveMK('ADABFLAGS');
+	return (0);
 }
 
 # C compiler option
@@ -687,6 +753,7 @@ sub c_option
 	MkDefine('CXXFLAGS', '$CXXFLAGS '.$opt);
 	MkSaveMK('CFLAGS');
 	MkSaveMK('CXXFLAGS');
+	return (0);
 }
 
 # Linker option
@@ -696,6 +763,7 @@ sub ld_option
 
 	MkDefine('LDFLAGS', '$LDFLAGS '.$opt);
 	MkSaveMK('LDFLAGS');
+	return (0);
 }
 
 # Generate a "foo-config" style script.
@@ -775,6 +843,7 @@ EOT
 EOF
 	MkDefine('AVAIL_CONFIGSCRIPTS', '$AVAIL_CONFIGSCRIPTS '.$out);
 	MkSaveMK('AVAIL_CONFIGSCRIPTS');
+	return (0);
 }
 
 # Generate a pkg-config module
@@ -820,6 +889,7 @@ EOT
 EOF
 	MkDefine('AVAIL_PCMODULES', '$AVAIL_PCMODULES '.$out.'.pc');
 	MkSaveMK('AVAIL_PCMODULES');
+	return (0);
 }
 
 #
@@ -838,6 +908,7 @@ sub pass1_register
 
 	my $darg = pack('A' x 27, split('', $arg));
 	push @Help, "echo '    $darg $descr'";
+	return (0);
 }
 sub pass1_register_section
 {
@@ -846,10 +917,12 @@ sub pass1_register_section
 	if ($s =~ /\"(.*)\"/) { $s = $1; }
 	push @Help, "echo ''";
 	push @Help, "echo '$s'";
+	return (0);
 }
 sub pass1_register_env_var
 {
 	RegisterEnvVar(@_);
+	return (0);
 }
 sub pass1_config_guess
 {
@@ -860,6 +933,7 @@ sub pass1_config_guess
 		print STDERR "Using config.guess: $s\n";
 	}
 	$ConfigGuess = $s;
+	return (0);
 }
 sub pass1_c_incdir_config
 {
@@ -870,6 +944,7 @@ sub pass1_c_incdir_config
 	} else {
 		$OutputHeaderDir = undef;
 	}
+	return (0);
 }
 sub pass1_c_include_config
 {
@@ -886,6 +961,7 @@ EOF
 	} else {
 		$OutputHeaderFile = undef;
 	}
+	return (0);
 }
 sub pass1_test
 {
@@ -902,15 +978,16 @@ sub pass1_test
 			}
 		}
 		if (!defined($mod)) {
-			print STDERR "No such test module: $t\n";
-			exit (1);
+			$ParserError = 'No such module: '.$t;
+			return (-1);
 		}
 		do($mod);
 		if ($@) {
-			print STDERR $@;
-			exit (1);
+			$ParserError = $t.' module: '.$@;
+			return (-1);
 		}
 	}
+	return (0);
 }
 
 sub Help
@@ -1018,11 +1095,12 @@ EOF
 		print $HELPENV{$v} . "\n";
 	}
 	print "exit 1\n";
+	return (0);
 }
 
 sub Version
 {
-    print << "EOF";
+	print << "EOF";
 if [ "${PACKAGE}" != '' ]; then
 	echo "BSDBuild %VERSION%, for ${PACKAGE} ${VERSION}"
 else
@@ -1030,6 +1108,7 @@ else
 fi
 exit 1
 EOF
+	return (0);
 }
 
 #
@@ -1421,12 +1500,14 @@ EOF
 my %done = ();
 my $registers = 1;
 my @INPUT = ();
+my %INPUT_LINENO = ();
 
 #
 # Read input, processing long line breaks.
 #
 my $trunc = 0;
 my $truncLine = '';
+my $inLineNo = 1;
 while (<STDIN>) {
 	chop;
 	if ($trunc) {
@@ -1434,6 +1515,7 @@ while (<STDIN>) {
 		if (!/\\$/) {
 			$truncLine =~ s/\s+/ /g;
 			push @INPUT, $truncLine;
+			$INPUT_LINENO{$inLineNo}=$lineNo; $inLineNo++;
 			$truncLine = '';
 			$trunc = 0;
 		} else {
@@ -1447,8 +1529,10 @@ while (<STDIN>) {
 			$trunc = 1;
 		} else {
 			push @INPUT, $_;
+			$INPUT_LINENO{$inLineNo}=$lineNo; $inLineNo++;
 		}
 	}
+	$lineNo++;
 }
 
 #
@@ -1458,38 +1542,48 @@ while (<STDIN>) {
 if ($Verbose) {
 	print STDERR "First pass\n";
 }
-foreach $_ (@INPUT) {
+$lineNo = 1;
+LINE: foreach $_ (@INPUT) {
 	if (/^\s*#/) {
-	    next;
+		$lineNo++;
+		next LINE;
 	}
 	DIRECTIVE: foreach my $s (split(';')) {
-		if ($s !~ /([A-Z_]+)\((.*)\)/) {
+		if ($s !~ /([A-Za-z_]+)\((.*)\)/) {
 			next DIRECTIVE;
 		}
-		my $cmd = uc($1);
+		my $cmd = lc($1);
 		my $argspec = $2;
 		my @args = ();
+		if (!exists($Fns{$cmd})) {
+			next DIRECTIVE;
+		}
 		foreach my $arg (split(',', $argspec)) {
 			$arg =~ s/^\s+//;
 			$arg =~ s/\s+$//;
 			push @args, $arg;
 		}
-		if ($cmd eq 'REGISTER') {
+		if ($cmd eq 'register') {
 			pass1_register(@args);
-		} elsif ($cmd eq 'REGISTER_ENV_VAR') {
+		} elsif ($cmd eq 'register_env_var') {
 			pass1_register_env_var(@args);
-		} elsif ($cmd eq 'REGISTER_SECTION') {
+		} elsif ($cmd eq 'register_section') {
 			pass1_register_section(@args);
-		} elsif ($cmd eq 'CONFIG_GUESS') {
+		} elsif ($cmd eq 'config_guess') {
 			pass1_config_guess(@args);
-		} elsif ($cmd eq 'C_INCDIR_CONFIG') {
+		} elsif ($cmd eq 'c_incdir_config') {
 			pass1_c_incdir_config(@args);
-		} elsif ($cmd eq 'C_INCLUDE_CONFIG') {
+		} elsif ($cmd eq 'c_include_config') {
 			pass1_c_include_config(@args);
-		} elsif ($cmd eq 'REQUIRE' || $cmd eq 'CHECK') {
-			pass1_test(@args);
+		} elsif ($cmd eq 'require' || $cmd eq 'check') {
+			if (pass1_test(@args) == -1) {
+				print STDERR 'configure.in:' . $INPUT_LINENO{$lineNo} .
+				             ': ' . $ParserError . "\n";
+				exit(1);
+			}
 		}
 	}
+	$lineNo++;
 }
 
 #
@@ -1654,13 +1748,15 @@ EOF
 if ($Verbose) {
 	print STDERR "Processing script\n";
 }
-foreach $_ (@INPUT) {
+$lineNo = 1;
+LINE: foreach $_ (@INPUT) {
 	if (/^\s*#/) {
-	    next;
+		$lineNo++;
+		next LINE;
 	}
 	s/\;\;/BSDBuild__keepcaseclose/g;
 	DIRECTIVE: foreach my $s (split(';')) {
-		if ($s !~ /([A-Z_]+)\((.*)\)/) {
+		if ($s !~ /([A-Za-z_]+)\((.*)\)/) {
 			$s =~ s/BSDBuild__keepcaseclose/;;/g;
 			print $s, "\n";
 			next DIRECTIVE;
@@ -1701,8 +1797,14 @@ foreach $_ (@INPUT) {
 			print $s, "\n";
 			next DIRECTIVE;
 		}
-		&{$Fns{$cmd}}(@args);
+		$ParserError = '';
+		if (&{$Fns{$cmd}}(@args) == -1 && $ParserError ne '') {
+			print STDERR 'configure.in:' . $INPUT_LINENO{$lineNo} .
+			             ': ' . $ParserError . "\n";
+			exit(1);
+		}
 	}
+	$lineNo++;
 }
 
 MkSaveMK_Commit();

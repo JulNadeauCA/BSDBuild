@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
-sub Test_AgarMath
+sub TEST_agar_math
 {
 	my ($ver, $pfx) = @_;
 	
@@ -32,19 +32,19 @@ sub Test_AgarMath
 				   $testCode);
 		MkSaveIfTrue('${HAVE_AGAR_MATH}', 'AGAR_MATH_CFLAGS', 'AGAR_MATH_LIBS');
 	MkElse;
-		Disable_AgarMath();
+		DISABLE_agar_math();
 	MkEndif;
-	return (0);
 }
 
-sub Disable_AgarMath
+sub DISABLE_agar_math
 {
-	MkSaveUndef('HAVE_AGAR_MATH',
-	            'AGAR_MATH_CFLAGS',
-	            'AGAR_MATH_LIBS');
+	MkDefine('HAVE_AGAR_MATH', 'no');
+	MkDefine('AGAR_MATH_CFLAGS', '');
+	MkDefine('AGAR_MATH_LIBS', '');
+	MkSaveUndef('HAVE_AGAR_MATH', 'AGAR_MATH_CFLAGS', 'AGAR_MATH_LIBS');
 }
 
-sub Emul
+sub EMUL_agar_math
 {
 	my ($os, $osrel, $machine) = @_;
 
@@ -60,14 +60,13 @@ BEGIN
 {
 	my $n = 'agar-math';
 
-	$DESCR{$n} = 'Agar-Math';
-	$URL{$n}   = 'http://libagar.org';
+	$DESCR{$n}   = 'Agar-Math';
+	$URL{$n}     = 'http://libagar.org';
 
-	$TESTS{$n}   = \&Test_AgarMath;
-	$DISABLE{$n} = \&Disable_AgarMath;
-	$EMUL{$n}    = \&Emul;
+	$TESTS{$n}   = \&TEST_agar_math;
+	$DISABLE{$n} = \&DISABLE_agar_math;
+	$EMUL{$n}    = \&EMUL_agar_math;
 	
-	$DEPS{$n} = 'cc,agar';
+	$DEPS{$n}    = 'cc,agar';
 }
-
 ;1

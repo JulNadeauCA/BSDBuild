@@ -1,5 +1,5 @@
-# Public domain
 # vim:ts=4
+# Public domain
 
 my $testCode = << 'EOF';
 #include <stdio.h>
@@ -31,7 +31,7 @@ my @autoPrefixes = (
 	'/usr/pkg'
 );
 
-sub Test
+sub TEST_portaudio
 {
 	my ($ver, $pfx) = @_;
 	
@@ -89,35 +89,23 @@ sub Test
 	MkEndif;
 }
 
-sub Disable
+sub DISABLE_portaudio
 {
 	MkDefine('HAVE_PORTAUDIO', 'no');
 	MkDefine('PORTAUDIO_CFLAGS', '');
 	MkDefine('PORTAUDIO_LIBS', '');
 	MkDefine('PORTAUDIO_PC', '');
-	MkSaveUndef('HAVE_PORTAUDIO',
-                'PORTAUDIO_CFLAGS',
-                'PORTAUDIO_LIBS',
-                'PORTAUDIO_PC');
-}
-
-sub Emul
-{
-	Disable();
-	return (1);
+	MkSaveUndef('HAVE_PORTAUDIO', 'PORTAUDIO_CFLAGS', 'PORTAUDIO_LIBS');
 }
 
 BEGIN
 {
 	my $n = 'portaudio';
 
-	$DESCR{$n} = 'PortAudio2';
-	$URL{$n}   = 'http://www.portaudio.com';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-	
-	$DEPS{$n} = 'cc,pthreads';
+	$DESCR{$n}   = 'PortAudio2';
+	$URL{$n}     = 'http://www.portaudio.com';
+	$TESTS{$n}   = \&TEST_portaudio;
+	$DISABLE{$n} = \&DISABLE_portaudio;
+	$DEPS{$n}    = 'cc,pthreads';
 }
 ;1

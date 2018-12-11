@@ -1,7 +1,7 @@
-# Public domain
 # vim:ts=4
+# Public domain
 
-sub Test
+sub TEST_xinerama
 {
 	my ($ver, $pfx) = @_;
 
@@ -82,35 +82,23 @@ EOF
 	MkEndif;
 }
 
-sub Disable
+sub DISABLE_xinerama
 {
-	MkDefine('XINERAMA_PC', '');
+	MkDefine('HAVE_XINERAMA', 'no');
 	MkDefine('XINERAMA_CFLAGS', '');
 	MkDefine('XINERAMA_LIBS', '');
-
+	MkDefine('XINERAMA_PC', '');
 	MkSaveUndef('HAVE_XINERAMA', 'XINERAMA_CFLAGS', 'XINERAMA_LIBS');
-}
-
-sub Emul
-{
-	my ($os, $osrel, $machine) = @_;
-	
-	MkEmulUnavail('XINERAMA');
-	return (1);
 }
 
 BEGIN
 {
 	my $n = 'xinerama';
 
-	$DESCR{$n} = 'the Xinerama extension';
-	$URL{$n}   = 'http://x.org';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-
-	$DEPS{$n} = 'cc,x11';
+	$DESCR{$n}   = 'the Xinerama extension';
+	$URL{$n}     = 'http://x.org';
+	$TESTS{$n}   = \&TEST_xinerama;
+	$DISABLE{$n} = \&DISABLE_xinerama;
+	$DEPS{$n}    = 'cc,x11';
 }
-
 ;1

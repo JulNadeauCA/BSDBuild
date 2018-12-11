@@ -1,5 +1,5 @@
-# Public domain
 # vim:ts=4
+# Public domain
 
 my $testCode = << 'EOF';
 #include <stdio.h>
@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
-sub Test
+sub TEST_sndfile
 {
 	my ($ver, $pfx) = @_;
 	
@@ -36,37 +36,25 @@ sub Test
 	MkElse;
 		MkDefine('SNDFILE_PC', '');
 	MkEndif;
-	return (0);
 }
 
-sub Disable
+sub DISABLE_sndfile
 {
 	MkDefine('HAVE_SNDFILE', 'no');
 	MkDefine('SNDFILE_CFLAGS', '');
 	MkDefine('SNDFILE_LIBS', '');
-	MkSaveUndef('HAVE_SNDFILE',
-	            'SNDFILE_CFLAGS',
-	            'SNDFILE_LIBS');
-}
-
-sub Emul
-{
-	Disable();
-	return (1);
+	MkDefine('SNDFILE_PC', '');
+	MkSaveUndef('HAVE_SNDFILE', 'SNDFILE_CFLAGS', 'SNDFILE_LIBS');
 }
 
 BEGIN
 {
 	my $n = 'sndfile';
 
-	$DESCR{$n} = 'libsndfile';
-	$URL{$n}   = 'http://www.mega-nerd.com/libsndfile';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-	
-	$DEPS{$n} = 'cc';
+	$DESCR{$n}   = 'libsndfile';
+	$URL{$n}     = 'http://www.mega-nerd.com/libsndfile';
+	$TESTS{$n}   = \&TEST_sndfile;
+	$DISABLE{$n} = \&DISABLE_sndfile;
+	$DEPS{$n}    = 'cc';
 }
-
 ;1

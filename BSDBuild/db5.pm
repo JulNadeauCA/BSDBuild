@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
-sub Test_DB5
+sub TEST_db5
 {
 	my ($ver, $pfx) = @_;
 	
@@ -48,12 +48,11 @@ sub Test_DB5
 		MkSaveIfTrue('${HAVE_DB5}', 'DB5_CFLAGS', 'DB5_LIBS');
 	MkElse;
 		MkPrint('no');
-		Disable_DB5();
+		DISABLE_db5();
 	MkEndif;
-	return (0);
 }
 
-sub Disable_DB5
+sub DISABLE_db5
 {
 	MkSetS('HAVE_DB5', 'no');
 	MkSetS('DB5_CFLAGS', '');
@@ -67,8 +66,8 @@ BEGIN
 
 	$DESCR{$n}   = 'Berkeley DB 5.x';
 	$URL{$n}     = 'http://www.oracle.com/technology/products/berkeley-db';
-	$TESTS{$n}   = \&Test_DB5;
-	$DISABLE{$n} = \&Disable_DB5;
+	$TESTS{$n}   = \&TEST_db5;
+	$DISABLE{$n} = \&DISABLE_db5;
 	$DEPS{$n}    = 'cc';
 }
 ;1

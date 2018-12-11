@@ -12,6 +12,7 @@ DATAFILES=Core.pm \
 	glib2.pm \
 	sdl.pm \
 	sdl_image.pm \
+	sdl_cpuinfo.pm \
 	smpeg.pm \
 	x11.pm \
 	freetype.pm \
@@ -40,9 +41,6 @@ DATAFILES=Core.pm \
 	getpwuid.pm \
 	getpwnam_r.pm \
 	getuid.pm \
-	md5.pm \
-	sha1.pm \
-	rmd160.pm \
 	pthreads.pm \
 	sys_stat.pm \
 	sys_types.pm \

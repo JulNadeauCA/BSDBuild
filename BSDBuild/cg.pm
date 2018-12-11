@@ -23,7 +23,7 @@ my @autoIncludeDirs = (
 	'/usr/X11R6/Cg/include',
 );
 
-sub Test_Cg
+sub TEST_cg
 {
 	my ($ver, $pfx) = @_;
 
@@ -60,10 +60,9 @@ sub Test_Cg
 	           '${CG_LIBS} ${OPENGL_LIBS} ${PTHREADS_LIBS}',
 	           $testCode);
 	MkSaveIfTrue('${HAVE_CG}', 'CG_CFLAGS', 'CG_LIBS');
-	return (0);
 }
 
-sub Disable_Cg
+sub DISABLE_cg
 {
 	MkDefine('HAVE_CG', 'no');
 	MkDefine('CG_CFLAGS', '');
@@ -73,12 +72,12 @@ sub Disable_Cg
 
 BEGIN
 {
-	$DESCR{'cg'} = 'Cg';
-	$URL{'cg'}   = 'http://developer.nvidia.com/object/cg_toolkit.html';
-	$DEPS{'cg'}  = 'cc';
+	my $n = 'cg';
 
-	$TESTS{'cg'}   = \&Test_Cg;
-	$DISABLE{'cg'} = \&Disable_Cg;
+	$DESCR{$n}   = 'Cg';
+	$URL{$n}     = 'http://developer.nvidia.com/object/cg_toolkit.html';
+	$TESTS{$n}   = \&TEST_cg;
+	$DISABLE{$n} = \&DISABLE_cg;
+	$DEPS{$n}    = 'cc';
 }
-
 ;1

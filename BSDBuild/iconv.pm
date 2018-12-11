@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 }
 EOF
 
-sub Test
+sub TEST_iconv
 {
 	my ($ver, $pfx) = @_;
 
@@ -56,7 +56,7 @@ sub Test
 	MkSaveIfTrue('${HAVE_ICONV}', 'ICONV_CFLAGS', 'ICONV_LIBS');
 }
 
-sub Disable
+sub DISABLE_iconv
 {
 	MkDefine('HAVE_ICONV', 'no');
 	MkDefine('ICONV_CFLAGS', '');
@@ -64,23 +64,13 @@ sub Disable
 	MkSaveUndef('HAVE_ICONV', 'ICONV_CFLAGS', 'ICONV_LIBS');
 }
 
-sub Emul
-{
-	Disable();
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'iconv';
 
-	$DESCR{$n} = 'iconv()';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-	
-	$DEPS{$n} = 'cc';
+	$DESCR{$n}   = 'iconv()';
+	$TESTS{$n}   = \&TEST_iconv;
+	$DISABLE{$n} = \&DISABLE_iconv;
+	$DEPS{$n}    = 'cc';
 }
-
 ;1

@@ -1,7 +1,7 @@
-# Public domain
 # vim:ts=4
+# Public domain
 
-sub Test
+sub TEST_siocgifconf
 {
 	TryCompile 'HAVE_SIOCGIFCONF', << 'EOF';
 #include <sys/types.h>
@@ -43,31 +43,19 @@ main(int argc, char *argv[])
 EOF
 }
 
-sub Disable
+sub DISABLE_siocgifconf
 {
 	MkDefine('HAVE_SIOCGIFCONF', 'no');
 	MkSaveUndef('HAVE_SIOCGIFCONF');
-}
-
-sub Emul
-{
-	my ($os, $osrel, $machine) = @_;
-	
-	MkEmulUnavailSYS('SIOCGIFCONF');
-	return (1);
 }
 
 BEGIN
 {
 	my $n = 'siocgifconf';
 
-	$DESCR{$n} = 'the SIOCGIFCONF interface';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-	
-	$DEPS{$n} = 'cc';
+	$DESCR{$n}   = 'the SIOCGIFCONF interface';
+	$TESTS{$n}   = \&TEST_siocgifconf;
+	$DISABLE{$n} = \&DISABLE_siocgifconf;
+	$DEPS{$n}    = 'cc';
 }
-
 ;1

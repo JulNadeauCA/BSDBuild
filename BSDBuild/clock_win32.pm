@@ -22,7 +22,7 @@ main(int argc, char *argv[])
 }
 EOF
 
-sub Test_Clock_Win32
+sub TEST_clock_win32
 {
 	MkCompileC('HAVE_CLOCK_WIN32', '', '-lwinmm', $testCode);
 	MkIfTrue('${HAVE_CLOCK_WIN32}');
@@ -35,7 +35,7 @@ sub Test_Clock_Win32
 	MkEndif;
 }
 
-sub Disable_Clock_Win32
+sub DISABLE_clock_win32
 {
 	MkDefine('HAVE_CLOCK_WIN32', 'no');
 	MkDefine('CLOCK_CFLAGS', '');
@@ -43,7 +43,7 @@ sub Disable_Clock_Win32
 	MkSaveUndef('HAVE_CLOCK_WIN32', 'CLOCK_CFLAGS', 'CLOCK_LIBS');
 }
 
-sub Emul
+sub EMUL_clock_win32
 {
 	my ($os, $osrel, $machine) = @_;
 
@@ -61,12 +61,10 @@ BEGIN
 {
 	my $n = 'clock_win32';
 
-	$DESCR{$n} = 'winmm time interface';
-	$DEPS{$n}  = 'cc';
-
-	$TESTS{$n}   = \&Test_Clock_Win32;
-	$DISABLE{$n} = \&Disable_Clock_Win32;
-	$EMUL{$n}    = \&Emul;
+	$DESCR{$n}   = 'winmm time interface';
+	$TESTS{$n}   = \&TEST_clock_win32;
+	$DISABLE{$n} = \&DISABLE_clock_win32;
+	$EMUL{$n}    = \&EMUL_clock_win32;
+	$DEPS{$n}    = 'cc';
 }
-
 ;1

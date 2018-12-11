@@ -20,7 +20,7 @@ my @autoLibDirs = (
 	'/usr/local/lib'
 );
 
-sub Test_ALSA
+sub TEST_alsa
 {
 	my ($ver, $pfx) = @_;
 
@@ -55,10 +55,9 @@ sub Test_ALSA
 	MkElse;
 		MkPrintS('no');
 	MkEndif;
-	return (0);
 }
 
-sub Disable_ALSA
+sub DISABLE_alsa
 {
 	MkDefine('HAVE_ALSA', 'no');
 	MkDefine('ALSA_CFLAGS', '');
@@ -66,26 +65,16 @@ sub Disable_ALSA
 	MkSaveUndef('HAVE_ALSA', 'ALSA_CFLAGS', 'ALSA_LIBS');
 }
 
-sub Emul
-{
-	my ($os, $osrel, $machine) = @_;
-	
-	MkEmulUnavail('ALSA');
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'alsa';
 
-	$DESCR{$n} = 'ALSA';
-	$URL{$n}   = 'http://www.alsa-project.org';
+	$DESCR{$n}   = 'ALSA';
+	$URL{$n}     = 'http://www.alsa-project.org';
 
-	$TESTS{$n}   = \&Test_ALSA;
-	$DISABLE{$n} = \&Disable_ALSA;
-	$EMUL{$n}    = \&Emul;
+	$TESTS{$n}   = \&TEST_alsa;
+	$DISABLE{$n} = \&DISABLE_alsa;
 
-	$DEPS{$n} = 'cc';
+	$DEPS{$n}    = 'cc';
 }
-
 ;1

@@ -1,7 +1,7 @@
 # Public domain
 # vim:ts=4
 
-sub Test_SpamAssassin
+sub TEST_spamassassin
 {
 	MkRunPerl('HAVE_SPAMASSASSIN', '', << 'EOF');
 use strict;
@@ -20,11 +20,11 @@ $Assassin->set_persistent_address_list_factory($AddrListFactory);
 $AddrListFactory->finish();
 $Assassin->finish();
 EOF
-	return (0);
 }
 
-sub Disable_SpamAssassin
+sub DISABLE_spamassassin
 {
+	MkDefine('HAVE_SPAMASSASSIN', 'no');
 	MkSaveUndef('HAVE_SPAMASSASSIN');
 }
 
@@ -32,13 +32,10 @@ BEGIN
 {
 	my $n = 'Mail-SpamAssassin';
 
-	$DESCR{$n} = 'the Mail::SpamAssassin module';
-	$URL{$n}   = 'http://spamassassin.org';
-
-	$TESTS{$n}   = \&Test_SpamAssassin;
-	$DISABLE{$n} = \&Disable_SpamAssassin;
-
-	$DEPS{$n} = 'perl';
+	$DESCR{$n}   = 'Mail::SpamAssassin';
+	$URL{$n}     = 'http://spamassassin.org';
+	$TESTS{$n}   = \&TEST_spamassassin;
+	$DISABLE{$n} = \&DISABLE_spamassassin;
+	$DEPS{$n}    = 'perl';
 }
-
 ;1

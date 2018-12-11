@@ -1,17 +1,18 @@
 # Public domain
+# vim:syn=bsdbuild
 
-CONFIG_GUESS("mk/config.guess")
+config_guess("mk/config.guess")
 
-PACKAGE("BSDBuild")
-VERSION("3.2")
-RELEASE("Hello bicycle")
-DEFAULT_DIR(DATADIR, "$PREFIX/share/bsdbuild")
+package("BSDBuild")
+version("3.2")
+release("Hello bicycle")
+default_dir(DATADIR, "$PREFIX/share/bsdbuild")
 
-REQUIRE(cc)
-CHECK(gettext)
-CHECK(perl)
+require(cc)
+check(gettext)
+check(perl)
 
-C_NO_SECURE_WARNINGS()
-C_INCDIR($SRC)
+c_no_secure_warnings()
+c_incdir($SRC)
 
-MDEFINE(CONFIGURE_OK, "yes")
+mdefine(CONFIGURE_OK, "yes")

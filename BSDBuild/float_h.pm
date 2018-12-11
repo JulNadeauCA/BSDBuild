@@ -1,7 +1,7 @@
 # vim:ts=4
 # Public domain
 
-sub Test
+sub TEST_float_h
 {
 	MkCompileC('_MK_HAVE_FLOAT_H', '', '', << 'EOF');
 #include <float.h>
@@ -15,23 +15,21 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-	return (0);
 }
 
-sub Emul
+sub DISABLE_float_h
 {
-	my ($os, $osrel, $machine) = @_;
-
-	MkEmulUnavailSYS('_MK_HAVE_FLOAT_H');
-	return (1);
+	MkDefine('_MK_HAVE_FLOAT_H', 'no');
+	MkSaveUndef('_MK_HAVE_FLOAT_H');
 }
 
 BEGIN
 {
-	$DESCR{'float_h'} = 'compatible <float.h>';
-	$TESTS{'float_h'} = \&Test;
-	$EMUL{'float_h'} = \&Emul;
-	$DEPS{'float_h'} = 'cc';
-}
+	my $n = 'float_h';
 
+	$DESCR{$n}   = '<float.h>';
+	$TESTS{$n}   = \&TEST_float_h;
+	$DISABLE{$n} = \&DISABLE_float_h;
+	$DEPS{$n}    = 'cc';
+}
 ;1

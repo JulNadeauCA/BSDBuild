@@ -30,7 +30,7 @@ main(int argc, char *argv[])
 }
 EOF
 
-sub Test_AgarCore
+sub TEST_agar_core
 {
 	my ($ver, $pfx) = @_;
 	
@@ -40,23 +40,22 @@ sub Test_AgarCore
 		MkExecOutputPfx($pfx, 'agar-core-config', '--cflags', 'AGAR_CORE_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-core-config', '--libs', 'AGAR_CORE_LIBS');
 		MkCompileC('HAVE_AGAR_CORE',
-		           '${AGAR_CORE_CFLAGS}', '${AGAR_CORE_LIBS}',
-				   $testCode);
+		           '${AGAR_CORE_CFLAGS}', '${AGAR_CORE_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_AGAR_CORE}', 'AGAR_CORE_CFLAGS', 'AGAR_CORE_LIBS');
 	MkElse;
-		Disable_AgarCore();
+		DISABLE_agar_core();
 	MkEndif;
-	return (0);
 }
 
-sub Disable_AgarCore
+sub DISABLE_agar_core
 {
-	MkSaveUndef('HAVE_AGAR_CORE',
-	            'AGAR_CORE_CFLAGS',
-	            'AGAR_CORE_LIBS');
+	MkDefine('HAVE_AGAR_CORE', 'no');
+	MkDefine('AGAR_CORE_CFLAGS', '');
+	MkDefine('AGAR_CORE_LIBS', '');
+	MkSaveUndef('HAVE_AGAR_CORE', 'AGAR_CORE_CFLAGS', 'AGAR_CORE_LIBS');
 }
 
-sub Emul
+sub EMUL_agar_core
 {
 	my ($os, $osrel, $machine) = @_;
 
@@ -72,12 +71,13 @@ BEGIN
 {
 	my $n = 'agar-core';
 
-	$DESCR{$n} = 'Agar-Core';
-	$URL{$n}   = 'http://libagar.org';
-	$DEPS{$n}  = 'cc';
+	$DESCR{$n}   = 'Agar-Core';
+	$URL{$n}     = 'http://libagar.org';
 
-	$TESTS{$n}   = \&Test_AgarCore;
-	$DISABLE{$n} = \&Disable_AgarCore;
-	$EMUL{$n}    = \&Emul;
+	$TESTS{$n}   = \&TEST_agar_core;
+	$DISABLE{$n} = \&DISABLE_agar_core;
+	$EMUL{$n}    = \&EMUL_agar_core;
+
+	$DEPS{$n}    = 'cc';
 }
 ;1

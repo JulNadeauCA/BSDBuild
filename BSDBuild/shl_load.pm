@@ -1,27 +1,5 @@
 # vim:ts=4
-#
-# Copyright (c) 2008 Hypertriton, Inc. <http://hypertriton.com/>
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
-# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-# USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# Public domain
 
 my $testCode = << 'EOF';
 #include <string.h>
@@ -43,7 +21,7 @@ main(int argc, char *argv[])
 }
 EOF
 
-sub Test
+sub TEST_shl_load
 {
 	my ($ver, $pfx) = @_;
 
@@ -56,9 +34,7 @@ sub Test
 		MkDefine('SHL_LOAD_LIBS', '-ldld');
 	MkEndif;
 
-	TryCompileFlagsC('HAVE_SHL_LOAD',
-	                 '${SHL_LOAD_LIBS}',
-					 $testCode);
+	TryCompileFlagsC('HAVE_SHL_LOAD', '${SHL_LOAD_LIBS}', $testCode);
 	MkIfTrue('${HAVE_SHL_LOAD}');
 		MkDefine('DSO_LIBS', '$DSO_LIBS $SHL_LOAD_LIBS');
 		MkSave('HAVE_SHL_LOAD', 'DSO_LIBS');
@@ -68,21 +44,20 @@ sub Test
 	EndTestHeaders();
 }
 
-sub Emul
+sub DISABLE_shl_load
 {
-	my ($os, $osrel, $machine) = @_;
-
-	MkEmulUnavail('DSO');
-	MkEmulUnavailSYS('DL_H', 'SHL_LOAD');
-	return (1);
+	MkDefine('HAVE_SHL_LOAD', 'no');
+	MkDefine('SHL_LOAD_LIBS', '');
+	MkSaveUndef('HAVE_SHL_LOAD');
 }
 
 BEGIN
 {
-	$DESCR{'shl_load'} = 'shl_load() interface';
-	$TESTS{'shl_load'} = \&Test;
-	$EMUL{'shl_load'} = \&Emul;
-	$DEPS{'shl_load'} = 'cc';
-}
+	my $n = 'shl_load';
 
+	$DESCR{$n}   = 'the shl_load() interface';
+	$TESTS{$n}   = \&TEST_shl_load;
+	$DISABLE{$n} = \&DISABLE_shl_load;
+	$DEPS{$n}    = 'cc';
+}
 ;1

@@ -16,7 +16,7 @@ main(int argc, char *argv[])
 }
 EOF
 
-sub Test_Agar
+sub TEST_agar
 {
 	my ($ver, $pfx) = @_;
 	
@@ -30,12 +30,11 @@ sub Test_Agar
 				   $testCode);
 		MkSaveIfTrue('${HAVE_AGAR}', 'AGAR_CFLAGS', 'AGAR_LIBS');
 	MkElse;
-		Disable_Agar();
+		DISABLE_agar();
 	MkEndif;
-	return (0);
 }
 
-sub Disable_Agar
+sub DISABLE_agar
 {
 	MkDefine('HAVE_AGAR', 'no');
 	MkDefine('AGAR_CFLAGS', '');
@@ -43,7 +42,7 @@ sub Disable_Agar
 	MkSaveUndef('HAVE_AGAR', 'AGAR_CFLAGS', 'AGAR_LIBS');
 }
 
-sub Emul
+sub EMUL_agar
 {
 	my ($os, $osrel, $machine) = @_;
 
@@ -59,13 +58,14 @@ BEGIN
 {
 	my $n = 'agar';
 
-	$DESCR{$n} = 'Agar';
-	$URL{$n}   = 'http://libagar.org';
-	$DEPS{$n}  = 'cc';
+	$DESCR{$n}   = 'Agar';
+	$URL{$n}     = 'http://libagar.org';
 
-	$TESTS{$n}   = \&Test_Agar;
-	$DISABLE{$n} = \&Disable_Agar;
-	$EMUL{$n}    = \&Emul;
+	$TESTS{$n}   = \&TEST_agar;
+	$DISABLE{$n} = \&DISABLE_agar;
+	$EMUL{$n}    = \&EMUL_agar;
+
+	$DEPS{$n}    = 'cc';
 
 	@{$EMULDEPS{$n}} = qw(
 		clock_win32

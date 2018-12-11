@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
-sub Test_DB4
+sub TEST_db4
 {
 	my ($ver, $pfx) = @_;
 
@@ -54,12 +54,11 @@ sub Test_DB4
 		MkCompileC('HAVE_DB4', '${DB4_CFLAGS}', '${DB4_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_DB4}', 'DB4_CFLAGS', 'DB4_LIBS');
 	MkElse;
-		Disable_DB4();
+		DISABLE_db4();
 	MkEndif;
-	return (0);
 }
 
-sub Disable_DB4
+sub DISABLE_db4
 {
 	MkSetS('HAVE_DB4', 'no');
 	MkSetS('DB4_CFLAGS', '');
@@ -73,8 +72,8 @@ BEGIN
 
 	$DESCR{$n}   = 'Berkeley DB 4.x';
 	$URL{$n}     = 'http://www.oracle.com/technology/products/berkeley-db';
-	$TESTS{$n}   = \&Test_DB4;
-	$DISABLE{$n} = \&Disable_DB4;
+	$TESTS{$n}   = \&TEST_db4;
+	$DISABLE{$n} = \&DISABLE_db4;
 	$DEPS{$n}    = 'cc';
 }
 ;1

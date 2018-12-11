@@ -1,5 +1,5 @@
-# Public domain
 # vim:ts=4
+# Public domain
 
 use BSDBuild::Core;
 
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
-sub Test
+sub TEST_sdl
 {
 	my ($ver, $pfx) = @_;
 
@@ -98,7 +98,7 @@ sub Test
 			MkSaveIfTrue('${HAVE_SDL}', 'SDL_CFLAGS', 'SDL_LIBS');
 		MkEndif;
 	MkElse;
-		Disable();
+		DISABLE_sdl();
 	MkEndif;
 
 	MkIfTrue('${HAVE_SDL}');
@@ -106,16 +106,18 @@ sub Test
 	MkElse;
 		MkDefine('SDL_PC', '');
 	MkEndif;
-	return (0);
 }
 
-sub Disable		
+sub DISABLE_sdl
 {
+	MkDefine('HAVE_SDL', 'no');
+	MkDefine('SDL_CFLAGS', '');
+	MkDefine('SDL_LIBS', '');
 	MkDefine('SDL_PC', '');
 	MkSaveUndef('HAVE_SDL', 'SDL_CFLAGS', 'SDL_LIBS');
 }
 
-sub Emul
+sub EMUL_sdl
 {
 	my ($os, $osrel, $machine) = @_;
 
@@ -131,13 +133,11 @@ BEGIN
 {
 	my $n = 'sdl';
 
-	$DESCR{$n} = 'SDL';
-	$URL{$n}   = 'http://www.libsdl.org';
-
-	$TESTS{$n}   = \&Test;
-	$DISABLE{$n} = \&Disable;
-	$EMUL{$n}    = \&Emul;
-
+	$DESCR{$n}   = 'SDL 1.2';
+	$URL{$n}     = 'http://www.libsdl.org';
+	$TESTS{$n}   = \&TEST_sdl;
+	$DISABLE{$n} = \&DISABLE_sdl;
+	$EMUL{$n}    = \&EMUL_sdl;
 	$DEPS{$n}    = 'cc';
 }
 ;1

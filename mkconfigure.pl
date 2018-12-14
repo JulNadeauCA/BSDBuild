@@ -1,6 +1,6 @@
 #!%PERL% -I%PREFIX%/share/bsdbuild
 #
-# Copyright (c) 2001-2018 Julien Nadeau Carriere <vedge@hypertriton.com>
+# Copyright (c) 2001-2018 Julien Nadeau Carriere <vedge@csoft.net>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -899,7 +899,7 @@ EOF
 #
 # Procedures handled by first pass.
 #
-sub pass1_register
+sub P1_register
 {
 	my ($arg, $descr) = @_;
 
@@ -910,7 +910,7 @@ sub pass1_register
 	push @Help, "echo '    $darg $descr'";
 	return (0);
 }
-sub pass1_register_section
+sub P1_register_section
 {
 	my ($s) = @_;
 
@@ -919,12 +919,12 @@ sub pass1_register_section
 	push @Help, "echo '$s'";
 	return (0);
 }
-sub pass1_register_env_var
+sub P1_register_env_var
 {
 	RegisterEnvVar(@_);
 	return (0);
 }
-sub pass1_config_guess
+sub P1_config_guess
 {
 	my ($s) = @_;
 
@@ -935,35 +935,35 @@ sub pass1_config_guess
 	$ConfigGuess = $s;
 	return (0);
 }
-sub pass1_c_incdir_config
+sub P1_c_incdir_config
 {
 	my $dir = shift;
 
 	if ($dir) {
 		$OutputHeaderDir = $dir;
+		MkSetS('bb_incdir', $dir);
 	} else {
 		$OutputHeaderDir = undef;
 	}
 	return (0);
 }
-sub pass1_c_include_config
+sub P1_c_include_config
 {
 	my $file = shift;
 
 	if ($file) {
-		print << "EOF";
-if [ -e "$file" ]; then
-	echo '* Overwriting $file'
-	rm -f "$file"
-fi
-EOF
+		MkIfExists('$file');
+			MkPrint('Overwriting $file');
+			print 'rm -f "$file"', "\n";
+			MkSetS('iconf', '$file');
+		MkEndif;
 		$OutputHeaderFile = $file;
 	} else {
 		$OutputHeaderFile = undef;
 	}
 	return (0);
 }
-sub pass1_test
+sub P1_test
 {
 	my @args = @_;
 	my ($t) = shift(@args);
@@ -1564,19 +1564,19 @@ LINE: foreach $_ (@INPUT) {
 			push @args, $arg;
 		}
 		if ($cmd eq 'register') {
-			pass1_register(@args);
+			P1_register(@args);
 		} elsif ($cmd eq 'register_env_var') {
-			pass1_register_env_var(@args);
+			P1_register_env_var(@args);
 		} elsif ($cmd eq 'register_section') {
-			pass1_register_section(@args);
+			P1_register_section(@args);
 		} elsif ($cmd eq 'config_guess') {
-			pass1_config_guess(@args);
+			P1_config_guess(@args);
 		} elsif ($cmd eq 'c_incdir_config') {
-			pass1_c_incdir_config(@args);
+			P1_c_incdir_config(@args);
 		} elsif ($cmd eq 'c_include_config') {
-			pass1_c_include_config(@args);
+			P1_c_include_config(@args);
 		} elsif ($cmd eq 'require' || $cmd eq 'check') {
-			if (pass1_test(@args) == -1) {
+			if (P1_test(@args) == -1) {
 				print STDERR 'configure.in:' . $INPUT_LINENO{$lineNo} .
 				             ': ' . $ParserError . "\n";
 				exit(1);

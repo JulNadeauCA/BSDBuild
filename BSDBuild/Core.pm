@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2002-2018 Julien Nadeau Carriere <vedge@hypertriton.com>
+# Copyright (c) 2002-2018 Julien Nadeau Carriere <vedge@csoft.net>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,7 @@ sub MkIf { print 'if [ ',shift,' ]; then',"\n"; }
 sub MkIfExec { print 'if ',shift,'; then',"\n"; }
 sub MkElif { print 'elif [ ',shift,' ]; then',"\n"; }
 sub MkElse { print 'else',"\n"; }
-sub MkEndif { print 'fi;',"\n"; }
+sub MkEndif { print 'fi',"\n"; }
 sub MkIfCmp
 {
 	my ($a, $test, $b) = @_;
@@ -84,12 +84,13 @@ sub MkSetS { my ($arg, $val) = @_; print "$arg=\"$val\"\n"; }
 sub MkPushIFS { my ($ifs) = shift; print 'bb_save_IFS=$IFS' . "\n"; print 'IFS=' . $ifs . "\n"; }
 sub MkPopIFS { print 'IFS=$bb_save_IFS' . "\n"; }
 sub MkFor { my ($i, $what) = @_; print 'for '.$i.' in '.$what.'; do' . "\n"; }
+sub MkDone { print "done\n"; }
 sub MkSetExec { my ($arg, $val) = @_; print "$arg=`$val`\n"; }
 sub MkDefine { my ($arg, $val) = @_; print "$arg=\"$val\"\n"; }
 sub MkAppend { my ($arg, $val) = @_; print "$arg=\"\${$arg} $val\"\n"; }
 sub MkSet { my ($arg, $val) = @_; print "$arg=$val\n"; }
-sub MkSetTrue { my ($arg) = @_; print "$arg='yes'\n"; }
-sub MkSetFalse { my ($arg) = @_; print "$arg='no'\n"; }
+sub MkSetTrue { my ($arg) = @_; print "$arg=yes\n"; }
+sub MkSetFalse { my ($arg) = @_; print "$arg=no\n"; }
 sub MkAppend { my ($arg, $val) = @_; print "$arg=\"\${$arg} $val\"\n"; }
 
 sub MkLog
@@ -98,7 +99,7 @@ sub MkLog
 
 	$msg =~ s/["]/\"/g;
 	print << "EOF";
-echo "$msg" >> config.log
+echo "$msg" >>config.log
 EOF
 }
 
@@ -109,7 +110,7 @@ sub MkPrint
 	$msg =~ s/["]/\"/g;
 	print << "EOF";
 echo "$msg"
-echo "$msg" >> config.log
+echo "$msg" >>config.log
 EOF
 }
 
@@ -120,7 +121,7 @@ sub MkPrintS
 	$msg =~ s/["]/\"/g;
 	print << "EOF";
 echo '$msg'
-echo '$msg' >> config.log
+echo '$msg' >>config.log
 EOF
 }
 
@@ -131,7 +132,7 @@ sub MkPrintN
 	$msg =~ s/["]/\"/g;
 	print << "EOF";
 \$ECHO_N "$msg"
-\$ECHO_N "$msg" >> config.log
+\$ECHO_N "$msg" >>config.log
 EOF
 }
 
@@ -142,7 +143,7 @@ sub MkPrintSN
 	$msg =~ s/["]/\"/g;
 	print << "EOF";
 \$ECHO_N '$msg'
-\$ECHO_N '$msg' >> config.log
+\$ECHO_N '$msg' >>config.log
 EOF
 }
 
@@ -210,6 +211,17 @@ sub MkComment
 	}
 }
 
+sub MkCache
+{
+	my ($value, $key) = @_;
+
+	if ($Cache) {
+		MkIfNE('${cache}', '');
+			print 'echo "' . $value . '" >${cache}/'.$key."\n";
+		MkEndif;
+	}
+}
+
 # Write the standard output of a program into variable "$define".
 # Set an empty string and $MK_EXEC_FOUND='No' if the binary is not found.
 sub MkExecOutput
@@ -217,68 +229,38 @@ sub MkExecOutput
 	my ($bin, $args, $define) = @_;
 
 	if ($Cache) {
-		print << "EOF";
-MK_EXEC_FOUND='No'
-MK_CACHED='No'
-if [ "\${cache}" != '' ]; then
-	if [ -e "\${cache}/exec-$define" ]; then
-		$define=`cat \${cache}/exec-$define`
-		MK_EXEC_FOUND=`cat \${cache}/exec-found-$define`
-		MK_CACHED='Yes'
-	fi
-fi
-if [ "\${MK_CACHED}" = 'No' ]; then
-	$define=''
-	bb_save_IFS=\$IFS
-	IFS=\$PATH_SEPARATOR
-	for path in \$PATH; do
-		if [ -e "\${path}/$bin" ]; then
-			$define=`\${path}/$bin $args`
-			MK_EXEC_FOUND='Yes'
-			break
-		elif [ -e "\${path}/$bin.exe" ]; then
-			$define=`\${path}/$bin.exe $args`
-			MK_EXEC_FOUND='Yes'
-			break
-		fi
-	done
-	IFS=\$bb_save_IFS
-	if [ "\${cache}" != '' ]; then
-		echo "\$$define" > \${cache}/exec-$define
-		echo \$MK_EXEC_FOUND > \${cache}/exec-found-$define
-	fi
-fi
-EOF
-	} else {
-		print << "EOF";
-MK_EXEC_FOUND='No'
-$define=''
-bb_save_IFS=\$IFS
-IFS=\$PATH_SEPARATOR
-for path in \$PATH; do
-	if [ -e "\${path}/$bin" ]; then
-		$define=`\${path}/$bin $args`
-		MK_EXEC_FOUND='Yes'
-		break
-	elif [ -e "\${path}/$bin.exe" ]; then
-		$define=`\${path}/$bin.exe $args`
-		MK_EXEC_FOUND='Yes'
-		break
-	fi
-done
-IFS=\$bb_save_IFS
-
-if [ "\${cache}" != '' ]; then
-	echo "\$$define" > \${cache}/exec-$define
-	echo \$MK_EXEC_FOUND > \${cache}/exec-found-$define
-fi
-EOF
+		MkSet('MK_EXEC_FOUND', 'No');
+		MkSet('MK_CACHED', 'No');
+		MkIfNE('${cache}', '');
+			MkIfExists('${cache}/exec-'.$define);
+				MkSetExec('MK_EXEC_FOUND', 'cat ${cache}/exec-found-'.$define);
+				MkSet    ('MK_CACHED',     'Yes');
+			MkEndif;
+		MkEndif;
+		MkIfEQ('${MK_CACHED}', 'No');
 	}
-}
 
-sub MkDone
-{
-	print 'done' . "\n";
+	MkSet($define, '');
+	MkPushIFS('$PATH_SEPARATOR');
+	MkFor('path', '$PATH');
+		MkIfExists('${path}/'.$bin);
+			MkSetExec($define, '${path}/'.$bin.' '.$args);
+			MkSet('MK_EXEC_FOUND', 'Yes');
+			MkBreak;
+		MkElif('-e ${path}/'.$bin.'.exe');
+			MkSetExec($define, '${path}/'.$bin.'.exe '.$args);
+			MkSet('MK_EXEC_FOUND', 'Yes');
+			MkBreak;
+		MkEndif;
+	MkDone;
+	MkPopIFS();
+
+	if ($Cache) {
+			MkCache('$'.$define,      'exec-'.$define);
+			MkCache('$MK_EXEC_FOUND', 'exec-found-'.$define);
+
+		MkEndif;	# !MK_CACHED
+	}
 }
 
 # Variant of MkExecOutput() accepting a prefix argument.
@@ -287,16 +269,18 @@ sub MkExecOutputPfx
 {
 	my ($pfx, $bin, $args, $define) = @_;
 
-	MkSetS($define, '');
+	MkSet($define, '');
 	MkPushIFS('$PATH_SEPARATOR');
 	MkFor('path', '$PATH');
 		MkIfExists('${path}/'.$bin);
-			MkSetExec($define, '${path}/' . $bin . ' ' . $args);
-			MkSetS('MK_EXEC_FOUND', 'Yes');
+			MkSetExec($define, '${path}/'.$bin.' '.$args);
+			MkSet('MK_EXEC_FOUND', 'Yes');
+			MkSetS('MK_EXEC_PATH', '${path}/'.$bin);
 			MkBreak;
 		MkElif('-e "${path}/'.$bin.'.exe"');
-			MkSetExec($define, '${path}/' . $bin . '.exe ' . $args);
-			MkSetS('MK_EXEC_FOUND', 'Yes');
+			MkSetExec($define, '${path}/' . $bin.'.exe '.$args);
+			MkSet('MK_EXEC_FOUND', 'Yes');
+			MkSetS('MK_EXEC_PATH', '${path}/'.$bin.'.exe');
 			MkBreak;
 		MkEndif;
 	MkDone;
@@ -317,189 +301,88 @@ sub MkExecPkgConfig
 {
 	my ($pfx, $pkg, $args, $define) = @_;
 
-	print << "EOF";
-if [ "$pfx" != '' ]; then
-	MK_EXEC_PKGPREFIX=`\$PKGCONFIG --variable=prefix $pkg 2>/dev/null`
-	if [ "\$MK_EXEC_PKGPREFIX" != "$pfx" ]; then
-		echo ' '
-		echo '* '
-		echo "* ERROR: According to pkg-config, $pkg is installed in prefix: "
-		echo "* \$MK_EXEC_PKGPREFIX, but the prefix $pfx was given."
-		echo '* '
-		echo "* Please re-run ./configure again with the correct $pkg prefix,"
-		echo '* or omit the prefix to trigger auto-detection.'
-		echo '* '
-		exit 1
-	else
-		$define=`\$PKGCONFIG $pkg $args 2>/dev/null`
-	fi
-else
-	$define=`\$PKGCONFIG $pkg $args 2>/dev/null`
-fi
-EOF
+	MkIfNE('$pfx', '');
+		MkSetExec('MK_EXEC_PKGPREFIX', '$PKGCONFIG --variable=prefix '.$pkg.
+		                               ' 2>/dev/null');
+		MkIfNE('$MK_EXEC_PKGPREFIX', '$pfx');
+			MkPrint('* ');
+			MkPrint("* ERROR: According to pkg-config, $pkg is installed in prefix: ");
+			MkPrint("* \$MK_EXEC_PKGPREFIX, but the prefix $pfx was given.");
+			MkPrint('* ');
+			MkPrint("* Please indicate correct $pkg prefix (or omit for autodetect).");
+			MkPrint('* ');
+			MkFail('Package prefix mismatch');
+		MkEndif;
+	MkEndif;
+
+	MkSetExec($define, '$PKGCONFIG '.$pkg.' '.$args.' 2>/dev/null');
 }
 
 # 
-# Variant of MkExecOutput() which warns when binary exists multiple
-# times in the $PATH. If binary exists once, set $MK_EXEC_UNIQUE='Yes'.
+# Variant of MkExecOutput() which tests and warns if the binary appears more
+# than once in $PATH (ignoring copies with alternate executable suffixes).
+# If the binary exists only once under $PATH, set $MK_EXEC_UNIQUE to Yes.
 # 
 sub MkExecOutputUnique
 {
 	my ($bin, $args, $define) = @_;
 
+	MkSet('MK_EXEC_FOUND', 'No');
+	MkSet('MK_EXEC_UNIQUE', 'No');
+	MkSet('MK_EXEC_FOUND_PATH', 'No');
+	MkSet($define, '');
+
 	if ($Cache) {
-		print << "EOF";
-MK_EXEC_FOUND='No'
-MK_CACHED='No'
-MK_EXEC_UNIQUE='No'
-MK_EXEC_FOUND_PATH=''
-if [ "\${cache}" != '' ]; then
-	if [ -e "\${cache}/exec-$define" ]; then
-		$define=`cat \${cache}/exec-$define`
-		MK_EXEC_FOUND=`cat \${cache}/exec-found-$define`
-		MK_EXEC_FOUND_PATH=`cat \${cache}/exec-found-path-$define`
-		MK_CACHED='Yes'
-	fi
-fi
-if [ "\${MK_CACHED}" = 'No' ]; then
-	$define=''
-	bb_save_IFS=\$IFS
-	IFS=\$PATH_SEPARATOR
-	for path in \$PATH; do
-		if [ -e "\${path}/$bin" ]; then
-			if [ "\$MK_EXEC_FOUND" = 'Yes' ]; then
-				echo 'yes.'
-				if [ "\$MK_EXEC_FOUND_PATH" != "\${path}/$bin.exe" ]; then
-					echo "* Warning: Multiple $bin in PATH, using \$MK_EXEC_FOUND_PATH"
-					echo "* Warning: Multiple $bin in PATH, using \$MK_EXEC_FOUND_PATH" >> config.log
-				fi
-				break
-			fi
-			$define=`\${path}/$bin $args`
-			MK_EXEC_FOUND='Yes'
-			MK_EXEC_FOUND_PATH="\${path}/$bin"
-		elif [ -e "\${path}/$bin.exe" ]; then
-			if [ "\$MK_EXEC_FOUND" = 'Yes' ]; then
-				echo 'yes.'
-				if [ "\$MK_EXEC_FOUND_PATH" != "\${path}/$bin" ]; then
-					echo "* Warning: Multiple $bin in PATH, using \$MK_EXEC_FOUND_PATH"
-					echo "* Warning: Multiple $bin in PATH, using \$MK_EXEC_FOUND_PATH" >> config.log
-				fi
-				break
-			fi
-			$define=`\${path}/$bin.exe $args`
-			MK_EXEC_FOUND='Yes'
-			MK_EXEC_FOUND_PATH="\${path}/$bin.exe"
-		fi
-	done
-	IFS=\$bb_save_IFS
-	if [ "\${cache}" != '' ]; then
-		echo "\$$define" > \${cache}/exec-$define
-		echo \$MK_EXEC_FOUND > \${cache}/exec-found-$define
-		echo \$MK_EXEC_FOUND_PATH > \${cache}/exec-found-path-$define
-	fi
-fi
-EOF
-	} else {
-		print << "EOF";
-MK_EXEC_FOUND='No'
-MK_CACHED='No'
-MK_EXEC_UNIQUE='No'
-MK_EXEC_FOUND_PATH=''
-$define=''
-bb_save_IFS=\$IFS
-IFS=\$PATH_SEPARATOR
-for path in \$PATH; do
-	if [ -e "\${path}/$bin" ]; then
-		if [ "\$MK_EXEC_FOUND" = 'Yes' ]; then
-			echo 'yes.'
-			if [ "\$MK_EXEC_FOUND_PATH" != "\${path}/$bin" ]; then
-				echo "* Warning: Multiple $bin in PATH, using \$MK_EXEC_FOUND_PATH"
-				echo "* Warning: Multiple $bin in PATH, using \$MK_EXEC_FOUND_PATH" >> config.log
-			fi
-			break
-		fi
-		$define=`\${path}/$bin $args`
-		MK_EXEC_FOUND='Yes'
-		MK_EXEC_FOUND_PATH="\${path}/$bin"
-	elif [ -e "\${path}/$bin.exe" ]; then
-		if [ "\$MK_EXEC_FOUND" = 'Yes' ]; then
-			echo 'yes.'
-			if [ "\$MK_EXEC_FOUND_PATH" != "\${path}/$bin" ]; then
-				echo "* Warning: Multiple $bin in PATH, using \$MK_EXEC_FOUND_PATH"
-				echo "* Warning: Multiple $bin in PATH, using \$MK_EXEC_FOUND_PATH" >> config.log
-			fi
-			break
-		fi
-		$define=`\${path}/$bin.exe $args`
-		MK_EXEC_FOUND='Yes'
-		MK_EXEC_FOUND_PATH="\${path}/$bin.exe"
-	fi
-done
-IFS=\$bb_save_IFS
-EOF
-	}
-}
-
-# Write contents of a file into variable "$define".
-# Set an empty string and $MK_FILE_FOUND='No' if the file is not found.
-sub MkFileOutput
-{
-	my ($file, $define) = @_;
-
-	print << "EOF";
-MK_FILE_FOUND='No'
-if [ -e "$file" ]; then
-	$define="`cat $file`"
-	MK_FILE_FOUND='Yes'
-else
-	$define=''
-fi
-EOF
-}
-
-# Return the absolute path name of a binary into a variable.
-# Set an empty string if the binary is not found.
-sub Which
-{
-	my ($bin, $args, $define) = @_;
-
-	if ($args) {
-		return << "EOF";
-$define=''
-bb_save_IFS=\$IFS
-IFS=\$PATH_SEPARATOR
-for path in \$PATH; do
-	if [ -e "\${path}/$bin" ]; then
-		$define=`\${path}/$bin $args`
-		break
-	elif [ -e "\${path}/$bin.exe" ]; then
-		$define=`\${path}/$bin.exe $args`
-		break
-	fi
-done
-IFS=\$bb_save_IFS
-EOF
-	} else {
-		return << "EOF";
-$define=''
-bb_save_IFS=\$IFS
-IFS=\$PATH_SEPARATOR
-for path in \$PATH; do
-	if [ -e "\${path}/$bin" ]; then
-		$define=`\${path}/$bin`
-		break
-	elif [ -e "\${path}/$bin.exe" ]; then
-		$define=`\${path}/$bin.exe`
-		break
-	fi
-done
-IFS=\$bb_save_IFS
-EOF
+		MkSet('MK_CACHED', 'No');
+		MkIfNE('${cache}', '');
+			MkIfExists('${cache}/exec-'.$define);
+				MkSetExec($define,              'cat ${cache}/exec-'.$define);
+				MkSetExec('MK_EXEC_FOUND',      'cat ${cache}/exec-found-'.$define);
+				MkSetExec('MK_EXEC_FOUND_PATH', 'cat ${cache}/exec-found-path-'.$define);
+				MkSet    ('MK_CACHED',          'Yes');
+			MkEndif;
+		MkEndif;
+		MkIfEQ('${MK_CACHED}', 'No');
 	}
 
-}
+	MkSet($define, '');
+	MkPushIFS('$PATH_SEPARATOR');
+	MkFor('path', '$PATH');
+		MkIfExists('${path}/'.$bin);
+			MkIfEQ('${MK_EXEC_FOUND}', 'Yes');
+				MkPrint('yes.');
+				MkIfNE('${MK_EXEC_FOUND_PATH}', '${path}/'.$bin.'.exe');
+					MkPrint('* WARNING: Multiple '.$bin.' in PATH '.
+					        '(using ${MK_EXEC_FOUND_PATH})');
+				MkEndif;
+				MkBreak;
+			MkEndif;
+			MkSetExec($define, '${path}/'.$bin.' '.$args);
+			MkSet('MK_EXEC_FOUND', 'Yes');
+			MkSet('MK_EXEC_FOUND_PATH', '${path}/'.$bin);
+		MkElif('-e ${path}/'.$bin.'.exe');
+			MkIfEQ('${MK_EXEC_FOUND}', 'Yes');
+				MkPrint('yes.');
+				MkIfNE('${MK_EXEC_FOUND_PATH}', '${path}/'.$bin);
+					MkPrint('* WARNING: Multiple '.$bin.' in PATH '.
+					        '(using ${MK_EXEC_FOUND_PATH})');
+				MkEndif;
+				MkBreak;
+			MkEndif;
+			MkSetExec($define, '${path}/'.$bin.'.exe '.$args);
+			MkSet('MK_EXEC_FOUND', 'Yes');
+			MkSet('MK_EXEC_FOUND_PATH', '${path}/'.$bin.'.exe');
+		MkEndif;
+	MkDone;			# path in $PATH
+	MkPopIFS();
 
+	if ($Cache) {
+			MkCache('$'.$define,           'exec-'.$define);
+			MkCache('$MK_EXEC_FOUND',      'exec-found-'.$define);
+			MkCache('$MK_EXEC_FOUND_PATH', 'exec-found-path-'.$define);
+		MkEndif;	# !MK_CACHED
+	}
+}
 
 sub MkIfFound
 {
@@ -511,17 +394,16 @@ sub MkIfFound
 		MkElse;
 			MkPrint("yes (\$$verDefn)");
 		MkEndif;
-
-		if ($ver ne '') {
-			MkTestVersion($verDefn, $ver);
-			MkIfEQ('${MK_VERSION_OK}', 'no');
-				MkPrintS('*');
-				MkPrint("* Minimum required version is $ver (found \$$verDefn); skipping.");
-				MkPrintS('*');
-			MkEndif;
-		} else {
-			MkDefine('MK_VERSION_OK', 'yes');
-		}
+	if ($ver ne '') {
+		MkTestVersion($verDefn, $ver);
+		MkIfEQ('${MK_VERSION_OK}', 'no');
+			MkPrintS('*');
+			MkPrint ("* Minimum required version is $ver (found \$$verDefn)");
+			MkPrintS('*');
+		MkEndif;
+	} else {
+		MkDefine('MK_VERSION_OK', 'yes');
+	}
 	MkElse;
 		MkIfNE($pfx, '');
 			MkPrint("no (not in $pfx)");
@@ -530,24 +412,7 @@ sub MkIfFound
 		MkEndif;
 		MkDefine('MK_VERSION_OK', 'no');
 	MkEndif;
-
 	MkIfEQ('${MK_VERSION_OK}', 'yes');
-}
-
-sub MkIfVersionOK
-{
-	MkIfEQ('${MK_VERSION_OK}', 'yes');
-}
-
-sub MkNotFound
-{
-	my $pfx = shift;
-
-	MkIfNE($pfx, '');
-		MkPrint("no (not in $pfx)");
-	MkElse;
-		MkPrintS('no');
-	MkEndif;
 }
 
 sub Log
@@ -556,7 +421,7 @@ sub Log
 
 	$msg =~ s/["]/\"/g;							# Escape quotes
 	$msg =~ tr/()/ /;
-	return "echo \"$msg\" >> config.log\n";
+	return "echo \"$msg\" >>config.log\n";
 }
 
 sub MkFail
@@ -576,7 +441,7 @@ sub MKSave
     my $var = shift;
     my $s = '';
    
-	$s = "echo \"$var=\$$var\" >> Makefile.config\n";
+	$s = "echo \"$var=\$$var\" >>Makefile.config\n";
     return ($s);
 }
 
@@ -605,10 +470,10 @@ sub MkSaveUndef
 {
 	foreach my $var (@_) {
 		if ($OutputHeaderFile) {
-			print "echo '#undef $var' >>$OutputHeaderFile\n";
+			print "echo '#undef $var' >>\$iconf\n";
 		}
 		if ($OutputHeaderDir) {
-			my $include = $OutputHeaderDir.'/'.lc($var).'.h';
+			my $include = '$bb_incdir/'.lc($var).'.h';
 			print "echo '#undef $var' >$include\n";
 		}
 		if ($OutputLUA) {
@@ -624,17 +489,18 @@ sub MkSaveDefine
 	foreach my $var (@_) {
 		if ($OutputHeaderFile) {
 			print << "EOF";
-echo '#ifndef $var' >> $OutputHeaderFile
-echo "#define $var \\"\$$var\\"" >> $OutputHeaderFile
-echo '#endif' >> $OutputHeaderFile
+echo '#ifndef $var' >>\$iconf
+echo "#define $var \\"\$$var\\"" >>\$iconf
+echo '#endif' >>\$iconf
 EOF
 		}
 		if ($OutputHeaderDir) {
-			my $include = $OutputHeaderDir.'/'.lc($var).'.h';
+			my $include = '$bb_incdir/'.lc($var).'.h';
 			print << "EOF";
-echo '#ifndef $var' > $include
-echo "#define $var \\"\$$var\\"" >> $include
-echo '#endif' >> $include
+bb_o=$include
+echo '#ifndef $var' >\$bb_o
+echo "#define $var \\"\$$var\\"" >>\$bb_o
+echo '#endif' >>\$bb_o
 EOF
 		}
 		if ($OutputLUA) {
@@ -650,17 +516,18 @@ sub MkSaveDefineUnquoted
 	foreach my $var (@_) {
 		if ($OutputHeaderFile) {
 			print << "EOF";
-echo '#ifndef $var' >> $OutputHeaderFile
-echo "#define $var \$$var" >> $OutputHeaderFile
-echo '#endif' >> $OutputHeaderFile
+echo '#ifndef $var' >>\$iconf
+echo "#define $var \$$var" >>\$iconf
+echo '#endif' >>\$iconf
 EOF
 		}
 		if ($OutputHeaderDir) {
 			my $include = $OutputHeaderDir.'/'.lc($var).'.h';
 			print << "EOF";
-echo '#ifndef $var' > $include
-echo "#define $var \$$var" >> $include
-echo '#endif' >> $include
+bb_o=$include
+echo '#ifndef $var' >\$bb_o
+echo "#define $var \$$var" >>\$bb_o
+echo '#endif' >>\$bb_o
 EOF
 		}
 		if ($OutputLUA) {
@@ -696,81 +563,71 @@ sub MkSaveIfTrue
 	MkEndif;
 }
 
+sub MkCleanup
+{
+	MkIfNE('${keep_conftest}', 'yes');
+		print 'rm -f '.join(' ',@_)."\n";
+	MkEndif;
+}
+
 sub TryCompile
 {
 	my ($define, $code) = @_;
+	
+	MkSet('MK_COMPILE_STATUS', 'OK');
 
 	if ($Cache) {
-		print << "EOF";
-MK_CACHED='No'
-MK_COMPILE_STATUS='OK'
-if [ "\${cache}" != '' ]; then
-	if [ -e "\${cache}/ctest-$define" ]; then
-		$define=`cat \${cache}/ctest-$define`
-		MK_COMPILE_STATUS=`cat \${cache}/ctest-status-$define`
-		MK_CACHED='Yes'
-	fi
-fi
-if [ "\${MK_CACHED}" = 'No' ]; then
-	cat << EOT > conftest\$\$.c
-$code
-EOT
-	\$CC \$CFLAGS \$TEST_CFLAGS -o \$testdir/conftest\$\$ conftest\$\$.c 2>>config.log
-	if [ \$? != 0 ]; then
-		echo ": failed, code \$?" >> config.log
-		MK_COMPILE_STATUS="FAIL \$?"
-	fi
-fi
-EOF
-	} else {
-		print << "EOF";
-MK_COMPILE_STATUS='OK'
-cat << EOT > conftest\$\$.c
-$code
-EOT
-\$CC \$CFLAGS \$TEST_CFLAGS -o \$testdir/conftest\$\$ conftest\$\$.c 2>>config.log
-if [ \$? != 0 ]; then
-	echo ": failed, code \$?" >> config.log
-	MK_COMPILE_STATUS="FAIL \$?"
-fi
-EOF
+		MkSet('MK_CACHED', 'No');
+		MkIfNE('${cache}', '');
+			MkIfExists('${cache}/ctest-'.$define);
+				MkSetExec($define,             'cat ${cache}/ctest-'.$define);
+				MkSetExec('MK_COMPILE_STATUS', 'cat ${cache}/ctest-status-'.$define);
+				MkSet    ('MK_CACHED',         'Yes');
+			MkEndif;
+		MkEndif;
+		MkIfEQ('${MK_CACHED}', 'No');
+	}
+
+	print 'cat << EOT >conftest$$.c', "\n";
+	print $code, "EOT\n";
+	print '$CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest$$ conftest$$.c ' .
+	      "2>>config.log\n";
+
+	MkIfNE('$?', '0');
+		MkLog('failed $?');
+		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
+	MkEndif;
+
+	if ($Cache) {
+		MkEndif;	# !MK_CACHED
 	}
 
 	MkIfEQ('${MK_COMPILE_STATUS}', 'OK');
 		MkPrintS('yes');
-		MkSetTrue($define);
+		MkSet($define, 'yes');
 		MkSaveDefine($define);
 	MkElse;
 		MkPrintS('no');
-		MkSetFalse($define);
+		MkSet($define, 'no');
 		MkSaveUndef($define);
 	MkEndif;
 
-	if ($Cache) {
-		print << "EOF";
-if [ "\${cache}" != '' ]; then
-	echo "\$$define" > \${cache}/ctest-$define
-	echo \$MK_COMPILE_STATUS > \${cache}/ctest-status-$define
-fi
-EOF
-	}
-	print << 'EOF';
-if [ "${keep_conftest}" != "yes" ]; then
-	rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
-fi
-EOF
+	MkCache('$'.$define,          'ctest-'.$define);
+	MkCache('$MK_COMPILE_STATUS', 'ctest-status-'.$define);
+
+	MkCleanup('conftest$$.c', '$testdir/conftest$$$EXECSUFFIX');
 }
 
 sub BeginTestHeaders
 {
-	MkDefine('TEST_CFLAGS_ORIG', '${TEST_CFLAGS}');
-	MkDefine('TEST_HEADERS', 'Yes');
+	MkSetS('TEST_CFLAGS_ORIG', '${TEST_CFLAGS}');
+	MkSet('TEST_HEADERS', 'Yes');
 }
 
 sub EndTestHeaders
 {
-	MkDefine('TEST_CFLAGS', '${TEST_CFLAGS_ORIG}');
-	MkDefine('TEST_HEADERS', '');
+	MkSetS('TEST_CFLAGS', '${TEST_CFLAGS_ORIG}');
+	MkSet('TEST_HEADERS', '');
 }
 
 sub MkTestVersion
@@ -789,25 +646,25 @@ sub MkTestVersion
 MK_VERSION_MAJOR=`echo "\$$verDef" |sed 's/\\([0-9]*\\).\\([0-9]*\\).\\([0-9]*\\).*/\\1/'`;
 MK_VERSION_MINOR=`echo "\$$verDef" |sed 's/\\([0-9]*\\).\\([0-9]*\\).\\([0-9]*\\).*/\\2/'`;
 MK_VERSION_MICRO=`echo "\$$verDef" |sed 's/\\([0-9]*\\).\\([0-9]*\\).\\([0-9]*\\).*/\\3/'`;
-MK_VERSION_OK='no'
+MK_VERSION_OK=no
 if [ \$MK_VERSION_MAJOR -gt $verSpec[0] ]; then
-	MK_VERSION_OK='yes';
+MK_VERSION_OK=yes
 elif [ \$MK_VERSION_MAJOR -eq $verSpec[0] ]; then
-	if [ "\$MK_VERSION_MINOR" = '' ]; then
-		MK_VERSION_OK='yes'
-	else
-		if [ \$MK_VERSION_MINOR -gt $verSpec[1] ]; then
-			MK_VERSION_OK='yes';
-		elif [ \$MK_VERSION_MINOR -eq $verSpec[1] ]; then
-			if [ "\$MK_VERSION_MICRO" = '' ]; then
-				MK_VERSION_OK='yes'
-			else
-				if [ \$MK_VERSION_MICRO -ge $verSpec[2] ]; then
-					MK_VERSION_OK='yes'
-				fi
-			fi
-		fi
-	fi
+if [ "\$MK_VERSION_MINOR" = '' ]; then
+MK_VERSION_OK=yes
+else
+if [ \$MK_VERSION_MINOR -gt $verSpec[1] ]; then
+MK_VERSION_OK=yes
+elif [ \$MK_VERSION_MINOR -eq $verSpec[1] ]; then
+if [ "\$MK_VERSION_MICRO" = '' ]; then
+MK_VERSION_OK=yes
+else
+if [ \$MK_VERSION_MICRO -ge $verSpec[2] ]; then
+MK_VERSION_OK=yes
+fi
+fi
+fi
+fi
 fi
 EOF
 	} elsif (@verSpec >= 2) {
@@ -817,17 +674,17 @@ EOF
 		print << "EOF";
 MK_VERSION_MAJOR=`echo "\$$verDef" |sed 's/\\([0-9]*\\).\\([0-9]*\\).\\([0-9]*\\).*/\\1/'`;
 MK_VERSION_MINOR=`echo "\$$verDef" |sed 's/\\([0-9]*\\).\\([0-9]*\\).\\([0-9]*\\).*/\\2/'`;
-MK_VERSION_OK='no'
+MK_VERSION_OK=no
 if [ \$MK_VERSION_MAJOR -gt $verSpec[0] ]; then
-	MK_VERSION_OK='yes';
+MK_VERSION_OK=yes
 elif [ \$MK_VERSION_MAJOR -eq $verSpec[0] ]; then
-	if [ "\$MK_VERSION_MINOR" = '' ]; then
-		MK_VERSION_OK='yes'
-	else
-		if [ \$MK_VERSION_MINOR -ge $verSpec[1] ]; then
-			MK_VERSION_OK='yes'
-		fi
-	fi
+if [ "\$MK_VERSION_MINOR" = '' ]; then
+MK_VERSION_OK=yes
+else
+if [ \$MK_VERSION_MINOR -ge $verSpec[1] ]; then
+MK_VERSION_OK=yes
+fi
+fi
 fi
 EOF
 	} elsif (@verSpec >= 1) {
@@ -836,11 +693,11 @@ EOF
 		#
 		print << "EOF";
 MK_VERSION_MAJOR=`echo "\$$verDef" |sed 's/\\([0-9]*\\).\\([0-9]*\\).\\([0-9]*\\).*/\\1/'`;
-MK_VERSION_OK='no'
+MK_VERSION_OK=no
 if [ \$MK_VERSION_MAJOR -gt $verSpec[0] ]; then
-	MK_VERSION_OK='yes';
+MK_VERSION_OK=yes
 elif [ \$MK_VERSION_MAJOR -ge $verSpec[0] ]; then
-	MK_VERSION_OK='yes';
+MK_VERSION_OK=yes
 fi
 EOF
 	}
@@ -850,32 +707,32 @@ sub DetectHeaderC
 {
 	my $def = shift;
 
-	print 'echo > conftest$$.c',"\n";
+	print 'echo >conftest$$.c',"\n";
 	while (my $hdr = shift) {
-		print << "EOF";
-echo '#include $hdr' >> conftest\$\$.c
-EOF
+		print "echo '#include $hdr' >>conftest\$\$.c\n";
 	}
 	print << 'EOF';
-echo 'int main (int argc, char *argv[]) { return (0); }' >> conftest$$.c
+echo 'int main (int argc, char *argv[]) { return (0); }' >>conftest$$.c
 EOF
+	MkSet('MK_COMPILE_STATUS', 'OK');
 	print << 'EOF';
-MK_COMPILE_STATUS='OK'
 $CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest$$ conftest$$.c 2>>config.log
-if [ $? != 0 ]; then
-	echo ": failed, code $?" >> config.log
-	MK_COMPILE_STATUS="FAIL $?"
-fi
-rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
 EOF
-	MkIf('"${MK_COMPILE_STATUS}" = \'OK\'');
-		MkSetTrue($def);
+	MkIfNE('$?', '0');
+		MkLog('failed $?');
+		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
+	MkEndif;
+
+	print "rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX\n";
+
+	MkIfEQ('${MK_COMPILE_STATUS}', 'OK');
+		MkSet($def, 'yes');
 		MkSaveDefine($def);
-		MkIf('"${TEST_HEADERS}" = \'Yes\'');
-			MkDefine('TEST_CFLAGS', "\${TEST_CFLAGS} -D$def");
+		MkIfEQ('${TEST_HEADERS}', 'Yes');
+			MkSetS('TEST_CFLAGS', "\${TEST_CFLAGS} -D$def");
 		MkEndif;
 	MkElse;
-		MkSetFalse($def);
+		MkSet($def, 'no');
 		MkSaveUndef($def);
 	MkEndif;
 }
@@ -884,7 +741,7 @@ sub MkSaveCompileSuccess ($)
 {
 	my $define = shift;
 		
-	MkSetTrue($define);
+	MkSet($define, 'yes');
 	MkSaveMK($define);
 	MkSaveDefine($define);
 }
@@ -893,7 +750,7 @@ sub MkSaveCompileFailed ($)
 {
 	my $define = shift;
 		
-	MkSetFalse($define);
+	MkSet($define, 'no');
 	MkSaveMK($define);
 	MkSaveUndef($define);
 }
@@ -908,38 +765,37 @@ sub MkCompileAndRunC
 {
 	my ($define, $cflags, $libs, $code) = @_;
 
-	print << "EOF";
-MK_COMPILE_STATUS='OK'
-MK_RUN_STATUS='OK'
-cat << EOT > conftest\$\$.c
-$code
-EOT
-\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest\$\$ conftest\$\$.c $libs 2>>config.log
-if [ \$? != 0 ]; then
-	echo ": failed, code \$?" >> config.log
-	MK_COMPILE_STATUS="FAIL \$?"
-fi
-EOF
-	MkIf('"${MK_COMPILE_STATUS}" = \'OK\'');
-		print '(cd $testdir && ./conftest$$$EXECSUFFIX) >> config.log', "\n";
-		MkIf('"$?" = \'0\'');
+	MkSet('MK_COMPILE_STATUS', 'OK');
+	MkSet('MK_RUN_STATUS', 'OK');
+
+	print 'cat << EOT >conftest$$.c', "\n";
+	print $code, "EOT\n";
+	print '$CC $CFLAGS $TEST_CFLAGS ' . $cflags .
+	      ' -o $testdir/conftest$$ conftest$$.c ' . $libs .
+	      " 2>>config.log\n";
+
+	MkIfNE('$?', '0');
+		MkLog('failed $?');
+		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
+	MkEndif;
+
+	MkIfEQ('${MK_COMPILE_STATUS}', 'OK');
+		print '(cd $testdir && ./conftest$$$EXECSUFFIX) >>config.log', "\n";
+		MkIfEQ('$?', '0');
 			MkPrintS('yes');
 			MkSaveCompileSuccess($define);
 		MkElse;
 			MkPrintS('no, test program failed');
-			MkDefine('MK_RUN_STATUS', 'FAIL \$?');
+			MkSetS('MK_RUN_STATUS', 'FAIL $?');
 			MkSaveCompileFailed($define);
 		MkEndif;
 	MkElse;
 		MkPrintS('no');
-		MkDefine('MK_RUN_STATUS', 'FAIL \$?');
+		MkSetS('MK_RUN_STATUS', 'FAIL $?');
 		MkSaveCompileFailed($define);
 	MkEndif;
-	print << 'EOF';
-if [ "${keep_conftest}" != "yes" ]; then
-	rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
-fi
-EOF
+
+	MkCleanup('conftest$$.c', '$testdir/conftest$$$EXECSUFFIX');
 }
 
 #
@@ -952,21 +808,22 @@ sub MkCompileAndRunCXX
 {
 	my ($define, $cxxflags, $libs, $code) = @_;
 
-	print << "EOF";
-MK_COMPILE_STATUS='OK'
-cat << EOT > conftest\$\$.cpp
-$code
-EOT
-\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $cxxflags -o \$testdir/conftest\$\$ conftest\$\$.cpp $libs 2>>config.log
-if [ \$? != 0 ]; then
-	echo ": failed, code \$?" >> config.log
-	MK_COMPILE_STATUS="FAIL \$?"
-fi
-EOF
+	MkSet('MK_COMPILE_STATUS', 'OK');
+
+	print 'cat << EOT >conftest$$.cpp', "\n";
+	print $code, "EOT\n";
+	print '$CXX $CXXFLAGS $TEST_CXXFLAGS ' . $cxxflags .
+	      ' -o $testdir/conftest$$ conftest$$.cpp ' . $libs .
+	      " 2>>config.log\n";
+
+	MkIfNE('$?', '0');
+		MkLog('failed $?');
+		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
+	MkEndif;
 
 	MkIfEQ('${MK_COMPILE_STATUS}', 'OK');
-		print '(cd $testdir && ./conftest$$$EXECSUFFIX) >> config.log', "\n";
-		MkIf('"$?" = \'0\'');
+		print '(cd $testdir && ./conftest$$$EXECSUFFIX) >>config.log', "\n";
+		MkIfEQ('$?', '0');
 			MkPrintS('yes');
 			MkSaveCompileSuccess($define);
 		MkElse;
@@ -977,66 +834,31 @@ EOF
 		MkPrintS('no');
 		MkSaveCompileFailed($define);
 	MkEndif;
-	print << 'EOF';
-if [ "${keep_conftest}" != "yes" ]; then
-	rm -f conftest$$.cpp $testdir/conftest$$$EXECSUFFIX
-fi
-EOF
+
+	MkCleanup('conftest$$.cpp', '$testdir/conftest$$$EXECSUFFIX');
 }
 
 sub TryCompileFlagsAda
 {
 	my ($define, $flags, $code) = @_;
 
-	if ($Cache) {
-		print << "EOF";
-MK_CACHED='No'
-MK_COMPILE_STATUS='OK'
-if [ "\${cache}" != '' ]; then
-	if [ -e "\${cache}/adatest-$define" ]; then
-		$define=`cat \${cache}/adatest-$define`
-		MK_COMPILE_STATUS=`cat \${cache}/adatest-status-$define`
-		MK_CACHED='Yes'
-	fi
-fi
-if [ "\${MK_CACHED}" = 'No' ]; then
-	cat << EOT > conftest.adb
-$code
-EOT
-	\$ADA \$ADAFLAGS \$TEST_ADAFLAGS $flags -c conftest.adb 2>>config.log
-	if [ \$? != 0 ]; then
-		echo ": failed, code \$?" >> config.log
-		MK_COMPILE_STATUS="FAIL \$?"
-	else
-		echo "\$ADABIND \$ADABFLAGS conftest"
-		\$ADABIND \$ADABFLAGS conftest 2>>config.log
-		if [ \$? != 0 ]; then
-			echo ": failed, code \$?" >> config.log
-			MK_COMPILE_STATUS="FAIL \$?"
-		fi
-	fi
-fi
-EOF
-	} else {
-		print << "EOF";
-MK_COMPILE_STATUS='OK'
-cat << EOT > conftest.adb
-$code
-EOT
-\$ADA \$ADAFLAGS \$TEST_ADAFLAGS $flags -c conftest.adb 2>>config.log
-if [ \$? != 0 ]; then
-	echo ": failed, code \$?" >> config.log
-	MK_COMPILE_STATUS="FAIL \$?"
-else
-	echo "\$ADABIND \$ADABFLAGS conftest"
-	\$ADABIND \$ADABFLAGS conftest 2>>config.log
-	if [ \$? != 0 ]; then
-		echo ": failed, code \$?" >> config.log
-		MK_COMPILE_STATUS="FAIL \$?"
-	fi
-fi
-EOF
-	}
+	MkSet('MK_COMPILE_STATUS', 'OK');
+
+	print 'cat << EOT >conftest.adb', "\n";
+	print $code, "EOT\n";
+	print '$ADA $ADAFLAGS $TEST_ADAFLAGS ' . $flags . ' -c conftest.adb ' .
+	      "2>>config.log\n";
+
+	MkIfNE('$?', '0');
+		MkLog('compiler failed $?');
+		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
+	MkElse;
+		print '$ADABIND $ADABFLAGS conftest 2>>config.log', "\n";
+		MkIfNE('$?', '0');
+			MkLog('binder failed $?');
+			MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
+		MkEndif;
+	MkEndif;
 
 	MkIfEQ('${MK_COMPILE_STATUS}', 'OK');
 		MkPrintS('yes');
@@ -1046,60 +868,41 @@ EOF
 		MkSaveCompileFailed($define);
 	MkEndif;
 	
-	if ($Cache) {
-		print << "EOF";
-if [ "\${cache}" != '' ]; then
-	echo "\$$define" > \${cache}/adatest-$define
-	echo \$MK_COMPILE_STATUS > \${cache}/adatest-status-$define
-fi
-EOF
-	}
-	print << 'EOF';
-if [ "${keep_conftest}" != "yes" ]; then
-	rm -f conftest.adb conftest.ali conftest.o conftest$EXECSUFFIX
-	rm -f "b~conftest.adb" "b~conftest.ads"
-fi
-EOF
+	MkCleanup('conftest.adb', 'conftest.ali', 'conftest.o', 'conftest$EXECSUFFIX',
+	          '"b~conftest.adb"', '"b~conftest.ads"');
 }
 
 sub TryCompileFlagsC
 {
 	my ($define, $flags, $code) = @_;
+	
+	MkSet('MK_COMPILE_STATUS', 'OK');
 
 	if ($Cache) {
-		print << "EOF";
-MK_CACHED='No'
-MK_COMPILE_STATUS='OK'
-if [ "\${cache}" != '' ]; then
-	if [ -e "\${cache}/ctest-$define" ]; then
-		$define=`cat \${cache}/ctest-$define`
-		MK_COMPILE_STATUS=`cat \${cache}/ctest-status-$define`
-		MK_CACHED='Yes'
-	fi
-fi
-if [ "\${MK_CACHED}" = 'No' ]; then
-	cat << EOT > conftest\$\$.c
-$code
-EOT
-	\$CC \$CFLAGS \$TEST_CFLAGS $flags -o \$testdir/conftest\$\$ conftest\$\$.c 2>>config.log
-	if [ \$? != 0 ]; then
-		echo ": failed, code \$?" >> config.log
-		MK_COMPILE_STATUS="FAIL \$?"
-	fi
-fi
-EOF
-	} else {
-		print << "EOF";
-MK_COMPILE_STATUS='OK'
-cat << EOT > conftest\$\$.c
-$code
-EOT
-\$CC \$CFLAGS \$TEST_CFLAGS $flags -o \$testdir/conftest\$\$ conftest\$\$.c 2>>config.log
-if [ \$? != 0 ]; then
-	echo ": failed, code \$?" >> config.log
-	MK_COMPILE_STATUS="FAIL \$?"
-fi
-EOF
+		MkSet('MK_CACHED', 'No');
+		MkIfNE('${cache}', '');
+			MkIfExists('${cache}/ctest-'.$define);
+				MkSetExec($define,             'cat ${cache}/ctest-'.$define);
+				MkSetExec('MK_COMPILE_STATUS', 'cat ${cache}/ctest-status-'.$define);
+				MkSet    ('MK_CACHED',         'Yes');
+			MkEndif;
+		MkEndif;
+		MkIfEQ('${MK_CACHED}', 'No');
+	}
+
+	print 'cat << EOT >conftest$$.c', "\n";
+	print $code, "EOT\n";
+	print '$CC $CFLAGS $TEST_CFLAGS ' . $flags .
+	      ' -o $testdir/conftest$$ conftest$$.c ' .
+	      "2>>config.log\n";
+
+	MkIfNE('$?', '0');
+		MkLog('failed $?');
+		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
+	MkEndif;
+	
+	if ($Cache) {
+		MkEndif;	# !MK_CACHED
 	}
 
 	MkIfEQ('${MK_COMPILE_STATUS}', 'OK');
@@ -1109,62 +912,45 @@ EOF
 		MkPrintS('no') unless $Quiet;
 		MkSaveCompileFailed($define);
 	MkEndif;
-	
-	if ($Cache) {
-		print << "EOF";
-if [ "\${cache}" != '' ]; then
-	echo "\$$define" > \${cache}/ctest-$define
-	echo \$MK_COMPILE_STATUS > \${cache}/ctest-status-$define
-fi
-EOF
-	}
-	print << 'EOF';
-if [ "${keep_conftest}" != "yes" ]; then
-	rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
-fi
-EOF
+
+	MkCache('$'.$define,          'ctest-'.$define);
+	MkCache('$MK_COMPILE_STATUS', 'ctest-status-'.$define);
+
+	MkCleanup('conftest$$.c', '$testdir/conftest$$$EXECSUFFIX');
 }
 
 sub TryCompileFlagsCXX
 {
 	my ($define, $flags, $code) = @_;
+	
+	MkSet('MK_COMPILE_STATUS', 'OK');
 
 	if ($Cache) {
-		print << "EOF";
-MK_CACHED='No'
-MK_COMPILE_STATUS='OK'
-if [ "\${cache}" != '' ]; then
-	if [ -e "\${cache}/cxxtest-$define" ]; then
-		$define=`cat \${cache}/cxxtest-$define`
-		MK_COMPILE_STATUS=`cat \${cache}/cxxtest-status-$define`
-		MK_CACHED='Yes'
-	fi
-fi
-if [ "\${MK_CACHED}" = 'No' ]; then
-	cat << EOT > conftest.cpp
-$code
-EOT
-	\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $flags -o \$testdir/conftest conftest.cpp -lstdc++ 2>>config.log
-	if [ \$? != 0 ]; then
-		echo ": failed, code \$?" >> config.log
-		MK_COMPILE_STATUS="FAIL \$?"
-	fi
-fi
-EOF
-	} else {
-		print << "EOF";
-MK_COMPILE_STATUS='OK'
-cat << EOT > conftest.cpp
-$code
-EOT
-\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $flags -o \$testdir/conftest conftest.cpp -lstdc++ 2>>config.log
-if [ \$? != 0 ]; then
-	echo ": failed, code \$?" >> config.log
-	MK_COMPILE_STATUS="FAIL \$?"
-fi
-EOF
+		MkSet('MK_CACHED', 'No');
+		MkIfNE('${cache}', '');
+			MkIfExists('${cache}/cxxtest-'.$define);
+				MkSetExec($define,             'cat ${cache}/cxxtest-'.$define);
+				MkSetExec('MK_COMPILE_STATUS', 'cat ${cache}/cxxtest-status-'.$define);
+				MkSet('MK_CACHED', 'Yes');
+			MkEndif;
+		MkEndif;
+		MkIfNE('${MK_CACHED}', 'No');
 	}
 
+	print 'cat << EOT >conftest$$.cpp', "\n";
+	print $code, "EOT\n";
+	print '$CXX $CXXFLAGS $TEST_CXXFLAGS ' . $flags .
+	      ' -o $testdir/conftest$$ conftest$$.cpp -lstdc++ ' .
+	      "2>>config.log\n";
+
+	MkIfNE('$?', '0');
+		MkPrint('failed $?');
+		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
+	MkEndif;
+
+	if ($Cache) {
+		MkEndif;
+	}
 	MkIfEQ('${MK_COMPILE_STATUS}', 'OK');
 		MkPrintS('yes');
 		MkSaveCompileSuccess($define);
@@ -1173,19 +959,10 @@ EOF
 		MkSaveCompileFailed($define);
 	MkEndif;
 
-	if ($Cache) {
-		print << "EOF";
-if [ "\${cache}" != '' ]; then
-	echo "\$$define" > \${cache}/cxxtest-$define
-	echo \$MK_COMPILE_STATUS > \${cache}/cxxtest-status-$define
-fi
-EOF
-	}
-	print << 'EOF';
-if [ "${keep_conftest}" != "yes" ]; then
-	rm -f conftest$$.cpp $testdir/conftest$$$EXECSUFFIX
-fi
-EOF
+	MkCache('$'.$define,          'cxxtest-'.$define);
+	MkCache('$MK_COMPILE_STATUS', 'cxxtest-status-'.$define);
+
+	MkCleanup('conftest$$.cpp', '$testdir/conftest$$$EXECSUFFIX');
 }
 
 #
@@ -1206,65 +983,46 @@ for F in $cflags; do
     esac;
 done
 EOF
+	MkSet('MK_COMPILE_STATUS', 'OK');
+
 	if ($Cache) {
-		print << "EOF";
-MK_CACHED='No'
-MK_COMPILE_STATUS='OK'
-if [ "\${cache}" != '' ]; then
-	if [ -e "\${cache}/adatest-$define" ]; then
-		$define=`cat \${cache}/adatest-$define`
-		MK_COMPILE_STATUS=`cat \${cache}/adatest-status-$define`
-		MK_CACHED='Yes'
-	fi
-fi
-if [ "\${MK_CACHED}" = 'No' ]; then
-	cat << EOT > conftest.adb
-$code
-EOT
-	\$ADA \$ADAFLAGS \$TEST_ADAFLAGS \$ada_cflags -c conftest.adb 2>>config.log
-	if [ \$? != 0 ]; then
-		echo ": failed, code \$?" >>config.log
-		MK_COMPILE_STATUS="FAIL \$?"
-	else
-		\$ADABIND \$ADABFLAGS \$ada_cflags conftest 2>>config.log
-		if [ \$? != 0 ]; then
-			echo ": binder failed, code \$?" >> config.log
-			MK_COMPILE_STATUS="FAIL \$?"
-		else
-		    echo "\$ADALINK \$ADALFLAGS \$ada_cflags conftest $libs" >>config.log
-		    \$ADALINK \$ADALFLAGS \$ada_cflags conftest $libs 2>>config.log
-		    if [ \$? != 0 ]; then
-			    echo ": linker failed, code \$?" >> config.log
-			    MK_COMPILE_STATUS="FAIL \$?"
-		    fi
-		fi
-	fi
-fi
-EOF
-	} else {
-		print << "EOF";
-MK_COMPILE_STATUS='OK'
-cat << EOT > conftest.adb
-$code
-EOT
-\$ADA \$ADAFLAGS \$TEST_ADAFLAGS \$ada_cflags -c conftest.adb 2>>config.log
-if [ \$? != 0 ]; then
-	echo ": failed, code \$?" >> config.log
-	MK_COMPILE_STATUS="FAIL \$?"
-else
-	\$ADABIND \$ADABFLAGS \$ada_cflags conftest 2>>config.log
-	if [ \$? != 0 ]; then
-	    echo ": binder failed, code \$?" >> config.log
-		MK_COMPILE_STATUS="FAIL \$?"
-	else
-		\$ADALINK \$ADALFLAGS \$ada_cflags conftest $libs 2>>config.log
-		if [ \$? != 0 ]; then
-			echo ": linker failed, code \$?" >> config.log
-			MK_COMPILE_STATUS="FAIL \$?"
-		fi
-	fi
-fi
-EOF
+		MkSet('MK_CACHED', 'No');
+		MkIfNE('${cache}', '');
+			MkIfExists('${cache}/adatest-'.$define);
+				MkSetExec($define,             'cat ${cache}/adatest-'.$define);
+				MkSetExec('MK_COMPILE_STATUS', 'cat ${cache}/adatest-status-'.$define);
+				MkSet('MK_CACHED',             'Yes');
+			MkEndif;
+		MkEndif;
+		MkIfNE('${MK_CACHED}', 'No');
+	}
+
+	print 'cat << EOT >conftest.adb', "\n";
+	print $code, "EOT\n";
+	print '$ADA $ADAFLAGS $TEST_ADAFLAGS $ada_cflags -c conftest.adb ' .
+	      "2>>config.log\n";
+
+	MkIfNE('$?', '0');
+		MkPrint('compiler failed $?');
+		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
+	MkElse;
+		print '$ADABIND $ADABFLAGS $ada_cflags conftest ' .
+		      "2>>config.log\n";
+		MkIfNE('$?', '0');
+			MkPrint('binder failed $?');
+			MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
+		MkElse;
+		    print '$ADALINK $ADALFLAGS $ada_cflags conftest ' . $libs .
+			      " 2>>config.log\n";
+			MkIfNE('$?', '0');
+				MkPrint('linker failed $?');
+				MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
+			MkEndif;
+		MkEndif;
+	MkEndif;
+	
+	if ($Cache) {
+		MkEndif;
 	}
 
 	MkIfEQ('${MK_COMPILE_STATUS}', 'OK');
@@ -1275,20 +1033,11 @@ EOF
 		MkSaveCompileFailed($define);
 	MkEndif;
 
-	if ($Cache) {
-		print << "EOF";
-if [ "\${cache}" != '' ]; then
-	echo "\$$define" > \${cache}/adatest-$define
-	echo \$MK_COMPILE_STATUS > \${cache}/adatest-status-$define
-fi
-EOF
-	}
-	print << 'EOF';
-if [ "${keep_conftest}" != "yes" ]; then
-	rm -f conftest.adb conftest.ali conftest.o conftest$EXECSUFFIX
-	rm -f "b~conftest.adb" "b~conftest.ads"
-fi
-EOF
+	MkCache('$'.$define,          'adatest-'.$define);
+	MkCache('$MK_COMPILE_STATUS', 'adatest-status-'.$define);
+
+	MkCleanup('conftest.adb', 'conftest.ali', 'conftest.o',
+	          'conftest$EXECSUFFIX', '"b~conftest.adb"', '"b~conftest.ads"');
 }
 
 #
@@ -1298,41 +1047,34 @@ EOF
 sub MkCompileC
 {
 	my ($define, $cflags, $libs, $code) = @_;
-
+	
+	MkSet('MK_COMPILE_STATUS', 'OK');
+	
 	if ($Cache) {
-		print << "EOF";
-MK_CACHED='No'
-MK_COMPILE_STATUS='OK'
-if [ "\${cache}" != '' ]; then
-	if [ -e "\${cache}/ctest-$define" ]; then
-		$define=`cat \${cache}/ctest-$define`
-		MK_COMPILE_STATUS=`cat \${cache}/ctest-status-$define`
-		MK_CACHED='Yes'
-	fi
-fi
-if [ "\${MK_CACHED}" = 'No' ]; then
-	cat << EOT > conftest\$\$.c
-$code
-EOT
-	\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest\$\$ conftest\$\$.c $libs 2>>config.log
-	if [ \$? != 0 ]; then
-		echo ": failed, code \$?" >> config.log
-		MK_COMPILE_STATUS="FAIL \$?"
-	fi
-fi
-EOF
-	} else {
-		MkSetS('MK_COMPILE_STATUS', 'OK');
-		print << "EOF";
-cat << EOT > conftest\$\$.c
-$code
-EOT
-\$CC \$CFLAGS \$TEST_CFLAGS $cflags -o \$testdir/conftest\$\$ conftest\$\$.c $libs 2>>config.log
-EOF
-		MkIfNE('$?', '0');
-			MkLog('cc failed, code $?');
-			MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
+		MkSet('MK_CACHED', 'No');
+		MkIfNE('${cache}', '');
+			MkIfExists('${cache}/ctest-'.$define);
+				MkSetExec($define,             'cat ${cache}/ctest-'.$define);
+				MkSetExec('MK_COMPILE_STATUS', 'cat ${cache}/ctest-status-'.$define);
+				MkSet    ('MK_CACHED',         'Yes');
+			MkEndif;
 		MkEndif;
+		MkIfEQ('${MK_CACHED}', 'No');
+	}
+
+	print 'cat << EOT >conftest$$.c', "\n";
+	print $code, "EOT\n";
+	print '$CC $CFLAGS $TEST_CFLAGS ' . $cflags .
+	      ' -o $testdir/conftest$$ conftest$$.c '. $libs .
+	      " 2>>config.log\n";
+
+	MkIfNE('$?', '0');
+		MkLog('failed $?');
+		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
+	MkEndif;
+	
+	if ($Cache) {
+		MkEndif;	# !MK_CACHED
 	}
 
 	MkIfEQ('${MK_COMPILE_STATUS}', 'OK');
@@ -1343,19 +1085,10 @@ EOF
 		MkSaveCompileFailed($define);
 	MkEndif;
 
-	if ($Cache) {
-		print << "EOF";
-if [ "\${cache}" != '' ]; then
-	echo "\$$define" > \${cache}/ctest-$define
-	echo \$MK_COMPILE_STATUS > \${cache}/ctest-status-$define
-fi
-EOF
-	}
-	print << 'EOF';
-if [ "${keep_conftest}" != "yes" ]; then
-rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
-fi
-EOF
+	MkCache('$'.$define,          'ctest-'.$define);
+	MkCache('$MK_COMPILE_STATUS', 'ctest-status-'.$define);
+
+	MkCleanup('conftest$$.c', '$testdir/conftest$$$EXECSUFFIX');
 }
 
 #
@@ -1365,42 +1098,31 @@ EOF
 sub MkCompileOBJC
 {
 	my ($define, $cflags, $libs, $code) = @_;
-
+	
+	MkSet('MK_COMPILE_STATUS', 'OK');
+	
 	if ($Cache) {
-		print << "EOF";
-MK_CACHED='No'
-MK_COMPILE_STATUS='OK'
-if [ "\${cache}" != '' ]; then
-	if [ -e "\${cache}/ctest-$define" ]; then
-		$define=`cat \${cache}/ctest-$define`
-		MK_COMPILE_STATUS=`cat \${cache}/ctest-status-$define`
-		MK_CACHED='Yes'
-	fi
-fi
-if [ "\${MK_CACHED}" = 'No' ]; then
-	cat << EOT > conftest\$\$.m
-$code
-EOT
-	\$CC \$CFLAGS \$TEST_CFLAGS $cflags -x objective-c -o \$testdir/conftest\$\$ conftest\$\$.m $libs 2>>config.log
-	if [ \$? != 0 ]; then
-		echo ": failed, code \$?" >> config.log
-		MK_COMPILE_STATUS="FAIL \$?"
-	fi
-fi
-EOF
-	} else {
-		print << "EOF";
-MK_COMPILE_STATUS='OK'
-cat << EOT > conftest\$\$.m
-$code
-EOT
-\$CC \$CFLAGS \$TEST_CFLAGS $cflags -x objective-c -o \$testdir/conftest\$\$ conftest\$\$.m $libs 2>>config.log
-EOF
-		MkIfNE('$?', '0');
-			MkLog('cc failed, code $?');
-			MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
+		MkSet('MK_CACHED', 'No');
+		MkIfNE('${cache}', '');
+			MkIfExists('${cache}/objctest-'.$define);
+				MkSetExec($define,             'cat ${cache}/objctest-'.$define);
+				MkSetExec('MK_COMPILE_STATUS', 'cat ${cache}/objctest-status-'.$define);
+				MkSet    ('MK_CACHED',         'Yes');
+			MkEndif;
 		MkEndif;
+		MkIfEQ('${MK_CACHED}', 'No');
 	}
+	
+	print 'cat << EOT >conftest$$.m', "\n";
+	print $code, "EOT\n";
+	print '$CC $CFLAGS $TEST_CFLAGS ' . $cflags .
+	      ' -x objective-c -o $testdir/conftest$$ conftest$$.m ' . $libs .
+	      " 2>>config.log\n";
+	
+	MkIfNE('$?', '0');
+		MkLog('failed $?');
+		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
+	MkEndif;
 
 	MkIfEQ('${MK_COMPILE_STATUS}', 'OK');
 		MkPrintS('yes');
@@ -1410,19 +1132,10 @@ EOF
 		MkSaveCompileFailed($define);
 	MkEndif;
 
-	if ($Cache) {
-		print << "EOF";
-if [ "\${cache}" != '' ]; then
-	echo "\$$define" > \${cache}/ctest-$define
-	echo \$MK_COMPILE_STATUS > \${cache}/ctest-status-$define
-fi
-EOF
-	}
-	print << 'EOF';
-if [ "${keep_conftest}" != "yes" ]; then
-rm -f conftest$$.m $testdir/conftest$$$EXECSUFFIX
-fi
-EOF
+	MkCache('$'.$define,          'objctest-'.$define);
+	MkCache('$MK_COMPILE_STATUS', 'objctest-status-'.$define);
+
+	MkCleanup('conftest$$.m', '$testdir/conftest$$$EXECSUFFIX');
 }
 
 #
@@ -1432,41 +1145,34 @@ EOF
 sub MkCompileCXX
 {
 	my ($define, $cxxflags, $libs, $code) = @_;
+	
+	MkSet('MK_COMPILE_STATUS', 'OK');
+	
+	if ($Cache) {
+		MkSet('MK_CACHED', 'No');
+		MkIfNE('${cache}', '');
+			MkIfExists('${cache}/cxxtest-'.$define);
+				MkSetExec($define,             'cat ${cache}/cxxtest-'.$define);
+				MkSetExec('MK_COMPILE_STATUS', 'cat ${cache}/cxxtest-status-'.$define);
+				MkSet    ('MK_CACHED',         'Yes');
+			MkEndif;
+		MkEndif;
+		MkIfEQ('${MK_CACHED}', 'No');
+	}
+	
+	print 'cat << EOT >conftest$$.cpp', "\n";
+	print $code, "EOT\n";
+	print '$CXX $CXXFLAGS $TEST_CXXFLAGS ' . $cxxflags .
+	      ' -o $testdir/conftest$$ conftest$$.cpp ' . $libs .
+	      " 2>>config.log\n";
+	
+	MkIfNE('$?', '0');
+		MkLog('failed $?');
+		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
+	MkEndif;
 
 	if ($Cache) {
-		print << "EOF";
-MK_CACHED='No'
-MK_COMPILE_STATUS='OK'
-if [ "\${cache}" != '' ]; then
-	if [ -e "\${cache}/cxxtest-$define" ]; then
-		$define=`cat \${cache}/cxxtest-$define`
-		MK_COMPILE_STATUS=`cat \${cache}/cxxtest-status-$define`
-		MK_CACHED='Yes'
-	fi
-fi
-if [ "\${MK_CACHED}" = 'No' ]; then
-	cat << EOT > conftest\$\$.cpp
-$code
-EOT
-	\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $cxxflags -o \$testdir/conftest\$\$ conftest\$\$.cpp $libs 2>>config.log
-	if [ \$? != 0 ]; then
-		echo ": failed, code \$?" >> config.log
-		MK_COMPILE_STATUS="FAIL \$?"
-	fi
-fi
-EOF
-	} else {
-		MkSetS('MK_COMPILE_STATUS', 'OK');
-		print << "EOF";
-cat << EOT > conftest\$\$.cpp
-$code
-EOT
-\$CXX \$CXXFLAGS \$TEST_CXXFLAGS $cxxflags -o \$testdir/conftest\$\$ conftest\$\$.cpp $libs 2>>config.log
-EOF
-		MkIfNE('$?', '0');
-			MkLog('cc failed, code $?');
-			MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
-		MkEndif;
+		MkEndif;	# !MK_CACHED
 	}
 
 	MkIfEQ('${MK_COMPILE_STATUS}', 'OK');
@@ -1477,19 +1183,10 @@ EOF
 		MkSaveCompileFailed($define);
 	MkEndif;
 
-	if ($Cache) {
-		print << "EOF";
-if [ "\${cache}" != '' ]; then
-	echo "\$$define" > \${cache}/cxxtest-$define
-	echo \$MK_COMPILE_STATUS > \${cache}/cxxtest-status-$define
-fi
-EOF
-	}
-	print << 'EOF';
-if [ "${keep_conftest}" != "yes" ]; then
-rm -f conftest$$.cpp $testdir/conftest$$$EXECSUFFIX
-fi
-EOF
+	MkCache('$'.$define,          'cxxtest-'.$define);
+	MkCache('$MK_COMPILE_STATUS', 'cxxtest-status-'.$define);
+
+	MkCleanup('conftest$$.cpp', '$testdir/conftest$$$EXECSUFFIX');
 }
 
 # Run a test Perl script. Returns yes or no in $define.
@@ -1502,23 +1199,20 @@ sub MkRunPerl
 	$code =~ s/\$/\\\$/g;
 
 	print << "EOF";
-cat << EOT > \$testdir/conftest\$\$.pl
+cat << EOT >\$testdir/conftest\$\$.pl
 $code
 EOT
-(cd \$testdir && perl conftest\$\$.pl) >> config.log
+(cd \$testdir && perl conftest\$\$.pl) >>config.log
 EOF
-	MkIf('"$?" = \'0\'');
+	MkIfEQ('$?', '0');
 		MkPrintS('yes');
 		MkSaveCompileSuccess($define);
 	MkElse;
 		MkPrintS('no (script failed)');
 		MkSaveCompileFailed($define);
 	MkEndif;
-	print << 'EOF';
-if [ "${keep_conftest}" != "yes" ]; then
-rm -f $testdir/conftest$$.pl
-fi
-EOF
+
+	MkCleanup('$testdir/conftest$$.pl');
 }
 
 # Specify module availability under Windows platforms in Emul()
@@ -1594,7 +1288,6 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($Quiet $Cache $OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DISABLE %DESCR %URL %HELPENV MkComment MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFileOutput Which MkFail MKSave TryCompile MkCompileAda MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsAda TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSet MkSetS MkSetExec MkSetTrue MkSetFalse MkPushIFS MkPopIFS MkFor MkDone MkAppend MkBreak MkIfExec MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveMK_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkLog MkPrint MkPrintN MkPrintS MkPrintSN MkIfFound MkIfVersionOK MkNotFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion MkEmulWindows MkEmulWindowsSYS MkEmulUnavail MkEmulUnavailSYS RegisterEnvVar);
+    @EXPORT = qw($Quiet $Cache $OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DISABLE %DESCR %URL %HELPENV MkComment MkCache MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFail MKSave MkCleanup TryCompile MkCompileAda MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsAda TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSet MkSetS MkSetExec MkSetTrue MkSetFalse MkPushIFS MkPopIFS MkFor MkDone MkAppend MkBreak MkIfExec MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveMK_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkLog MkPrint MkPrintN MkPrintS MkPrintSN MkIfFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion MkEmulWindows MkEmulWindowsSYS MkEmulUnavail MkEmulUnavailSYS RegisterEnvVar);
 }
-
 ;1

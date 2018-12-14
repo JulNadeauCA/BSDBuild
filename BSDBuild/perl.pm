@@ -10,6 +10,7 @@ sub TEST_perl
 	
 	MkIfNE('${PERL_LIBS}', '');
 		MkPrintS('yes');
+
 		MkPrintSN('checking whether libperl works...');
 		MkCompileC('HAVE_PERL', '${PERL_CFLAGS} -Wno-error', '${PERL_LIBS}', << 'EOF');
 #include <EXTERN.h>
@@ -39,7 +40,7 @@ main(int argc, char **argv, char **env)
 EOF
 		MkSaveIfTrue('${HAVE_PERL}', 'PERL_CFLAGS', 'PERL_LIBS');
 		
-		Which('perl', undef, 'PERL');
+		MkSet('PERL', '${MK_EXEC_PATH}');
 		MkSaveMK('PERL');
 	MkElse;
 		MkPrintS('no');

@@ -33,7 +33,7 @@ sub TEST_png
 		MkSaveIfTrue('${HAVE_PNG}', 'PNG_CFLAGS', 'PNG_LIBS');
 		
 		MkTestVersion('PNG_VERSION', '1.4.0');
-		MkIfVersionOK;
+		MkIfEQ('${MK_VERSION_OK}', 'yes');
 			MkDefine('HAVE_LIBPNG14', 'yes');
 			MkSave('HAVE_LIBPNG14');
 		MkElse;

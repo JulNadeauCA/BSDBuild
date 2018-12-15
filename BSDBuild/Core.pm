@@ -247,7 +247,7 @@ sub MkExecOutput
 			MkSetExec($define, '${path}/'.$bin.' '.$args);
 			MkSet('MK_EXEC_FOUND', 'Yes');
 			MkBreak;
-		MkElif('-e ${path}/'.$bin.'.exe');
+		MkElif('-e "${path}/'.$bin.'.exe"');
 			MkSetExec($define, '${path}/'.$bin.'.exe '.$args);
 			MkSet('MK_EXEC_FOUND', 'Yes');
 			MkBreak;
@@ -360,7 +360,7 @@ sub MkExecOutputUnique
 			MkSetExec($define, '${path}/'.$bin.' '.$args);
 			MkSet('MK_EXEC_FOUND', 'Yes');
 			MkSet('MK_EXEC_FOUND_PATH', '${path}/'.$bin);
-		MkElif('-e ${path}/'.$bin.'.exe');
+		MkElif('-e "${path}/'.$bin.'.exe"');
 			MkIfEQ('${MK_EXEC_FOUND}', 'Yes');
 				MkPrint('yes.');
 				MkIfNE('${MK_EXEC_FOUND_PATH}', '${path}/'.$bin);
@@ -723,7 +723,7 @@ EOF
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
 	MkEndif;
 
-	print "rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX\n";
+	MkCleanup('conftest$$.c', '$testdir/conftest$$$EXECSUFFIX');
 
 	MkIfEQ('${MK_COMPILE_STATUS}', 'OK');
 		MkSet($def, 'yes');

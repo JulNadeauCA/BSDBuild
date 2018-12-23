@@ -1,7 +1,7 @@
 # vim:ts=4
 # Public domain
 
-my $testCode = << 'EOF';
+my $testCode6 = << 'EOF';
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,21 +17,46 @@ main(int argc, char *argv[])
 }
 EOF
 
+my $testCode7 = << 'EOF';
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <MagickWand/MagickWand.h>
+
+int
+main(int argc, char *argv[])
+{
+	MagickWandGenesis();
+	MagickWandTerminus();
+	return (0);
+}
+EOF
+
 sub TEST_imagemagick
 {
 	my ($ver, $pfx) = @_;
-	
+
 	MkExecOutputPfx($pfx, 'MagickWand-config', '--version', 'IMAGEMAGICK_VERSION');
 	MkIfFound($pfx, $ver, 'IMAGEMAGICK_VERSION');
-		MkPrintSN('checking whether ImageMagick works...');
 		MkExecOutputPfx($pfx, 'MagickWand-config', '--cflags', 'IMAGEMAGICK_CFLAGS');
 		MkExecOutputPfx($pfx, 'MagickWand-config', '--libs', 'IMAGEMAGICK_LIBS');
-		MkCompileC('HAVE_IMAGEMAGICK',
-		           '${IMAGEMAGICK_CFLAGS}', '${IMAGEMAGICK_LIBS}',
-				   $testCode);
-		MkSaveIfTrue('${HAVE_IMAGEMAGICK}', 'IMAGEMAGICK_CFLAGS', 'IMAGEMAGICK_LIBS');
+		if ($ver =~ /^6\./) {
+			MkPrintSN('checking whether ImageMagick 6 works...');
+			MkCompileC('HAVE_IMAGEMAGICK',
+			           '${IMAGEMAGICK_CFLAGS}', '${IMAGEMAGICK_LIBS}',
+					   $testCode6);
+		} else {
+			MkPrintSN('checking whether ImageMagick 7 works...');
+			MkCompileC('HAVE_IMAGEMAGICK',
+			           '${IMAGEMAGICK_CFLAGS}', '${IMAGEMAGICK_LIBS}',
+					   $testCode7);
+		}
+		MkSaveIfTrue('${HAVE_IMAGEMAGICK}',
+		             'IMAGEMAGICK_CFLAGS', 'IMAGEMAGICK_LIBS');
 	MkElse;
-		MkSaveUndef('IMAGEMAGICK_CFLAGS', 'IMAGEMAGICK_LIBS');
+		MkSaveUndef('IMAGEMAGICK_CFLAGS', 'IMAGEMAGICK_LIBS',
+		            'HAVE_IMAGEMAGICK6', 'HAVE_IMAGEMAGICK7');
 	MkEndif;
 }
 

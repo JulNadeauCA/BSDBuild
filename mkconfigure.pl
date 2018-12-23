@@ -297,7 +297,7 @@ sub require_perl_module
 		MkPrintS("* This software requires the $modname module.");
 		MkPrintS("* Get it from CPAN (http://cpan.org/).");
 		MkPrintS('* ');
-		MkFail('configure failed!');
+		MkFail('Required Perl module not found');
 	MkEndif;
 
 	return (0);
@@ -470,24 +470,29 @@ sub test_require
 
 	MkIf "\"\$\{$def\}\" != \"yes\"";
 		MkPrintS('* ');
-		MkPrintS("* This software requires $t installed on your system.");
+		if ($ver) {
+			MkPrint('* $PACKAGE requires ' . $DESCR{$t} .
+			         " (version $ver or newer).");
+		} else {
+			MkPrintS('* This software requires ' . $DESCR{$t});
+		}
 		if (exists($URL{$t}) && defined($URL{$t})) {
-			MkPrintS("* It is available from: $URL{$t}");
+			MkPrintS("* WWW: $URL{$t}");
 		}
 		MkPrintS('* ');
-		MkFail('configure failed!');
+		MkFail("Required dependency $t not found");
 	MkEndif;
 
 	if ($ver) {
-		MkIf '"${MK_VERSION_OK}" != "yes"';
+		MkIfNE('${MK_VERSION_OK}', 'yes');
 			MkPrintS('* ');
 			MkPrintS("* This software requires $t version >= $ver,");
-			MkPrintS("* please upgrade and try again.");
+			MkPrintS("* please update that package and try again.");
 			if (exists($URL{$t}) && defined($URL{$t})) {
-				MkPrintS("* $t should be available from: $URL{$t}");
+				MkPrintS("* WWW: $URL{$t}");
 			}
 			MkPrintS('* ');
-			MkFail('configure failed!');
+			MkFail("Required dependency $t version mismatch");
 		MkEndif;
 	}
 	return (0);

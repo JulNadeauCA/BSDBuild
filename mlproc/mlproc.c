@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Julien Nadeau <vedge@hypertriton.com>.
+ * Copyright (c) 2019 Julien Nadeau Carriere <vedge@csoft.net>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,15 +26,16 @@
 /*
  * Process <ml lang="xx">Text</ml> and $_("Text") elements in a document.
  */
-
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <libintl.h>
 
 #include "config/have_gettext.h"
+#ifdef HAVE_GETTEXT
+#include <libintl.h>
+#endif
 
 static int htmlMode = 0;	/* Ignore anything before <!DOCTYPE html> */
 static int curLine = 0;
@@ -275,4 +276,3 @@ fail:
 	fclose(fin);
 	return (1);
 }
-

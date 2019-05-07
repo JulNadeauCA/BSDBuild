@@ -8,12 +8,12 @@ AG_ObjectClass FooClass = {
 	"FooClass",
 	sizeof(AG_Object),
 	{ 0,0 },
-	NULL,		/* init */
-	NULL,		/* reset */
-	NULL,		/* destroy */
-	NULL,		/* load */
-	NULL,		/* save */
-	NULL		/* edit */
+	AG_NULL,		/* init */
+	AG_NULL,		/* reset */
+	AG_NULL,		/* destroy */
+	AG_NULL,		/* load */
+	AG_NULL,		/* save */
+	AG_NULL			/* edit */
 };
 
 int

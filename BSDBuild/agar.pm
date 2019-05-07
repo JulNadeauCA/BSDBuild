@@ -9,7 +9,7 @@ int
 main(int argc, char *argv[])
 {
 	AG_InitCore("conf-test", 0);
-	AG_InitGraphics(NULL);
+	AG_InitGraphics(AG_NULL);
 	AG_EventLoop();
 	AG_Quit();
 	return (0);

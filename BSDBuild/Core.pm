@@ -270,21 +270,29 @@ sub MkExecOutputPfx
 	my ($pfx, $bin, $args, $define) = @_;
 
 	MkSet($define, '');
-	MkPushIFS('$PATH_SEPARATOR');
-	MkFor('path', '$PATH');
-		MkIfExists('${path}/'.$bin);
-			MkSetExec($define, '${path}/'.$bin.' '.$args);
-			MkSet('MK_EXEC_FOUND', 'Yes');
-			MkSetS('MK_EXEC_PATH', '${path}/'.$bin);
-			MkBreak;
-		MkElif('-e "${path}/'.$bin.'.exe"');
-			MkSetExec($define, '${path}/' . $bin.'.exe '.$args);
-			MkSet('MK_EXEC_FOUND', 'Yes');
-			MkSetS('MK_EXEC_PATH', '${path}/'.$bin.'.exe');
-			MkBreak;
-		MkEndif;
-	MkDone;
-	MkPopIFS;
+	MkIfNE($pfx, '');
+			MkIfExists($pfx.'/bin/'.$bin);
+				MkSetExec($define, $pfx.'/bin/'.$bin.' '.$args);
+				MkSet('MK_EXEC_FOUND', 'Yes');
+				MkSetS('MK_EXEC_PATH', $pfx.'/bin/'.$bin);
+			MkEndif;
+	MkElse;
+		MkPushIFS('$PATH_SEPARATOR');
+		MkFor('path', '$PATH');
+			MkIfExists('${path}/'.$bin);
+				MkSetExec($define, '${path}/'.$bin.' '.$args);
+				MkSet('MK_EXEC_FOUND', 'Yes');
+				MkSetS('MK_EXEC_PATH', '${path}/'.$bin);
+				MkBreak;
+			MkElif('-e "${path}/'.$bin.'.exe"');
+				MkSetExec($define, '${path}/' . $bin.'.exe '.$args);
+				MkSet('MK_EXEC_FOUND', 'Yes');
+				MkSetS('MK_EXEC_PATH', '${path}/'.$bin.'.exe');
+				MkBreak;
+			MkEndif;
+		MkDone;
+		MkPopIFS;
+	MkEndif;
 }
 
 sub MkIfPkgConfig

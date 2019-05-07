@@ -111,9 +111,10 @@ Defaults to "cc", "clang" or "gcc".
 .It Ev PROG_PROFILE
 Set "Yes" to compile with profiling instrumentation.
 .It Ev PROG_LINKER_TYPE
-Set to "C" for C-style linker or "ADA" to use the Ada linker.
-By default, select based on the exclusive presence of *.adb and *.ads
-files in ${SRCS}.
+Set to "C" for C-style linker (the default),
+"CL65" for cc65 (the default if
+.Dv HAVE_CC65
+is set) or "ADA" (the default if SRCS contains *.ad[bs] files exclusively).
 .It Ev ADAFLAGS
 Compiler flags for Ada sources.
 .It Ev ADABFLAGS

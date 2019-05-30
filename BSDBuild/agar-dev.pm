@@ -7,12 +7,8 @@ my $testCode = << 'EOF';
 #include <agar/dev.h>
 
 int main(int argc, char *argv[]) {
-	AG_Object obj;
-
-	AG_ObjectInitStatic(&obj, &agObjectClass);
 	DEV_InitSubsystem(0);
-	DEV_Browser(&obj);
-	AG_ObjectDestroy(&obj);
+    DEV_DestroySubsystem();
 	return (0);
 }
 EOF

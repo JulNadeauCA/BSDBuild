@@ -50,11 +50,16 @@ DATAFILES=Core.pm \
 	agar.types.pm \
 	agar-ada.pm \
 	agar-ada-core.pm \
+	agar-au.pm \
 	agar-core.pm \
 	agar-core.types.pm \
-	agar-vg.pm \
 	agar-dev.pm \
-	agar-au.pm \
+	agar-map.pm \
+	agar-math.pm \
+	agar-rg.pm \
+	agar-sg.pm \
+	agar-sk.pm \
+	agar-vg.pm \
 	cg.pm \
 	cracklib.pm \
 	db4.pm \
@@ -92,7 +97,6 @@ DATAFILES=Core.pm \
 	dyld.pm \
 	shl_load.pm \
 	float_h.pm \
-	agar-math.pm \
 	percgi.pm \
 	gettimeofday.pm \
 	syslog.pm \

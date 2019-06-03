@@ -11,7 +11,6 @@ static const struct {
 	const char *name;
 	unsigned    value;
 } constants[] = {
-	{ "AG_CONSOLE_LINE_MAX",	AG_CONSOLE_LINE_MAX },		/* console.h */
 	{ "AG_GRAPH_LABEL_MAX",		AG_GRAPH_LABEL_MAX },		/* graph.h */
 	{ "AG_LABEL_MAX",			AG_LABEL_MAX },				/* label.h */
 	{ "AG_LABEL_MAX_POLLPTRS",	AG_LABEL_MAX_POLLPTRS },	/* label.h */
@@ -24,9 +23,7 @@ static const struct {
 	{ "AG_TABLE_HASHBUF_MAX",	AG_TABLE_HASHBUF_MAX },		/* table.h */
 	{ "AG_TEXT_STATES_MAX",		AG_TEXT_STATES_MAX },		/* text.h */
 	{ "AG_TLIST_LABEL_MAX",		AG_TLIST_LABEL_MAX },		/* tlist.h */
-	{ "AG_TLIST_ARGS_MAX",		AG_TLIST_ARGS_MAX },		/* tlist.h */
 	{ "AG_TOOLBAR_MAX_ROWS",	AG_TOOLBAR_MAX_ROWS },		/* toolbar.h */
-	{ "AG_TREETBL_LABEL_MAX",	AG_TREETBL_LABEL_MAX },		/* treetbl.h */
 	{ "AG_WINDOW_CAPTION_MAX",	AG_WINDOW_CAPTION_MAX },	/* window.h */
 };
 
@@ -134,7 +131,7 @@ main(int argc, char *argv[])
 		fprintf(f, "%s:%u\n", constants[i].name, constants[i].value);
 
 	fprintf(f, "#\n# Size of AG_Object(3) derived classes\n#\n");
-	PrintClass(f, agClassTree);
+	PrintClass(f, &agObjectClass);
 		
 	fprintf(f, "#\n# Size of other types\n#\n");
 	for (i = 0; i < sizeof(nonobject_types) / sizeof(nonobject_types[0]); i++)

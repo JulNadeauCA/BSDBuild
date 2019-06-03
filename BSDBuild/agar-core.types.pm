@@ -42,7 +42,6 @@ static const struct {
 	{ "AG_Dbt",				sizeof(AG_Dbt),				},
 	{ "AG_Dir",				sizeof(AG_Dir),				},
 	{ "AG_Event",			sizeof(AG_Event),			},
-	{ "AG_EventQ",			sizeof(AG_EventQ),			},
 	{ "AG_EventSink",		sizeof(AG_EventSink),		},
 	{ "AG_EventSource",		sizeof(AG_EventSource),		},
 	{ "AG_FileExtMapping",	sizeof(AG_FileExtMapping),	},
@@ -124,7 +123,7 @@ main(int argc, char *argv[])
 		fprintf(f, "%s:%u\n", constants[i].name, constants[i].value);
 
 	fprintf(f, "#\n# Size of AG_Object(3) derived classes\n#\n");
-	PrintClass(f, agClassTree);
+	PrintClass(f, &agObjectClass);
 		
 	fprintf(f, "#\n# Size of other types\n#\n");
 	for (i = 0; i < sizeof(nonobject_types) / sizeof(nonobject_types[0]); i++)

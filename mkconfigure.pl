@@ -63,6 +63,7 @@ my %Fns = (
 	'config_cache'		=> \&config_cache,
 	'config_script'		=> \&config_script,
 	'pkgconfig_module'	=> \&pkgconfig_module,
+	'pkgconfig_mod'		=> \&pkgconfig_module,
 	'config_guess'		=> \&config_guess,
 	'success_fn'		=> \&success_fn,
 	'check_header'		=> \&check_header,

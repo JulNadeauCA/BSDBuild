@@ -153,6 +153,14 @@ Defaults to the CXXFLAGS environment variable.
 Compiler flags for Objective C sources.
 Defaults to
 .Sq ${CFLAGS} .
+.It Ev ADAPREP
+The Ada preprocessor.
+Defaults to
+.Xr gnatprep 1 .
+.It Ev ADAPREPFLAGS
+Extra flags to the Ada preprocessor.
+.It Ev ADAPREPFILE
+Definitions file for the Ada preprocessor.
 .It Ev CPPFLAGS
 Compiler preprocessor flags, for sources in all languages featuring
 a C preprocessor.
@@ -231,6 +239,14 @@ message.
 .It Ev CONF_OVERWRITE
 Overwrite any existing configuration file on installation.
 Default is "No".
+.It Ev CLEANFILES
+Any extra files that the
+.Ar clean
+target should remove.
+.It Ev CLEANDIRFILES
+Any extra files that the
+.Ar cleandir
+target should remove.
 .El
 .Sh SEE ALSO
 .Xr build.common.mk 5 ,

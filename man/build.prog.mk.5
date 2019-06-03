@@ -191,6 +191,14 @@ message.
 .It Ev CONF_OVERWRITE
 Overwrite any existing configuration file on installation.
 Default is "No".
+.It Ev CLEANFILES
+Any extra files that the
+.Ar clean
+target should remove.
+.It Ev CLEANDIRFILES
+Any extra files that the
+.Ar cleandir
+target should remove.
 .El
 .Sh SEE ALSO
 .Xr build.common.mk 5 ,

@@ -47,6 +47,7 @@ DATAFILES=Core.pm \
 	sys_queue.pm \
 	free_null.pm \
 	agar.pm \
+	agar.defs.pm \
 	agar.types.pm \
 	agar-ada.pm \
 	agar-ada-core.pm \

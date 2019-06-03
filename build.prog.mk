@@ -52,7 +52,7 @@ WINDRES?=
 YACC?=		yacc
 
 ADAFLAGS?=
-ADABFLAGS?=
+ADABFLAGS?=	-x
 ASMFLAGS?=	-g -w-orphan-labels
 CFLAGS?=	-O -g
 CPPFLAGS?=

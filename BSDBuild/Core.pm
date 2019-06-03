@@ -861,7 +861,7 @@ sub TryCompileFlagsAda
 		MkLog('compiler failed $?');
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
 	MkElse;
-		print '$ADABIND $ADABFLAGS conftest 2>>config.log', "\n";
+		print '$ADABIND -x $ADABFLAGS conftest 2>>config.log', "\n";
 		MkIfNE('$?', '0');
 			MkLog('binder failed $?');
 			MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
@@ -1014,7 +1014,7 @@ EOF
 		MkPrint('compiler failed $?');
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
 	MkElse;
-		print '$ADABIND $ADABFLAGS $ada_cflags conftest ' .
+		print '$ADABIND -x $ADABFLAGS $ada_cflags conftest ' .
 		      "2>>config.log\n";
 		MkIfNE('$?', '0');
 			MkPrint('binder failed $?');

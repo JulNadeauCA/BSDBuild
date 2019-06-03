@@ -52,6 +52,7 @@ DATAFILES=Core.pm \
 	agar-ada-core.pm \
 	agar-au.pm \
 	agar-core.pm \
+	agar-core.defs.pm \
 	agar-core.types.pm \
 	agar-dev.pm \
 	agar-map.pm \

@@ -9,26 +9,6 @@ my $testCode = << 'EOF';
 
 static const struct {
 	const char *name;
-	unsigned    value;
-} constants[] = {
-	{ "AG_GRAPH_LABEL_MAX",		AG_GRAPH_LABEL_MAX },		/* graph.h */
-	{ "AG_LABEL_MAX",			AG_LABEL_MAX },				/* label.h */
-	{ "AG_LABEL_MAX_POLLPTRS",	AG_LABEL_MAX_POLLPTRS },	/* label.h */
-	{ "AG_NOTEBOOK_LABEL_MAX",	AG_NOTEBOOK_LABEL_MAX },	/* notebook.h */
-	{ "AG_STATUSBAR_MAX_LABELS",AG_STATUSBAR_MAX_LABELS },	/* statusbar.h */
-	{ "AG_STYLE_VALUE_MAX",		AG_STYLE_VALUE_MAX },		/* stylesheet.h */
-	{ "AG_TABLE_TXT_MAX",		AG_TABLE_TXT_MAX },			/* table.h */
-	{ "AG_TABLE_FMT_MAX",		AG_TABLE_FMT_MAX },			/* table.h */
-	{ "AG_TABLE_COL_NAME_MAX",	AG_TABLE_COL_NAME_MAX },	/* table.h */
-	{ "AG_TABLE_HASHBUF_MAX",	AG_TABLE_HASHBUF_MAX },		/* table.h */
-	{ "AG_TEXT_STATES_MAX",		AG_TEXT_STATES_MAX },		/* text.h */
-	{ "AG_TLIST_LABEL_MAX",		AG_TLIST_LABEL_MAX },		/* tlist.h */
-	{ "AG_TOOLBAR_MAX_ROWS",	AG_TOOLBAR_MAX_ROWS },		/* toolbar.h */
-	{ "AG_WINDOW_CAPTION_MAX",	AG_WINDOW_CAPTION_MAX },	/* window.h */
-};
-
-static const struct {
-	const char *name;
 	size_t      size;
 } nonobject_types[] = {
 	{ "AG_Surface",				sizeof(AG_Surface) },			/* surface.h */
@@ -126,9 +106,6 @@ main(int argc, char *argv[])
 	AG_GetCPUInfo(&cpuinfo);
 	fprintf(f, "# Platform: %s (%s, 0x%x)\n#\n", cpuinfo.arch, cpuinfo.vendorID,
 	    cpuinfo.ext);
-	fprintf(f, "# Agar-GUI constants\n#\n");
-	for (i = 0; i < sizeof(constants) / sizeof(constants[0]); i++)
-		fprintf(f, "%s:%u\n", constants[i].name, constants[i].value);
 
 	fprintf(f, "#\n# Size of AG_Object(3) derived classes\n#\n");
 	PrintClass(f, &agObjectClass);

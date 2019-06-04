@@ -7,28 +7,6 @@ my $testCode = << 'EOF';
 
 static const struct {
 	const char *name;
-	unsigned long value;
-} constants[] = {
-	{ "AG_OBJECT_NAME_MAX",		AG_OBJECT_NAME_MAX },		/* object.h */
-	{ "AG_OBJECT_TYPE_MAX",		AG_OBJECT_TYPE_MAX },
-	{ "AG_OBJECT_HIER_MAX",		AG_OBJECT_HIER_MAX },
-	{ "AG_OBJECT_PATH_MAX",		AG_OBJECT_PATH_MAX },
-	{ "AG_OBJECT_LIBS_MAX",		AG_OBJECT_LIBS_MAX },
-	{ "AG_DSONAME_MAX",			AG_DSONAME_MAX },			/* dso.h */
-	{ "AG_EVENT_ARGS_MAX",		AG_EVENT_ARGS_MAX },		/* event.h */
-	{ "AG_EVENT_NAME_MAX",		AG_EVENT_NAME_MAX },
-	{ "AG_PATHNAME_MAX",		AG_PATHNAME_MAX },			/* limits.h */
-	{ "AG_FILENAME_MAX",		AG_FILENAME_MAX },
-	{ "AG_LOAD_STRING_MAX",		AG_LOAD_STRING_MAX },		/* load_string.h */
-	{ "AG_VERSION_NAME_MAX",	AG_VERSION_NAME_MAX },		/* load_version.h */
-	{ "AG_VERSION_MAX",			AG_VERSION_MAX },
-	{ "AG_TIMER_NAME_MAX",		AG_TIMER_NAME_MAX },		/* time.h */
-	{ "AG_USER_NAME_MAX",		AG_USER_NAME_MAX },			/* user.h */
-	{ "AG_VARIABLE_NAME_MAX",	AG_VARIABLE_NAME_MAX },		/* variable.h */
-};
-
-static const struct {
-	const char *name;
 	size_t      size;
 } nonobject_types[] = {
 	{ "AG_AgarVersion",		sizeof(AG_AgarVersion),		},
@@ -118,9 +96,6 @@ main(int argc, char *argv[])
 	AG_GetCPUInfo(&cpuinfo);
 	fprintf(f, "# Platform: %s (%s, 0x%x)\n#\n", cpuinfo.arch, cpuinfo.vendorID,
 	    cpuinfo.ext);
-	fprintf(f, "# Agar-Core constants\n#\n");
-	for (i = 0; i < sizeof(constants) / sizeof(constants[0]); i++)
-		fprintf(f, "%s:%lu\n", constants[i].name, constants[i].value);
 
 	fprintf(f, "#\n# Size of AG_Object(3) derived classes\n#\n");
 	PrintClass(f, &agObjectClass);

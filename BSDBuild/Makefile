@@ -48,13 +48,11 @@ DATAFILES=Core.pm \
 	free_null.pm \
 	agar.pm \
 	agar.defs.pm \
-	agar.types.pm \
 	agar-ada.pm \
 	agar-ada-core.pm \
 	agar-au.pm \
 	agar-core.pm \
 	agar-core.defs.pm \
-	agar-core.types.pm \
 	agar-dev.pm \
 	agar-map.pm \
 	agar-math.pm \

@@ -53,12 +53,14 @@ my @gui_options = qw(
 	have_cocoa
 );
 my @gui_constants = qw(
-	AG_ZOOM_RANGE
-	AG_ZOOM_DEFAULT
+	AG_COMPONENT_BITS
+	AG_COLOR_FIRST
+	AG_COLOR_LAST
 	AG_GRAPH_LABEL_MAX
 	AG_LABEL_MAX
 	AG_LABEL_MAX_POLLPTRS
 	AG_NOTEBOOK_LABEL_MAX
+	AG_OPAQUE
 	AG_STATUSBAR_MAX_LABELS
 	AG_STYLE_VALUE_MAX
 	AG_TABLE_TXT_MAX
@@ -66,24 +68,67 @@ my @gui_constants = qw(
 	AG_TABLE_COL_NAME_MAX
 	AG_TABLE_HASHBUF_MAX
 	AG_TEXT_STATES_MAX
+	AG_TRANSPARENT
 	AG_TLIST_LABEL_MAX
 	AG_TOOLBAR_MAX_ROWS
 	AG_WINDOW_CAPTION_MAX
+	AG_ZOOM_DEFAULT
+	AG_ZOOM_RANGE
 );
 my @gui_sizeofs = (
-	'AG_Surface', 'AG_AnimFrame', 'AG_Palette', 'AG_PixelFormat', 'AG_Rect',
-	'AG_Color', 'AG_ConsoleLine', 'AG_EditableBuffer', 'AG_EditableClipboard',
-	'AG_FileOption', 'AG_FileType', 'AG_FixedPlotterItem', 'AG_GraphVertex',
-	'AG_GraphEdge', 'AG_StaticIcon', 'struct ag_keycode',
-	'struct ag_key_composition', 'struct ag_key_mapping', 'AG_MenuItem',
-	'AG_RadioItem', 'AG_TablePopup', 'AG_TableCell', 'AG_TableBucket',
-	'AG_TableCol', 'AG_FontSpec', 'AG_Glyph', 'AG_TextState', 'AG_StaticFont',
-	'AG_TextMetrics', 'AG_GlyphCache', 'AG_CachedText', 'AG_TextCacheBucket',
-	'AG_TlistPopup', 'AG_TlistItem', 'AG_TlistItemQ', 'AG_TreetblCol',
-	'AG_TreetblRowQ', 'AG_TreetblCell', 'AG_TreetblRow', 'AG_Unit',
-	'AG_SizeReq', 'AG_SizeAlloc', 'AG_FlagDescr', 'AG_Action', 'AG_ActionTie',
-	'AG_RedrawTie', 'AG_CursorArea', 'AG_WidgetGL', 'AG_WidgetPalette',
-	'AG_WidgetPvt', 'AG_WindowPvt');
+	'AG_Action',
+	'AG_ActionTie',
+	'AG_AnimFrame',
+	'AG_CachedText',
+	'AG_Color',
+	'AG_ColorOffset',
+	'AG_ConsoleLine',
+	'AG_CursorArea',
+	'AG_EditableClipboard',
+	'AG_EditableBuffer',
+	'AG_FileOption',
+	'AG_FileType',
+	'AG_FixedPlotterItem',
+	'AG_FlagDescr',
+	'AG_FontSpec',
+	'AG_Glyph',
+	'AG_GlyphCache',
+	'AG_GraphEdge',
+	'AG_GraphVertex',
+	'AG_MenuItem',
+	'AG_Palette',
+	'AG_PixelFormat',
+	'AG_RadioItem',
+	'AG_Rect',
+	'AG_RedrawTie',
+	'AG_SizeReq',
+	'AG_SizeAlloc',
+	'AG_StaticFont',
+	'AG_StaticIcon',
+	'AG_Surface',
+	'struct ag_keycode',
+	'struct ag_key_composition',
+	'struct ag_key_mapping',
+	'AG_TableBucket',
+	'AG_TableCell',
+	'AG_TableCol',
+	'AG_TablePopup',
+	'AG_TextCacheBucket',
+	'AG_TextMetrics',
+	'AG_TextState',
+	'AG_TlistItem',
+	'AG_TlistItemQ',
+	'AG_TlistPopup',
+	'AG_TreetblCell',
+	'AG_TreetblCol',
+	'AG_TreetblRow',
+	'AG_TreetblRowQ',
+	'AG_Unit',
+	'AG_WidgetGL',
+	'AG_WidgetPalette',
+	'AG_WidgetPvt',
+	'AG_WindowPvt'
+);
 
 my $mainCode = << 'EOF';
 int

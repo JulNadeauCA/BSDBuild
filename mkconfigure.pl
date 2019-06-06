@@ -1583,7 +1583,25 @@ LINE: foreach $_ (@INPUT) {
 		$lineNo++;
 		next LINE;
 	}
-	DIRECTIVE: foreach my $s (split(';')) {
+
+	my $line_in = '';
+	my $inQuotes = 0;
+	foreach my $char (split('', $_)) {
+		if ($char eq '"') {
+			if ($inQuotes) {
+				$inQuotes = 0;
+			} else {
+				$inQuotes = 1;
+			}
+		}
+		if ($char eq ';' && $inQuotes) {
+			$line_in .= 'BSDBuild_escapethissemicolon';
+		} else {
+			$line_in .= $char;
+		}
+	}
+
+	DIRECTIVE: foreach my $s (split(';', $line_in)) {
 		if ($s !~ /([A-Za-z_]+)\((.*)\)/) {
 			next DIRECTIVE;
 		}
@@ -1593,7 +1611,25 @@ LINE: foreach $_ (@INPUT) {
 		if (!exists($Fns{$cmd})) {
 			next DIRECTIVE;
 		}
-		foreach my $arg (split(',', $argspec)) {
+		my $newSpec = '';
+		my $inQuotes = 0;
+		foreach my $char (split('', $argspec)) {
+			if ($char eq '"') {
+				if ($inQuotes) {
+					$inQuotes = 0;
+				} else {
+					$inQuotes = 1;
+				}
+			}
+			if ($char eq ',' && $inQuotes) {
+				$newSpec .= 'BSDBuild_escapethiscomma';
+			} else {
+				$newSpec .= $char;
+			}
+		}
+		foreach my $arg (split(',', $newSpec)) {
+			$arg =~ s/BSDBuild_escapethiscomma/,/g;
+			$arg =~ s/BSDBuild_escapethissemicolon/;/g;
 			$arg =~ s/^\s+//;
 			$arg =~ s/\s+$//;
 			push @args, $arg;

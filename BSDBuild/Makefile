@@ -134,7 +134,8 @@ DATAFILES=Core.pm \
 	pcre.pm \
 	imagemagick.pm \
 	zlib.pm \
-	fdclose.pm
+	fdclose.pm \
+	lldb.pm
 
 all:
 

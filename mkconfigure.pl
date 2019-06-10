@@ -1723,6 +1723,20 @@ echo "CROSS_COMPILING=${CROSS_COMPILING}" >> Makefile.config
 echo "SRCDIR=${SRC}" >> Makefile.config
 echo "BLDDIR=${BLD}" >> Makefile.config
 
+$ECHO_N 'env ' >>config.log
+$ECHO_N 'env ' >>config.status
+EOF
+
+foreach my $regEnv (keys %HELPENV) {
+	MkIfNE('$'.$regEnv, '');
+		print '$ECHO_N "' . $regEnv . '=' . '${'.$regEnv . '}" >> config.log', "\n";
+		print '$ECHO_N "' . $regEnv . '=' . '${'.$regEnv . '}" >> config.status', "\n";
+		print '$ECHO_N " " >> config.log', "\n";
+		print '$ECHO_N " " >> config.status', "\n";
+	MkEndif;
+}
+
+print << 'EOF';
 $ECHO_N './configure' >>config.log
 $ECHO_N './configure' >>config.status
 for arg

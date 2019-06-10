@@ -1729,10 +1729,12 @@ EOF
 
 foreach my $regEnv (keys %HELPENV) {
 	MkIfNE('$'.$regEnv, '');
-		print '$ECHO_N "' . $regEnv . '=' . '${'.$regEnv . '}" >> config.log', "\n";
-		print '$ECHO_N "' . $regEnv . '=' . '${'.$regEnv . '}" >> config.status', "\n";
-		print '$ECHO_N " " >> config.log', "\n";
-		print '$ECHO_N " " >> config.status', "\n";
+		print '$ECHO_N ' . "'" . $regEnv . "=\"' >> config.log\n";
+		print '$ECHO_N ' . "'" . $regEnv . "=\"' >> config.status\n";
+		print '$ECHO_N "${' . $regEnv . '}" >> config.log', "\n";
+		print '$ECHO_N "${' . $regEnv . '}" >> config.status', "\n";
+		print '$ECHO_N \'" \' >> config.log', "\n";
+		print '$ECHO_N \'" \' >> config.status', "\n";
 	MkEndif;
 }
 

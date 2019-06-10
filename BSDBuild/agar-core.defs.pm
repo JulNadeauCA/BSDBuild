@@ -57,11 +57,13 @@ my @core_sizeofs = qw(
 	AG_AgarVersion
 	AG_CPUInfo
 	AG_Cond
-	AG_CoreSource
+	AG_Config
 	AG_ConstCoreSource
+	AG_CoreSource
 	AG_DSO
 	AG_DSOSym
 	AG_DataSource
+	AG_Db
 	AG_Dbt
 	AG_Dir
 	AG_Event
@@ -82,6 +84,7 @@ my @core_sizeofs = qw(
 	AG_NetOps
 	AG_NetSocket
 	AG_NetSocketSource
+	AG_Object
 	AG_ObjectClass
 	AG_ObjectClassPvt
 	AG_ObjectDep

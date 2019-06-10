@@ -39,6 +39,61 @@ my @core_constants = qw(
 	AG_BUFFER_MIN
 	AG_BUFFER_MAX
 );
+my @core_sizeofs = qw(
+	AG_AgarVersion
+	AG_CPUInfo
+	AG_Cond
+	AG_Config
+	AG_ConstCoreSource
+	AG_CoreSource
+	AG_DSO
+	AG_DSOSym
+	AG_DataSource
+	AG_Db
+	AG_Dbt
+	AG_Dir
+	AG_Event
+	AG_EventSink
+	AG_EventSource
+	AG_FileExtMapping
+	AG_FileInfo
+	AG_FileSource
+	AG_FmtString
+	AG_FmtStringExt
+	AG_Function
+	AG_List
+	AG_Mutex
+	AG_MutexAttr
+	AG_Namespace
+	AG_NetAcceptFilter
+	AG_NetAddr
+	AG_NetOps
+	AG_NetSocket
+	AG_NetSocketSource
+	AG_Object
+	AG_ObjectClass
+	AG_ObjectClassPvt
+	AG_ObjectDep
+	AG_ObjectHeader
+	AG_ObjectPvt
+	AG_Tbl
+	AG_TblBucket
+	AG_Tree
+	AG_TreeItem
+	AG_Text
+	AG_TextElement
+	AG_TextEnt
+	AG_Thread
+	AG_ThreadKey
+	AG_Timer
+	AG_TimerPvt
+	AG_TimeOps
+	AG_User
+	AG_UserOps
+	AG_Variable
+	AG_VariableTypeInfo
+);
+
 my @gui_options = qw(
 	have_freetype
 	have_fontconfig
@@ -238,7 +293,7 @@ static const struct {
 	unsigned long value;
 } sizeofs[] = {
 EOF
-	foreach my $szo (@gui_sizeofs) {
+	foreach my $szo (@core_sizeofs, @gui_sizeofs) {
 		my $szo_uc = uc($szo);
 		$szo_uc =~ tr/ /_/;
 		$testCode .= << "EOF";

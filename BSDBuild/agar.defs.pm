@@ -145,6 +145,7 @@ my @gui_sizeofs = (
 	'AG_FileType',
 	'AG_FixedPlotterItem',
 	'AG_FlagDescr',
+	'AG_Font',
 	'AG_FontSpec',
 	'AG_Glyph',
 	'AG_GlyphCache',

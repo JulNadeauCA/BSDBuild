@@ -1,17 +1,17 @@
 # vim:ts=4
 # Public domain
 
-my %autoIncludeDirs = (
-	'/usr/include'				=> '/usr/lib',
-	'/usr/local/include'		=> '/usr/local/lib',
-	'/usr/include/X11'			=> '/usr/lib/X11',
-	'/usr/include/X11R6'		=> '/usr/lib/X11R6',
-	'/usr/local/X11/include'	=> '/usr/local/X11/lib',
-	'/usr/local/X11R6/include'	=> '/usr/local/X11R6/lib',
-	'/usr/local/include/X11'	=> '/usr/local/lib/X11',
-	'/usr/local/include/X11R6'	=> '/usr/local/lib/X11R6',
-	'/usr/X11/include'			=> '/usr/X11/lib',
-	'/usr/X11R6/include'		=> '/usr/X11R6/lib',
+my @autoIncludeAndLibDirs = (
+	'/usr/include:/usr/lib',
+	'/usr/local/include:/usr/local/lib',
+	'/usr/include/X11:/usr/lib/X11',
+	'/usr/include/X11R6:/usr/lib/X11R6',
+	'/usr/local/X11/include:/usr/local/X11/lib',
+	'/usr/local/X11R6/include:/usr/local/X11R6/lib',
+	'/usr/local/include/X11:/usr/local/lib/X11',
+	'/usr/local/include/X11R6:/usr/local/lib/X11R6',
+	'/usr/X11/include:/usr/X11/lib',
+	'/usr/X11R6/include:/usr/X11R6/lib',
 );
 
 sub TEST_glu
@@ -42,8 +42,8 @@ sub TEST_glu
 				MkDefine('GLU_LIBS', "-L$pfx/lib -lGLU");
 			MkEndif;
 		MkElse;
-			foreach my $dir (keys %autoIncludeDirs) {
-				my $libDir = $autoIncludeDirs{$dir};
+			foreach my $dirspec (@autoIncludeAndLibDirs) {
+				my ($dir, $libDir) = split(':', $dirspec);
 				MkIfExists("$dir/GL/glu.h");
 					MkDefine('GLU_CFLAGS', "-I$dir");
 					MkDefine('GLU_LIBS', "-L$libDir -lGLU");

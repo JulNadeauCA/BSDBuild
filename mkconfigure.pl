@@ -1723,6 +1723,21 @@ echo "CROSS_COMPILING=${CROSS_COMPILING}" >> Makefile.config
 echo "SRCDIR=${SRC}" >> Makefile.config
 echo "BLDDIR=${BLD}" >> Makefile.config
 
+if [ "${SUDO}" != "" ]; then
+	if [ -e "${prefix}" ]; then
+		$ECHO_N "Checking whether ${prefix} is writeable..."
+		bb_test_file="${prefix}/bsdbuild_test_file$$"
+		echo "Hello" > "${bb_test_file}" 2>/dev/null
+		if [ $? == 0 ]; then
+			rm -f "${bb_test_file}"
+			echo "yes, disabling SUDO"
+			echo "SUDO=" >> Makefile.config
+		else
+			echo "no, will use ${SUDO}"
+		fi
+	fi
+fi
+
 $ECHO_N 'env ' >>config.log
 $ECHO_N 'env ' >>config.status
 EOF

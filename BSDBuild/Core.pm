@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2002-2018 Julien Nadeau Carriere <vedge@csoft.net>
+# Copyright (c) 2002-2019 Julien Nadeau Carriere <vedge@csoft.net>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -99,7 +99,7 @@ sub MkLog
 
 	$msg =~ s/["]/\"/g;
 	print << "EOF";
-echo "$msg" >>config.log
+echo "# $msg" >>config.log
 EOF
 }
 
@@ -110,7 +110,7 @@ sub MkPrint
 	$msg =~ s/["]/\"/g;
 	print << "EOF";
 echo "$msg"
-echo "$msg" >>config.log
+echo "# $msg" >>config.log
 EOF
 }
 
@@ -121,7 +121,7 @@ sub MkPrintS
 	$msg =~ s/["]/\"/g;
 	print << "EOF";
 echo '$msg'
-echo '$msg' >>config.log
+echo '# $msg' >>config.log
 EOF
 }
 
@@ -132,7 +132,7 @@ sub MkPrintN
 	$msg =~ s/["]/\"/g;
 	print << "EOF";
 \$ECHO_N "$msg"
-\$ECHO_N "$msg" >>config.log
+\$ECHO_N "# $msg" >>config.log
 EOF
 }
 
@@ -143,7 +143,7 @@ sub MkPrintSN
 	$msg =~ s/["]/\"/g;
 	print << "EOF";
 \$ECHO_N '$msg'
-\$ECHO_N '$msg' >>config.log
+\$ECHO_N '# $msg' >>config.log
 EOF
 }
 
@@ -598,9 +598,10 @@ sub TryCompile
 
 	print 'cat << EOT >conftest$$.c', "\n";
 	print $code, "EOT\n";
-	print '$CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest$$ conftest$$.c ' .
-	      "2>>config.log\n";
 
+	MkLogCode($define, 'C', 'conftest$$.c');
+	MkRun('$CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest$$ conftest$$.c ' .
+	      "2>>config.log");
 	MkIfNE('$?', '0');
 		MkLog('failed $?');
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
@@ -763,6 +764,25 @@ sub MkSaveCompileFailed ($)
 	MkSaveUndef($define);
 }
 
+sub MkLogCode ($$$)
+{
+	my ($define, $lang, $conftest) = @_;
+
+	print 'echo >>config.log', "\n";
+	print "echo '# $lang: $define' >>config.log\n";
+	print 'echo "cat << EOT >' . $conftest. '" >>config.log', "\n";
+	print 'cat ' . $conftest . '>>config.log', "\n";
+	print 'echo EOT >>config.log', "\n";
+}
+
+sub MkRun ($)
+{
+	my $cmd = shift;
+
+	print 'echo "' . $cmd . '"' . ">>config.log\n";
+	print $cmd, "\n";
+}
+
 #
 # Compile and run a test C program. If the program returns a non-zero
 # exit code, the test fails.
@@ -778,10 +798,11 @@ sub MkCompileAndRunC
 
 	print 'cat << EOT >conftest$$.c', "\n";
 	print $code, "EOT\n";
-	print '$CC $CFLAGS $TEST_CFLAGS ' . $cflags .
-	      ' -o $testdir/conftest$$ conftest$$.c ' . $libs .
-	      " 2>>config.log\n";
 
+	MkLogCode($define, 'C', 'conftest$$.c');
+	MkRun('$CC $CFLAGS $TEST_CFLAGS ' . $cflags .
+	      ' -o $testdir/conftest$$ conftest$$.c ' . $libs .
+	      " 2>>config.log");
 	MkIfNE('$?', '0');
 		MkLog('failed $?');
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
@@ -820,10 +841,11 @@ sub MkCompileAndRunCXX
 
 	print 'cat << EOT >conftest$$.cpp', "\n";
 	print $code, "EOT\n";
-	print '$CXX $CXXFLAGS $TEST_CXXFLAGS ' . $cxxflags .
-	      ' -o $testdir/conftest$$ conftest$$.cpp ' . $libs .
-	      " 2>>config.log\n";
 
+	MkLogCode($define, 'C++', 'conftest$$.cpp');
+	MkRun('$CXX $CXXFLAGS $TEST_CXXFLAGS ' . $cxxflags .
+	      ' -o $testdir/conftest$$ conftest$$.cpp ' . $libs .
+	      " 2>>config.log");
 	MkIfNE('$?', '0');
 		MkLog('failed $?');
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
@@ -854,9 +876,10 @@ sub TryCompileFlagsAda
 
 	print 'cat << EOT >conftest.adb', "\n";
 	print $code, "EOT\n";
-	print '$ADA $ADAFLAGS $TEST_ADAFLAGS ' . $flags . ' -c conftest.adb ' .
-	      "2>>config.log\n";
-
+	
+	MkLogCode($define, 'Ada', 'conftest.adb');
+	MkRun('$ADA $ADAFLAGS $TEST_ADAFLAGS ' . $flags . ' -c conftest.adb ' .
+	      "2>>config.log");
 	MkIfNE('$?', '0');
 		MkLog('compiler failed $?');
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
@@ -900,10 +923,11 @@ sub TryCompileFlagsC
 
 	print 'cat << EOT >conftest$$.c', "\n";
 	print $code, "EOT\n";
-	print '$CC $CFLAGS $TEST_CFLAGS ' . $flags .
-	      ' -o $testdir/conftest$$ conftest$$.c ' .
-	      "2>>config.log\n";
 
+	MkLogCode($define, 'C', 'conftest$$.c');
+	MkRun('$CC $CFLAGS $TEST_CFLAGS ' . $flags .
+	      ' -o $testdir/conftest$$ conftest$$.c ' .
+	      "2>>config.log");
 	MkIfNE('$?', '0');
 		MkLog('failed $?');
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
@@ -947,10 +971,11 @@ sub TryCompileFlagsCXX
 
 	print 'cat << EOT >conftest$$.cpp', "\n";
 	print $code, "EOT\n";
-	print '$CXX $CXXFLAGS $TEST_CXXFLAGS ' . $flags .
-	      ' -o $testdir/conftest$$ conftest$$.cpp -lstdc++ ' .
-	      "2>>config.log\n";
 
+	MkLogCode($define, 'C', 'conftest$$.c');
+	MkRun('$CXX $CXXFLAGS $TEST_CXXFLAGS ' . $flags .
+	      ' -o $testdir/conftest$$ conftest$$.cpp -lstdc++ ' .
+	      "2>>config.log");
 	MkIfNE('$?', '0');
 		MkPrint('failed $?');
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
@@ -1007,21 +1032,22 @@ EOF
 
 	print 'cat << EOT >conftest.adb', "\n";
 	print $code, "EOT\n";
-	print '$ADA $ADAFLAGS $TEST_ADAFLAGS $ada_cflags -c conftest.adb ' .
-	      "2>>config.log\n";
 
+	MkLogCode($define, 'Ada', 'conftest.adb');
+	MkRun('$ADA $ADAFLAGS $TEST_ADAFLAGS $ada_cflags -c conftest.adb ' .
+	      "2>>config.log");
 	MkIfNE('$?', '0');
 		MkPrint('compiler failed $?');
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
 	MkElse;
-		print '$ADABIND -x $ADABFLAGS $ada_cflags conftest ' .
-		      "2>>config.log\n";
+		MkRun('$ADABIND -x $ADABFLAGS $ada_cflags conftest ' .
+		      "2>>config.log");
 		MkIfNE('$?', '0');
 			MkPrint('binder failed $?');
 			MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
 		MkElse;
-		    print '$ADALINK $ADALFLAGS $ada_cflags conftest ' . $libs .
-			      " 2>>config.log\n";
+		    MkRun('$ADALINK $ADALFLAGS $ada_cflags conftest ' . $libs .
+			      " 2>>config.log");
 			MkIfNE('$?', '0');
 				MkPrint('linker failed $?');
 				MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
@@ -1072,10 +1098,11 @@ sub MkCompileC
 
 	print 'cat << EOT >conftest$$.c', "\n";
 	print $code, "EOT\n";
-	print '$CC $CFLAGS $TEST_CFLAGS ' . $cflags .
-	      ' -o $testdir/conftest$$ conftest$$.c '. $libs .
-	      " 2>>config.log\n";
 
+	MkLogCode($define, 'C', 'conftest$$.c');
+	MkRun('$CC $CFLAGS $TEST_CFLAGS ' . $cflags .
+	      ' -o $testdir/conftest$$ conftest$$.c '. $libs .
+	      " 2>>config.log");
 	MkIfNE('$?', '0');
 		MkLog('failed $?');
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
@@ -1123,10 +1150,11 @@ sub MkCompileOBJC
 	
 	print 'cat << EOT >conftest$$.m', "\n";
 	print $code, "EOT\n";
-	print '$CC $CFLAGS $TEST_CFLAGS ' . $cflags .
+
+	MkLogCode($define, 'ObjC', 'conftest$$.m');
+	MkRun('$CC $CFLAGS $TEST_CFLAGS ' . $cflags .
 	      ' -x objective-c -o $testdir/conftest$$ conftest$$.m ' . $libs .
-	      " 2>>config.log\n";
-	
+	      " 2>>config.log");
 	MkIfNE('$?', '0');
 		MkLog('failed $?');
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
@@ -1170,10 +1198,11 @@ sub MkCompileCXX
 	
 	print 'cat << EOT >conftest$$.cpp', "\n";
 	print $code, "EOT\n";
-	print '$CXX $CXXFLAGS $TEST_CXXFLAGS ' . $cxxflags .
+
+	MkLogCode($define, 'C++', 'conftest$$.cpp');
+	MkRun('$CXX $CXXFLAGS $TEST_CXXFLAGS ' . $cxxflags .
 	      ' -o $testdir/conftest$$ conftest$$.cpp ' . $libs .
-	      " 2>>config.log\n";
-	
+	      " 2>>config.log");
 	MkIfNE('$?', '0');
 		MkLog('failed $?');
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
@@ -1296,6 +1325,6 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($Quiet $Cache $OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DISABLE %DESCR %URL %HELPENV MkComment MkCache MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFail MKSave MkCleanup TryCompile MkCompileAda MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsAda TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSet MkSetS MkSetExec MkSetTrue MkSetFalse MkPushIFS MkPopIFS MkFor MkDone MkAppend MkBreak MkIfExec MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveMK_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkLog MkPrint MkPrintN MkPrintS MkPrintSN MkIfFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion MkEmulWindows MkEmulWindowsSYS MkEmulUnavail MkEmulUnavailSYS RegisterEnvVar);
+    @EXPORT = qw($Quiet $Cache $OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DISABLE %DESCR %URL %HELPENV MkComment MkCache MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFail MKSave MkCleanup MkRun TryCompile MkCompileAda MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsAda TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSet MkSetS MkSetExec MkSetTrue MkSetFalse MkPushIFS MkPopIFS MkFor MkDone MkAppend MkBreak MkIfExec MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveMK_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkSaveIfTrue MkLog MkPrint MkPrintN MkPrintS MkPrintSN MkIfFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion MkEmulWindows MkEmulWindowsSYS MkEmulUnavail MkEmulUnavailSYS RegisterEnvVar);
 }
 ;1

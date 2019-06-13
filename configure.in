@@ -13,6 +13,7 @@ check(gettext)
 check(perl)
 
 c_no_secure_warnings()
-c_incdir($SRC)
+c_incdir($BLD)
+c_incdir_config($BLD/config)
 
 mdefine(CONFIGURE_OK, "yes")

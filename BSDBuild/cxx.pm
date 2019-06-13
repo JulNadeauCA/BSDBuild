@@ -41,13 +41,13 @@ EOF
 		echo "*"
 		echo "* You may need to set the CXX environment variable."
 		echo "*"
-		echo "Cannot find C++ compiler in PATH." >> config.log
+		echo "Cannot find C++ compiler in PATH." >>config.log
 		HAVE_CXX="no"
 		echo "no"
 	else
 		HAVE_CXX="yes"
 		echo "yes, ${CXX}"
-		echo "yes, ${CXX}" >> config.log
+		echo "yes, ${CXX}" >>config.log
 	fi
 else
 	HAVE_CXX="yes"
@@ -56,7 +56,7 @@ fi
 
 if [ "${HAVE_CXX}" = "yes" ]; then
 	$ECHO_N 'checking whether the C++ compiler works...'
-	$ECHO_N 'checking whether the C++ compiler works...' >> config.log
+	$ECHO_N '# checking whether the C++ compiler works...' >>config.log
 	cat << 'EOT' > conftest.cc
 #include <iostream>
 int main(void) { std::cout << "Hello world!" << std::endl; return 0; }
@@ -64,7 +64,7 @@ EOT
 	$CXX -o conftest conftest.cc -lstdc++ 2>>config.log
 	if [ $? != 0 ]; then
 	    echo "no"
-	    echo "no, compile failed" >> config.log
+	    echo "no, compilation failed" >>config.log
 		HAVE_CXX="no"
 	else
 		HAVE_CXX="yes"
@@ -88,10 +88,10 @@ EOT
 			done
 			if [ "$EXECSUFFIX" != '' ]; then
 				echo "yes, it outputs $EXECSUFFIX files"
-				echo "yes, it outputs $EXECSUFFIX files" >> config.log
+				echo "yes, it outputs $EXECSUFFIX files" >>config.log
 			else
 				echo "yes"
-				echo "yes" >> config.log
+				echo "yes" >>config.log
 			fi
 EOF
 	MkSaveMK('EXECSUFFIX');
@@ -99,7 +99,7 @@ EOF
 print << 'EOF';
 		else
 			echo "yes"
-			echo "yes" >> config.log
+			echo "yes" >>config.log
 		fi
 	fi
 	if [ "${keep_conftest}" != "yes" ]; then

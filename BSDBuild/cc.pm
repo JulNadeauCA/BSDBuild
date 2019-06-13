@@ -62,7 +62,7 @@ sub TEST_cc
 			echo "* Cannot find cc65 in PATH. You may need to set CC."
 			echo "* You can download cc65 from: https://www.cc65.org/."
 			echo "*"
-			echo "Cannot find cc65 in PATH." >> config.log
+			echo "Cannot find cc65 in PATH." >>config.log
 		else
 			echo "*"
 EOF
@@ -73,36 +73,39 @@ EOF
 			echo "*"
 			echo "* You may need to set the CC environment variable."
 			echo "*"
-			echo "Cannot find C compiler in PATH." >> config.log
+			echo "Cannot find C compiler in PATH." >>config.log
 		fi
 		HAVE_CC="no"
 		echo "no"
+		echo "no" >>config.log
 	else
 		HAVE_CC="yes"
 		echo "yes, ${CC}"
-		echo "yes, ${CC}" >> config.log
+		echo "yes, ${CC}" >>config.log
 	fi
 else
 	HAVE_CC="yes"
 	if ${CC} -V 2>&1 |grep -q ^cc65; then
 		echo "using cc65 (${CC})"
+		echo "using cc65 (${CC})" >>config.log
 		HAVE_CC65="yes"
 		CROSS_COMPILING="yes"
 	else
 		echo "using ${CC}"
+		echo "using ${CC}" >>config.log
 	fi
 fi
 
 if [ "${HAVE_CC}" = "yes" ]; then
 	$ECHO_N 'checking whether the C compiler works...'
-	$ECHO_N 'checking whether the C compiler works...' >> config.log
+	$ECHO_N '# checking whether the C compiler works...' >>config.log
 	cat << 'EOT' > conftest.c
 int main(int argc, char *argv[]) { return (0); }
 EOT
 	$CC -o conftest conftest.c 2>>config.log
 	if [ $? != 0 ]; then
 	    echo "no"
-	    echo "no, compile failed" >> config.log
+	    echo "no, compilation failed" >>config.log
 		HAVE_CC="no"
 	else
 		HAVE_CC="yes"
@@ -126,10 +129,10 @@ EOT
 			done
 			if [ "$EXECSUFFIX" != '' ]; then
 				echo "yes, it outputs $EXECSUFFIX files"
-				echo "yes, it outputs $EXECSUFFIX files" >> config.log
+				echo "yes, it outputs $EXECSUFFIX files" >>config.log
 			else
 				echo "yes"
-				echo "yes" >> config.log
+				echo "yes" >>config.log
 			fi
 EOF
 	MkSaveMK('EXECSUFFIX');
@@ -137,7 +140,7 @@ EOF
 	print << 'EOF';
 		else
 			echo "yes"
-			echo "yes" >> config.log
+			echo "yes" >>config.log
 		fi
 	fi
 	if [ "${keep_conftest}" != "yes" ]; then

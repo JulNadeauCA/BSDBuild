@@ -41,13 +41,13 @@ EOF
 		echo "*"
 	    echo "* You may need to set the OBJC environment variable."
 	    echo "*"
-	    echo "Cannot find Objective C compiler in PATH." >> config.log
+	    echo "Cannot find Objective C compiler in PATH." >>config.log
 		HAVE_OBJC="no"
 		echo "no"
 	else
 		HAVE_OBJC="yes"
 		echo "yes, ${OBJC}"
-		echo "yes, ${OBJC}" >> config.log
+		echo "yes, ${OBJC}" >>config.log
 	fi
 else
 	HAVE_OBJC="yes"
@@ -56,7 +56,7 @@ fi
 
 if [ "${HAVE_OBJC}" = "yes" ]; then
 	$ECHO_N 'checking whether the Objective-C compiler works...'
-	$ECHO_N 'checking whether the Objective-C compiler works...' >> config.log
+	$ECHO_N '# checking whether the Objective-C compiler works...' >>config.log
 	cat << 'EOT' > conftest.m
 #import <stdio.h>
 int main(int argc, char *argv[]) { return (0); }
@@ -64,7 +64,7 @@ EOT
 	$OBJC -x objective-c -o conftest conftest.m 2>>config.log
 	if [ $? != 0 ]; then
 	    echo "no"
-	    echo "no, compile failed" >> config.log
+	    echo "no, compilation failed" >>config.log
 		HAVE_OBJC="no"
 	else
 		HAVE_OBJC="yes"
@@ -88,10 +88,10 @@ EOT
 			done
 			if [ "$EXECSUFFIX" != '' ]; then
 				echo "yes, it outputs $EXECSUFFIX files"
-				echo "yes, it outputs $EXECSUFFIX files" >> config.log
+				echo "yes, it outputs $EXECSUFFIX files" >>config.log
 			else
 				echo "yes"
-				echo "yes" >> config.log
+				echo "yes" >>config.log
 			fi
 EOF
 	MkSaveMK('EXECSUFFIX');
@@ -99,7 +99,7 @@ EOF
 	print << 'EOF';
 		else
 			echo "yes"
-			echo "yes" >> config.log
+			echo "yes" >>config.log
 		fi
 	fi
 	if [ "${keep_conftest}" != "yes" ]; then

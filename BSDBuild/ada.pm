@@ -43,13 +43,13 @@ if [ "$ADA" = '' ]; then
 		echo "* Cannot find ${CROSSPFX}ada or ${CROSSPFX}gcc in default PATH."
 		echo "* You may need to set the ADA environment variable."
 		echo "*"
-		echo "Cannot find ${CROSSPFX}ada or ${CROSSPFX}gcc in PATH." >> config.log
+		echo "Cannot find ${CROSSPFX}ada or ${CROSSPFX}gcc in PATH." >>config.log
 		HAVE_ADA="no"
 		echo "no"
 	else
 		HAVE_ADA="yes"
 		echo "yes, ${ADA}"
-		echo "yes, ${ADA}" >> config.log
+		echo "yes, ${ADA}" >>config.log
 	fi
 else
 	HAVE_ADA="yes"
@@ -75,17 +75,18 @@ if [ "$ADABIND" = '' ]; then
 		echo "* Cannot find ${CROSSPFX}gnatbind in default PATH."
 		echo "* You may need to set the ADABIND environment variable."
 		echo "*"
-		echo "Cannot find ${CROSSPFX}gnatbind in PATH." >> config.log
+		echo "Cannot find ${CROSSPFX}gnatbind in PATH." >>config.log
 		echo "no"
 	else
 		echo "yes, ${ADABIND}"
-		echo "yes, ${ADABIND}" >> config.log
+		echo "yes, ${ADABIND}" >>config.log
 	fi
 else
 	echo "using ${ADABIND}"
-	echo "using ${ADABIND}" >> config.log
+	echo "using ${ADABIND}" >>config.log
 fi
 $ECHO_N "ada: checking for Ada linker..."
+$ECHO_N "# ada: checking for Ada linker..." >>config.log
 if [ "$ADALINK" = '' ]; then
 	bb_save_IFS=$IFS
 	IFS=$PATH_SEPARATOR
@@ -105,18 +106,19 @@ if [ "$ADALINK" = '' ]; then
 		echo "* Cannot find ${CROSSPFX}gnatlink in default PATH."
 		echo "* You may need to set the ADALINK environment variable."
 		echo "*"
-		echo "Cannot find ${CROSSPFX}gnatlink in PATH." >> config.log
+		echo "Cannot find ${CROSSPFX}gnatlink in PATH." >>config.log
 		echo "no"
 	else
 		echo "yes, ${ADALINK}"
-		echo "yes, ${ADALINK}" >> config.log
+		echo "yes, ${ADALINK}" >>config.log
 	fi
 else
 	echo "using ${ADALINK}"
-	echo "using ${ADALINK}" >> config.log
+	echo "using ${ADALINK}" >>config.log
 fi
 
 $ECHO_N "ada: checking for Ada mkdep..."
+$ECHO_N "# ada: checking for Ada mkdep..." >>config.log
 if [ "$ADAMKDEP" = '' ]; then
 	bb_save_IFS=$IFS
 	IFS=$PATH_SEPARATOR
@@ -136,41 +138,45 @@ if [ "$ADAMKDEP" = '' ]; then
 		echo "* Cannot find ${CROSSPFX}gnatmake in default PATH."
 		echo "* You may need to set the ADAMKDEP environment variable."
 		echo "*"
-		echo "Cannot find ${CROSSPFX}gnatlink in PATH." >> config.log
+		echo "Cannot find ${CROSSPFX}gnatlink in PATH." >>config.log
 		echo "no"
 	else
 		echo "yes, ${ADAMKDEP} -M"
-		echo "yes, ${ADAMKDEP} -M" >> config.log
+		echo "yes, ${ADAMKDEP} -M" >>config.log
 	fi
 else
 	echo "using ${ADAMKDEP} -M"
-	echo "using ${ADAMKDEP} -M" >> config.log
+	echo "using ${ADAMKDEP} -M" >>config.log
 fi
 
 if [ "${HAVE_ADA}" = "yes" ]; then
 	$ECHO_N 'checking whether the Ada compiler works...'
-	$ECHO_N 'checking whether the Ada compiler works...' >> config.log
+	$ECHO_N '# checking whether the Ada compiler works...' >>config.log
 	cat << 'EOT' > conftest.adb
 EOF
 	print $adaHello;
-print << 'EOF';
-EOT
+    print "EOT\n";
+
+    MkLogCode('HAVE_ADA', 'Ada', 'conftest.adb');
+
+    print << 'EOF';
+	echo "$ADA -c conftest.adb" >>config.log
 	$ADA -c conftest.adb 2>>config.log
 	if [ $? != 0 ]; then
 	    echo "no (compile failed)"
-	    echo "no, compile failed" >> config.log
+	    echo "no, compile failed" >>config.log
 		HAVE_ADA="no"
 	else
 		$ADABIND conftest 2>>config.log
 		if [ $? != 0 ]; then
 		    echo "no (binder failed)"
-		    echo "no, binder failed" >> config.log
+		    echo "no, binder failed" >>config.log
 			HAVE_ADA="no"
 		else
 			$ADALINK conftest 2>>config.log
 			if [ $? != 0 ]; then
 				echo "no (linker failed)"
-				echo "no, linker failed" >> config.log
+				echo "no, linker failed" >>config.log
 				HAVE_ADA="no"
 			else
 				HAVE_ADA="yes"
@@ -196,10 +202,10 @@ EOT
 			done
 			if [ "$EXECSUFFIX" != '' ]; then
 				echo "yes, it outputs $EXECSUFFIX files"
-				echo "yes, it outputs $EXECSUFFIX files" >> config.log
+				echo "yes, it outputs $EXECSUFFIX files" >>config.log
 			else
 				echo "yes"
-				echo "yes" >> config.log
+				echo "yes" >>config.log
 			fi
 EOF
 	MkSaveMK('EXECSUFFIX');
@@ -207,7 +213,7 @@ EOF
 	print << 'EOF';
 		else
 			echo "yes"
-			echo "yes" >> config.log
+			echo "yes" >>config.log
 		fi
 	fi
 	if [ "${keep_conftest}" != "yes" ]; then

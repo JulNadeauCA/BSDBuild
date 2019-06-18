@@ -59,23 +59,23 @@ sub TEST_lldb
 {
 	my ($ver, $pfx) = @_;
 
-	MkExecOutputPfx($pfx, 'llvm-config', '--prefix', 'LLDB_PREFIX');
-	Output_LLVM_Config('llvm-config');
+	MkExecOutputPfx($pfx, 'llvm-config80', '--prefix', 'LLDB_PREFIX');
+	Output_LLVM_Config('llvm-config80');
 
 	MkIfEQ('LLDB_PREFIX', '');
-		MkExecOutputPfx($pfx, 'llvm80-config', '--prefix', 'LLDB_PREFIX');
+		MkExecOutputPfx($pfx, 'llvm-config70', '--prefix', 'LLDB_PREFIX');
 		MkIfEQ('LLDB_PREFIX', '');
-			MkExecOutputPfx($pfx, 'llvm70-config', '--prefix', 'LLDB_PREFIX');
+			MkExecOutputPfx($pfx, 'llvm-config', '--prefix', 'LLDB_PREFIX');
 			MkIfEQ('LLDB_PREFIX', '');
-				MkExecOutputPfx($pfx, 'llvm60-config', '--prefix', 'LLDB_PREFIX');
+				MkExecOutputPfx($pfx, 'llvm-config60', '--prefix', 'LLDB_PREFIX');
 				MkIfNE('LLDB_PREFIX', '');
-					Output_LLVM_Config('llvm60-config');
+					Output_LLVM_Config('llvm-config60');
 				MkEndif;
 			MkElse;
-				Output_LLVM_Config('llvm70-config');
+				Output_LLVM_Config('llvm-config');
 			MkEndif;
 		MkElse;
-			Output_LLVM_Config('llvm80-config');
+			Output_LLVM_Config('llvm-config70');
 		MkEndif;
 	MkEndif;
 

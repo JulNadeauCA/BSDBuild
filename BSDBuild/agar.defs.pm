@@ -73,7 +73,6 @@ my @core_sizeofs = qw(
 	AG_Object
 	AG_ObjectClass
 	AG_ObjectClassPvt
-	AG_ObjectDep
 	AG_ObjectHeader
 	AG_ObjectPvt
 	AG_Tbl
@@ -180,9 +179,11 @@ my @gui_sizeofs = (
 	'AG_TreetblRow',
 	'AG_TreetblRowQ',
 	'AG_Unit',
+	'AG_Widget',
 	'AG_WidgetGL',
 	'AG_WidgetPalette',
 	'AG_WidgetPvt',
+	'AG_Window',
 	'AG_WindowPvt'
 );
 

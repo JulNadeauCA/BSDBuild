@@ -95,8 +95,7 @@ sub TEST_x11
 #include <X11/Xlib.h>
 int main(int argc, char *argv[])
 {
-	Display *disp;
-	disp = XOpenDisplay(NULL);
+	Display *disp = XOpenDisplay(NULL);
 	XCloseDisplay(disp);
 	return (0);
 }
@@ -112,15 +111,38 @@ EOF
 #include <X11/XKBlib.h>
 int main(int argc, char *argv[])
 {
-	Display *disp;
+	Display *disp = XOpenDisplay(NULL);
 	KeyCode kc = 0;
-	KeySym ks;
-	disp = XOpenDisplay(NULL);
-	ks = XkbKeycodeToKeysym(disp, kc, 0, 0);
+	KeySym ks = XkbKeycodeToKeysym(disp, kc, 0, 0);
 	XCloseDisplay(disp);
 	return (ks != NoSymbol);
 }
 EOF
+		MkIfTrue('${HAVE_XKB}');
+			MkDefine('HAVE_XF86MISC', 'no');
+			MkSaveUndef('HAVE_XF86MISC');
+		MkElse;
+			MkPrintSN('checking for the XF86MISC extension...');
+			MkCompileC('HAVE_XF86MISC', '${X11_CFLAGS}', '${X11_LIBS} -lX11 -lXxf86misc', << 'EOF');
+#include <X11/Xlib.h>
+#include <X11/extensions/xf86misc.h>
+int main(int argc, char *argv[])
+{
+	Display *disp = XOpenDisplay(NULL);
+	int dummy, rv;
+	rv = XF86MiscQueryExtension(disp, &dummy, &dummy);
+	XCloseDisplay(disp);
+	return (rv != 0);
+}
+EOF
+			MkIfTrue('${HAVE_XF86MISC}');
+				MkDefine('X11_LIBS', '${X11_LIBS} -lXxf86misc');
+				MkSaveMK('X11_LIBS');
+				MkSaveDefine('HAVE_XF86MISC', 'X11_LIBS');
+			MkElse;
+				MkSaveUndef('HAVE_XF86MISC');
+			MkEndif;
+		MkEndif;
 	MkElse;
 		DISABLE_x11();
 	MkEndif;
@@ -130,10 +152,11 @@ sub DISABLE_x11
 {
 	MkDefine('HAVE_X11', 'no');
 	MkDefine('HAVE_XKB', 'no');
+	MkDefine('HAVE_XF86MISC', 'no');
 	MkDefine('X11_CFLAGS', '');
 	MkDefine('X11_LIBS', '');
 	MkDefine('X11_PC', '');
-	MkSaveUndef('HAVE_X11', 'HAVE_XKB', 'X11_CFLAGS', 'X11_LIBS');
+	MkSaveUndef('HAVE_X11', 'HAVE_XKB', 'HAVE_XF86MISC', 'X11_CFLAGS', 'X11_LIBS');
 }
 
 BEGIN

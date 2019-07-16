@@ -575,18 +575,20 @@ check-prog:
 	@echo check-prog
 
 configure-prog:
-	@if [ -e "configure.in" ]; then \
-		echo "cat configure.in | mkconfigure > configure"; \
-		cat configure.in | mkconfigure > configure; \
-		if [ ! -e configure ]; then \
-			echo "mkconfigure failed."; \
-			echo "Note: mkconfigure is part of BSDBuild"; \
-			echo "(http://bsdbuild.hypertriton.com/)"; \
-			exit 1; \
-		fi; \
-		if [ ! -x configure ]; then \
-			echo "chmod 755 configure"; \
-			chmod 755 configure; \
+	@if [ "${PROG}" != "" ]; then \
+		if [ -e "configure.in" ]; then \
+			echo "cat configure.in | mkconfigure > configure"; \
+			cat configure.in | mkconfigure > configure; \
+			if [ ! -e configure ]; then \
+				echo "mkconfigure failed."; \
+				echo "Note: mkconfigure is part of BSDBuild"; \
+				echo "(http://bsdbuild.hypertriton.com/)"; \
+				exit 1; \
+			fi; \
+			if [ ! -x configure ]; then \
+				echo "chmod 755 configure"; \
+				chmod 755 configure; \
+			fi; \
 		fi; \
 	fi
 

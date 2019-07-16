@@ -1,5 +1,6 @@
 .\"
 .\" Copyright (c) 2008 Hypertriton, Inc. <http://www.hypertriton.com/>
+.\" Copyright (c) 2008-2018 Julien Nadeau Carriere <vedge@hypertriton.com>
 .\" All rights reserved.
 .\"
 .\" Redistribution and use in source and binary forms, with or without
@@ -60,27 +61,13 @@ in the top-level directory (or some other central location) in an
 application source code, such that people building applications which
 use the BSDBuild build system do not need to have BSDBuild or any
 other software installed on their systems.
-.Pp
-While the need for a
-.Pa mk
-directory may be perceived as a problem, there are several advantages:
-.Bl -enum
-.It
-Makefiles are not generated, they can be edited directly.
-BSDBuild will generate Makefiles only when performing concurrent builds
-(i.e., building object files in a directory separate from the source tree).
-.It
-BSDBuild makefiles are orders of magnitude smaller than any generated
-Makefile, avoiding masses of redundant code.
-.It
-There is no
-.Pa Makefile.in ,
-so the total number of files in your tree is reduced.
-.El
 .Sh SEE ALSO
 .Xr mkconfigure 1 ,
 .Xr build.common.mk 5 ,
 .Xr build.lib.mk 5 ,
-.Xr build.prog.mk 5
+.Xr build.man.mk 5 ,
+.Xr build.proj.mk 5 ,
+.Xr build.prog.mk 5 ,
+.Xr build.www.mk 5
 .Pp
-http://hypertriton.com/bsdbuild/
+http://bsdbuild.hypertriton.com/

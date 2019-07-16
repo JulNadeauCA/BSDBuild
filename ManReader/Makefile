@@ -14,6 +14,12 @@ install:
 	    ${SUDO} ${INSTALL_DATA} $$F ${DESTDIR}${DATADIR}/ManReader; \
 	done
 
+deinstall:
+	@for F in ${DATAFILES}; do \
+	    echo "${DEINSTALL_DATA} ${DESTDIR}${DATADIR}/ManReader/$$F"; \
+	    ${SUDO} ${DEINSTALL_DATA} ${DESTDIR}${DATADIR}/ManReader/$$F; \
+	done
+
 install-links:
 	@if [ ! -d "${DESTDIR}${DATADIR}/ManReader" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${DESTDIR}${DATADIR}/ManReader"; \

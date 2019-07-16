@@ -81,6 +81,24 @@ install: all install-subdir
 	    ${SUDO} ${INSTALL_PROG} $$F "${DESTDIR}${BINDIR}"; \
 	done
 
+deinstall: deinstall-subdir
+	@for F in ${LTFILES_M4}; do \
+	    echo "${DEINSTALL_DATA} ${DATADIR}/libtool/m4/$$F"; \
+	    ${SUDO} ${DEINSTALL_DATA} "${DESTDIR}${DATADIR}/libtool/m4/$$F"; \
+	done
+	@for F in ${LTFILES}; do \
+	    echo "${DEINSTALL_DATA} ${DATADIR}/libtool/$$F"; \
+	    ${SUDO} ${DEINSTALL_DATA} "${DESTDIR}${DATADIR}/libtool/$$F"; \
+	done
+	@for F in ${DATAFILES}; do \
+	    echo "${DEINSTALL_DATA} ${DATADIR}/$$F"; \
+	    ${SUDO} ${DEINSTALL_DATA} "${DESTDIR}${DATADIR}/$$F"; \
+	done
+	@for F in ${SCRIPTS}; do \
+	    echo "${DEINSTALL_DATA} ${BINDIR}/$$F"; \
+	    ${SUDO} ${DEINSTALL_DATA} "${DESTDIR}${BINDIR}/$$F"; \
+	done
+
 cleandir: cleandir-subdir
 	echo > Makefile.config
 	rm -fR config.log config configure.lua
@@ -107,7 +125,8 @@ clean-release:
 		rm -f ../$$F; \
 	  done);
 
-.PHONY: install cleandir clean depend release configure clean-release config-ok
+.PHONY: install deinstall cleandir clean depend release configure clean-release
+.PHONY: config-ok
 
 include ${TOP}/mk/build.common.mk
 include ${TOP}/mk/build.subdir.mk

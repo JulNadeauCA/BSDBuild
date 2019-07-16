@@ -149,6 +149,12 @@ install:
 	    ${SUDO} ${INSTALL_DATA} $$F ${DESTDIR}${DATADIR}/BSDBuild; \
 	done
 
+deinstall:
+	@for F in ${DATAFILES}; do \
+	    echo "${DEINSTALL_DATA} ${DATADIR}/BSDBuild/$$F"; \
+	    ${SUDO} ${DEINSTALL_DATA} ${DESTDIR}${DATADIR}/BSDBuild/$$F; \
+	done
+
 install-links:
 	@if [ ! -d "${DESTDIR}${DATADIR}/BSDBuild" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${DATADIR}/BSDBuild"; \

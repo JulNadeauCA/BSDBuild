@@ -153,11 +153,11 @@ EOF
 	MkIfTrue('${HAVE_CC}');
 
 		MkPrintSN('cc: checking for compiler warning options...');
-		MkCompileC('HAVE_CC_WARNINGS', '-Wall -Werror', '', << 'EOF');
+		MkCompileC('HAVE_CC_WARNINGS', '-Wall', '', << 'EOF');
 int main(int argc, char *argv[]) { return (0); }
 EOF
 		MkIfTrue('${HAVE_CC_WARNINGS}');
-			MkDefine('TEST_CFLAGS', '-Wall -Werror');
+			MkDefine('TEST_CFLAGS', '-Wall');
 		MkEndif;
 		
 		# Check for float type.

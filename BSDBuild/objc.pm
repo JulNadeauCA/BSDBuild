@@ -111,11 +111,11 @@ EOF
 	
 	MkIfTrue('${HAVE_OBJC}');
 		MkPrintSN('objc: checking for compiler warning options...');
-		MkCompileOBJC('HAVE_OBJC_WARNINGS', '-Wall -Werror', '', << 'EOF');
+		MkCompileOBJC('HAVE_OBJC_WARNINGS', '-Wall', '', << 'EOF');
 int main(int argc, char *argv[]) { return (0); }
 EOF
 		MkIfTrue('${HAVE_OBJC_WARNINGS}');
-			MkDefine('TEST_OBJCFLAGS', '-Wall -Werror');
+			MkDefine('TEST_OBJCFLAGS', '-Wall');
 		MkEndif;
 		MkSaveDefine('HAVE_OBJC');
 		print 'rm -f conftest.m $testdir/conftest$EXECSUFFIX', "\n";

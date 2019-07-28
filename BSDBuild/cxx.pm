@@ -112,11 +112,11 @@ EOF
 	MkIfTrue('${HAVE_CXX}');
 
 		MkPrintSN('cxx: checking for compiler warning options...');
-		MkCompileCXX('HAVE_CXX_WARNINGS', '-Wall -Werror', '-lstdc++', << 'EOF');
+		MkCompileCXX('HAVE_CXX_WARNINGS', '-Wall', '-lstdc++', << 'EOF');
 int main(void) { return (0); }
 EOF
 		MkIfTrue('${HAVE_CXX_WARNINGS}');
-			MkDefine('TEST_CXXFLAGS', '-Wall -Werror');
+			MkDefine('TEST_CXXFLAGS', '-Wall');
 		MkEndif;
 
 		print 'rm -f conftest.cc $testdir/conftest$EXECSUFFIX', "\n";

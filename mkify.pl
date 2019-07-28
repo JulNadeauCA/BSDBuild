@@ -33,12 +33,13 @@
 	cleanfiles.pl
 	gen-bundle.pl
 	gen-declspecs.pl
+	gen-dotdepend.pl
 	gen-includes.pl
 	gen-includelinks.pl
-	gen-dotdepend.pl
+	gen-revision.sh
 	gen-wwwdepend.pl
 	install-manpages.sh);
-		  
+
 @LibtoolFiles = qw(
 	Makefile
 	Makefile.in

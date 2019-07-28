@@ -179,6 +179,7 @@ my @gui_sizeofs = (
 	'AG_TreetblRow',
 	'AG_TreetblRowQ',
 	'AG_Unit',
+	'AG_VectorElement',
 	'AG_Widget',
 	'AG_WidgetGL',
 	'AG_WidgetPalette',

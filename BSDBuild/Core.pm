@@ -24,7 +24,7 @@
 # USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 our $OutputHeaderFile = undef;
-our $OutputHeaderDir = 'config';
+our $OutputHeaderDir = undef;
 our $OutputLUA = 'configure.lua';
 our $LUA = undef;
 our $EmulOS = undef;

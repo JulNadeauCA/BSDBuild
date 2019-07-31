@@ -219,6 +219,17 @@ fi
 bb_save_IFS=$IFS
 IFS=$PATH_SEPARATOR
 
+SH='sh'
+for path in $PATH; do
+	if [ -x "${path}/sh" ]; then
+		SH="${path}/sh"
+		break
+	elif [ -e "${path}/sh.exe" ]; then
+		SH="${path}/sh.exe"
+		break
+	fi
+done
+
 PERL=''
 for path in $PATH; do
 	if [ -x "${path}/perl" ]; then
@@ -500,12 +511,16 @@ if [ "${SUDO}" != "" ]; then
 	if [ -e "${PREFIX}" ]; then
 		bb_test_file="${PREFIX}/bsdbuild_test_file$$"
 		$ECHO_N "# checking the writeability of ${PREFIX}..." >>config.log
-		if [ -w "${bb_test_file}" ]; then
+		echo "echo 'Test' > '${bb_test_file}'" > conftest$$.sh
+		${SH} conftest$$.sh 2>/dev/null
+		if [ -e "${bb_test_file}" ]; then
+			rm -f "${bb_test_file}"
 			echo "yes (ignoring SUDO)" >>config.log
 			echo "SUDO=" >> Makefile.config
 		else
 			echo "no (honoring ${SUDO})" >>config.log
 		fi
+		rm -f conftest$$.sh
 	fi
 fi
 
@@ -1077,8 +1092,8 @@ echo '# C: HAVE_CC_WARNINGS' >>config.log
 echo "cat << EOT >conftest$$.c" >>config.log
 cat conftest$$.c>>config.log
 echo EOT >>config.log
-echo "$CC $CFLAGS $TEST_CFLAGS -Wall -Werror -o $testdir/conftest$$ conftest$$.c  2>>config.log">>config.log
-$CC $CFLAGS $TEST_CFLAGS -Wall -Werror -o $testdir/conftest$$ conftest$$.c  2>>config.log
+echo "$CC $CFLAGS $TEST_CFLAGS -Wall -o $testdir/conftest$$ conftest$$.c  2>>config.log">>config.log
+$CC $CFLAGS $TEST_CFLAGS -Wall -o $testdir/conftest$$ conftest$$.c  2>>config.log
 if [ "$?" != "0" ]; then
 echo "# failed $?" >>config.log
 MK_COMPILE_STATUS="FAIL $?"
@@ -1103,7 +1118,7 @@ if [ "${keep_conftest}" != "yes" ]; then
 rm -f conftest$$.c $testdir/conftest$$$EXECSUFFIX
 fi
 if [ "${HAVE_CC_WARNINGS}" = "yes" ]; then
-TEST_CFLAGS="-Wall -Werror"
+TEST_CFLAGS="-Wall"
 fi
 $ECHO_N 'cc: checking for float and double...'
 $ECHO_N '# cc: checking for float and double...' >>config.log

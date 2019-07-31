@@ -127,7 +127,10 @@ my @gui_constants = qw(
 	AG_TOOLBAR_MAX_ROWS
 	AG_WINDOW_CAPTION_MAX
 	AG_ZOOM_DEFAULT
-	AG_ZOOM_RANGE
+	AG_ZOOM_MIN
+	AG_ZOOM_MAX
+	AG_ZOOM_1_1
+	AG_ZOOM_DEFAULT
 );
 my @gui_sizeofs = (
 	'AG_Action',

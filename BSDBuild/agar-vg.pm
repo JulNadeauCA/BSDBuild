@@ -6,8 +6,10 @@ my $testCode = << 'EOF';
 #include <agar/vg.h>
 
 int main(int argc, char *argv[]) {
-	VG vg;
-	VG_Init(&vg, 0);
+	AG_InitCore(NULL, 0);
+	VG_InitSubsystem();
+	VG_DestroySubsystem();
+	AG_Quit();
 	return (0);
 }
 EOF

@@ -9,14 +9,20 @@ my $testCode = << 'EOF';
 #ifdef __APPLE__
 # include <LLDB/LLDB.h>
 #else
-# include "lldb/API/SBBlock.h"
-# include "lldb/API/SBCompileUnit.h"
+# include "lldb/API/SBBreakpoint.h"
+# include "lldb/API/SBCommandInterpreter.h"
+# include "lldb/API/SBCommandReturnObject.h"
+# include "lldb/API/SBCommunication.h"
+# include "lldb/API/SBBroadcaster.h"
 # include "lldb/API/SBDebugger.h"
-# include "lldb/API/SBFunction.h"
-# include "lldb/API/SBModule.h"
+# include "lldb/API/SBStructuredData.h"
+# include "lldb/API/SBEvent.h"
+# include "lldb/API/SBHostOS.h"
+# include "lldb/API/SBLanguageRuntime.h"
+# include "lldb/API/SBListener.h"
 # include "lldb/API/SBProcess.h"
 # include "lldb/API/SBStream.h"
-# include "lldb/API/SBSymbol.h"
+# include "lldb/API/SBStringList.h"
 # include "lldb/API/SBTarget.h"
 # include "lldb/API/SBThread.h"
 #endif
@@ -24,6 +30,48 @@ my $testCode = << 'EOF';
 #include <string>
 
 using namespace lldb;
+
+class LLDBSentry {
+public:
+	LLDBSentry() { SBDebugger::Initialize(); }
+	~LLDBSentry() { SBDebugger::Terminate(); }
+};
+
+int
+main(int argc, char const *argv[])
+{
+	LLDBSentry sentry;
+	SBDebugger debugger(SBDebugger::Create());
+
+	return !debugger.IsValid();
+}
+EOF
+
+my $testCodeUtility = << 'EOF';
+#include <stdlib.h>
+
+#include "lldb/API/SBBlock.h"
+#include "lldb/API/SBCompileUnit.h"
+#include "lldb/API/SBDebugger.h"
+#include "lldb/API/SBFunction.h"
+#include "lldb/API/SBModule.h"
+#include "lldb/API/SBProcess.h"
+#include "lldb/API/SBStream.h"
+#include "lldb/API/SBSymbol.h"
+#include "lldb/API/SBTarget.h"
+#include "lldb/API/SBThread.h"
+
+#include "lldb/Utility/Stream.h"
+#include "lldb/Utility/StringList.h"
+#include "lldb/Utility/ArchSpec.h"
+
+#include "llvm/Support/PrettyStackTrace.h"
+#include "llvm/Support/Signals.h"
+
+#include <string>
+
+using namespace lldb;
+using namespace lldb_private;
 
 class LLDBSentry {
 public:
@@ -40,7 +88,16 @@ main(int argc, char const *argv[])
 {
 	LLDBSentry sentry;
 	SBDebugger debugger(SBDebugger::Create());
+	llvm::StringRef name = argv[0];
+	llvm::sys::PrintStackTraceOnErrorSignal(name);
+	StringList arches;
+	unsigned i;
 
+	ArchSpec::ListSupportedArchNames(arches);
+	for (i = 0; i < arches.GetSize(); ++i) {
+		const char *s = arches.GetStringAtIndex(i);
+		if (s == NULL) return (1);
+	}
 	return !debugger.IsValid();
 }
 EOF
@@ -85,7 +142,8 @@ sub TEST_lldb
 			MkDefine('LLDB_BUILD_DIR',
                      '/Applications/Xcode.app/Contents/SharedFrameworks');
 		MkEndif;
-		MkDefine('LLDB_LIBS', '${LLDB_LDFLAGS} -llldb ${LLDB_LIBS} -framework LLDB '.
+		MkDefine('LLDB_LIBS', '${LLDB_LDFLAGS} -llldb ${LLDB_LIBS} ' .
+		                      '-framework LLDB '.
                               '-Wl,-rpath,"${LLDB_BUILD_DIR}" -lstdc++');
 		MkCaseEnd;
 	MkCaseBegin('*');
@@ -95,13 +153,38 @@ sub TEST_lldb
 		
 	MkIfFound($pfx, $ver, 'LLDB_VERSION');
 		MkPrintSN('checking whether LLDB works...');
-		MkLog('LLDB_CFLAGS = ${LLDB_CFLAGS}');
-		MkLog('LLDB_LIBS = ${LLDB_LIBS}');
 		MkCompileCXX('HAVE_LLDB', '${LLDB_CFLAGS}',
-                     '${LLDB_LDFLAGS} ${LLDB_LIBS}', $testCode);
+                     '${LLDB_LDFLAGS} ${LLDB_LIBS}',
+					 $testCode);
 		MkIfTrue('${HAVE_LLDB}');
 			MkDefine('LLDB_LIBS', '${LLDB_LDFLAGS} ${LLDB_LIBS}');
 			MkSave('LLDB_CFLAGS', 'LLDB_LIBS');
+
+			MkPrintSN('checking for LLDB Utility library...');
+			MkCaseIn('${host}');
+			MkCaseBegin('*-*-darwin*');
+				MkPrintS('no');
+				MkDefine('HAVE_LLDB_UTILITY', 'no');
+				MkDefine('LLDB_UTILITY_CFLAGS', '');
+				MkDefine('LLDB_UTILITY_LIBS', '');
+				MkCaseEnd;
+			MkCaseBegin('*');
+				MkDefine('LLDB_UTILITY_CFLAGS', '');
+				MkDefine('LLDB_UTILITY_LIBS', '-llldbUtility');
+				MkCompileCXX('HAVE_LLDB_UTILITY',
+				             '${LLDB_CFLAGS} ${LLDB_UTILITY_CFLAGS}',
+		                     '${LLDB_LDFLAGS} ${LLDB_LIBS} ${LLDB_UTILITY_LIBS}',
+							 $testCodeUtility);
+				MkIfTrue('${HAVE_LLDB_UTILITY}');
+					MkSave('LLDB_UTILITY_CFLAGS', 'LLDB_UTILITY_LIBS');
+				MkElse;
+					MkSaveUndef('LLDB_UTILITY_CFLAGS', 'LLDB_UTILITY_LIBS');
+				MkEndif;
+				MkCaseEnd;
+			MkEsac;
+		MkElse;
+			MkDefine('HAVE_LLDB_UTILITY', 'no');
+			MkSaveUndef('LLDB_UTILITY_CFLAGS', 'LLDB_UTILITY_LIBS');
 		MkEndif;
 	MkElse;
 		DISABLE_lldb();
@@ -111,9 +194,15 @@ sub TEST_lldb
 sub DISABLE_lldb
 {
 	MkDefine('HAVE_LLDB', 'no');
+	MkDefine('HAVE_LLDB_UTILITY', 'no');
 	MkDefine('LLDB_CFLAGS', '');
 	MkDefine('LLDB_LIBS', '');
-	MkSaveUndef('HAVE_LLDB', 'LLDB_CFLAGS', 'LLDB_LIBS');
+	MkDefine('LLDB_UTILITY_CFLAGS', '');
+	MkDefine('LLDB_UTILITY_LIBS', '');
+
+	MkSaveUndef('HAVE_LLDB', 'HAVE_LLDB_UTILITY',
+				'LLDB_CFLAGS', 'LLDB_LIBS',
+				'LLDB_UTILITY_CFLAGS', 'LLDB_UTILITY_LIBS');
 }
 
 BEGIN

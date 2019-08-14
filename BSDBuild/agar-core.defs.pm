@@ -75,7 +75,6 @@ my @core_sizeofs = qw(
 	AG_FmtString
 	AG_FmtStringExt
 	AG_Function
-	AG_List
 	AG_Mutex
 	AG_MutexAttr
 	AG_Namespace
@@ -91,8 +90,6 @@ my @core_sizeofs = qw(
 	AG_ObjectPvt
 	AG_Tbl
 	AG_TblBucket
-	AG_Tree
-	AG_TreeItem
 	AG_Text
 	AG_TextElement
 	AG_TextEnt

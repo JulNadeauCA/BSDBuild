@@ -23,7 +23,8 @@ main(int argc, char *argv[])
 
 	AG_InitCore("conf-test", 0);
 	AG_RegisterClass(&FooClass);
-	AG_ObjectInitStatic(&obj, &FooClass);
+	AG_ObjectInit(&obj, &FooClass);
+	obj.flags |= AG_OBJECT_STATIC;
 	AG_ObjectDestroy(&obj);
 	AG_Quit();
 	return (0);

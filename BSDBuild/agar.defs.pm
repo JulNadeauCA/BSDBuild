@@ -38,6 +38,7 @@ my @core_constants = qw(
 	AG_ARG_MAX
 	AG_BUFFER_MIN
 	AG_BUFFER_MAX
+	AG_VARIABLE_TYPE_LAST
 );
 my @core_sizeofs = qw(
 	AG_AgarVersion

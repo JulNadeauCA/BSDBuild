@@ -10,7 +10,9 @@ main(int argc, char *argv[])
 {
 	AG_InitCore("conf-test", 0);
 	AG_InitGraphics(AG_NULL);
+#ifdef AG_EVENT_LOOP
 	AG_EventLoop();
+#endif
 	AG_Quit();
 	return (0);
 }

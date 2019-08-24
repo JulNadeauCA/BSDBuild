@@ -6,8 +6,12 @@ my $testCode = << 'EOF';
 #include <agar/vg.h>
 
 int main(int argc, char *argv[]) {
+	VG *vg;
 	AG_InitCore(NULL, 0);
 	VG_InitSubsystem();
+	if ((vg = VG_New(0)) != NULL) {
+		AG_ObjectDestroy(vg);
+	}
 	VG_DestroySubsystem();
 	AG_Quit();
 	return (0);

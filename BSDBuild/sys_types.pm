@@ -120,11 +120,9 @@ sub EMUL_sys_types
 	if ($os =~ /^windows/) {
 		MkEmulWindowsSYS('_MK_HAVE_SYS_TYPES_H');
 		MkEmulWindowsSYS('_MK_HAVE_STDINT_H');
-		if ($os =~ /64/) {
-			MkEmulWindowsSYS('64BIT');
-		} else {
-			MkEmulUnavailSYS('64BIT');
-		}
+		MkEmulWindowsSYS('64BIT');
+		MkEmulWindowsSYS('INT64_T');
+		MkEmulWindowsSYS('__INT64');
 	} else {
 		DISABLE_sys_types();
 	}

@@ -1272,7 +1272,7 @@ sub MkEmulWindowsSYS
 {
 	my $module = shift;
 
-	if ($module =~ /^_/) {
+	if ($module =~ /^_MK/) {
 		MkDefine($module, "yes");
 		MkSaveDefine($module);
 	} else {

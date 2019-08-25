@@ -308,11 +308,42 @@ sub DISABLE_cc
              'PROG_GUI_CFLAGS', 'PROG_CLI_CFLAGS', 'LIBTOOLOPTS_SHARED');
 }
 
+sub EMUL_cc
+{
+	MkDefine('HAVE_CC', 'yes');
+	MkDefine('HAVE_FLOAT', 'yes');
+
+	MkDefine('HAVE_CC65', 'no');
+	MkDefine('HAVE_CC_WARNINGS', 'no');
+	MkDefine('HAVE_LONG_DOUBLE', 'no');
+	MkDefine('HAVE_LONG_LONG', 'no');
+	MkDefine('HAVE_CYGWIN', 'no');
+	MkDefine('HAVE_CC_MWINDOWS', 'no');
+	MkDefine('HAVE_CC_MCONSOLE', 'no');
+	MkDefine('HAVE_LD_NO_UNDEFINED', 'no');
+	MkDefine('HAVE_LD_STATIC_LIBGCC', 'no');
+	MkDefine('PROG_GUI_FLAGS', '');
+	MkDefine('PROG_CLI_FLAGS', '');
+	MkDefine('LIBTOOLOPTS_SHARED', '');
+	MkDefine('TEST_CFLAGS', '');
+
+	MkSaveDefine('HAVE_CC', 'HAVE_FLOAT');
+
+	MkSaveUndef('HAVE_CC65', 'HAVE_CC_WARNINGS', 'HAVE_LONG_DOUBLE',
+	            'HAVE_LONG_LONG', 'HAVE_CYGWIN', 'HAVE_CC_MWINDOWS',
+				'HAVE_CC_MCONSOLE', 'HAVE_LD_NO_UNDEFINED',
+				'HAVE_LD_STATIC_LIBGCC');
+
+	MkSaveMK('HAVE_CC', 'HAVE_CC65', 'HAVE_CC_WARNINGS', 'CC', 'CFLAGS',
+             'PROG_GUI_CFLAGS', 'PROG_CLI_CFLAGS', 'LIBTOOLOPTS_SHARED');
+}
+
 BEGIN
 {
 	$DESCR{'cc'}   = 'a C compiler';
 	$TESTS{'cc'}   = \&TEST_cc;
 	$DISABLE{'cc'} = \&DISABLE_cc;
+	$EMUL{'cc'}    = \&EMUL_cc;
 
 	RegisterEnvVar('CC',		'C compiler command');
 	RegisterEnvVar('CFLAGS',	'C compiler flags');

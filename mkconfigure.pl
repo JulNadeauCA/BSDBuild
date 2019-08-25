@@ -412,25 +412,21 @@ sub test
 	}
 	my $c;
 	if ($EmulOS) {
-		my $noEmul = 0;
-		unless (exists($EMUL{$t}) && defined($EMUL{$t})) {
-			$noEmul = 1;
+		if (exists($EMUL{$t}) && defined($EMUL{$t})) {
+			if (exists($EMULDEPS{$t})) {
+		 		foreach my $ed (@{$EMULDEPS{$t}}) {
+					if (!exists($EmulDepsTested{$ed})) {
+						test($ed);
+						$EmulDepsTested{$ed} = 1;
+					}
+				}
+			}
+			$c = $EMUL{$t};
+		} else {
 			unless (exists($DISABLE{$t}) && defined($DISABLE{$t})) {
 				$ParserError = $t.': missing EMUL/DISABLE hook';
 				return (-1);
 			}
-		}
-		if (exists($EMULDEPS{$t})) {
-	 		foreach my $ed (@{$EMULDEPS{$t}}) {
-				if (!exists($EmulDepsTested{$ed})) {
-					test($ed);
-					$EmulDepsTested{$ed} = 1;
-				}
-			}
-		}
-		if ($noEmul) {
-			$c = $EMUL{$t};
-		} else {
 			$c = $DISABLE{$t};
 		}
 		@args = ($EmulOS, $EmulOSRel, '');
@@ -1940,8 +1936,11 @@ if ($SuccessFn) {
 } else {
 	print << "EOF";
 echo '*'
-echo '* Configuration successful. Use the "make" command to compile,'
-echo '* and complete the installation using "make install".'
+echo '* Configuration successful!'
+echo '*'
+echo '* Use "make depend all" to compile. When finished,'
+\$ECHO_N '* run "make install" to install under '
+echo "\${PREFIX}."
 echo '*'
 EOF
 }

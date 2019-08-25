@@ -52,7 +52,6 @@ BEGIN
 	$DESCR{$n}   = 'the GLX interface';
 	$TESTS{$n}   = \&TEST_glx;
 	$DISABLE{$n} = \&DISABLE_glx;
-	$EMUL{$n}    = \&EMUL_glx;
 	$DEPS{$n}    = 'cc,opengl,x11,math';
 }
 ;1

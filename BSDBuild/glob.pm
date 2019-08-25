@@ -35,7 +35,6 @@ BEGIN
 	$DESCR{$n}   = 'glob()';
 	$TESTS{$n}   = \&TEST_glob;
 	$DISABLE{$n} = \&DISABLE_glob;
-	$EMUL{$n}    = \&Emul;
 	$DEPS{$n}    = 'cc';
 }
 ;1

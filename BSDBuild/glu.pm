@@ -47,7 +47,6 @@ sub TEST_glu
 				MkIfExists("$dir/GL/glu.h");
 					MkDefine('GLU_CFLAGS', "-I$dir");
 					MkDefine('GLU_LIBS', "-L$libDir -lGLU");
-					MkBreak;
 				MkEndif;
 			}
 		MkEndif;

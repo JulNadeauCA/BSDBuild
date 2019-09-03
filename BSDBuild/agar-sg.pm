@@ -26,8 +26,8 @@ sub TEST_agar_sg
 		MkExecOutputPfx($pfx, 'agar-sg-config', '--cflags', 'AGAR_SG_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-sg-config', '--libs', 'AGAR_SG_LIBS');
 		MkCompileC('HAVE_AGAR_SG',
-		           '${AGAR_SG_CFLAGS} ${AGAR_CFLAGS}',
-		           '${AGAR_SG_LIBS} ${AGAR_LIBS}',
+		           '${AGAR_SG_CFLAGS} ${AGAR_MATH_CFLAGS} ${AGAR_CFLAGS}',
+		           '${AGAR_SG_LIBS} ${AGAR_MATH_LIBS} ${AGAR_LIBS}',
 		           $testCode);
 		MkSaveIfTrue('${HAVE_AGAR_SG}', 'AGAR_SG_CFLAGS', 'AGAR_SG_LIBS');
 	MkElse;
@@ -64,7 +64,7 @@ BEGIN
 	$TESTS{$n}   = \&TEST_agar_sg;
 	$DISABLE{$n} = \&DISABLE_agar_sg;
 	$EMUL{$n}    = \&EMUL_agar_sg;
-	$DEPS{$n}    = 'cc,agar';
+	$DEPS{$n}    = 'cc,agar,agar-math';
 
 	@{$EMULDEPS{$n}} = qw(agar);
 }

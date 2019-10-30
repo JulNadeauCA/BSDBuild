@@ -439,7 +439,10 @@ sub MkFail
 	$msg =~ s/["]/\"/g;							# Escape quotes
 	$msg =~ tr/()/ /;
 	print << "EOF";
-echo \"$msg\"
+echo \"***\"
+echo \"*** ERROR: $msg\"
+echo \"*** Failed! See ./config.log for more details.\"
+echo \"***\"
 exit 1
 EOF
 }

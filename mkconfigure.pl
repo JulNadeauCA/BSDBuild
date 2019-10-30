@@ -1935,12 +1935,12 @@ if ($SuccessFn) {
 	print $SuccessFn . "\n";
 } else {
 	print << "EOF";
-echo '*'
-echo '* Configuration successful!'
-echo '*'
-echo '* Use "make depend all" to compile. When finished,'
-\$ECHO_N '* run "make install" to install under '
+echo '**'
+echo '** Configuration successful!'
+echo '**'
+echo '** Use "make depend all" to compile. When finished,'
+\$ECHO_N '** run "make install" to install under '
 echo "\${PREFIX}."
-echo '*'
+echo '**'
 EOF
 }

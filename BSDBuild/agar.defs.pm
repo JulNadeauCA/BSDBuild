@@ -135,7 +135,6 @@ my @gui_sizeofs = (
 	'AG_AnimFrame',
 	'AG_CachedText',
 	'AG_Color',
-	'AG_ColorOffset',
 	'AG_ConsoleLine',
 	'AG_CursorArea',
 	'AG_EditableClipboard',

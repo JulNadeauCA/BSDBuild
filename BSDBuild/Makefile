@@ -57,6 +57,7 @@ DATAFILES=Core.pm \
 	agar-map.pm \
 	agar-math.pm \
 	agar-micro.pm \
+	agar-net.pm \
 	agar-rg.pm \
 	agar-sg.pm \
 	agar-sk.pm \

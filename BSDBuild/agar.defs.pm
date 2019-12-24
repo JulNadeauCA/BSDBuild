@@ -65,11 +65,6 @@ my @core_sizeofs = qw(
 	AG_Mutex
 	AG_MutexAttr
 	AG_Namespace
-	AG_NetAcceptFilter
-	AG_NetAddr
-	AG_NetOps
-	AG_NetSocket
-	AG_NetSocketSource
 	AG_Object
 	AG_ObjectClass
 	AG_ObjectClassPvt

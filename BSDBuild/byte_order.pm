@@ -24,9 +24,15 @@ sub TEST_byte_order
 	MkIfNE('${byte_order}', '');
 		MkIfEQ('${byte_order}', 'LE');
 			MkDefine('_MK_BYTE_ORDER', 'LE');
+			MkDefine('_MK_LITTLE_ENDIAN', 'yes');
+			MkSaveDefine('_MK_LITTLE_ENDIAN');
+			MkSaveUndef('_MK_BIG_ENDIAN');
 		MkElse;
 			MkIfEQ('${byte_order}', 'BE');
 				MkDefine('_MK_BYTE_ORDER', 'BE');
+				MkDefine('_MK_BIG_ENDIAN', 'yes');
+				MkSaveDefine('_MK_BIG_ENDIAN');
+				MkSaveUndef('_MK_LITTLE_ENDIAN');
 			MkElse;
 				MkFail('Usage: --byte-order=[LE|BE]');
 			MkEndif;

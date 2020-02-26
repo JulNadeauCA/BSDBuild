@@ -89,6 +89,21 @@ sub TEST_sdl
 				MkEndif;
 				MkCaseEnd;
 			MkEsac;
+
+			MkPushIFS('" "');
+			MkDefine('SDL_LIBS_FIXED', '');
+			MkFor('sdl_lib', '$SDL_LIBS');
+			    MkCaseIn('${sdl_lib}');
+				MkCaseBegin('-Wl*');
+					MkCaseEnd;
+				MkCaseBegin('*');
+					MkDefine('SDL_LIBS_FIXED', '$SDL_LIBS_FIXED ${sdl_lib}');
+					MkCaseEnd;
+				MkEsac;
+			MkDone;
+			MkPopIFS();
+
+			MkDefine('SDL_LIBS', '${SDL_LIBS_FIXED}');
 			MkSave('SDL_CFLAGS', 'SDL_LIBS');
 		MkElse;
 			MkPrintSN('checking whether SDL works (with X11 libs)...');

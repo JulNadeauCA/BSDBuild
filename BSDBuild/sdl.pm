@@ -96,6 +96,9 @@ sub TEST_sdl
 			    MkCaseIn('${sdl_lib}');
 				MkCaseBegin('-Wl*');
 					MkCaseEnd;
+				MkCaseBegin('-pthread');
+					MkDefine('SDL_LIBS_FIXED', '$SDL_LIBS_FIXED -lpthread');
+					MkCaseEnd;
 				MkCaseBegin('*');
 					MkDefine('SDL_LIBS_FIXED', '$SDL_LIBS_FIXED ${sdl_lib}');
 					MkCaseEnd;

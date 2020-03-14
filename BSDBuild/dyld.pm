@@ -7,9 +7,19 @@ sub TEST_dyld
 	DetectHeaderC('HAVE_MACH_O_DYLD_H',	'<mach-o/dyld.h>');
 
 	TryCompile 'HAVE_DYLD', << 'EOF';
+#ifdef __APPLE__
+# include <Availability.h>
+# ifdef __MAC_OS_X_VERSION_MIN_REQUIRED
+#  if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#   error "deprecated in Lion and later"
+#  endif
+# endif
+#endif
+
 #ifdef HAVE_MACH_O_DYLD_H
 #include <mach-o/dyld.h>
 #endif
+
 int
 main(int argc, char *argv[])
 {

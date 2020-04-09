@@ -37,7 +37,7 @@ EOF
 		MkPrintSN('!bounded ');
 	MkEndif;
 
-	TryCompileFlagsC('HAVE_CONST_ATTRIBUTE', '', << 'EOF');
+	TryCompileFlagsC('HAVE_CONST_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 int foo(int) __attribute__ ((const));
 int foo(int x) { return (x*x); }
 int main(int argc, char *argv[])
@@ -52,7 +52,7 @@ EOF
 		MkPrintSN('!const ');
 	MkEndif;
 
-	TryCompileFlagsC('HAVE_DEPRECATED_ATTRIBUTE', '', << 'EOF');
+	TryCompileFlagsC('HAVE_DEPRECATED_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 void foo(void) __attribute__ ((deprecated));
 void foo(void) { }
 
@@ -91,7 +91,7 @@ EOF
 	
 	MkPrintSN('checking for C compiler attributes...');
 
-	TryCompileFlagsC('HAVE_MALLOC_ATTRIBUTE', '', << 'EOF');
+	TryCompileFlagsC('HAVE_MALLOC_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -109,7 +109,7 @@ EOF
 		MkPrintSN('!malloc ');
 	MkEndif;
 
-	TryCompileFlagsC('HAVE_NORETURN_ATTRIBUTE', '', << 'EOF');
+	TryCompileFlagsC('HAVE_NORETURN_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 #include <unistd.h>
 #include <stdlib.h>
 void foo(void) __attribute__ ((noreturn));
@@ -138,7 +138,7 @@ EOF
 		MkPrintSN('!packed ');
 	MkEndif;
 
-	TryCompileFlagsC('HAVE_PURE_ATTRIBUTE', '', << 'EOF');
+	TryCompileFlagsC('HAVE_PURE_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 volatile int glo = 1234;
 int foo(int) __attribute__ ((pure));
 int foo(int x) { return (x*x + glo); }
@@ -156,7 +156,7 @@ EOF
 		MkPrintSN('!pure ');
 	MkEndif;
 	
-	TryCompileFlagsC('HAVE_UNUSED_VARIABLE_ATTRIBUTE', '', << 'EOF');
+	TryCompileFlagsC('HAVE_UNUSED_VARIABLE_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 int main(int argc, char *argv[])
 {
 	int __attribute__ ((unused)) variable;
@@ -171,7 +171,7 @@ EOF
 	
 	MkPrintSN('checking for C compiler attributes...');
 
-	TryCompileFlagsC('HAVE_WARN_UNUSED_RESULT_ATTRIBUTE', '', << 'EOF');
+	TryCompileFlagsC('HAVE_WARN_UNUSED_RESULT_ATTRIBUTE', '-Wall -Werror', << 'EOF');
 int foo(void) __attribute__ ((warn_unused_result));
 int foo(void) { return (1); }
 int main(int argc, char *argv[])

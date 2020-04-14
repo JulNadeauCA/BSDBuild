@@ -895,12 +895,6 @@ echo '#ifndef VERSION' >$bb_o
 echo "#define VERSION \"$VERSION\"" >>$bb_o
 echo '#endif' >>$bb_o
 echo "hdefs[\"VERSION\"] = \"$VERSION\"" >>configure.lua
-RELEASE="Hello bicycle"
-bb_o=$bb_incdir/release.h
-echo '#ifndef RELEASE' >$bb_o
-echo "#define RELEASE \"$RELEASE\"" >>$bb_o
-echo '#endif' >>$bb_o
-echo "hdefs[\"RELEASE\"] = \"$RELEASE\"" >>configure.lua
 if [ "${DATADIR_SPECIFIED}" != 'yes' ]; then
 DATADIR="$PREFIX/share/bsdbuild"
 bb_o=$bb_incdir/datadir.h
@@ -1527,7 +1521,10 @@ echo '* This software requires a C compiler'
 echo '# * This software requires a C compiler' >>config.log
 echo '* '
 echo '# * ' >>config.log
-echo "Required dependency cc not found"
+echo "***"
+echo "*** ERROR: Required dependency cc not found"
+echo "*** Failed! See ./config.log for more details."
+echo "***"
 exit 1
 fi
 $ECHO_N 'checking for a gettext library in libc...'
@@ -2003,8 +2000,6 @@ echo "PROG_SUFFIX=$PROG_SUFFIX" >>Makefile.config
 echo "mdefs[\"PROG_SUFFIX\"] = \"$PROG_SUFFIX\"" >>configure.lua
 echo "PROG_TRANSFORM=$PROG_TRANSFORM" >>Makefile.config
 echo "mdefs[\"PROG_TRANSFORM\"] = \"$PROG_TRANSFORM\"" >>configure.lua
-echo "RELEASE=$RELEASE" >>Makefile.config
-echo "mdefs[\"RELEASE\"] = \"$RELEASE\"" >>configure.lua
 echo "STATEDIR=$STATEDIR" >>Makefile.config
 echo "mdefs[\"STATEDIR\"] = \"$STATEDIR\"" >>configure.lua
 echo "SYSCONFDIR=$SYSCONFDIR" >>Makefile.config
@@ -2019,7 +2014,10 @@ if [ "${srcdir}" != '' ]; then
 	fi
 	echo 'ok'
 fi
-echo '*'
-echo '* Configuration successful. Use the "make" command to compile,'
-echo '* and complete the installation using "make install".'
-echo '*'
+echo '**'
+echo '** Configuration successful!'
+echo '**'
+echo '** Use "make depend all" to compile. When finished,'
+$ECHO_N '** run "make install" to install under '
+echo "${PREFIX}."
+echo '**'

@@ -5,7 +5,6 @@ config_guess("mk/config.guess")
 
 package("BSDBuild")
 version("3.2")
-release("Hello bicycle")
 default_dir(DATADIR, "$PREFIX/share/bsdbuild")
 
 require(cc)

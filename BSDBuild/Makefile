@@ -58,7 +58,6 @@ DATAFILES=Core.pm \
 	agar-math.pm \
 	agar-micro.pm \
 	agar-net.pm \
-	agar-rg.pm \
 	agar-sg.pm \
 	agar-sk.pm \
 	agar-vg.pm \
@@ -87,8 +86,6 @@ DATAFILES=Core.pm \
 	getpeerucred.pm \
 	so_peercred.pm \
 	getpeereid.pm \
-	freesg.pm \
-	freesg-rg.pm \
 	math_c99.pm \
 	getopt.pm \
 	byte_order.pm \

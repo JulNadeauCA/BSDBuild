@@ -10,8 +10,8 @@ sub TEST_dyld
 #ifdef __APPLE__
 # include <Availability.h>
 # ifdef __MAC_OS_X_VERSION_MIN_REQUIRED
-#  if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-#   error "deprecated in Lion and later"
+#  if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1050
+#   error "deprecated in Leopard and later"
 #  endif
 # endif
 #endif
@@ -32,7 +32,7 @@ main(int argc, char *argv[])
 EOF
 
 	MkIfTrue('${HAVE_DYLD}');
-		MkPrintS('checking for NSLINKMODULE_OPTION_RETURN_ON_ERROR');
+		MkPrintSN('checking for NSLINKMODULE_OPTION_RETURN_ON_ERROR');
 		TryCompile 'HAVE_DYLD_RETURN_ON_ERROR', << 'EOF';
 #ifdef HAVE_MACH_O_DYLD_H
 #include <mach-o/dyld.h>

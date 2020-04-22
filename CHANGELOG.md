@@ -31,7 +31,7 @@ All notable changes to BSDBuild will be documented in this file. This project ad
 - **mkconcurrent** script: Extract and cache make target fragments directly from an installed build.\*.mk so we no longer need to maintain a copy of them in the script.
 - **x11**: Honor `--x-includes=*` and `--x-libraries=*` configure arguments. If XKB is not found then fallback to libXf86misc.
 - **pthreads**: Add subtests `HAVE_PTHREAD_{MUTEX,COND,}_T_POINTER` to determine whether `pthread_mutex_t`, `pthread_cond_t` and `pthread_t` are pointer types or not. Needed for `_Pure_Attribute_If_Unthreaded` in agar.
-- Update config.guess to 2015-03-04. Add [FabBSD](https://FabBSD.og).
+- Update config.guess to 2015-03-04. Add [FabBSD](https://FabBSD.org).
 - Updates to the manual pages.
 
 ### Fixed
@@ -193,7 +193,7 @@ All notable changes to BSDBuild will be documented in this file. This project ad
 - **syslog**: New test for `syslog()` interface.
 - **db**: New test for Berkeley DB.
 - **gettimeofday**: New test for `gettimeofday()` call.
-- Added [FabBSD](https://fabbsd.org/) to target platforms.
+- Added [FabBSD](https://FabBSD.org/) to target platforms.
 
 ## Removed
 

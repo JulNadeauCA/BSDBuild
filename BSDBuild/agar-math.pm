@@ -3,7 +3,8 @@
 
 my $testCode = << 'EOF';
 #include <agar/core.h>
-#include <agar/math.h>
+#include <agar/gui.h>
+#include <agar/math/m.h>
 
 int main(int argc, char *argv[]) {
 	M_Matrix *A = M_New(2,2);

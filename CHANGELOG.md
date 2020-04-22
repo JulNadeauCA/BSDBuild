@@ -33,6 +33,7 @@ All notable changes to BSDBuild will be documented in this file. This project ad
 - **x11**: Honor `--x-includes=*` and `--x-libraries=*` configure arguments. If XKB is not found then fallback to libXf86misc.
 - **pthreads**: Add subtests `HAVE_PTHREAD_{MUTEX,COND,}_T_POINTER` to determine whether `pthread_mutex_t`, `pthread_cond_t` and `pthread_t` are pointer types or not. Needed for `_Pure_Attribute_If_Unthreaded` in agar.
 - Update config.guess to 2015-03-04. Add [FabBSD](https://FabBSD.org).
+- Don't imply "all" in the "install" target.
 - Updates to the manual pages.
 
 ### Fixed

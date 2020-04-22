@@ -377,8 +377,8 @@ lib${LIB}.so: ${SRCS_GENERATED} _lib_objs ${OBJS}
 	    \
 	    case "${HOST}" in \
 	    *-darwin*) \
-	        echo "${CC} -shared -o $$_libout -Wl,-rpath,${PREFIX}/lib ${LDFLAGS} -dynamiclib -install_name lib${LIB}.dylib $$_objs"; \
-	        ${CC} -shared -o $$_libout -Wl,-rpath ${PREFIX}/lib ${LDFLAGS} -dynamiclib -install_name lib${LIB}.dylib $$_objs; \
+	        echo "${CC} -shared -o $$_libout -Wl,-rpath,${PREFIX}/lib ${LDFLAGS} -dynamiclib -install_name lib${LIB}.dylib $$_objs ${LIBS}"; \
+	        ${CC} -shared -o $$_libout -Wl,-rpath ${PREFIX}/lib ${LDFLAGS} -dynamiclib -install_name lib${LIB}.dylib $$_objs ${LIBS}; \
 	        ;; \
 	    *-mingw*) \
 	        echo "${CC} -shared -o $$_libout -Wl,--out-implib,lib${LIB}_dll.lib -Wl,-rpath ${PREFIX}/lib ${LDFLAGS} $$_objs ${LIBS}"; \

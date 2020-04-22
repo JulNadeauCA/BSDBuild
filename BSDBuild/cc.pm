@@ -152,6 +152,22 @@ EOF
 	
 	MkIfTrue('${HAVE_CC}');
 
+		MkPrintSN('cc: checking whether compiler is Clang...');
+		MkCompileC('HAVE_CC_CLANG', '', '', << 'EOF');
+#if !defined(__clang__)
+# error "is not clang"
+#endif
+int main(int argc, char *argv[]) { return (0); }
+EOF
+
+		MkPrintSN('cc: checking whether compiler is GCC...');
+		MkCompileC('HAVE_CC_GCC', '', '', << 'EOF');
+#if !defined(__GNUC__) || defined(__clang__)
+# error "is not gcc"
+#endif
+int main(int argc, char *argv[]) { return (0); }
+EOF
+
 		MkPrintSN('cc: checking for compiler warning options...');
 		MkCompileC('HAVE_CC_WARNINGS', '-Wall', '', << 'EOF');
 int main(int argc, char *argv[]) { return (0); }
@@ -281,7 +297,8 @@ EOF
 			MkSaveUndef('HAVE_CC65');
 		MkEndif;
 
-		MkSaveMK('HAVE_CC', 'HAVE_CC65', 'CC', 'CC_COMPILE', 'CFLAGS',
+		MkSaveMK('HAVE_CC', 'HAVE_CC_CLANG', 'HAVE_CC_GCC', 'HAVE_CC65',
+		         'CC', 'CC_COMPILE', 'CFLAGS',
                  'PROG_GUI_FLAGS', 'PROG_CLI_FLAGS', 'LIBTOOLOPTS_SHARED');
 
 	MkElse;
@@ -299,7 +316,8 @@ sub DISABLE_cc
 	MkDefine('LIBTOOLOPTS_SHARED', '');
 	MkDefine('TEST_CFLAGS', '');
 
-	MkSaveUndef('HAVE_CC', 'HAVE_CC65', 'HAVE_CC_WARNINGS',
+	MkSaveUndef('HAVE_CC', 'HAVE_CC_CLANG', 'HAVE_CC_GCC', 'HAVE_CC65',
+	            'HAVE_CC_WARNINGS',
 	            'HAVE_FLOAT', 'HAVE_LONG_DOUBLE', 'HAVE_LONG_LONG',
 	            'HAVE_CYGWIN', 'HAVE_CC_MWINDOWS', 'HAVE_CC_MCONSOLE',
 	            'HAVE_LD_NO_UNDEFINED', 'HAVE_LD_STATIC_LIBGCC');

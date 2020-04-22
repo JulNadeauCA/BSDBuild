@@ -29,6 +29,7 @@ All notable changes to BSDBuild will be documented in this file. This project ad
 - [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): Make the generated config.log a runnable shell script containing all test code and compilation commands (so individual tests can be reproduced easily by copy/pasting from it). Fix quoting of arguments in config.status.
 - [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): Show influential environment variables in generated "--help" output. Introduce `Register_env_var()` directive. Use `$IFS` instead of sed for path traversals. Add test for `$PATH_SEPARATOR`. Use expr to validate `--with-*` and `--enable-*` arguments. Honor `${EXECSUFFIX}` in `$PATH` searches. Don't invoke config.guess unnecessarily if --build is provided.
 - **mkconcurrent** script: Extract and cache make target fragments directly from an installed build.\*.mk so we no longer need to maintain a copy of them in the script.
+- **cc**: Define `HAVE_CC_GCC` and `HAVE_CC_CLANG`.
 - **x11**: Honor `--x-includes=*` and `--x-libraries=*` configure arguments. If XKB is not found then fallback to libXf86misc.
 - **pthreads**: Add subtests `HAVE_PTHREAD_{MUTEX,COND,}_T_POINTER` to determine whether `pthread_mutex_t`, `pthread_cond_t` and `pthread_t` are pointer types or not. Needed for `_Pure_Attribute_If_Unthreaded` in agar.
 - Update config.guess to 2015-03-04. Add [FabBSD](https://FabBSD.org).

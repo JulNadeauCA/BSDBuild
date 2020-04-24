@@ -47,8 +47,9 @@ sub TEST_shl_load
 sub DISABLE_shl_load
 {
 	MkDefine('HAVE_SHL_LOAD', 'no');
+	MkDefine('HAVE_DL_H', 'no');
 	MkDefine('SHL_LOAD_LIBS', '');
-	MkSaveUndef('HAVE_SHL_LOAD');
+	MkSaveUndef('HAVE_SHL_LOAD', 'HAVE_DL_H');
 }
 
 BEGIN

@@ -25,6 +25,7 @@ sub TEST_csidl
 sub DISABLE_csidl
 {
 	MkDefine('HAVE_CSIDL', 'no');
+	MkSaveUndef('HAVE_CSIDL');
 }
 
 BEGIN

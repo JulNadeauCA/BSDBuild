@@ -1,6 +1,6 @@
 #!%PERL%
 #
-# Copyright (c) 2008 Hypertriton, Inc. <http://hypertriton.com>
+# Copyright (c) 2008-2020 Julien Nadeau Carriere <vedge@hypertriton.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without

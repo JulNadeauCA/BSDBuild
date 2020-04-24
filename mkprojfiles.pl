@@ -1,6 +1,6 @@
 #!%PERL% -I%PREFIX%/share/bsdbuild
 #
-# Copyright (c) 2008-2009 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2008-2020 Julien Nadeau Carriere <vedge@csoft.net>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -244,7 +244,7 @@ print << 'EOF';
 -- This file was generated from Makefile by BSDbuild %VERSION%.
 --
 -- To regenerate this file, get the latest BSDbuild release from
--- http://hypertriton.com/bsdbuild/, the latest Premake release
+-- https://bsdbuild.hypertriton.com/, the latest Premake release
 -- (v3 series) from http://premake.sourceforge.net/, and execute:
 --
 --     $ make proj

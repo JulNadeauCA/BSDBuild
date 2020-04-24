@@ -1,6 +1,6 @@
 #!%PERL%
 #
-# Copyright (c) 2001-2019 Julien Nadeau Carriere <vedge@csoft.net>
+# Copyright (c) 2001-2020 Julien Nadeau Carriere <vedge@csoft.net>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without

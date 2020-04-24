@@ -1,6 +1,6 @@
 # vim:ts=4
 #
-# Copyright (c) 2010-2016 Hypertriton, Inc. <http://hypertriton.com/>
+# Copyright (c) 2010-2020 Julien Nadeau Carriere <vedge@hypertriton.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without

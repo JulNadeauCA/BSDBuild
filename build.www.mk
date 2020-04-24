@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2001-2016 Julien Nadeau <vedge@hypertriton.com>
+# Copyright (c) 2001-2020 Julien Nadeau Carriere <vedge@csoft.net>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions

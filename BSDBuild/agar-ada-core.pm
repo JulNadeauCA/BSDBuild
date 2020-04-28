@@ -11,7 +11,8 @@ sub TEST_agar_ada_core
 		MkExecOutputPfx($pfx, 'agar-ada-core-config', '--cflags', 'AGAR_ADA_CORE_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-ada-core-config', '--libs', 'AGAR_ADA_CORE_LIBS');
 		MkCompileAda('HAVE_AGAR_ADA_CORE',
-		             '${AGAR_ADA_CORE_CFLAGS}', '${AGAR_ADA_CORE_LIBS}', << "EOF");
+		             '${AGAR_ADA_CORE_CFLAGS} ${AGAR_CORE_CFLAGS}',
+					 '${AGAR_ADA_CORE_LIBS} ${AGAR_CORE_LIBS}', << "EOF");
 with Agar;
 with Agar.Init;
 with Agar.Error;

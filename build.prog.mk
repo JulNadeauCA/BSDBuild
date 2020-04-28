@@ -272,7 +272,7 @@ _prog_objs:
 
 # Compile and link the program
 ${PROG}: ${SRCS_GENERATED} _prog_objs ${OBJS}
-	@if [ "${PROG}" != "" -a "${SRCS}" != "" ]; then \
+	@if [ "${PROG}" != "" -a "${SRCS}" != "" -a "${.TARGETS}" != "install" ]; then \
 	    if [ "${PROG_TYPE}" = "GUI" ]; then \
 	    	_prog_ldflags="${PROG_GUI_FLAGS}"; \
 	    else \

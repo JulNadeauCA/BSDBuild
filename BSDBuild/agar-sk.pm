@@ -26,8 +26,8 @@ sub TEST_agar_sk
 		MkExecOutputPfx($pfx, 'agar-sk-config', '--cflags', 'AGAR_SK_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-sk-config', '--libs', 'AGAR_SK_LIBS');
 		MkCompileC('HAVE_AGAR_SK',
-		           '${AGAR_SK_CFLAGS} ${AGAR_CFLAGS}',
-		           '${AGAR_SK_LIBS} ${AGAR_LIBS}',
+		           '${AGAR_SK_CFLAGS} ${AGAR_MATH_CFLAGS} ${AGAR_CFLAGS}',
+		           '${AGAR_SK_LIBS} ${AGAR_MATH_LIBS} ${AGAR_LIBS}',
 		           $testCode);
 		MkSaveIfTrue('${HAVE_AGAR_SK}', 'AGAR_SK_CFLAGS', 'AGAR_SK_LIBS');
 	MkElse;

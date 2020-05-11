@@ -1847,12 +1847,31 @@ if [ "\${$path}" != '' ]; then
 	$ucPath="\${$path}"
 	${ucPath}_SPECIFIED='yes'
 else
+EOF
+	if ($path eq 'mandir') {
+		print << "EOF";
+	case "\${host}" in
+	*-*-darwin*)
+		$ucPath="\${PREFIX}/share/man"
+		;;
+	*)
+		$ucPath="\${PREFIX}/man"
+		;;
+	esac
+EOF
+	} else {
+		print << "EOF";
 	$ucPath="$defPath"
+EOF
+	}
+	print << 'EOF';
 fi
 EOF
 	MkSaveDefine($ucPath);
 	MkSaveMK($ucPath);
 }
+
+
 
 #
 # Second pass: actually process the script.

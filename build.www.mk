@@ -199,6 +199,13 @@ install-www:
 	@if [ "${HTMLDIR}" = "none" ]; then \
 		exit 0; \
 	fi
+	@if [ "${DESTDIR}" != "" ]; then \
+		echo "# Installing under DESTDIR=${DESTDIR}:"; \
+		if [ ! -e "${DESTDIR}" ]; then \
+			echo "${INSTALL_DESTDIR} ${DESTDIR}"; \
+			${SUDO} ${INSTALL_DESTDIR} ${DESTDIR}; \
+		fi; \
+	fi
 	@if [ ! -d "${DESTDIR}${HTMLDIR}" ]; then \
 		echo "${INSTALL_DATA_DIR} ${HTMLDIR}"; \
 		${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${HTMLDIR}; \

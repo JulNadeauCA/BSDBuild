@@ -140,36 +140,36 @@ DATAFILES=Core.pm \
 all:
 
 install:
-	@if [ ! -d "${DESTDIR}${DATADIR}/BSDBuild" ]; then \
-	    echo "${INSTALL_DATA_DIR} ${DATADIR}/BSDBuild"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${DATADIR}/BSDBuild; \
+	@if [ "${DESTDIR}" != "" ]; then \
+		if [ ! -e "${DESTDIR}" ]; then \
+			echo "${INSTALL_DESTDIR} ${DESTDIR}"; \
+			${INSTALL_DESTDIR} ${DESTDIR}; \
+		fi; \
+	fi; \
+	if [ ! -e "${DESTDIR}${DATADIR}" ]; then \
+		echo "${INSTALL_DATA_DIR} ${DATADIR}"; \
+		${INSTALL_DATA_DIR} ${DESTDIR}${DATADIR}; \
+	fi; \
+	if [ ! -d "${DESTDIR}${DATADIR}/BSDBuild" ]; then \
+		echo "${INSTALL_DATA_DIR} ${DATADIR}/BSDBuild"; \
+		${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${DATADIR}/BSDBuild; \
 	fi; \
 	for F in ${DATAFILES}; do \
-	    echo "${INSTALL_DATA} $$F ${DATADIR}/BSDBuild"; \
-	    ${SUDO} ${INSTALL_DATA} $$F ${DESTDIR}${DATADIR}/BSDBuild; \
+		echo "${INSTALL_DATA} $$F ${DATADIR}/BSDBuild"; \
+		${SUDO} ${INSTALL_DATA} $$F ${DESTDIR}${DATADIR}/BSDBuild; \
 	done
 
 deinstall:
 	@for F in ${DATAFILES}; do \
-	    echo "${DEINSTALL_DATA} ${DATADIR}/BSDBuild/$$F"; \
-	    ${SUDO} ${DEINSTALL_DATA} ${DESTDIR}${DATADIR}/BSDBuild/$$F; \
-	done
-
-install-links:
-	@if [ ! -d "${DESTDIR}${DATADIR}/BSDBuild" ]; then \
-	    echo "${INSTALL_DATA_DIR} ${DATADIR}/BSDBuild"; \
-	    ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${DATADIR}/BSDBuild; \
-	fi; \
-	for F in ${DATAFILES}; do \
-	    echo "ln -sf `pwd`/$$F ${DATADIR}/BSDBuild/$$F"; \
-	    ${SUDO} ln -sf `pwd`/$$F ${DESTDIR}${DATADIR}/BSDBuild/$$F; \
+		echo "${DEINSTALL_DATA} ${DATADIR}/BSDBuild/$$F"; \
+		${SUDO} ${DEINSTALL_DATA} ${DESTDIR}${DATADIR}/BSDBuild/$$F; \
 	done
 
 clean:
 
 cleandir:
 
-.PHONY: install install-links
+.PHONY: install
 
 include ${TOP}/build.common.mk
 include ${TOP}/build.subdir.mk

@@ -8,24 +8,41 @@ SUBDIR=	BSDBuild \
 	man \
 	mlproc
 
-SCRIPTS=mkconfigure \
-	mkprojfiles \
-	mkify \
-	h2mandoc \
-	man2wiki \
-	uman
+SCRIPTS=	mkconfigure \
+		mkprojfiles \
+		mkify \
+		h2mandoc \
+		uman
 
-DATAFILES=mkdep mkconcurrent.pl manlinks.pl cmpfiles.pl cleanfiles.pl \
-	gen-includes.pl gen-declspecs.pl get-version.pl get-release.pl \
-	gen-revision.sh \
-	gen-dotdepend.pl gen-wwwdepend.pl gen-includelinks.pl gen-bundle.pl \
-	config.guess install-manpages.sh \
-	build.common.mk build.lib.mk build.man.mk build.perl.mk build.prog.mk \
-	build.subdir.mk build.www.mk build.po.mk build.doc.mk build.proj.mk
+DATAFILES=	build.common.mk \
+		build.doc.mk \
+		build.lib.mk \
+		build.man.mk \
+		build.perl.mk \
+		build.po.mk \
+		build.proj.mk \
+		build.prog.mk \
+		build.subdir.mk \
+		build.www.mk \
+		config.guess \
+		cleanfiles.pl \
+		cmpfiles.pl \
+		mkdep \
+		mkconcurrent.pl \
+		manlinks.pl \
+		gen-bundle.pl \
+		gen-declspecs.pl \
+		gen-dotdepend.pl \
+		gen-includelinks.pl \
+		gen-includes.pl \
+		get-release.pl \
+		gen-revision.sh \
+		gen-wwwdepend.pl \
+		get-version.pl
 
-LTFILES=Makefile Makefile.in aclocal.m4 config.guess config.sub configure \
-	configure.in install-sh ltmain.sh README
-LTFILES_M4=libtool.m4 ltoptions.m4 ltsugar.m4 ltversion.m4 lt~obsolete.m4
+LTFILES=	Makefile Makefile.in aclocal.m4 config.guess config.sub \
+		configure configure.in install-sh ltmain.sh README
+LTFILES_M4=	libtool.m4 ltoptions.m4 ltsugar.m4 ltversion.m4 lt~obsolete.m4
 
 PERL?=/usr/bin/perl
 
@@ -49,15 +66,21 @@ all-scripts: config-ok
 	done
 
 install: all install-subdir
-	@if [ ! -d "${DESTDIR}${DATADIR}" ]; then \
+	@if [ "${DESTDIR}" != "" ]; then \
+		if [ ! -e "${DESTDIR}" ]; then \
+			echo "${INSTALL_DESTDIR} ${DESTDIR}"; \
+			${INSTALL_DESTDIR} ${DESTDIR}; \
+		fi; \
+	fi; \
+	if [ ! -d "${DESTDIR}${DATADIR}" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${DATADIR}"; \
 	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${DATADIR}"; \
-	fi
-	@if [ ! -d "${DESTDIR}${DATADIR}/libtool" ]; then \
+	fi; \
+	if [ ! -d "${DESTDIR}${DATADIR}/libtool" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${DATADIR}/libtool"; \
 	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${DATADIR}/libtool"; \
-	fi
-	@if [ ! -d "${DESTDIR}${DATADIR}/libtool/m4" ]; then \
+	fi; \
+	if [ ! -d "${DESTDIR}${DATADIR}/libtool/m4" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${DATADIR}/libtool/m4"; \
 	    ${SUDO} ${INSTALL_DATA_DIR} "${DESTDIR}${DATADIR}/libtool/m4"; \
 	fi

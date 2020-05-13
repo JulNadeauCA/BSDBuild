@@ -44,82 +44,89 @@ regress: regress-subdir
 depend: depend-subdir
 
 install-perl:
-	if [ "${SCRIPTS}" != "" ]; then \
-	    if [ ! -d "${BINDIR}" ]; then \
-	        echo "${INSTALL_PROG_DIR} ${BINDIR}"; \
-	        ${SUDO} ${INSTALL_PROG_DIR} ${DESTDIR}${BINDIR}; \
-	    fi; \
-	    if [ "${SCRIPTS_SUBST}" != "" ]; then \
-		    for F in ${SCRIPTS}; do \
-		        echo "sed -e '${SCRIPTS_SUBST}' $$F > $$F.prep"; \
-		        sed -e '${SCRIPTS_SUBST}' $$F > $$F.prep; \
-			echo "${INSTALL_PROG} $$F.prep ${BINDIR}/$$F"; \
-			${SUDO} ${INSTALL_PROG} $$F.prep ${DESTDIR}${BINDIR}/$$F; \
-			rm -f $$F.prep; \
-		    done; \
-	    else \
-		for F in ${SCRIPTS}; do \
-		    echo "${INSTALL_PROG} $$F ${BINDIR}"; \
-		    ${SUDO} ${INSTALL_PROG} $$F ${DESTDIR}${BINDIR}; \
-		done; \
-	    fi; \
+	@if [ "${DESTDIR}" != "" ]; then \
+		echo "# Installing under DESTDIR=${DESTDIR}:"; \
+		if [ ! -e "${DESTDIR}" ]; then \
+			echo "${INSTALL_DESTDIR} ${DESTDIR}"; \
+			${SUDO} ${INSTALL_DESTDIR} ${DESTDIR}; \
+		fi; \
+	fi
+	@if [ "${SCRIPTS}" != "" ]; then \
+		if [ ! -d "${DESTDIR}${BINDIR}" ]; then \
+			echo "${INSTALL_PROG_DIR} ${BINDIR}"; \
+			${SUDO} ${INSTALL_PROG_DIR} ${DESTDIR}${BINDIR}; \
+		fi; \
+		if [ "${SCRIPTS_SUBST}" != "" ]; then \
+			for F in ${SCRIPTS}; do \
+				echo "sed -e '${SCRIPTS_SUBST}' $$F > $$F.prep"; \
+				sed -e '${SCRIPTS_SUBST}' $$F > $$F.prep; \
+				echo "${INSTALL_PROG} $$F.prep ${BINDIR}/$$F"; \
+				${SUDO} ${INSTALL_PROG} $$F.prep ${DESTDIR}${BINDIR}/$$F; \
+				rm -f $$F.prep; \
+			done; \
+		else \
+			for F in ${SCRIPTS}; do \
+				echo "${INSTALL_PROG} $$F ${BINDIR}"; \
+				${SUDO} ${INSTALL_PROG} $$F ${DESTDIR}${BINDIR}; \
+			done; \
+		fi; \
 	fi
 	@if [ "${MODULES}" != "" ]; then \
-	    if [ ! -d "${MODULES_DIR}" ]; then \
-	        echo "${INSTALL_DATA_DIR} ${MODULES_DIR}"; \
-	        ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${MODULES_DIR}; \
-	    fi; \
-	    if [ "${MODULES_SUBST}" != "" ]; then \
-		    for F in ${MODULES}; do \
-		        echo "sed -e '${MODULES_SUBST}' $$F > $$F.prep"; \
-		        sed -e '${MODULES_SUBST}' $$F > $$F.prep; \
-			echo "${INSTALL_DATA} $$F.prep ${MODULES_DIR}/$$F"; \
-			${SUDO} ${INSTALL_DATA} $$F.prep ${DESTDIR}${MODULES_DIR}/$$F; \
-			rm -f $$F.prep; \
-		    done; \
-	    else \
-	        for F in ${MODULES}; do \
-	            echo "${INSTALL_DATA} $$F ${MODULES_DIR}"; \
-	            ${SUDO} ${INSTALL_DATA} $$F ${DESTDIR}${MODULES_DIR}; \
-	        done; \
-	    fi; \
+		if [ ! -d "${DESTDIR}${MODULES_DIR}" ]; then \
+			echo "${INSTALL_DATA_DIR} ${MODULES_DIR}"; \
+			${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${MODULES_DIR}; \
+		fi; \
+		if [ "${MODULES_SUBST}" != "" ]; then \
+			for F in ${MODULES}; do \
+				echo "sed -e '${MODULES_SUBST}' $$F > $$F.prep"; \
+				sed -e '${MODULES_SUBST}' $$F > $$F.prep; \
+				echo "${INSTALL_DATA} $$F.prep ${MODULES_DIR}/$$F"; \
+				${SUDO} ${INSTALL_DATA} $$F.prep ${DESTDIR}${MODULES_DIR}/$$F; \
+				rm -f $$F.prep; \
+			done; \
+		else \
+			for F in ${MODULES}; do \
+				echo "${INSTALL_DATA} $$F ${MODULES_DIR}"; \
+				${SUDO} ${INSTALL_DATA} $$F ${DESTDIR}${MODULES_DIR}; \
+			done; \
+		fi; \
 	fi
 	@export _datafiles="${DATAFILES}"; \
         if [ "$$_datafiles" != "" ]; then \
-            if [ ! -d "${DATADIR}" ]; then \
-                echo "${INSTALL_DATA_DIR} ${DATADIR}"; \
-                ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${DATADIR}; \
-            fi; \
-            for F in $$_datafiles; do \
-                echo "${INSTALL_DATA} $$F ${DATADIR}"; \
-                ${SUDO} ${INSTALL_DATA} $$F ${DESTDIR}${DATADIR}; \
-            done; \
+ 		if [ ! -d "${DATADIR}" ]; then \
+			echo "${INSTALL_DATA_DIR} ${DATADIR}"; \
+			${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${DATADIR}; \
+ 		fi; \
+		for F in $$_datafiles; do \
+			echo "${INSTALL_DATA} $$F ${DATADIR}"; \
+			${SUDO} ${INSTALL_DATA} $$F ${DESTDIR}${DATADIR}; \
+ 		done; \
 	fi
 
 deinstall-perl:
 	@if [ "${SCRIPTS}" != "" ]; then \
-	    for F in ${SCRIPTS}; do \
-	        echo "${DEINSTALL_PROG} ${BINDIR}/$$F"; \
-	        ${SUDO} ${DEINSTALL_PROG} ${DESTDIR}${BINDIR}/$$F; \
-	    done; \
+		for F in ${SCRIPTS}; do \
+			echo "${DEINSTALL_PROG} ${BINDIR}/$$F"; \
+			${SUDO} ${DEINSTALL_PROG} ${DESTDIR}${BINDIR}/$$F; \
+		done; \
 	fi
 	@if [ "${MODULES}" != "" ]; then \
-	    for F in ${MODULES}; do \
-	        echo "${DEINSTALL_DATA} ${MODULES_DIR}/$$F"; \
-	        ${SUDO} ${DEINSTALL_DATA} ${DESTDIR}${MODULES_DIR}/$$F; \
-	    done; \
+		for F in ${MODULES}; do \
+			echo "${DEINSTALL_DATA} ${MODULES_DIR}/$$F"; \
+			${SUDO} ${DEINSTALL_DATA} ${DESTDIR}${MODULES_DIR}/$$F; \
+		done; \
 	fi
 	@if [ "${DATAFILES}" != "" ]; then \
-	    for F in ${DATAFILES}; do \
-	        echo "${DEINSTALL_DATA} ${DATADIR}/$$F"; \
-	        ${SUDO} ${DEINSTALL_DATA} ${DESTDIR}${DATADIR}/$$F; \
-	    done; \
+		for F in ${DATAFILES}; do \
+			echo "${DEINSTALL_DATA} ${DATADIR}/$$F"; \
+			${SUDO} ${DEINSTALL_DATA} ${DESTDIR}${DATADIR}/$$F; \
+		done; \
 	fi
 
 clean-perl:
 	@if [ "${CLEANFILES}" != "" ]; then \
-	    echo "rm -f ${CLEANFILES}"; \
-	    rm -f ${CLEANFILES}; \
+		echo "rm -f ${CLEANFILES}"; \
+		rm -f ${CLEANFILES}; \
 	fi
 
 .PHONY: install deinstall clean cleandir regress depend

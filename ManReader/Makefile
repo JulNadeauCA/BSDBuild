@@ -5,11 +5,17 @@ DATAFILES=	Mdoc.pm
 all:
 
 install:
-	@if [ ! -d "${DESTDIR}${DATADIR}/ManReader" ]; then \
+	@if [ "${DESTDIR}" != "" ]; then \
+		if [ ! -e "${DESTDIR}" ]; then \
+			echo "${INSTALL_DESTDIR} ${DESTDIR}"; \
+			${INSTALL_DESTDIR} ${DESTDIR}; \
+		fi; \
+	fi; \
+	if [ ! -d "${DESTDIR}${DATADIR}/ManReader" ]; then \
 	    echo "${INSTALL_DATA_DIR} ${DESTDIR}${DATADIR}/ManReader"; \
 	    ${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${DATADIR}/ManReader; \
-	fi; \
-	for F in ${DATAFILES}; do \
+	fi
+	@for F in ${DATAFILES}; do \
 	    echo "${INSTALL_DATA} $$F ${DESTDIR}${DATADIR}/ManReader"; \
 	    ${SUDO} ${INSTALL_DATA} $$F ${DESTDIR}${DATADIR}/ManReader; \
 	done

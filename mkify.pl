@@ -37,8 +37,7 @@
 	gen-includes.pl
 	gen-includelinks.pl
 	gen-revision.sh
-	gen-wwwdepend.pl
-	install-manpages.sh);
+	gen-wwwdepend.pl);
 
 @LibtoolFiles = qw(
 	Makefile

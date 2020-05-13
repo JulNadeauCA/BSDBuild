@@ -97,22 +97,6 @@ if [ "${HAVE_MANDOC}" = 'no' ]; then
 else
 	echo 'HAVE_MANDOC=yes' >> Makefile.config
 	echo "MANDOC=${MANDOC}" >> Makefile.config
-	if [ "${with_catman}" = "no" ]; then
-		echo 'NOCATMAN=yes' >> Makefile.config
-	else
-		if [ "${with_catman}" = "yes" ]; then
-			echo 'NOCATMAN=no' >> Makefile.config
-		else
-			case "${host}" in
-			*-*-freebsd*)
-				echo 'NOCATMAN=yes' >> Makefile.config
-				;;
-			*)
-				echo 'NOCATMAN=no' >> Makefile.config
-				;;
-			esac
-		fi
-	fi
 	if [ "${with_manpages}" = 'no' ]; then
 		echo 'NOMAN=yes' >> Makefile.config
 		echo 'NOMANLINKS=yes' >> Makefile.config

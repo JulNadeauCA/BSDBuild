@@ -3,8 +3,6 @@ TOP=..
 MAN1=	mkify.1 \
 	mkconfigure.1 \
 	mlproc.1 \
-	man2wiki.1 \
-	man2mediawiki.1 \
 	uman.1
 
 MAN5=	build.common.mk.5 \

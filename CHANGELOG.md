@@ -20,6 +20,7 @@ All notable changes to BSDBuild will be documented in this file. This project ad
 
 ### Removed
 
+- [**build.man.mk**](https://bsdbuild.hypertriton.com/man5/build.man.mk): Removed support for catman (`.cat*`) file auto-generation.
 - **freesg**: Module replaced by **agar-sg**.
 
 ### Changed
@@ -34,6 +35,7 @@ All notable changes to BSDBuild will be documented in this file. This project ad
 - **pthreads**: Add subtests `HAVE_PTHREAD_{MUTEX,COND,}_T_POINTER` to determine whether `pthread_mutex_t`, `pthread_cond_t` and `pthread_t` are pointer types or not. Needed for `_Pure_Attribute_If_Unthreaded` in agar.
 - Update config.guess to 2015-03-04. Add [FabBSD](https://FabBSD.org).
 - Don't imply "all" in the "install" target.
+- In "install" target, create `${DESTDIR}` if needed.
 - Updates to the manual pages.
 
 ### Fixed

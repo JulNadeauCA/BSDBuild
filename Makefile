@@ -69,7 +69,7 @@ install: all install-subdir
 	@if [ "${DESTDIR}" != "" ]; then \
 		if [ ! -e "${DESTDIR}" ]; then \
 			echo "${INSTALL_DESTDIR} ${DESTDIR}"; \
-			${INSTALL_DESTDIR} ${DESTDIR}; \
+			${SUDO} ${INSTALL_DESTDIR} ${DESTDIR}; \
 		fi; \
 	fi; \
 	if [ ! -d "${DESTDIR}${DATADIR}" ]; then \

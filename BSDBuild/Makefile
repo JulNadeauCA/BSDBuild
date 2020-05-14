@@ -69,6 +69,7 @@ DATAFILES=Core.pm \
 	libidn.pm \
 	getaddrinfo.pm \
 	gethostbyname.pm \
+	gle.pm \
 	glu.pm \
 	ode.pm \
 	sse.pm \

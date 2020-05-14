@@ -143,12 +143,12 @@ install:
 	@if [ "${DESTDIR}" != "" ]; then \
 		if [ ! -e "${DESTDIR}" ]; then \
 			echo "${INSTALL_DESTDIR} ${DESTDIR}"; \
-			${INSTALL_DESTDIR} ${DESTDIR}; \
+			${SUDO} ${INSTALL_DESTDIR} ${DESTDIR}; \
 		fi; \
 	fi; \
 	if [ ! -e "${DESTDIR}${DATADIR}" ]; then \
 		echo "${INSTALL_DATA_DIR} ${DATADIR}"; \
-		${INSTALL_DATA_DIR} ${DESTDIR}${DATADIR}; \
+		${SUDO} ${INSTALL_DATA_DIR} ${DESTDIR}${DATADIR}; \
 	fi; \
 	if [ ! -d "${DESTDIR}${DATADIR}/BSDBuild" ]; then \
 		echo "${INSTALL_DATA_DIR} ${DATADIR}/BSDBuild"; \

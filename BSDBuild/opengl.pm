@@ -40,6 +40,29 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
+my $testCodeGLEXT = << 'EOF';
+#define GL_GLEXT_PROTOTYPES
+#ifdef _USE_OPENGL_FRAMEWORK
+# include <OpenGL/gl.h>
+# include <OpenGL/glext.h>
+#else
+# include <GL/gl.h>
+# include <GL/glext.h>
+#endif
+
+static void
+DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
+    GLsizei length, const GLchar *message, const void *userParam)
+{
+}
+
+int main(int argc, char *argv[]) {
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(DebugMessageCallback, 0);
+	return (0);
+}
+EOF
+
 sub TEST_opengl
 {
 	my ($ver, $pfx) = @_;
@@ -110,6 +133,9 @@ sub TEST_opengl
 			MkCompileC('HAVE_OPENGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', $testCode);
 			MkSaveIfTrue('${HAVE_OPENGL}', 'OPENGL_CFLAGS', 'OPENGL_LIBS');
 		MkEndif;
+
+		MkPrintSN('checking whether OpenGL has glext...');
+		MkCompileC('HAVE_GLEXT', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', $testCodeGLEXT);
 	MkElse;
 		MkPrintS('no');
 	MkEndif;
@@ -124,10 +150,11 @@ sub TEST_opengl
 sub DISABLE_opengl
 {
 	MkDefine('HAVE_OPENGL', 'no');
+	MkDefine('HAVE_GLEXT', 'no');
 	MkDefine('OPENGL_CFLAGS', '');
 	MkDefine('OPENGL_LIBS', '');
 	MkDefine('OPENGL_PC', '');
-	MkSaveUndef('HAVE_OPENGL', 'OPENGL_CFLAGS', 'OPENGL_LIBS');
+	MkSaveUndef('HAVE_OPENGL', 'HAVE_GLEXT', 'OPENGL_CFLAGS', 'OPENGL_LIBS');
 }
 
 sub EMUL_opengl

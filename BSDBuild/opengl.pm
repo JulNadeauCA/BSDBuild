@@ -53,8 +53,7 @@ my $testCodeGLEXT = << 'EOF';
 static void
 DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
     GLsizei length, const GLchar *message, const void *userParam)
-{
-}
+{ }
 
 int main(int argc, char *argv[]) {
 	glEnable(GL_DEBUG_OUTPUT);
@@ -110,7 +109,9 @@ sub TEST_opengl
 			MkCaseEnd;
 		MkCaseBegin('*-*-cygwin* | *-*-mingw32*');
 			MkPrintSN('checking whether -lopengl32 works...');
-			MkCompileC('HAVE_LIBOPENGL32', '${OPENGL_CFLAGS}', '-lopengl32', $testCode);
+			MkCompileC('HAVE_LIBOPENGL32',
+			           '${OPENGL_CFLAGS}', '-lopengl32',
+					   $testCode);
 			MkIfTrue('${HAVE_LIBOPENGL32}');
 				MkDefine('OPENGL_LIBS', '${GL_LIBS} -lopengl32');
 			MkElse;
@@ -124,20 +125,28 @@ sub TEST_opengl
 		MkEsac;
 
 		MkPrintSN('checking whether OpenGL works...');
-		MkCompileC('HAVE_OPENGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', $testCode);
+		MkCompileC('HAVE_OPENGL',
+		           '${OPENGL_CFLAGS}', '${OPENGL_LIBS}',
+				   $testCode);
 		MkIfTrue('${HAVE_OPENGL}');
 			MkSave('OPENGL_CFLAGS', 'OPENGL_LIBS');
 		MkElse;
 			MkPrintSN('checking whether -lGL requires -lm...');
 			MkDefine('OPENGL_LIBS', '${OPENGL_LIBS} -lm');
-			MkCompileC('HAVE_OPENGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', $testCode);
+			MkCompileC('HAVE_OPENGL',
+			           '${OPENGL_CFLAGS}', '${OPENGL_LIBS}',
+					   $testCode);
 			MkSaveIfTrue('${HAVE_OPENGL}', 'OPENGL_CFLAGS', 'OPENGL_LIBS');
 		MkEndif;
 
 		MkPrintSN('checking whether OpenGL has glext...');
-		MkCompileC('HAVE_GLEXT', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}', $testCodeGLEXT);
+		MkCompileC('HAVE_GLEXT',
+		           '${OPENGL_CFLAGS}', '${OPENGL_LIBS}',
+		           $testCodeGLEXT);
 	MkElse;
 		MkPrintS('no');
+		MkDefine('HAVE_GLEXT', 'no');
+		MkSaveUndef('HAVE_GLEXT');
 	MkEndif;
 	
 	MkIfTrue('${HAVE_OPENGL}');
@@ -151,10 +160,13 @@ sub DISABLE_opengl
 {
 	MkDefine('HAVE_OPENGL', 'no');
 	MkDefine('HAVE_GLEXT', 'no');
+
 	MkDefine('OPENGL_CFLAGS', '');
 	MkDefine('OPENGL_LIBS', '');
 	MkDefine('OPENGL_PC', '');
-	MkSaveUndef('HAVE_OPENGL', 'HAVE_GLEXT', 'OPENGL_CFLAGS', 'OPENGL_LIBS');
+
+	MkSaveUndef('HAVE_OPENGL', 'HAVE_GLEXT',
+	            'OPENGL_CFLAGS', 'OPENGL_LIBS');
 }
 
 sub EMUL_opengl
@@ -163,8 +175,10 @@ sub EMUL_opengl
 	
 	if ($os =~ /^windows/) {
 		MkEmulWindows('OPENGL', 'opengl32');
+		MkDefine('HAVE_GLEXT', 'no');
+		MkSaveUndef('HAVE_GLEXT');
 	} else {
-		MkEmulUnavail('OPENGL');
+		DISABLE_opengl();
 	}
 	return (1);
 }

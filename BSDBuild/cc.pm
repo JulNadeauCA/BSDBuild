@@ -275,6 +275,8 @@ EOF
 			MkCaseEnd;
 
 		MkCaseBegin('*');
+			MkDefine('PICFLAGS', '-fPIC');
+			MkSaveMK('PICFLAGS');
 
 			MkDefine('HAVE_CYGWIN', 'no');
 			MkSaveUndef('HAVE_CYGWIN');

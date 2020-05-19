@@ -9,6 +9,16 @@ sub TEST_cc
 	my $cc65_tgts = 'apple2 | apple2enh | atari | atmos | c16 | '.
                     'c64 | c128 | cbm510 | cbm610 | geos | lunix | '.
                     'lynx | nes | pet | plus4 | supervision | vic20';
+	my $mainTest = << 'EOF';
+int main(int argc, char *argv[]) { return(0); }';
+EOF
+	my $winTest = << 'EOF';
+#include <windows.h>
+int
+main(int argc, char *argv[]) {
+	return GetFileAttributes("foo") ? 0 : 1;
+}
+EOF
 
 	MkIfTrue('$CROSS_COMPILING');
 		MkDefine('CROSSPFX', '${host}-');
@@ -176,7 +186,6 @@ EOF
 			MkDefine('TEST_CFLAGS', '-Wall');
 		MkEndif;
 		
-		# Check for float type.
 		MkPrintSN('cc: checking for float and double...');
 		TryCompile('HAVE_FLOAT', << 'EOF');
 #include <stdio.h>
@@ -190,9 +199,6 @@ main(int argc, char *argv[])
 	return ((double)f + d) > 0.2 ? 1 : 0;
 }
 EOF
-	
-		# Check for long double type.
-		# XXX: should rename to HAVE_CC_LONG_DOUBLE
 		MkPrintSN('cc: checking for long double...');
 		TryCompile('HAVE_LONG_DOUBLE', << 'EOF');
 #include <stdio.h>
@@ -205,9 +211,6 @@ main(int argc, char *argv[])
 	return (ld + 0.1) > 0.2 ? 1 : 0;
 }
 EOF
-	
-		# Check for long long type.
-		# XXX: should rename to HAVE_CC_LONG_LONG
 		MkPrintSN('cc: checking for long long...');
 		TryCompile('HAVE_LONG_LONG', << 'EOF');
 int
@@ -219,71 +222,64 @@ main(int argc, char *argv[])
 	return (ll != -1 || ull != 1);
 }
 EOF
+		
+		MkCaseIn('${host}');
+		MkCaseBegin('*-*-cygwin* | *-*-mingw32*');
+			MkDefine('PICFLAGS', '');
+			MkSaveMK('PICFLAGS');
 
-		# XXX: should rename to HAVE_CC_CYGWIN
-		MkPrintSN('cc: checking for cygwin environment...');
-		TryCompileFlagsC('HAVE_CYGWIN', '-mcygwin', << 'EOF');
+			MkPrintSN('cc: checking for linker -no-undefined option...');
+			TryCompileFlagsC('HAVE_LD_NO_UNDEFINED', '-Wl,--no-undefined', $mainTest);
+			MkIfTrue('${HAVE_LD_NO_UNDEFINED}');
+				MkDefine('LIBTOOLOPTS_SHARED', '${LIBTOOLOPTS_SHARED} ' .
+				                               '-no-undefined ' .
+				                               '-Wl,--no-undefined');
+				MkSaveMK('LIBTOOLOPTS_SHARED');
+			MkEndif;
+
+			MkPrintSN('cc: checking for linker -static-libgcc option...');
+			TryCompileFlagsC('HAVE_LD_STATIC_LIBGCC', '-static-libgcc', $mainTest);
+			MkIfTrue('${HAVE_LD_STATIC_LIBGCC}');
+				MkDefine('LIBTOOLOPTS_SHARED', '${LIBTOOLOPTS_SHARED} -XCClinker ' .
+				                               '-static-libgcc');
+				MkSaveMK('LIBTOOLOPTS_SHARED');
+			MkEndif;
+
+			MkPrintSN('cc: checking for cygwin environment...');
+			TryCompileFlagsC('HAVE_CYGWIN', '-mcygwin', << 'EOF');
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <windows.h>
-
-int
-main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
 	struct stat sb;
 	DWORD rv;
 	rv = GetFileAttributes("foo");
 	stat("foo", &sb);
-	return (0);
+	return(0);
 }
 EOF
-		MkPrintSN('cc: checking for -mwindows option...');
-		TryCompileFlagsC('HAVE_CC_MWINDOWS', '-mwindows', << 'EOF');
-#include <windows.h>
-int
-main(int argc, char *argv[]) {
-	return GetFileAttributes("foo") ? 0 : 1;
-}
-EOF
-		MkIfTrue('${HAVE_CC_MWINDOWS}');
-			MkDefine('PROG_GUI_FLAGS', '-mwindows');
-		MkElse;
+			MkPrintSN('cc: checking for -mwindows option...');
+			TryCompileFlagsC('HAVE_CC_MWINDOWS', '-mwindows', $winTest);
+				MkIfTrue('${HAVE_CC_MWINDOWS}');
+					MkDefine('PROG_GUI_FLAGS', '-mwindows');
+				MkElse;
+					MkDefine('PROG_GUI_FLAGS', '');
+				MkEndif;
+				MkPrintSN('cc: checking for -mconsole option...');
+				TryCompileFlagsC('HAVE_CC_MCONSOLE', '-mconsole', $winTest);
+				MkIfTrue('${HAVE_CC_MCONSOLE}');
+					MkDefine('PROG_CLI_FLAGS', '-mconsole');
+				MkElse;
+					MkDefine('PROG_CLI_FLAGS', '');
+				MkEndif;
+			MkCaseEnd;
+
+		MkCaseBegin('*');
+
+			MkDefine('HAVE_CYGWIN', 'no');
+			MkSaveUndef('HAVE_CYGWIN');
 			MkDefine('PROG_GUI_FLAGS', '');
-		MkEndif;
-		
-		MkPrintSN('cc: checking for -mconsole option...');
-		TryCompileFlagsC('HAVE_CC_MCONSOLE', '-mconsole', << 'EOF');
-#include <windows.h>
-int
-main(int argc, char *argv[]) {
-	return GetFileAttributes("foo") ? 0 : 1;
-}
-EOF
-		MkIfTrue('${HAVE_CC_MCONSOLE}');
-			MkDefine('PROG_CLI_FLAGS', '-mconsole');
-		MkElse;
 			MkDefine('PROG_CLI_FLAGS', '');
-		MkEndif;
-		
-		MkCaseIn('${host}');
-		MkCaseBegin('*-*-cygwin* | *-*-mingw32*');
-			MkPrintSN('cc: checking for linker -no-undefined option...');
-			TryCompileFlagsC('HAVE_LD_NO_UNDEFINED',
-			    '-Wl,--no-undefined', << 'EOF');
-int main(int argc, char *argv[]) { return (0); }
-EOF
-			MkIfTrue('${HAVE_LD_NO_UNDEFINED}');
-				MkDefine('LIBTOOLOPTS_SHARED',
-				    '${LIBTOOLOPTS_SHARED} -no-undefined -Wl,--no-undefined');
-			MkEndif;
-			MkPrintSN('cc: checking for linker -static-libgcc option...');
-			TryCompileFlagsC('HAVE_LD_STATIC_LIBGCC',
-			    '-static-libgcc', << 'EOF');
-int main(int argc, char *argv[]) { return (0); }
-EOF
-			MkIfTrue('${HAVE_LD_STATIC_LIBGCC}');
-				MkDefine('LIBTOOLOPTS_SHARED',
-				    '${LIBTOOLOPTS_SHARED} -XCClinker -static-libgcc');
-			MkEndif;
 			MkCaseEnd;
 		MkEsac;
 		
@@ -299,7 +295,7 @@ EOF
 
 		MkSaveMK('HAVE_CC', 'HAVE_CC_CLANG', 'HAVE_CC_GCC', 'HAVE_CC65',
 		         'CC', 'CC_COMPILE', 'CFLAGS',
-                 'PROG_GUI_FLAGS', 'PROG_CLI_FLAGS', 'LIBTOOLOPTS_SHARED');
+                 'PROG_GUI_FLAGS', 'PROG_CLI_FLAGS');
 
 	MkElse;
 		DISABLE_cc();
@@ -313,7 +309,6 @@ sub DISABLE_cc
 	MkDefine('HAVE_CC_WARNINGS', 'no');
 	MkDefine('PROG_GUI_FLAGS', '');
 	MkDefine('PROG_CLI_FLAGS', '');
-	MkDefine('LIBTOOLOPTS_SHARED', '');
 	MkDefine('TEST_CFLAGS', '');
 
 	MkSaveUndef('HAVE_CC', 'HAVE_CC_CLANG', 'HAVE_CC_GCC', 'HAVE_CC65',
@@ -323,7 +318,7 @@ sub DISABLE_cc
 	            'HAVE_LD_NO_UNDEFINED', 'HAVE_LD_STATIC_LIBGCC');
 
 	MkSaveMK('HAVE_CC', 'HAVE_CC65', 'HAVE_CC_WARNINGS', 'CC', 'CFLAGS',
-             'PROG_GUI_CFLAGS', 'PROG_CLI_CFLAGS', 'LIBTOOLOPTS_SHARED');
+             'PROG_GUI_CFLAGS', 'PROG_CLI_CFLAGS');
 }
 
 sub EMUL_cc
@@ -342,7 +337,6 @@ sub EMUL_cc
 	MkDefine('HAVE_LD_STATIC_LIBGCC', 'no');
 	MkDefine('PROG_GUI_FLAGS', '');
 	MkDefine('PROG_CLI_FLAGS', '');
-	MkDefine('LIBTOOLOPTS_SHARED', '');
 	MkDefine('TEST_CFLAGS', '');
 
 	MkSaveDefine('HAVE_CC', 'HAVE_FLOAT');
@@ -353,7 +347,7 @@ sub EMUL_cc
 				'HAVE_LD_STATIC_LIBGCC');
 
 	MkSaveMK('HAVE_CC', 'HAVE_CC65', 'HAVE_CC_WARNINGS', 'CC', 'CFLAGS',
-             'PROG_GUI_CFLAGS', 'PROG_CLI_CFLAGS', 'LIBTOOLOPTS_SHARED');
+             'PROG_GUI_CFLAGS', 'PROG_CLI_CFLAGS');
 }
 
 BEGIN

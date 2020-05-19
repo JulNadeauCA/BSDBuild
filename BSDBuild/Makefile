@@ -53,7 +53,6 @@ DATAFILES=Core.pm \
 	agar-au.pm \
 	agar-core.pm \
 	agar-core.defs.pm \
-	agar-dev.pm \
 	agar-map.pm \
 	agar-math.pm \
 	agar-micro.pm \

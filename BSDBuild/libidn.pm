@@ -28,7 +28,7 @@ sub TEST_libidn
 		MkCompileC('HAVE_LIBIDN', '${LIBIDN_CFLAGS}', '${LIBIDN_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_LIBIDN}', 'LIBIDN_CFLAGS', 'LIBIDN_LIBS');
 	MkElse;
-		MkSaveUndef('HAVE_LIBIDN', 'LIBIDN_CFLAGS', 'LIBIDN_LIBS');
+		MkSaveUndef('HAVE_LIBIDN');
 	MkEndif;
 }
 
@@ -37,7 +37,7 @@ sub DISABLE_libidn
 	MkDefine('HAVE_LIBIDN', 'no');
 	MkDefine('LIBIDN_CFLAGS', '');
 	MkDefine('LIBIDN_LIBS', '');
-	MkSaveUndef('HAVE_LIBIDN', 'LIBIDN_CFLAGS', 'LIBIDN_LIBS');
+	MkSaveUndef('HAVE_LIBIDN');
 }
 
 BEGIN

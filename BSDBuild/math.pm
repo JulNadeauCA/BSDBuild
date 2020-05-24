@@ -32,7 +32,7 @@ sub DISABLE_math
 	MkDefine('HAVE_MATH', 'no');
 	MkDefine('MATH_CFLAGS', '');
 	MkDefine('MATH_LIBS', '');
-	MkSaveUndef('HAVE_MATH', 'MATH_CFLAGS', 'MATH_LIBS');
+	MkSaveUndef('HAVE_MATH');
 }
 
 sub EMUL_math

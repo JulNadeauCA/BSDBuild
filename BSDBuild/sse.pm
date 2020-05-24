@@ -33,13 +33,7 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	MkIfTrue('${HAVE_SSE}');
-		MkSaveDefine('SSE_CFLAGS');
-	MkElse;
-		MkSaveUndef('SSE_CFLAGS');
-		MkDefine('SSE_CFLAGS', '');
-	MkEndif;
-	MkSaveMK('SSE_CFLAGS');
+	MkSaveIfTrue('${HAVE_SSE}', 'SSE_CFLAGS');
 
 	MkPrintSN('checking for SSE2 extensions...');
 	MkDefine('SSE2_CFLAGS', '-msse2');
@@ -63,13 +57,7 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	MkIfTrue('${HAVE_SSE2}');
-		MkSaveDefine('SSE2_CFLAGS');
-	MkElse;
-		MkSaveUndef('SSE2_CFLAGS');
-		MkDefine('SSE2_CFLAGS', '');
-	MkEndif;
-	MkSaveMK('SSE2_CFLAGS');
+	MkSaveIfTrue('${HAVE_SSE2}', 'SSE2_CFLAGS');
 	
 	MkPrintSN('checking for SSE3 extensions...');
 	MkDefine('SSE3_CFLAGS', '-msse3');
@@ -95,13 +83,7 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	MkIfTrue('${HAVE_SSE3}');
-		MkSaveDefine('SSE3_CFLAGS');
-	MkElse;
-		MkSaveUndef('SSE3_CFLAGS');
-		MkDefine('SSE3_CFLAGS', '');
-	MkEndif;
-	MkSaveMK('SSE3_CFLAGS');
+	MkSaveIfTrue('${HAVE_SSE3}', 'SSE3_CFLAGS');
 }
 
 sub DISABLE_sse
@@ -113,8 +95,7 @@ sub DISABLE_sse
 	MkDefine('SSE_CFLAGS', '');
 	MkDefine('SSE2_CFLAGS', '');
 	MkDefine('SSE3_CFLAGS', '');
-	MkSaveUndef('HAVE_SSE', 'HAVE_SSE2', 'HAVE_SSE3', 'INLINE_SSE',
-                'SSE_CFLAGS', 'SSE2_CFLAGS', 'SSE3_CFLAGS');
+	MkSaveUndef('HAVE_SSE', 'HAVE_SSE2', 'HAVE_SSE3', 'INLINE_SSE');
 }
 
 BEGIN

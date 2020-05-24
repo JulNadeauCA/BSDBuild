@@ -156,7 +156,7 @@ sub DISABLE_x11
 	MkDefine('X11_CFLAGS', '');
 	MkDefine('X11_LIBS', '');
 	MkDefine('X11_PC', '');
-	MkSaveUndef('HAVE_X11', 'HAVE_XKB', 'HAVE_XF86MISC', 'X11_CFLAGS', 'X11_LIBS');
+	MkSaveUndef('HAVE_X11', 'HAVE_XKB', 'HAVE_XF86MISC');
 }
 
 BEGIN

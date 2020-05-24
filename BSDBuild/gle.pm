@@ -57,7 +57,7 @@ sub DISABLE_gle
 	MkDefine('HAVE_GLE', 'no');
 	MkDefine('GLE_CFLAGS', '');
 	MkDefine('GLE_LIBS', '');
-	MkSaveUndef('HAVE_GLE', 'GLE_CFLAGS', 'GLE_LIBS');
+	MkSaveUndef('HAVE_GLE');
 }
 
 sub EMUL_gle

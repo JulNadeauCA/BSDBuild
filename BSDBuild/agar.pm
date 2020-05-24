@@ -41,7 +41,7 @@ sub DISABLE_agar
 	MkDefine('HAVE_AGAR', 'no');
 	MkDefine('AGAR_CFLAGS', '');
 	MkDefine('AGAR_LIBS', '');
-	MkSaveUndef('HAVE_AGAR', 'AGAR_CFLAGS', 'AGAR_LIBS');
+	MkSaveUndef('HAVE_AGAR');
 }
 
 sub EMUL_agar

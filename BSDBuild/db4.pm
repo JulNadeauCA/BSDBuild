@@ -63,7 +63,7 @@ sub DISABLE_db4
 	MkSetS('HAVE_DB4', 'no');
 	MkSetS('DB4_CFLAGS', '');
 	MkSetS('DB4_LIBS', '');
-	MkSaveUndef('HAVE_DB4', 'DB4_CFLAGS', 'DB4_LIBS');
+	MkSaveUndef('HAVE_DB4');
 }
 
 BEGIN

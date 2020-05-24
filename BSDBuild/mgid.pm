@@ -33,7 +33,7 @@ sub DISABLE_mgid
 	MkDefine('HAVE_MGID', 'no');
 	MkDefine('MGID_CFLAGS', '');
 	MkDefine('MGID_LIBS', '');
-	MkSaveUndef('HAVE_MGID', 'MGID_CFLAGS', 'MGID_LIBS');
+	MkSaveUndef('HAVE_MGID');
 }
 
 BEGIN

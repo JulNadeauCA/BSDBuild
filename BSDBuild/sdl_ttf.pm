@@ -38,7 +38,7 @@ sub DISABLE_sdl_ttf
 	MkDefine('HAVE_SDL_TTF', 'no');
 	MkDefine('SDL_TTF_CFLAGS', '');
 	MkDefine('SDL_TTF_LIBS', '');
-	MkSaveUndef('HAVE_SDL_TTF', 'SDL_TTF_CFLAGS', 'SDL_TTF_LIBS');
+	MkSaveUndef('HAVE_SDL_TTF');
 }
 
 BEGIN

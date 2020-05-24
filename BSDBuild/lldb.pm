@@ -158,7 +158,7 @@ sub TEST_lldb
 					 $testCode);
 		MkIfTrue('${HAVE_LLDB}');
 			MkDefine('LLDB_LIBS', '${LLDB_LDFLAGS} ${LLDB_LIBS}');
-			MkSave('LLDB_CFLAGS', 'LLDB_LIBS');
+			MkSaveMK('LLDB_CFLAGS', 'LLDB_LIBS');
 
 			MkPrintSN('checking for LLDB Utility library...');
 			MkCaseIn('${host}');
@@ -175,16 +175,13 @@ sub TEST_lldb
 				             '${LLDB_CFLAGS} ${LLDB_UTILITY_CFLAGS}',
 		                     '${LLDB_LDFLAGS} ${LLDB_LIBS} ${LLDB_UTILITY_LIBS}',
 							 $testCodeUtility);
-				MkIfTrue('${HAVE_LLDB_UTILITY}');
-					MkSave('LLDB_UTILITY_CFLAGS', 'LLDB_UTILITY_LIBS');
-				MkElse;
-					MkSaveUndef('LLDB_UTILITY_CFLAGS', 'LLDB_UTILITY_LIBS');
+				MkSaveIfTrue('${HAVE_LLDB_UTILITY}',
+				             'LLDB_UTILITY_CFLAGS', 'LLDB_UTILITY_LIBS');
 				MkEndif;
 				MkCaseEnd;
 			MkEsac;
 		MkElse;
 			MkDefine('HAVE_LLDB_UTILITY', 'no');
-			MkSaveUndef('LLDB_UTILITY_CFLAGS', 'LLDB_UTILITY_LIBS');
 		MkEndif;
 	MkElse;
 		DISABLE_lldb();
@@ -200,9 +197,7 @@ sub DISABLE_lldb
 	MkDefine('LLDB_UTILITY_CFLAGS', '');
 	MkDefine('LLDB_UTILITY_LIBS', '');
 
-	MkSaveUndef('HAVE_LLDB', 'HAVE_LLDB_UTILITY',
-				'LLDB_CFLAGS', 'LLDB_LIBS',
-				'LLDB_UTILITY_CFLAGS', 'LLDB_UTILITY_LIBS');
+	MkSaveUndef('HAVE_LLDB', 'HAVE_LLDB_UTILITY');
 }
 
 BEGIN

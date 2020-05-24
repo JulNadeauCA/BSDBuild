@@ -28,7 +28,7 @@ sub TEST_wgl
 	MkCompileC('HAVE_WGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS} -lgdi32', $testCode);
 	MkIfTrue('${HAVE_WGL}');
 		MkDefine('OPENGL_LIBS', '${OPENGL_LIBS} -lgdi32');
-		MkSave('OPENGL_LIBS');
+		MkSaveMK('OPENGL_CFLAGS', 'OPENGL_LIBS');
 	MkEndif;
 }
 

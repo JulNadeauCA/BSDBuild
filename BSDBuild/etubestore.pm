@@ -38,7 +38,7 @@ sub DISABLE_etubestore
 	MkDefine('HAVE_ETUBESTORE', 'no');
 	MkDefine('ETUBESTORE_CFLAGS', '');
 	MkDefine('ETUBESTORE_LIBS', '');
-	MkSaveUndef('HAVE_ETUBESTORE', 'ETUBESTORE_CFLAGS', 'ETUBESTORE_LIBS');
+	MkSaveUndef('HAVE_ETUBESTORE');
 }
 
 BEGIN

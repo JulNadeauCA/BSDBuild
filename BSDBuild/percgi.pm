@@ -33,7 +33,7 @@ sub DISABLE_percgi
 	MkDefine('HAVE_PERCGI', 'no');
 	MkDefine('PERCGI_CFLAGS', '');
 	MkDefine('PERCGI_LIBS', '');
-	MkSaveUndef('HAVE_PERCGI', 'PERCGI_CFLAGS', 'PERCGI_LIBS');
+	MkSaveUndef('HAVE_PERCGI');
 }
 
 BEGIN

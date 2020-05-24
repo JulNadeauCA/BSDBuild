@@ -57,7 +57,7 @@ sub DISABLE_db5
 	MkSetS('HAVE_DB5', 'no');
 	MkSetS('DB5_CFLAGS', '');
 	MkSetS('DB5_LIBS', '');
-	MkSaveUndef('HAVE_DB5', 'DB5_CFLAGS', 'DB5_LIBS');
+	MkSaveUndef('HAVE_DB5');
 }
 
 BEGIN

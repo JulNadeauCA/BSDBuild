@@ -57,7 +57,7 @@ sub DISABLE_png
 	MkDefine('PNG_CFLAGS', '');
 	MkDefine('PNG_LIBS', '');
 	MkDefine('PNG_PC', '');
-	MkSaveUndef('HAVE_PNG', 'HAVE_LIBPNG14', 'PNG_CFLAGS', 'PNG_LIBS');
+	MkSaveUndef('HAVE_PNG', 'HAVE_LIBPNG14');
 }
 
 BEGIN

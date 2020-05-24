@@ -62,8 +62,7 @@ sub DISABLE_cracklib
 	MkDefine('CRACKLIB_CFLAGS', '');
 	MkDefine('CRACKLIB_LIBS', '');
 	MkDefine('CRACKLIB_DICT_PATH', '');
-	MkSaveUndef('HAVE_CRACKLIB', 'CRACKLIB_CFLAGS', 'CRACKLIB_LIBS',
-	            'CRACKLIB_DICT_PATH');
+	MkSaveUndef('HAVE_CRACKLIB', 'CRACKLIB_DICT_PATH');
 }
 
 BEGIN

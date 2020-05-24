@@ -38,7 +38,7 @@ sub DISABLE_agar_ada
 	MkDefine('HAVE_AGAR_ADA', 'no');
 	MkDefine('AGAR_ADA_CFLAGS', '');
 	MkDefine('AGAR_ADA_LIBS', '');
-	MkSaveUndef('HAVE_AGAR_ADA', 'AGAR_ADA_CFLAGS', 'AGAR_ADA_LIBS');
+	MkSaveUndef('HAVE_AGAR_ADA');
 }
 
 sub EMUL_agar_ada

@@ -42,7 +42,7 @@ sub DISABLE_glx
 	MkDefine('HAVE_GLX', 'no');
 	MkDefine('GLX_CFLAGS', '');
 	MkDefine('GLX_LIBS', '');
-	MkSaveUndef('HAVE_GLX', 'GLX_CFLAGS', 'GLX_LIBS');
+	MkSaveUndef('HAVE_GLX');
 }
 
 BEGIN

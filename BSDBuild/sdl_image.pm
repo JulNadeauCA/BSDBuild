@@ -37,7 +37,7 @@ sub DISABLE_sdl_image
 	MkDefine('HAVE_SDL_IMAGE', 'no');
 	MkDefine('SDL_IMAGE_CFLAGS', '');
 	MkDefine('SDL_IMAGE_LIBS', '');
-	MkSaveUndef('HAVE_SDL_IMAGE', 'SDL_IMAGE_CFLAGS', 'SDL_IMAGE_LIBS');
+	MkSaveUndef('HAVE_SDL_IMAGE');
 }
 
 BEGIN

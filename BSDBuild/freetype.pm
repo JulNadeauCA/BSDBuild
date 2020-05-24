@@ -59,7 +59,7 @@ sub DISABLE_freetype
 	MkDefine('FREETYPE_CFLAGS', '');
 	MkDefine('FREETYPE_LIBS', '');
 	MkDefine('FREETYPE_PC', '');
-	MkSaveUndef('HAVE_FREETYPE', 'FREETYPE_CFFLAGS', 'FREETYPE_LIBS');
+	MkSaveUndef('HAVE_FREETYPE');
 }
 
 sub EMUL_freetype

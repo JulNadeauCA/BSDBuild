@@ -107,7 +107,7 @@ sub TEST_sdl
 			MkPopIFS();
 
 			MkDefine('SDL_LIBS', '${SDL_LIBS_FIXED}');
-			MkSave('SDL_CFLAGS', 'SDL_LIBS');
+			MkSaveMK('SDL_CFLAGS', 'SDL_LIBS');
 		MkElse;
 			MkPrintSN('checking whether SDL works (with X11 libs)...');
 			MkAppend('SDL_LIBS', '-L/usr/X11R6/lib -lX11 -lXext -lXrandr '.
@@ -132,7 +132,7 @@ sub DISABLE_sdl
 	MkDefine('SDL_CFLAGS', '');
 	MkDefine('SDL_LIBS', '');
 	MkDefine('SDL_PC', '');
-	MkSaveUndef('HAVE_SDL', 'SDL_CFLAGS', 'SDL_LIBS');
+	MkSaveUndef('HAVE_SDL');
 }
 
 sub EMUL_sdl

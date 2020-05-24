@@ -56,7 +56,7 @@ sub DISABLE_fastcgi
 	MkDefine('HAVE_FASTCGI', 'no');
 	MkDefine('FASTCGI_CFLAGS', '');
 	MkDefine('FASTCGI_LIBS', '');
-	MkSaveUndef('HAVE_FASTCGI', 'FASTCGI_CFLAGS', 'FASTCGI_LIBS');
+	MkSaveUndef('HAVE_FASTCGI');
 }
 
 BEGIN

@@ -129,7 +129,7 @@ sub TEST_opengl
 		           '${OPENGL_CFLAGS}', '${OPENGL_LIBS}',
 				   $testCode);
 		MkIfTrue('${HAVE_OPENGL}');
-			MkSave('OPENGL_CFLAGS', 'OPENGL_LIBS');
+			MkSaveMK('OPENGL_CFLAGS', 'OPENGL_LIBS');
 		MkElse;
 			MkPrintSN('checking whether -lGL requires -lm...');
 			MkDefine('OPENGL_LIBS', '${OPENGL_LIBS} -lm');
@@ -165,8 +165,7 @@ sub DISABLE_opengl
 	MkDefine('OPENGL_LIBS', '');
 	MkDefine('OPENGL_PC', '');
 
-	MkSaveUndef('HAVE_OPENGL', 'HAVE_GLEXT',
-	            'OPENGL_CFLAGS', 'OPENGL_LIBS');
+	MkSaveUndef('HAVE_OPENGL', 'HAVE_GLEXT');
 }
 
 sub EMUL_opengl

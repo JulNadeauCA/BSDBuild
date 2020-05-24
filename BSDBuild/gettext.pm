@@ -47,7 +47,7 @@ sub TEST_gettext
 
 		MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}', $testCode);
 		MkIfTrue('${HAVE_GETTEXT}');
-			MkSave('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
+			MkSaveMK('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
 		MkElse;
 			MkPrintSN('checking whether -lintl requires -liconv...');
 			MkIfNE($pfx, '');
@@ -66,8 +66,6 @@ sub TEST_gettext
 			MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}', $testCode);
 			MkSaveIfTrue('${HAVE_GETTEXT}', 'GETTEXT_CFLAGS', 'GETTEXT_LIBS');
 		MkEndif;
-	MkElse;
-		MkSaveUndef('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
 	MkEndif;
 }
 
@@ -76,7 +74,7 @@ sub DISABLE_gettext
 	MkDefine('HAVE_GETTEXT', 'no');
 	MkDefine('GETTEXT_CFLAGS', '');
 	MkDefine('GETTEXT_LIBS', '');
-	MkSaveUndef('HAVE_GETTEXT', 'GETTEXT_CFLAGS', 'GETTEXT_LIBS');
+	MkSaveUndef('HAVE_GETTEXT');
 }
 
 BEGIN

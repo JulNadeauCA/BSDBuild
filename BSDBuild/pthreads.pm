@@ -151,7 +151,6 @@ sub TEST_pthreads_std
 	MkIfTrue('${HAVE_PTHREADS}');
 		MkDefine('CFLAGS', '${CFLAGS} ${PTHREADS_CFLAGS}');
 		MkSaveMK('CFLAGS', 'PTHREADS_CFLAGS', 'PTHREADS_LIBS');
-		MkSaveDefine('PTHREADS_CFLAGS', 'PTHREADS_LIBS');
 	MkElse();
 		# Fallback to -pthread.
 		MkPrintSN('checking for -pthread...');
@@ -160,7 +159,6 @@ sub TEST_pthreads_std
 		MkIf('"${HAVE_PTHREADS}" = "yes"');
 			MkDefine('CFLAGS', '${CFLAGS} ${PTHREADS_CFLAGS}');
 			MkSaveMK('CFLAGS', 'PTHREADS_CFLAGS','PTHREADS_LIBS');
-			MkSaveDefine('PTHREADS_CFLAGS','PTHREADS_LIBS');
 		MkElse();
 			# Fallback to scanning libs and include files.
 			MkDefine('PTHREADS_CFLAGS', '');
@@ -174,7 +172,6 @@ sub TEST_pthreads_std
 			MkIf('"${HAVE_PTHREADS}" = "yes"');
 				MkDefine('CFLAGS', '${CFLAGS} ${PTHREADS_CFLAGS}');
 				MkSaveMK('CFLAGS', 'PTHREADS_CFLAGS', 'PTHREADS_LIBS');
-				MkSaveDefine('PTHREADS_CFLAGS', 'PTHREADS_LIBS');
 			MkEndif();
 		MkEndif();
 	MkEndif();
@@ -272,7 +269,6 @@ sub TEST_pthreads_xopen
 	MkIfTrue('${HAVE_PTHREADS_XOPEN}');
 		MkSaveMK('PTHREADS_XOPEN_CFLAGS', 'PTHREADS_XOPEN_LIBS');
 		MkSaveDefine('HAVE_PTHREADS_XOPEN');
-		MkSaveDefine('PTHREADS_XOPEN_CFLAGS', 'PTHREADS_XOPEN_LIBS');
 	MkElse;
 		# Fallback to scanning libraries and includes.
 		MkDefine('PTHREADS_XOPEN_LIBS', '');
@@ -285,7 +281,6 @@ sub TEST_pthreads_xopen
 		MkIfTrue('${HAVE_PTHREADS_XOPEN}');
 			MkSaveMK('PTHREADS_XOPEN_CFLAGS', 'PTHREADS_XOPEN_LIBS');
 			MkSaveDefine('HAVE_PTHREADS_XOPEN');
-			MkSaveDefine('PTHREADS_XOPEN_CFLAGS', 'PTHREADS_XOPEN_LIBS');
 		MkElse;
 			MkSaveUndef('HAVE_PTHREADS_XOPEN');
 		MkEndif;
@@ -318,9 +313,7 @@ sub DISABLE_pthreads
 	            'HAVE_PTHREADS_XOPEN',
 	            'HAVE_PTHREAD_MUTEX_T_POINTER',
 	            'HAVE_PTHREAD_COND_T_POINTER',
-	            'HAVE_PTHREAD_T_POINTER',
-	            'PTHREADS_CFLAGS',       'PTHREADS_LIBS',
-	            'PTHREADS_XOPEN_CFLAGS', 'PTHREADS_XOPEN_LIBS');
+	            'HAVE_PTHREAD_T_POINTER');
 }
 
 sub EMUL_pthreads
@@ -335,7 +328,7 @@ sub EMUL_pthreads
 
 		MkDefine('PTHREADS_XOPEN_CFLAGS', '-U_XOPEN_SOURCE '.
 		                                  '-D_XOPEN_SOURCE=600');
-		MkSaveDefine('PTHREADS_XOPEN_CFLAGS');
+		MkSaveMK('PTHREADS_XOPEN_CFLAGS');
 	} else {
 		DISABLE_pthreads();
 	}

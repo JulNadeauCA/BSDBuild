@@ -79,7 +79,7 @@ sub TEST_portaudio
 		MkCompileC('HAVE_PORTAUDIO', '${PORTAUDIO_CFLAGS}', '${PORTAUDIO_LIBS}', $testCode);
 		MkSaveIfTrue('${HAVE_PORTAUDIO}', 'PORTAUDIO_CFLAGS', 'PORTAUDIO_LIBS');
 	MkElse;
-		MkSaveUndef('HAVE_PORTAUDIO', 'PORTAUDIO_CFLAGS', 'PORTAUDIO_LIBS');
+		MkSaveUndef('HAVE_PORTAUDIO');
 	MkEndif;
 	
 	MkIfTrue('${HAVE_PORTAUDIO}');
@@ -95,7 +95,7 @@ sub DISABLE_portaudio
 	MkDefine('PORTAUDIO_CFLAGS', '');
 	MkDefine('PORTAUDIO_LIBS', '');
 	MkDefine('PORTAUDIO_PC', '');
-	MkSaveUndef('HAVE_PORTAUDIO', 'PORTAUDIO_CFLAGS', 'PORTAUDIO_LIBS');
+	MkSaveUndef('HAVE_PORTAUDIO');
 }
 
 BEGIN

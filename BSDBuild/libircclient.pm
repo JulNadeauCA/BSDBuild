@@ -45,16 +45,15 @@ sub TEST_libircclient
 	MkIfNE('${LIBIRCCLIENT_CFLAGS}', '');
 		MkPrintSN('checking whether libircclient works...');
 		MkCompileC('HAVE_LIBIRCCLIENT', '${LIBIRCCLIENT_CFLAGS}',
-		    '${LIBIRCCLIENT_LIBS}', $testCode);
-		MkIfTrue('${HAVE_LIBIRCCLIENT}');
-			MkSave('LIBIRCCLIENT_CFLAGS', 'LIBIRCCLIENT_LIBS');
+		           '${LIBIRCCLIENT_LIBS}', $testCode);
+		MkSaveIfTrue('${HAVE_LIBIRCCLIENT}', 'LIBIRCCLIENT_CFLAGS',
+		                                     'LIBIRCCLIENT_LIBS');
 		MkElse;
 			DISABLE_libircclient();
 		MkEndif;
 	MkElse;
 		MkPrintS('no');
-		MkSaveUndef('HAVE_LIBIRCCLIENT', 'LIBIRCCLIENT_CFLAGS',
-		            'LIBIRCCLIENT_LIBS');
+		MkSaveUndef('HAVE_LIBIRCCLIENT');
 	MkEndif;
 }
 
@@ -63,7 +62,7 @@ sub DISABLE_libircclient
 	MkDefine('HAVE_LIBIRCCLIENT', 'no');
 	MkDefine('LIBIRCCLIENT_CFLAGS', '');
 	MkDefine('LIBIRCCLIENT_LIBS', '');
-	MkSaveUndef('HAVE_LIBIRCCLIENT', 'LIBIRCCLIENT_CFLAGS', 'LIBIRCCLIENT_LIBS');
+	MkSaveUndef('HAVE_LIBIRCCLIENT');
 }
 
 sub EMUL_libircclient

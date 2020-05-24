@@ -26,7 +26,7 @@ sub DISABLE_cocoa
 	MkDefine('HAVE_COCOA', 'no');
 	MkDefine('COCOA_CFLAGS', '');
 	MkDefine('COCOA_LIBS', '');
-	MkSaveUndef('HAVE_COCOA', 'COCOA_CFLAGS', 'COCOA_LIBS');
+	MkSaveUndef('HAVE_COCOA');
 }
 
 BEGIN

@@ -76,7 +76,7 @@ sub DISABLE_jpeg
 	MkDefine('JPEG_CFLAGS', '');
 	MkDefine('JPEG_LIBS', '');
 	MkDefine('JPEG_PC', '');
-	MkSaveUndef('HAVE_JPEG', 'JPEG_CFLAGS', 'JPEG_LIBS');
+	MkSaveUndef('HAVE_JPEG');
 }
 
 BEGIN

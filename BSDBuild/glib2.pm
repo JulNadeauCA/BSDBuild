@@ -33,7 +33,7 @@ sub DISABLE_glib2
 	MkDefine('HAVE_GLIB2', 'no');
 	MkDefine('GLIB2_CFLAGS', '');
 	MkDefine('GLIB2_LIBS', '');
-	MkSaveUndef('HAVE_GLIB2', 'GLIB2_CFLAGS', 'GLIB2_LIBS');
+	MkSaveUndef('HAVE_GLIB2');
 }
 
 BEGIN

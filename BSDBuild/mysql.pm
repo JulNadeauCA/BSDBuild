@@ -35,7 +35,7 @@ sub DISABLE_mysql
 	MkDefine('HAVE_MYSQL', 'no');
 	MkDefine('MYSQL_CFLAGS', '');
 	MkDefine('MYSQL_LIBS', '');
-	MkSaveUndef('HAVE_MYSQL', 'MYSQL_CFLAGS', 'MYSQL_LIBS');
+	MkSaveUndef('HAVE_MYSQL');
 }
 
 BEGIN

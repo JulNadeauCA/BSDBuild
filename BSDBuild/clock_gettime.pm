@@ -20,14 +20,14 @@ sub TEST_clock_gettime
 	MkCompileC('HAVE_CLOCK_GETTIME', '${CLOCK_CFLAGS}',
 	    '${CLOCK_LIBS}', $testCode);
 	MkIfTrue('${HAVE_CLOCK_GETTIME}');
-		MkSaveDefine('HAVE_CLOCK_GETTIME', 'CLOCK_CFLAGS', 'CLOCK_LIBS');
+		MkSaveDefine('HAVE_CLOCK_GETTIME');
 		MkSaveMK('CLOCK_CFLAGS', 'CLOCK_LIBS');
 	MkElse;
 		MkPrintSN('checking for clock_gettime() interface (with -lrt)...');
 		MkCompileC('HAVE_CLOCK_GETTIME', '${CLOCK_CFLAGS}', '-lrt', $testCode);
 		MkIfTrue('${HAVE_CLOCK_GETTIME}');
 			MkDefine('CLOCK_LIBS', '-lrt');
-			MkSaveDefine('HAVE_CLOCK_GETTIME', 'CLOCK_CFLAGS', 'CLOCK_LIBS');
+			MkSaveDefine('HAVE_CLOCK_GETTIME');
 			MkSaveMK('CLOCK_CFLAGS', 'CLOCK_LIBS');
 		MkElse;
 			MkSaveUndef('HAVE_CLOCK_GETTIME');
@@ -40,7 +40,7 @@ sub DISABLE_clock_gettime
 	MkDefine('HAVE_CLOCK_GETTIME', 'no');
 	MkDefine('CLOCK_CFLAGS', '');
 	MkDefine('CLOCK_LIBS', '');
-	MkSaveUndef('HAVE_CLOCK_GETTIME', 'CLOCK_CFLAGS', 'CLOCK_LIBS');
+	MkSaveUndef('HAVE_CLOCK_GETTIME');
 }
 
 BEGIN

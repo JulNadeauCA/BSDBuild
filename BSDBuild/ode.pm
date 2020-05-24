@@ -38,7 +38,7 @@ sub DISABLE_ode
 	MkDefine('HAVE_ODE', 'no');
 	MkDefine('ODE_CFLAGS', '');
 	MkDefine('ODE_LIBS', '');
-	MkSaveUndef('HAVE_ODE', 'ODE_CFLAGS', 'ODE_LIBS');
+	MkSaveUndef('HAVE_ODE');
 }
 
 BEGIN

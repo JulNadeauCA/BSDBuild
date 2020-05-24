@@ -35,7 +35,7 @@ sub TEST_edacious
 		           $testCode);
 		MkSaveIfTrue('${HAVE_EDACIOUS}', 'EDACIOUS_CFLAGS', 'EDACIOUS_LIBS');
 	MkElse;
-		MkSaveUndef('HAVE_EDACIOUS', 'EDACIOUS_CFLAGS', 'EDACIOUS_LIBS');
+		MkSaveUndef('HAVE_EDACIOUS');
 	MkEndif;
 }
 
@@ -44,7 +44,7 @@ sub DISABLE_edacious
 	MkDefine('HAVE_EDACIOUS', 'no');
 	MkDefine('EDACIOUS_CFLAGS', '');
 	MkDefine('EDACIOUS_LIBS', '');
-	MkSaveUndef('HAVE_EDACIOUS', 'EDACIOUS_CFLAGS', 'EDACIOUS_LIBS');
+	MkSaveUndef('HAVE_EDACIOUS');
 }
 
 BEGIN

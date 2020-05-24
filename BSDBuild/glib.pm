@@ -10,7 +10,7 @@ sub TEST_glib
 	MkExecOutputPfx($pfx, 'glib-config', '--libs', 'GLIB_LIBS');
 	
 	MkIfFound($pfx, $ver, 'GLIB_VERSION');
-		MkSave('HAVE_GLIB', 'GLIB_CFLAGS', 'GLIB_LIBS');
+		MkSaveIfTrue('${HAVE_GLIB}', 'GLIB_CFLAGS', 'GLIB_LIBS');
 	MkElse;
 		MkPrintSN("checking for glib 1.2...");
 		MkExecOutputPfx($pfx, 'glib12-config', '--version', 'GLIB12_VERSION');
@@ -19,7 +19,7 @@ sub TEST_glib
 		MkIfFound($pfx, $ver, 'GLIB12_VERSION');
 			MkDefine('GLIB_CFLAGS', '${GLIB12_CFLAGS}');
 			MkDefine('GLIB_LIBS', '${GLIB12_LIBS}');
-			MkSave('HAVE_GLIB', 'GLIB_CFLAGS', 'GLIB_LIBS');
+			MkSaveIfTrue('${HAVE_GLIB}', 'GLIB_CFLAGS', 'GLIB_LIBS');
 		MkElse;
 			MkSaveUndef('HAVE_GLIB');
 		MkEndif;
@@ -33,7 +33,7 @@ sub DISABLE_glib
 	MkDefine('GLIB_LIBS', '');
 	MkDefine('GLIB12_CFLAGS', '');
 	MkDefine('GLIB12_LIBS', '');
-	MkSaveUndef('HAVE_GLIB', 'GLIB_CFLAGS', 'GLIB_LIBS');
+	MkSaveUndef('HAVE_GLIB');
 }
 
 BEGIN

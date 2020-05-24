@@ -45,7 +45,7 @@ sub DISABLE_math_c99
 	MkDefine('HAVE_MATH_C99', 'no');
 	MkDefine('MATH_C99_CFLAGS', '');
 	MkDefine('MATH_C99_LIBS', '');
-	MkSaveUndef('HAVE_MATH_C99', 'MATH_C99_CFLAGS', 'MATH_C99_LIBS');
+	MkSaveUndef('HAVE_MATH_C99');
 }
 
 BEGIN

@@ -35,7 +35,7 @@ sub DISABLE_curl
 	MkDefine('HAVE_CURL', 'no');
 	MkDefine('CURL_CFLAGS', '');
 	MkDefine('CURL_LIBS', '');
-	MkSaveUndef('HAVE_CURL', 'CURL_CFLAGS', 'CURL_LIBS');
+	MkSaveUndef('HAVE_CURL');
 }
 
 BEGIN

@@ -62,7 +62,7 @@ sub DISABLE_alsa
 	MkDefine('HAVE_ALSA', 'no');
 	MkDefine('ALSA_CFLAGS', '');
 	MkDefine('ALSA_LIBS', '');
-	MkSaveUndef('HAVE_ALSA', 'ALSA_CFLAGS', 'ALSA_LIBS');
+	MkSaveUndef('HAVE_ALSA');
 }
 
 BEGIN

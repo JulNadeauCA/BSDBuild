@@ -36,7 +36,7 @@ sub DISABLE_agar_ada_core
 	MkDefine('HAVE_AGAR_ADA_CORE', 'no');
 	MkDefine('AGAR_ADA_CORE_CFLAGS', '');
 	MkDefine('AGAR_ADA_CORE_LIBS', '');
-	MkSaveUndef('HAVE_AGAR_ADA_CORE', 'AGAR_ADA_CORE_CFLAGS', 'AGAR_ADA_CORE_LIBS');
+	MkSaveUndef('HAVE_AGAR_ADA_CORE');
 }
 
 sub EMUL_agar_ada_core

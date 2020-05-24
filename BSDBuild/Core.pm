@@ -564,12 +564,6 @@ sub MkSaveIfTrue
 	MkIfTrue($cond);
 		foreach my $var (@_) {
 			MkSaveMK($var);
-			MkSaveDefine($var);
-		}
-	MkElse;
-		foreach my $var (@_) {
-			MkSaveUndef($var);
-			MkDefine($var, '');
 		}
 	MkEndif;
 }
@@ -1266,7 +1260,7 @@ sub MkEmulWindows
 
 	MkDefine("${module}_CFLAGS", "");
 	MkDefine("${module}_LIBS", "$libs");
-	MkSave("${module}_CFLAGS", "${module}_LIBS");
+	MkSaveMK("${module}_CFLAGS", "${module}_LIBS");
 }
 
 # Specify module availability under Windows platforms in Emul()
@@ -1293,7 +1287,7 @@ sub MkEmulUnavail
 
 		MkDefine("${module}_CFLAGS", "");
 		MkDefine("${module}_LIBS", "");
-		MkSave("${module}_CFLAGS", "${module}_LIBS");
+		MkSaveMK("${module}_CFLAGS", "${module}_LIBS");
 	}
 }
 

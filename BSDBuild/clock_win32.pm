@@ -28,7 +28,7 @@ sub TEST_clock_win32
 	MkIfTrue('${HAVE_CLOCK_WIN32}');
 		MkDefine('CLOCK_CFLAGS', '');
 		MkDefine('CLOCK_LIBS', '-lwinmm');
-		MkSaveDefine('HAVE_CLOCK_WIN32', 'CLOCK_CFLAGS', 'CLOCK_LIBS');
+		MkSaveDefine('HAVE_CLOCK_WIN32');
 		MkSaveMK('CLOCK_CFLAGS', 'CLOCK_LIBS');
 	MkElse;
 		MkSaveUndef('HAVE_CLOCK_WIN32');
@@ -40,7 +40,7 @@ sub DISABLE_clock_win32
 	MkDefine('HAVE_CLOCK_WIN32', 'no');
 	MkDefine('CLOCK_CFLAGS', '');
 	MkDefine('CLOCK_LIBS', '');
-	MkSaveUndef('HAVE_CLOCK_WIN32', 'CLOCK_CFLAGS', 'CLOCK_LIBS');
+	MkSaveUndef('HAVE_CLOCK_WIN32');
 }
 
 sub EMUL_clock_win32

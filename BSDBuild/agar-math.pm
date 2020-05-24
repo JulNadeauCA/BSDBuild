@@ -42,7 +42,7 @@ sub DISABLE_agar_math
 	MkDefine('HAVE_AGAR_MATH', 'no');
 	MkDefine('AGAR_MATH_CFLAGS', '');
 	MkDefine('AGAR_MATH_LIBS', '');
-	MkSaveUndef('HAVE_AGAR_MATH', 'AGAR_MATH_CFLAGS', 'AGAR_MATH_LIBS');
+	MkSaveUndef('HAVE_AGAR_MATH');
 }
 
 sub EMUL_agar_math

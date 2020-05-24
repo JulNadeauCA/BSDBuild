@@ -88,7 +88,7 @@ sub DISABLE_xinerama
 	MkDefine('XINERAMA_CFLAGS', '');
 	MkDefine('XINERAMA_LIBS', '');
 	MkDefine('XINERAMA_PC', '');
-	MkSaveUndef('HAVE_XINERAMA', 'XINERAMA_CFLAGS', 'XINERAMA_LIBS');
+	MkSaveUndef('HAVE_XINERAMA');
 }
 
 BEGIN

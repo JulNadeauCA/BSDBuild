@@ -44,7 +44,7 @@ sub DISABLE_agar_vg
 	MkDefine('HAVE_AGAR_VG', 'no');
 	MkDefine('AGAR_VG_CFLAGS', '');
 	MkDefine('AGAR_VG_LIBS', '');
-	MkSaveUndef('HAVE_AGAR_VG', 'AGAR_VG_CFLAGS', 'AGAR_VG_LIBS');
+	MkSaveUndef('HAVE_AGAR_VG');
 }
 
 sub EMUL_agar_vg

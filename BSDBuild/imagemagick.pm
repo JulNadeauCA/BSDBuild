@@ -55,15 +55,14 @@ sub TEST_imagemagick
 		MkSaveIfTrue('${HAVE_IMAGEMAGICK}',
 		             'IMAGEMAGICK_CFLAGS', 'IMAGEMAGICK_LIBS');
 	MkElse;
-		MkSaveUndef('IMAGEMAGICK_CFLAGS', 'IMAGEMAGICK_LIBS',
-		            'HAVE_IMAGEMAGICK6', 'HAVE_IMAGEMAGICK7');
+		MkSaveUndef('HAVE_IMAGEMAGICK6', 'HAVE_IMAGEMAGICK7');
 	MkEndif;
 }
 
 sub DISABLE_imagemagick
 {
 	MkDefine('HAVE_IMAGEMAGICK', 'no');
-	MkSaveUndef('HAVE_IMAGEMAGICK', 'IMAGEMAGICK_CFLAGS', 'IMAGEMAGICK_LIBS');
+	MkSaveUndef('HAVE_IMAGEMAGICK');
 }
 
 sub EMUL_imagemagick

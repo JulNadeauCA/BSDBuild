@@ -43,7 +43,7 @@ sub DISABLE_agar_map
 	MkDefine('HAVE_AGAR_MAP', 'no');
 	MkDefine('AGAR_MAP_CFLAGS', '');
 	MkDefine('AGAR_MAP_LIBS', '');
-	MkSaveUndef('HAVE_AGAR_MAP', 'AGAR_MAP_CFLAGS', 'AGAR_MAP_LIBS');
+	MkSaveUndef('HAVE_AGAR_MAP');
 }
 
 sub EMUL_agar_map

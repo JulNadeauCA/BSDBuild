@@ -53,7 +53,7 @@ sub DISABLE_agar_core
 	MkDefine('HAVE_AGAR_CORE', 'no');
 	MkDefine('AGAR_CORE_CFLAGS', '');
 	MkDefine('AGAR_CORE_LIBS', '');
-	MkSaveUndef('HAVE_AGAR_CORE', 'AGAR_CORE_CFLAGS', 'AGAR_CORE_LIBS');
+	MkSaveUndef('HAVE_AGAR_CORE');
 }
 
 sub EMUL_agar_core

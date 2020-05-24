@@ -37,7 +37,8 @@ sub TEST_shl_load
 	TryCompileFlagsC('HAVE_SHL_LOAD', '${SHL_LOAD_LIBS}', $testCode);
 	MkIfTrue('${HAVE_SHL_LOAD}');
 		MkDefine('DSO_LIBS', '$DSO_LIBS $SHL_LOAD_LIBS');
-		MkSave('HAVE_SHL_LOAD', 'DSO_LIBS');
+		MkSaveDefine('HAVE_SHL_LOAD');
+		MkSaveMK('DSO_LIBS');
 	MkElse;
 		MkSaveUndef('HAVE_SHL_LOAD');
 	MkEndif;

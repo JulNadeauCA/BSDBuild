@@ -23,7 +23,7 @@ sub DISABLE_smpeg
 	MkDefine('HAVE_SMPEG', 'no');
 	MkDefine('SMPEG_CFLAGS', '');
 	MkDefine('SMPEG_LIBS', '');
-	MkSaveUndef('HAVE_SMPEG', 'SMPEG_CFLAGS', 'SMPEG_LIBS');
+	MkSaveUndef('HAVE_SMPEG');
 }
 
 BEGIN

@@ -46,7 +46,7 @@ sub DISABLE_agar_net
 	MkDefine('HAVE_AGAR_NET', 'no');
 	MkDefine('AGAR_NET_CFLAGS', '');
 	MkDefine('AGAR_NET_LIBS', '');
-	MkSaveUndef('HAVE_AGAR_NET', 'AGAR_NET_CFLAGS', 'AGAR_NET_LIBS');
+	MkSaveUndef('HAVE_AGAR_NET');
 }
 
 sub EMUL_agar_net

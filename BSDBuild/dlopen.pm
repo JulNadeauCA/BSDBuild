@@ -33,7 +33,7 @@ sub TEST_dlopen
 		MkIfTrue('${HAVE_DLOPEN}');
 			MkDefine('DSO_CFLAGS', '');
 			MkDefine('DSO_LIBS', '-ldl');
-			MkSave('DSO_CFLAGS', 'DSO_LIBS');
+			MkSaveMK('DSO_CFLAGS', 'DSO_LIBS');
 		MkEndif;
 	MkEndif;
 	EndTestHeaders();

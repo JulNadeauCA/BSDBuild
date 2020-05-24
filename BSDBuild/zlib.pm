@@ -54,7 +54,7 @@ sub DISABLE_zlib
 	MkDefine('HAVE_ZLIB', 'no');
 	MkDefine('ZLIB_CFLAGS', '');
 	MkDefine('ZLIB_LIBS', '');
-	MkSaveUndef('HAVE_ZLIB', 'ZLIB_CFLAGS', 'ZLIB_LIBS');
+	MkSaveUndef('HAVE_ZLIB');
 }
 
 BEGIN

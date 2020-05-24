@@ -41,7 +41,7 @@ sub DISABLE_agar_micro
 	MkDefine('HAVE_AGAR_MICRO', 'no');
 	MkDefine('AGAR_MICRO_CFLAGS', '');
 	MkDefine('AGAR_MICRO_LIBS', '');
-	MkSaveUndef('HAVE_AGAR_MICRO', 'AGAR_MICRO_CFLAGS', 'AGAR_MICRO_LIBS');
+	MkSaveUndef('HAVE_AGAR_MICRO');
 }
 
 sub EMUL_agar_micro

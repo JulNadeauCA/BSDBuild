@@ -52,7 +52,7 @@ sub DISABLE_fontconfig
 	MkDefine('HAVE_FONTCONFIG', 'no');
 	MkDefine('FONTCONFIG_CFLAGS', '');
 	MkDefine('FONTCONFIG_LIBS', '');
-	MkSaveUndef('HAVE_FONTCONFIG', 'FONTCONFIG_CFLAGS', 'FONTCONFIG_LIBS');
+	MkSaveUndef('HAVE_FONTCONFIG');
 }
 
 BEGIN

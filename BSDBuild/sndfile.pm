@@ -44,7 +44,7 @@ sub DISABLE_sndfile
 	MkDefine('SNDFILE_CFLAGS', '');
 	MkDefine('SNDFILE_LIBS', '');
 	MkDefine('SNDFILE_PC', '');
-	MkSaveUndef('HAVE_SNDFILE', 'SNDFILE_CFLAGS', 'SNDFILE_LIBS');
+	MkSaveUndef('HAVE_SNDFILE');
 }
 
 BEGIN

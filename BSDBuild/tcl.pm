@@ -62,7 +62,7 @@ sub DISABLE_tcl
 	MkDefine('HAVE_TCL', 'no');
 	MkDefine('TCL_CFLAGS', '');
 	MkDefine('TCL_LIBS', '');
-	MkSaveUndef('HAVE_TCL', 'TCL_CFLAGS', 'TCL_LIBS');
+	MkSaveUndef('HAVE_TCL');
 }
 
 BEGIN

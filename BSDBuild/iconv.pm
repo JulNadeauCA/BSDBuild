@@ -61,7 +61,7 @@ sub DISABLE_iconv
 	MkDefine('HAVE_ICONV', 'no');
 	MkDefine('ICONV_CFLAGS', '');
 	MkDefine('ICONV_LIBS', '');
-	MkSaveUndef('HAVE_ICONV', 'ICONV_CFLAGS', 'ICONV_LIBS');
+	MkSaveUndef('HAVE_ICONV');
 }
 
 BEGIN

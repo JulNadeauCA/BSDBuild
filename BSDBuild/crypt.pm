@@ -41,7 +41,7 @@ sub TEST_crypt
 sub DISABLE_crypt
 {
 	MkDefine('HAVE_CRYPT', 'no');
-	MkSaveUndef('HAVE_CRYPT', 'CRYPT_CFLAGS', 'CRYPT_LIBS');
+	MkSaveUndef('HAVE_CRYPT');
 }
 
 BEGIN

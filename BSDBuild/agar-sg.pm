@@ -40,7 +40,7 @@ sub DISABLE_agar_sg
 	MkDefine('HAVE_AGAR_SG', 'no');
 	MkDefine('AGAR_SG_CFLAGS', '');
 	MkDefine('AGAR_SG_LIBS', '');
-	MkSaveUndef('HAVE_AGAR_SG', 'AGAR_SG_CFLAGS', 'AGAR_SG_LIBS');
+	MkSaveUndef('HAVE_AGAR_SG');
 }
 
 sub EMUL_agar_sg

@@ -37,7 +37,7 @@ sub DISABLE_libbsd
 	MkDefine('HAVE_LIBBSD', 'no');
 	MkDefine('LIBBSD_CFLAGS', '');
 	MkDefine('LIBBSD_LIBS', '');
-	MkSaveUndef('HAVE_LIBBSD', 'LIBBSD_CFLAGS', 'LIBBSD_LIBS');
+	MkSaveUndef('HAVE_LIBBSD');
 }
 
 BEGIN

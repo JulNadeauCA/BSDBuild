@@ -48,7 +48,7 @@ sub DISABLE_uim
 	MkDefine('UIM_CFLAGS', '');
 	MkDefine('UIM_LIBS', '');
 	MkDefine('UIM_PC', '');
-	MkSaveUndef('HAVE_UIM', 'UIM_CFLAGS', 'UIM_LIBS');
+	MkSaveUndef('HAVE_UIM');
 }
 
 BEGIN

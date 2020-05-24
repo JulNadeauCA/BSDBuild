@@ -251,12 +251,12 @@ sub ParseElementToHTML
 		return ('</ul>');
 	} elsif (/^(Bx) (\S+) (.+)$/) {		return ("BSD".Trail($3));
 	} elsif (/^(Bx) (.+)$/) {		return ("BSD ");
-	} elsif (/^(Fx) (\S+) (.+)$/) {		return ("<a class=ext href='http://freebsd.org/>FreeBSD</a>".Trail($3));
-	} elsif (/^(Fx) (.+)$/) {		return ("<a class=ext href='http://freebsd.org/>FreeBSD</a> ");
-	} elsif (/^(Nx) (\S+) (.+)$/) {		return ("<a class=ext href='http://netbsd.org/>NetBSD</a>".Trail($3));
-	} elsif (/^(Nx) (.+)$/) {		return ("<a class=ext href='http://netbsd.org/>NetBSD</a> ");
-	} elsif (/^(Ox) (\S+) (.+)$/) {		return ("<a class=ext href='http://openbsd.org/>OpenBSD</a>".Trail($3));
-	} elsif (/^(Ox) (.+)$/) {		return ("<a class=ext href='http://openbsd.org/>OpenBSD</a> ");
+	} elsif (/^(Fx) (\S+) (.+)$/) {		return ("<a class=ext href='https://freebsd.org/>FreeBSD</a>".Trail($3));
+	} elsif (/^(Fx) (.+)$/) {		return ("<a class=ext href='https://freebsd.org/>FreeBSD</a> ");
+	} elsif (/^(Nx) (\S+) (.+)$/) {		return ("<a class=ext href='https://netbsd.org/>NetBSD</a>".Trail($3));
+	} elsif (/^(Nx) (.+)$/) {		return ("<a class=ext href='https://netbsd.org/>NetBSD</a> ");
+	} elsif (/^(Ox) (\S+) (.+)$/) {		return ("<a class=ext href='https://openbsd.org/>OpenBSD</a>".Trail($3));
+	} elsif (/^(Ox) (.+)$/) {		return ("<a class=ext href='https://openbsd.org/>OpenBSD</a> ");
 	} elsif (/^(Bsx) (\S+) (.+)$/) {	return ("BSDI BSD/OS".Trail($3));
 	} elsif (/^(Bsx) (.+)$/) {		return ("BSDI BSD/OS ");
 	} elsif (/^(Ux) (\S+) (.+)$/) {		return ("UNIX".Trail($3));
@@ -397,12 +397,12 @@ sub ParseElementToWikitext
 		return ('</ul>');
 	} elsif (/^(Bx) (\S+) (.+)$/) {		return ("BSD".Trail($3));
 	} elsif (/^(Bx) (.+)$/) {		return ("BSD ");
-	} elsif (/^(Fx) (\S+) (.+)$/) {		return ("[http://freebsd.org/ FreeBSD]".Trail($3));
-	} elsif (/^(Fx) (.+)$/) {		return ("[http://freebsd.org/ FreeBSD] ");
-	} elsif (/^(Nx) (\S+) (.+)$/) {		return ("[http://netbsd.org/ NetBSD]".Trail($3));
-	} elsif (/^(Nx) (.+)$/) {		return ("[http://netbsd.org/ NetBSD] ");
-	} elsif (/^(Ox) (\S+) (.+)$/) {		return ("[http://openbsd.org/ OpenBSD]".Trail($3));
-	} elsif (/^(Ox) (.+)$/) {		return ("[http://openbsd.org/ OpenBSD] ");
+	} elsif (/^(Fx) (\S+) (.+)$/) {		return ("[https://freebsd.org/ FreeBSD]".Trail($3));
+	} elsif (/^(Fx) (.+)$/) {		return ("[https://freebsd.org/ FreeBSD] ");
+	} elsif (/^(Nx) (\S+) (.+)$/) {		return ("[https://netbsd.org/ NetBSD]".Trail($3));
+	} elsif (/^(Nx) (.+)$/) {		return ("[https://netbsd.org/ NetBSD] ");
+	} elsif (/^(Ox) (\S+) (.+)$/) {		return ("[https://openbsd.org/ OpenBSD]".Trail($3));
+	} elsif (/^(Ox) (.+)$/) {		return ("[https://openbsd.org/ OpenBSD] ");
 	} elsif (/^(Bsx) (\S+) (.+)$/) {	return ("BSDI BSD/OS".Trail($3));
 	} elsif (/^(Bsx) (.+)$/) {		return ("BSDI BSD/OS ");
 	} elsif (/^(Ux) (\S+) (.+)$/) {		return ("UNIX".Trail($3));
@@ -435,10 +435,10 @@ sub ParseToHTML
 		$line =~ s/(http:\/\/[\w.-\/]+)/<a href="$1">$1<\/a>/g;
 		if ($line =~ /Agar\s+\d{1,2}\.\d{1,2}\.\d{1,2}/) {
 			$line =~ s/Agar\s+(\d{1,2}\.\d{1,2}\.\d{1,2})\b/
-		           <a href="http:\/\/stable.hypertriton.com\/agar\/agar-$1.tar.gz">Agar $1<\/a>/gx;
+		           <a href="https:\/\/stable.hypertriton.com\/agar\/agar-$1.tar.gz">Agar $1<\/a>/gx;
 		} else {
 			$line =~ s/Agar\s+(\d{1,2}\.\d{1,2})\b/
-		           <a href="http:\/\/stable.hypertriton.com\/agar\/agar-$1.tar.gz">Agar $1<\/a>/gx;
+		           <a href="https:\/\/stable.hypertriton.com\/agar\/agar-$1.tar.gz">Agar $1<\/a>/gx;
 		}
 		if ($shflag) {
 			$shline++;

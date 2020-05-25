@@ -34,7 +34,7 @@ sub TEST_pcre
 	MkIfFound($pfx, $ver, 'PCRE_VERSION');
 		MkPrintSN('checking whether PCRE works...');
 		MkCompileC('HAVE_PCRE', '${PCRE_CFLAGS}', '${PCRE_LIBS}', $testCode);
-		MkSaveIfTrue('${HAVE_PCRE}', 'PCRE_CFLAGS', 'PCRE_LIBS');
+		MkSave('PCRE_CFLAGS', 'PCRE_LIBS');
 	MkElse;
 		MkSaveUndef('HAVE_PCRE');
 	MkEndif;

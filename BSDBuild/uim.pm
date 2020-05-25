@@ -30,7 +30,7 @@ sub TEST_uim
 	MkIfFound($pfx, $ver, 'UIM_VERSION');
 		MkPrintSN('checking whether uim works...');
 		MkCompileC('HAVE_UIM', '${UIM_CFLAGS}', '${UIM_LIBS}', $testCode);
-		MkSaveIfTrue('${HAVE_UIM}', 'UIM_CFLAGS', 'UIM_LIBS');
+		MkSave('UIM_CFLAGS', 'UIM_LIBS');
 	MkElse;
 		MkSaveUndef('HAVE_UIM');
 	MkEndif;

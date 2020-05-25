@@ -53,7 +53,7 @@ sub TEST_iconv
 	MkCompileC('HAVE_ICONV', '${ICONV_CFLAGS} -Wno-cast-qual',
 	           '${ICONV_LIBS}', $testCode);
 
-	MkSaveIfTrue('${HAVE_ICONV}', 'ICONV_CFLAGS', 'ICONV_LIBS');
+	MkSave('ICONV_CFLAGS', 'ICONV_LIBS');
 }
 
 sub DISABLE_iconv

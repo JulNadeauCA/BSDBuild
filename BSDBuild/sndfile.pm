@@ -26,7 +26,7 @@ sub TEST_sndfile
 	MkIfFound($pfx, $ver, 'SNDFILE_VERSION');
 		MkPrintSN('checking whether libsndfile works...');
 		MkCompileC('HAVE_SNDFILE', '${SNDFILE_CFLAGS}', '${SNDFILE_LIBS}', $testCode);
-		MkSaveIfTrue('${HAVE_SNDFILE}', 'SNDFILE_CFLAGS', 'SNDFILE_LIBS');
+		MkSave('SNDFILE_CFLAGS', 'SNDFILE_LIBS');
 	MkElse;
 		MkSaveUndef('HAVE_SNDFILE');
 	MkEndif;

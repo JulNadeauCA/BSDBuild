@@ -37,7 +37,7 @@ EOF
 		MkCaseEnd;
 	MkEsac;
 
-	MkSaveIfTrue('${HAVE_MATH_C99}', 'MATH_C99_CFLAGS', 'MATH_C99_LIBS');
+	MkSave('MATH_C99_CFLAGS', 'MATH_C99_LIBS');
 }
 
 sub DISABLE_math_c99

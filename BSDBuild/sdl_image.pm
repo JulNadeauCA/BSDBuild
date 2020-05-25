@@ -25,7 +25,7 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-		MkSaveIfTrue('${HAVE_SDL_IMAGE}', 'SDL_IMAGE_CFLAGS', 'SDL_IMAGE_LIBS');
+		MkSave('SDL_IMAGE_CFLAGS', 'SDL_IMAGE_LIBS');
 	MkElse;
 		MkPrintS('no');
 		DISABLE_sdl_image();

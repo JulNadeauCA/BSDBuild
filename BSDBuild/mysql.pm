@@ -24,7 +24,7 @@ sub TEST_mysql
 		MkExecOutput('mysql_config', '--cflags', 'MYSQL_CFLAGS');
 		MkExecOutput('mysql_config', '--libs', 'MYSQL_LIBS');
 		MkCompileC('HAVE_MYSQL', '${MYSQL_CFLAGS}', '${MYSQL_LIBS}', $testCode);
-		MkSaveIfTrue('${HAVE_MYSQL}', 'MYSQL_CFLAGS', 'MYSQL_LIBS');
+		MkSave('MYSQL_CFLAGS', 'MYSQL_LIBS');
 	MkElse;
 		DISABLE_mysql();
 	MkEndif;

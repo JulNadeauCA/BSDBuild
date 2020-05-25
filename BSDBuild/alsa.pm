@@ -51,7 +51,7 @@ sub TEST_alsa
 		MkPrintS('yes');
 		MkPrintSN('checking whether ALSA works...');
 		MkCompileC('HAVE_ALSA', '${ALSA_CFLAGS}', '${ALSA_LIBS}', $testCode);
-		MkSaveIfTrue('${HAVE_ALSA}', 'ALSA_CFLAGS', 'ALSA_LIBS');
+		MkSave('ALSA_CFLAGS', 'ALSA_LIBS');
 	MkElse;
 		MkPrintS('no');
 	MkEndif;

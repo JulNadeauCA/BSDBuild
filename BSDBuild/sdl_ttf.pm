@@ -26,7 +26,7 @@ main(int argc, char *argv[])
 	return (fn == NULL);
 }
 EOF
-		MkSaveIfTrue('${HAVE_SDL_TTF}', 'SDL_TTF_CFLAGS', 'SDL_TTF_LIBS');
+		MkSave('SDL_TTF_CFLAGS', 'SDL_TTF_LIBS');
 	MkElse;
 		MkPrintS('no');
 		DISABLE_sdl_ttf();

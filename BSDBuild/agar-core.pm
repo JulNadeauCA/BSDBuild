@@ -40,9 +40,9 @@ sub TEST_agar_core
 		MkPrintSN('checking whether Agar-Core works...');
 		MkExecOutputPfx($pfx, 'agar-core-config', '--cflags', 'AGAR_CORE_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-core-config', '--libs', 'AGAR_CORE_LIBS');
-		MkCompileC('HAVE_AGAR_CORE',
-		           '${AGAR_CORE_CFLAGS}', '${AGAR_CORE_LIBS}', $testCode);
-		MkSaveIfTrue('${HAVE_AGAR_CORE}', 'AGAR_CORE_CFLAGS', 'AGAR_CORE_LIBS');
+		MkCompileC('HAVE_AGAR_CORE', '${AGAR_CORE_CFLAGS}', '${AGAR_CORE_LIBS}',
+		           $testCode);
+		MkSave('AGAR_CORE_CFLAGS', 'AGAR_CORE_LIBS');
 	MkElse;
 		DISABLE_agar_core();
 	MkEndif;

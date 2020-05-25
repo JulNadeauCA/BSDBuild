@@ -26,7 +26,7 @@ sub TEST_libidn
 	MkIfFound($pfx, $ver, 'LIBIDN_VERSION');
 		MkPrintSN('checking whether libidn works...');
 		MkCompileC('HAVE_LIBIDN', '${LIBIDN_CFLAGS}', '${LIBIDN_LIBS}', $testCode);
-		MkSaveIfTrue('${HAVE_LIBIDN}', 'LIBIDN_CFLAGS', 'LIBIDN_LIBS');
+		MkSave('LIBIDN_CFLAGS', 'LIBIDN_LIBS');
 	MkElse;
 		MkSaveUndef('HAVE_LIBIDN');
 	MkEndif;

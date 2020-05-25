@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	MkSaveIfTrue('${HAVE_X11}', 'X11_CFLAGS', 'X11_LIBS');
+	MkSave('X11_CFLAGS', 'X11_LIBS');
 
 	MkIfTrue('${HAVE_X11}');
 		MkDefine('X11_PC', 'x11');

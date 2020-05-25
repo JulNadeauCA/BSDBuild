@@ -33,7 +33,7 @@ sub TEST_edacious
 		           '${EDACIOUS_LIBS} ${AGAR_MATH_LIBS} ${AGAR_VG_LIBS} '.
 		           '${AGAR_LIBS}',
 		           $testCode);
-		MkSaveIfTrue('${HAVE_EDACIOUS}', 'EDACIOUS_CFLAGS', 'EDACIOUS_LIBS');
+		MkSave('EDACIOUS_CFLAGS', 'EDACIOUS_LIBS');
 	MkElse;
 		MkSaveUndef('HAVE_EDACIOUS');
 	MkEndif;

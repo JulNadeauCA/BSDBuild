@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-	MkSaveIfTrue('${HAVE_GLU}', 'GLU_CFLAGS', 'GLU_LIBS');
+	MkSave('GLU_CFLAGS', 'GLU_LIBS');
 }
 
 sub DISABLE_glu

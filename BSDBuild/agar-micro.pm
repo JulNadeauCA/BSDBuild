@@ -30,7 +30,7 @@ sub TEST_agar_micro
 		MkCompileC('HAVE_AGAR_MICRO',
 		           '${AGAR_MICRO_CFLAGS}', '${AGAR_MICRO_LIBS}',
 				   $testCode);
-		MkSaveIfTrue('${HAVE_AGAR_MICRO}', 'AGAR_MICRO_CFLAGS', 'AGAR_MICRO_LIBS');
+		MkSave('AGAR_MICRO_CFLAGS', 'AGAR_MICRO_LIBS');
 	MkElse;
 		DISABLE_agar_micro();
 	MkEndif;

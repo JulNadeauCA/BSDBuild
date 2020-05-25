@@ -18,7 +18,7 @@ sub TEST_cocoa
 
 int main(int argc, char *argv[]) { return (0); }
 EOF
-	MkSaveIfTrue('${HAVE_COCOA}', 'COCOA_CFLAGS', 'COCOA_LIBS');
+	MkSave('COCOA_CFLAGS', 'COCOA_LIBS');
 }
 
 sub DISABLE_cocoa

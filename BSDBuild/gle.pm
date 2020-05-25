@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
 	return gleGetNumSides();
 }
 EOF
-	MkSaveIfTrue('${HAVE_GLE}', 'GLE_CFLAGS', 'GLE_LIBS');
+	MkSave('GLE_CFLAGS', 'GLE_LIBS');
 }
 
 sub DISABLE_gle

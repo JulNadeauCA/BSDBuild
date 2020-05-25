@@ -27,7 +27,7 @@ sub TEST_ode
 	MkIfFound($pfx, $ver, 'ODE_VERSION');
 		MkPrintSN('checking whether ODE works...');
 		MkCompileC('HAVE_ODE', '${ODE_CFLAGS}', '${ODE_LIBS}', $testCode);
-		MkSaveIfTrue('${HAVE_ODE}', 'ODE_CFLAGS', 'ODE_LIBS');
+		MkSave('ODE_CFLAGS', 'ODE_LIBS');
 	MkElse;
 		MkSaveUndef('HAVE_ODE');
 	MkEndif;

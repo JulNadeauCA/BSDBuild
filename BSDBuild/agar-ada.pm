@@ -27,7 +27,7 @@ begin
   end if;
 end conftest;
 EOF
-		MkSaveIfTrue('${HAVE_AGAR_ADA}', 'AGAR_ADA_CFLAGS', 'AGAR_ADA_LIBS');
+		MkSave('AGAR_ADA_CFLAGS', 'AGAR_ADA_LIBS');
 	MkElse;
 		DISABLE_agar_ada();
 	MkEndif;

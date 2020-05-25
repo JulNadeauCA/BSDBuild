@@ -24,8 +24,7 @@ begin
   end if;
 end conftest;
 EOF
-		MkSaveIfTrue('${HAVE_AGAR_ADA_CORE}',
-                     'AGAR_ADA_CORE_CFLAGS', 'AGAR_ADA_CORE_LIBS');
+		MkSave('AGAR_ADA_CORE_CFLAGS', 'AGAR_ADA_CORE_LIBS');
 	MkElse;
 		DISABLE_agar_ada_core();
 	MkEndif;

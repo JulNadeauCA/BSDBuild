@@ -45,7 +45,7 @@ sub TEST_db5
 	MkIfFound($pfx, $ver, 'DB5_VERSION');
 		MkPrintSN('checking whether DB5 works...');
 		MkCompileC('HAVE_DB5', '${DB5_CFLAGS}', '${DB5_LIBS}', $testCode);
-		MkSaveIfTrue('${HAVE_DB5}', 'DB5_CFLAGS', 'DB5_LIBS');
+		MkSave('DB5_CFLAGS', 'DB5_LIBS');
 	MkElse;
 		MkPrint('no');
 		DISABLE_db5();

@@ -46,11 +46,7 @@ sub TEST_libircclient
 		MkPrintSN('checking whether libircclient works...');
 		MkCompileC('HAVE_LIBIRCCLIENT', '${LIBIRCCLIENT_CFLAGS}',
 		           '${LIBIRCCLIENT_LIBS}', $testCode);
-		MkSaveIfTrue('${HAVE_LIBIRCCLIENT}', 'LIBIRCCLIENT_CFLAGS',
-		                                     'LIBIRCCLIENT_LIBS');
-		MkElse;
-			DISABLE_libircclient();
-		MkEndif;
+		MkSave('LIBIRCCLIENT_CFLAGS', 'LIBIRCCLIENT_LIBS');
 	MkElse;
 		MkPrintS('no');
 		MkSaveUndef('HAVE_LIBIRCCLIENT');

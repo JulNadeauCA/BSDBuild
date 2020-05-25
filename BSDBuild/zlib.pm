@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
 	return deflateInit(&strm, 0);
 }
 EOF
-		MkSaveIfTrue('${HAVE_ZLIB}', 'ZLIB_CFLAGS', 'ZLIB_LIBS');
+		MkSave('ZLIB_CFLAGS', 'ZLIB_LIBS');
 	MkElse;
 		MkPrintS('no');
 		DISABLE_zlib();

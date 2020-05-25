@@ -24,7 +24,7 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-		MkSaveIfTrue('${HAVE_CURL}', 'CURL_CFLAGS', 'CURL_LIBS');
+		MkSave('CURL_CFLAGS', 'CURL_LIBS');
 	MkElse;
 		DISABLE_curl();
 	MkEndif;

@@ -22,7 +22,7 @@ sub TEST_percgi
 		MkExecOutputPfx($pfx, 'percgi-config', '--libs', 'PERCGI_LIBS');
 		MkPrintSN('checking whether PerCGI works...');
 		MkCompileC('HAVE_PERCGI', '${PERCGI_CFLAGS}', '${PERCGI_LIBS}', $testCode);
-		MkSaveIfTrue('${HAVE_PERCGI}', 'PERCGI_CFLAGS', 'PERCGI_LIBS');
+		MkSave('PERCGI_CFLAGS', 'PERCGI_LIBS');
 	MkElse;
 		DISABLE_percgi();
 	MkEndif;

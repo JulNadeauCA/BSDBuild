@@ -22,7 +22,7 @@ sub TEST_glib2
 		MkCompileC('HAVE_GLIB2',
 			   '${GLIB2_CFLAGS}', '${GLIB2_LIBS}',
 			    $testCode);
-		MkSaveIfTrue('${HAVE_GLIB2}', 'GLIB2_CFLAGS', 'GLIB2_LIBS');
+		MkSave('GLIB2_CFLAGS', 'GLIB2_LIBS');
 	MkElse;
 		MkSaveUndef('HAVE_GLIB2');
 	MkEndif;

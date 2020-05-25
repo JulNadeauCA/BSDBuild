@@ -44,7 +44,7 @@ sub TEST_fastcgi
 		MkPrintS('yes');
 		MkPrintSN('checking whether fastcgi works...');
 		MkCompileC('HAVE_FASTCGI', '${FASTCGI_CFLAGS}', '${FASTCGI_LIBS}', $testCode);
-		MkSaveIfTrue('${HAVE_FASTCGI}', 'FASTCGI_CFLAGS', 'FASTCGI_LIBS');
+		MkSave('FASTCGI_CFLAGS', 'FASTCGI_LIBS');
 	MkElse;
 		MkPrintS('no');
 		DISABLE_fastcgi();

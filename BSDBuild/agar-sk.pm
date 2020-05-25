@@ -29,7 +29,7 @@ sub TEST_agar_sk
 		           '${AGAR_SK_CFLAGS} ${AGAR_MATH_CFLAGS} ${AGAR_CFLAGS}',
 		           '${AGAR_SK_LIBS} ${AGAR_MATH_LIBS} ${AGAR_LIBS}',
 		           $testCode);
-		MkSaveIfTrue('${HAVE_AGAR_SK}', 'AGAR_SK_CFLAGS', 'AGAR_SK_LIBS');
+		MkSave('AGAR_SK_CFLAGS', 'AGAR_SK_LIBS');
 	MkElse;
 		DISABLE_agar_sk();
 	MkEndif;

@@ -136,7 +136,7 @@ sub TEST_opengl
 			MkCompileC('HAVE_OPENGL',
 			           '${OPENGL_CFLAGS}', '${OPENGL_LIBS}',
 					   $testCode);
-			MkSaveIfTrue('${HAVE_OPENGL}', 'OPENGL_CFLAGS', 'OPENGL_LIBS');
+			MkSave('OPENGL_CFLAGS', 'OPENGL_LIBS');
 		MkEndif;
 
 		MkPrintSN('checking whether OpenGL has glext...');

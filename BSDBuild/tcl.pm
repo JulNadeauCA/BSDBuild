@@ -50,7 +50,7 @@ sub TEST_tcl
 	MkIfFound($pfx, $ver, 'TCL_VERSION');
 		MkPrintN('checking whether TCL works...');
 		MkCompileC('HAVE_TCL', '${TCL_CFLAGS}', '${TCL_LIBS}', $testCode);
-		MkSaveIfTrue('${HAVE_TCL}', 'TCL_CFLAGS', 'TCL_LIBS');
+		MkSave('TCL_CFLAGS', 'TCL_LIBS');
 	MkElse;
 		DISABLE_tcl();
 	MkEndif;

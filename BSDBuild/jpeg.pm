@@ -57,7 +57,7 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-		MkSaveIfTrue('${HAVE_JPEG}', 'JPEG_CFLAGS', 'JPEG_LIBS');
+		MkSave('JPEG_CFLAGS', 'JPEG_LIBS');
 	MkElse;
 		MkPrintS('no');
 		DISABLE_jpeg();

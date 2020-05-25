@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-	MkSaveIfTrue('${HAVE_GLX}', 'GLX_CFLAGS', 'GLX_LIBS');
+	MkSave('GLX_CFLAGS', 'GLX_LIBS');
 }
 
 sub DISABLE_glx

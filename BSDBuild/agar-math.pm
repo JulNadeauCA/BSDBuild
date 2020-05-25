@@ -31,7 +31,7 @@ sub TEST_agar_math
 		           '${AGAR_MATH_CFLAGS} ${AGAR_CFLAGS}',
 		           '${AGAR_MATH_LIBS} ${AGAR_LIBS}',
 				   $testCode);
-		MkSaveIfTrue('${HAVE_AGAR_MATH}', 'AGAR_MATH_CFLAGS', 'AGAR_MATH_LIBS');
+		MkSave('AGAR_MATH_CFLAGS', 'AGAR_MATH_LIBS');
 	MkElse;
 		DISABLE_agar_math();
 	MkEndif;

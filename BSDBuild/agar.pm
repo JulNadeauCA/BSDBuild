@@ -30,7 +30,7 @@ sub TEST_agar
 		MkCompileC('HAVE_AGAR',
 		           '${AGAR_CFLAGS}', '${AGAR_LIBS}',
 				   $testCode);
-		MkSaveIfTrue('${HAVE_AGAR}', 'AGAR_CFLAGS', 'AGAR_LIBS');
+		MkSave('AGAR_CFLAGS', 'AGAR_LIBS');
 	MkElse;
 		DISABLE_agar();
 	MkEndif;

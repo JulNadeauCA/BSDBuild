@@ -41,7 +41,7 @@ sub TEST_fontconfig
 		MkCompileC('HAVE_FONTCONFIG',
 		           '${FONTCONFIG_CFLAGS}', '${FONTCONFIG_LIBS}',
 				   $testCode);
-		MkSaveIfTrue('${HAVE_FONTCONFIG}', 'FONTCONFIG_CFLAGS', 'FONTCONFIG_LIBS');
+		MkSave('FONTCONFIG_CFLAGS', 'FONTCONFIG_LIBS');
 	MkElse;
 		DISABLE_fontconfig();
 	MkEndif;

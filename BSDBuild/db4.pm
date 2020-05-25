@@ -52,7 +52,7 @@ sub TEST_db4
 
 		MkPrintSN('checking whether DB4 works...');
 		MkCompileC('HAVE_DB4', '${DB4_CFLAGS}', '${DB4_LIBS}', $testCode);
-		MkSaveIfTrue('${HAVE_DB4}', 'DB4_CFLAGS', 'DB4_LIBS');
+		MkSave('DB4_CFLAGS', 'DB4_LIBS');
 	MkElse;
 		DISABLE_db4();
 	MkEndif;

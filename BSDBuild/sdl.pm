@@ -113,7 +113,7 @@ sub TEST_sdl
 			MkAppend('SDL_LIBS', '-L/usr/X11R6/lib -lX11 -lXext -lXrandr '.
 			                     '-lXrender');
 			MkCompileC('HAVE_SDL', '${SDL_CFLAGS}', '${SDL_LIBS}', $testCode);
-			MkSaveIfTrue('${HAVE_SDL}', 'SDL_CFLAGS', 'SDL_LIBS');
+			MkSave('SDL_CFLAGS', 'SDL_LIBS');
 		MkEndif;
 	MkElse;
 		DISABLE_sdl();

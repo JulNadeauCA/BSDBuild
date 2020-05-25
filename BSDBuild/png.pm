@@ -30,12 +30,13 @@ sub TEST_png
 	MkIfFound($pfx, $ver, 'PNG_VERSION');
 		MkPrintSN('checking whether libpng works...');
 		MkCompileC('HAVE_PNG', '${PNG_CFLAGS}', '${PNG_LIBS}', $testCode);
-		MkSaveIfTrue('${HAVE_PNG}', 'PNG_CFLAGS', 'PNG_LIBS');
+		MkSave('PNG_CFLAGS', 'PNG_LIBS');
 		
 		MkTestVersion('PNG_VERSION', '1.4.0');
 		MkIfEQ('${MK_VERSION_OK}', 'yes');
 			MkDefine('HAVE_LIBPNG14', 'yes');
-			MkSave('HAVE_LIBPNG14');
+			MkSaveMK('HAVE_LIBPNG14');
+			MkSaveDefine('HAVE_LIBPNG14');
 		MkElse;
 			MkSaveUndef('HAVE_LIBPNG14');
 		MkEndif;

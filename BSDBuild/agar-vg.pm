@@ -33,7 +33,7 @@ sub TEST_agar_vg
 		           '${AGAR_VG_CFLAGS} ${AGAR_CFLAGS}',
 		           '${AGAR_VG_LIBS} ${AGAR_LIBS}',
 				   $testCode);
-		MkSaveIfTrue('${HAVE_AGAR_VG}', 'AGAR_VG_CFLAGS', 'AGAR_VG_LIBS');
+		MkSave('AGAR_VG_CFLAGS', 'AGAR_VG_LIBS');
 	MkElse;
 		DISABLE_agar_vg();
 	MkEndif;

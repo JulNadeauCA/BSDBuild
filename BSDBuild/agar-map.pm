@@ -32,7 +32,7 @@ sub TEST_agar_map
 		                            '${AGAR_MAP_LIBS} ${AGAR_LIBS}',
 		                            $testCode);
 
-		MkSaveIfTrue('${HAVE_AGAR_MAP}', 'AGAR_MAP_CFLAGS', 'AGAR_MAP_LIBS');
+		MkSave('AGAR_MAP_CFLAGS', 'AGAR_MAP_LIBS');
 	MkElse;
 		DISABLE_agar_map();
 	MkEndif;

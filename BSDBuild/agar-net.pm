@@ -35,7 +35,7 @@ sub TEST_agar_net
 		           '${AGAR_NET_CFLAGS} ${AGAR_CORE_CFLAGS}',
 		           '${AGAR_NET_LIBS} ${AGAR_CORE_LIBS}',
 		           $testCode);
-		MkSaveIfTrue('${HAVE_AGAR_NET}', 'AGAR_NET_CFLAGS', 'AGAR_NET_LIBS');
+		MkSave('AGAR_NET_CFLAGS', 'AGAR_NET_LIBS');
 	MkElse;
 		DISABLE_agar_net();
 	MkEndif;

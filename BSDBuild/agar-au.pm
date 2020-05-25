@@ -26,7 +26,7 @@ sub TEST_agar_au
 		MkCompileC('HAVE_AGAR_AU',
 		           '${AGAR_AU_CFLAGS} ${AGAR_CFLAGS}',
 		           '${AGAR_AU_LIBS} ${AGAR_LIBS}', $testCode);
-		MkSaveIfTrue('${HAVE_AGAR_AU}', 'AGAR_AU_CFLAGS', 'AGAR_AU_LIBS');
+		MkSave('AGAR_AU_CFLAGS', 'AGAR_AU_LIBS');
 	MkElse;
 		DISABLE_agar_au();
 	MkEndif;

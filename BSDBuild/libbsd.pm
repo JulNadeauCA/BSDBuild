@@ -26,7 +26,7 @@ sub TEST_libbsd
 	MkIfFound($pfx, $ver, 'LIBBSD_VERSION');
 		MkPrintSN('checking whether libbsd works...');
 		MkCompileC('HAVE_LIBBSD', '${LIBBSD_CFLAGS}', '${LIBBSD_LIBS}', $testCode);
-		MkSaveIfTrue('${HAVE_LIBBSD}', 'LIBBSD_CFLAGS', 'LIBBSD_LIBS');
+		MkSave('LIBBSD_CFLAGS', 'LIBBSD_LIBS');
 	MkElse;
 		DISABLE_libbsd();
 	MkEndif;

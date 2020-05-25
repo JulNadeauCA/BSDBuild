@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
 	return (msg != NULL);
 }
 EOF
-		MkSaveIfTrue('${HAVE_CRACKLIB}', 'CRACKLIB_CFLAGS', 'CRACKLIB_LIBS');
+		MkSave('CRACKLIB_CFLAGS', 'CRACKLIB_LIBS');
 		MkIfTrue('${HAVE_CRACKLIB}', '');
 			foreach my $path (@dictPaths) {
 				MkIf("-f \"$path.pwd\"");

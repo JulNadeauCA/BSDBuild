@@ -27,7 +27,7 @@ sub TEST_etubestore
 		           '${ETUBESTORE_CFLAGS} ${AGAR_CFLAGS}',
 				   '${ETUBESTORE_LIBS} ${AGAR_LIBS}',
 		           $testCode);
-		MkSaveIfTrue('${HAVE_ETUBESTORE}', 'ETUBESTORE_CFLAGS', 'ETUBESTORE_LIBS');
+		MkSave('ETUBESTORE_CFLAGS', 'ETUBESTORE_LIBS');
 	MkElse;
 		DISABLE_etubestore();
 	MkEndif;

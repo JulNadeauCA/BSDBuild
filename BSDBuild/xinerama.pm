@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 	return (rv);
 }
 EOF
-	MkSaveIfTrue('${HAVE_XINERAMA}', 'XINERAMA_CFLAGS', 'XINERAMA_LIBS');
+	MkSave('XINERAMA_CFLAGS', 'XINERAMA_LIBS');
 
 	MkIfTrue('${HAVE_XINERAMA}');
 		MkDefine('XINERAMA_PC', 'xinerama');

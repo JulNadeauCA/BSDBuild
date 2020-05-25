@@ -24,7 +24,7 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	MkSaveIfTrue('${HAVE_MATH}', 'MATH_CFLAGS', 'MATH_LIBS');
+	MkSave('MATH_CFLAGS', 'MATH_LIBS');
 }
 
 sub DISABLE_math

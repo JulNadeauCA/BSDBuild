@@ -175,9 +175,7 @@ sub TEST_lldb
 				             '${LLDB_CFLAGS} ${LLDB_UTILITY_CFLAGS}',
 		                     '${LLDB_LDFLAGS} ${LLDB_LIBS} ${LLDB_UTILITY_LIBS}',
 							 $testCodeUtility);
-				MkSaveIfTrue('${HAVE_LLDB_UTILITY}',
-				             'LLDB_UTILITY_CFLAGS', 'LLDB_UTILITY_LIBS');
-				MkEndif;
+				MkSave('LLDB_UTILITY_CFLAGS', 'LLDB_UTILITY_LIBS');
 				MkCaseEnd;
 			MkEsac;
 		MkElse;

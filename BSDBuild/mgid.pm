@@ -22,7 +22,7 @@ sub TEST_mgid
 	MkIfFound($pfx, $ver, 'MGID_VERSION');
 		MkPrintSN('checking whether libmgid works...');
 		MkCompileC('HAVE_MGID', '${MGID_CFLAGS}', '${MGID_LIBS}', $testCode);
-		MkSaveIfTrue('${HAVE_MGID}', 'MGID_CFLAGS', 'MGID_LIBS');
+		MkSave('MGID_CFLAGS', 'MGID_LIBS');
 	MkElse;
 		MkSaveUndef('HAVE_MGID');
 	MkEndif;

@@ -12,7 +12,7 @@ sub TEST_smpeg
 	# TODO Test
 
 	MkIfFound($pfx, $ver, 'SMPEG_VERSION');
-		MkSaveIfTrue('${HAVE_SMPEG}', 'SMPEG_CFLAGS', 'SMPEG_LIBS');
+		MkSave('SMPEG_CFLAGS', 'SMPEG_LIBS');
 	MkElse;
 		DISABLE_smpeg();
 	MkEndif;

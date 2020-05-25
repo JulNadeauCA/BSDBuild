@@ -64,7 +64,7 @@ sub TEST_gettext
 				}
 			MkEndif;
 			MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}', $testCode);
-			MkSaveIfTrue('${HAVE_GETTEXT}', 'GETTEXT_CFLAGS', 'GETTEXT_LIBS');
+			MkSave('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
 		MkEndif;
 	MkEndif;
 }

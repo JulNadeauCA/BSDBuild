@@ -41,7 +41,7 @@ sub TEST_freetype
 	MkIfFound($pfx, $ver, 'FREETYPE_VERSION');
 		MkPrintSN('checking whether FreeType works...');
 		MkCompileC('HAVE_FREETYPE', '${FREETYPE_CFLAGS}', '${FREETYPE_LIBS}', $testCode);
-		MkSaveIfTrue('${HAVE_FREETYPE}', 'FREETYPE_CFLAGS', 'FREETYPE_LIBS');
+		MkSave('FREETYPE_CFLAGS', 'FREETYPE_LIBS');
 	MkElse;
 		DISABLE_freetype();
 	MkEndif;

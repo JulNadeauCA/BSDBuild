@@ -38,8 +38,7 @@ main(int argc, char **argv, char **env)
 	return (0);
 }
 EOF
-		MkSaveIfTrue('${HAVE_PERL}', 'PERL_CFLAGS', 'PERL_LIBS');
-		
+		MkSave('PERL_CFLAGS', 'PERL_LIBS');
 		MkSet('PERL', '${MK_EXEC_PATH}');
 		MkSaveMK('PERL');
 	MkElse;

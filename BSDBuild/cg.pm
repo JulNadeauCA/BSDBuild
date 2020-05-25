@@ -59,7 +59,7 @@ sub TEST_cg
 	           '${CG_CFLAGS} ${OPENGL_CFLAGS} ${PTHREADS_CFLAGS}',
 	           '${CG_LIBS} ${OPENGL_LIBS} ${PTHREADS_LIBS}',
 	           $testCode);
-	MkSaveIfTrue('${HAVE_CG}', 'CG_CFLAGS', 'CG_LIBS');
+	MkSave('CG_CFLAGS', 'CG_LIBS');
 }
 
 sub DISABLE_cg

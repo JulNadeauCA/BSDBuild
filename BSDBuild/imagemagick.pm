@@ -52,8 +52,7 @@ sub TEST_imagemagick
 			           '${IMAGEMAGICK_CFLAGS}', '${IMAGEMAGICK_LIBS}',
 					   $testCode7);
 		}
-		MkSaveIfTrue('${HAVE_IMAGEMAGICK}',
-		             'IMAGEMAGICK_CFLAGS', 'IMAGEMAGICK_LIBS');
+		MkSave('IMAGEMAGICK_CFLAGS', 'IMAGEMAGICK_LIBS');
 	MkElse;
 		MkSaveUndef('HAVE_IMAGEMAGICK6', 'HAVE_IMAGEMAGICK7');
 	MkEndif;

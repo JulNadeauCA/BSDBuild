@@ -186,7 +186,7 @@ sub TEST_lldb
 
 sub DISABLE_lldb
 {
-	MkDefine('HAVE_LLDB', 'no') unless $TestFailed
+	MkDefine('HAVE_LLDB', 'no') unless $TestFailed;
 	MkDefine('HAVE_LLDB_UTILITY', 'no');
 	MkDefine('LLDB_CFLAGS', '');
 	MkDefine('LLDB_LIBS', '');

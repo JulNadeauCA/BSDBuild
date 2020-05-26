@@ -1,11 +1,10 @@
-# vim:ts=4
 # Public domain
 
 sub TEST_cxx
 {
 	my @cxx_try = ('clang++', 'clang++70', 'clang++60', 'c++',
-                   'gcc', 'gcc-6', 'gcc7', 'gcc8', 'gcc5', 'gcc49', 'gcc48',
-                   'clang.exe', 'c++.exe', 'gcc.exe');
+	               'gcc', 'gcc-6', 'gcc7', 'gcc8', 'gcc5', 'gcc49', 'gcc48',
+ 	               'clang.exe', 'c++.exe', 'gcc.exe');
 
 	MkIfTrue('$CROSS_COMPILING');
 		MkDefine('CROSSPFX', '${host}-');
@@ -16,16 +15,19 @@ sub TEST_cxx
 	MkIfEQ('$CXX', '');										# Unspecified CXX
 		MkPushIFS('$PATH_SEPARATOR');
 		MkFor('i', '$PATH');
-	my @try = @cxx_try;
-	my $cxx = shift(@try);
+			my @try = @cxx_try;
+			my $cxx = shift(@try);
+
 			MkIf('-x "${i}/${CROSSPFX}'.$cxx.'"');
 			MkDefine('CXX', '${i}/${CROSSPFX}'.$cxx);
 			MkBreak;
-	foreach $cxx (@try) {
-			MkElif('-x "${i}/${CROSSPFX}'.$cxx.'"');
-			MkDefine('CXX', '${i}/${CROSSPFX}'.$cxx);
-			MkBreak;
-	}
+
+			foreach $cxx (@try) {
+				MkElif('-x "${i}/${CROSSPFX}'.$cxx.'"');
+				MkDefine('CXX', '${i}/${CROSSPFX}'.$cxx);
+				MkBreak;
+			}
+
 			MkEndif;
 		MkDone;
 		MkPopIFS();
@@ -94,7 +96,6 @@ EOT
 				echo "yes" >>config.log
 			fi
 EOF
-	MkSaveMK('EXECSUFFIX');
 	MkSaveDefine('EXECSUFFIX');
 print << 'EOF';
 		else
@@ -120,34 +121,33 @@ EOF
 		MkEndif;
 
 		print 'rm -f conftest.cc $testdir/conftest$EXECSUFFIX', "\n";
-
-		MkSaveMK('HAVE_CXX', 'CXX', 'CXXFLAGS');
-
 	MkElse;
-		DISABLE_cxx();
+		MkDisableFailed('cxx');
 	MkEndif;
 }
 
 sub DISABLE_cxx
 {
-	MkDefine('HAVE_CXX', 'no');
+	MkDefine('HAVE_CXX', 'no') unless $TestFailed;
 	MkDefine('HAVE_CXX_WARNINGS', 'no');
 	MkDefine('TEST_CXXFLAGS', '');
+	MkDefine('EXECSUFFIX', '');
+	MkSaveDefine('EXECSUFFIX');
 	MkSaveUndef('HAVE_CXX', 'HAVE_CXX_WARNINGS');
-	MkSaveMK('HAVE_CXX', 'HAVE_CXX_WARNINGS');
 }
 
 BEGIN
 {
 	my $n = 'cxx';
 
-	$DESCR{$n}	 = 'a C++ compiler';
-	$TESTS{$n}	 = \&TEST_cxx;
+	$DESCR{$n}   = 'a C++ compiler';
+	$TESTS{$n}   = \&TEST_cxx;
 	$DISABLE{$n} = \&DISABLE_cxx;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'HAVE_CXX HAVE_CXX_WARNINGS CXX CXXFLAGS EXECSUFFIX';
 	
-	RegisterEnvVar('CXX',		'C++ compiler command');
-	RegisterEnvVar('CXXFLAGS',	'C++ compiler flags');
-	RegisterEnvVar('CXXCPP',	'C++ preprocessor');
+	RegisterEnvVar('CXX',      'C++ compiler command');
+	RegisterEnvVar('CXXFLAGS', 'C++ compiler flags');
+	RegisterEnvVar('CXXCPP',   'C++ preprocessor');
 }
 ;1

@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 sub TEST_math
@@ -24,7 +23,6 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	MkSave('MATH_CFLAGS', 'MATH_LIBS');
 }
 
 sub DISABLE_math
@@ -56,5 +54,6 @@ BEGIN
 	$DISABLE{$n} = \&DISABLE_math;
 	$EMUL{$n}    = \&EMUL_math;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'MATH_CFLAGS MATH_LIBS';
 }
 ;1

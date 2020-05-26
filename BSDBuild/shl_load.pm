@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my $testCode = << 'EOF';
@@ -38,16 +37,16 @@ sub TEST_shl_load
 	MkIfTrue('${HAVE_SHL_LOAD}');
 		MkDefine('DSO_LIBS', '$DSO_LIBS $SHL_LOAD_LIBS');
 		MkSaveDefine('HAVE_SHL_LOAD');
-		MkSaveMK('DSO_LIBS');
 	MkElse;
-		MkSaveUndef('HAVE_SHL_LOAD');
+		MkDisableFailed('shl_load');
 	MkEndif;
+
 	EndTestHeaders();
 }
 
 sub DISABLE_shl_load
 {
-	MkDefine('HAVE_SHL_LOAD', 'no');
+	MkDefine('HAVE_SHL_LOAD', 'no') unless $TestFailed;
 	MkDefine('HAVE_DL_H', 'no');
 	MkDefine('SHL_LOAD_LIBS', '');
 	MkSaveUndef('HAVE_SHL_LOAD', 'HAVE_DL_H');
@@ -61,5 +60,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_shl_load;
 	$DISABLE{$n} = \&DISABLE_shl_load;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'DSO_LIBS SHL_LOAD_LIBS';
 }
 ;1

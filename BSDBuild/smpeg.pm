@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 sub TEST_smpeg
@@ -9,18 +8,17 @@ sub TEST_smpeg
 	MkExecOutputPfx($pfx, 'smpeg-config', '--cflags', 'SMPEG_CFLAGS');
 	MkExecOutputPfx($pfx, 'smpeg-config', '--libs', 'SMPEG_LIBS');
 
-	# TODO Test
-
 	MkIfFound($pfx, $ver, 'SMPEG_VERSION');
-		MkSave('SMPEG_CFLAGS', 'SMPEG_LIBS');
+		# TODO test
+		MkSaveDefine('HAVE_SMPEG');
 	MkElse;
-		DISABLE_smpeg();
+		MkDisableNotFound('smpeg');
 	MkEndif;
 }
 
 sub DISABLE_smpeg
 {
-	MkDefine('HAVE_SMPEG', 'no');
+	MkDefine('HAVE_SMPEG', 'no') unless $TestFailed;
 	MkDefine('SMPEG_CFLAGS', '');
 	MkDefine('SMPEG_LIBS', '');
 	MkSaveUndef('HAVE_SMPEG');
@@ -35,5 +33,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_smpeg;
 	$DISABLE{$n} = \&DISABLE_smpeg;
 	$DEPS{$n}    = 'cc,sdl';
+	$SAVED{$n}   = 'SMPEG_CFLAGS SMPEG_LIBS';
 }
 ;1

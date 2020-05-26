@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 my $testCode = << 'EOF';
 #include <agar/core.h>
@@ -40,17 +39,20 @@ sub TEST_agar_core
 		MkPrintSN('checking whether Agar-Core works...');
 		MkExecOutputPfx($pfx, 'agar-core-config', '--cflags', 'AGAR_CORE_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-core-config', '--libs', 'AGAR_CORE_LIBS');
-		MkCompileC('HAVE_AGAR_CORE', '${AGAR_CORE_CFLAGS}', '${AGAR_CORE_LIBS}',
+		MkCompileC('HAVE_AGAR_CORE',
+		           '${AGAR_CORE_CFLAGS}', '${AGAR_CORE_LIBS}',
 		           $testCode);
-		MkSave('AGAR_CORE_CFLAGS', 'AGAR_CORE_LIBS');
+		MkIfFalse('${HAVE_AGAR_CORE}');
+			MkDisableFailed('agar-core');
+		MkEndif;
 	MkElse;
-		DISABLE_agar_core();
+		MkDisableNotFound('agar-core');
 	MkEndif;
 }
 
 sub DISABLE_agar_core
 {
-	MkDefine('HAVE_AGAR_CORE', 'no');
+	MkDefine('HAVE_AGAR_CORE', 'no') unless $TestFailed;
 	MkDefine('AGAR_CORE_CFLAGS', '');
 	MkDefine('AGAR_CORE_LIBS', '');
 	MkSaveUndef('HAVE_AGAR_CORE');
@@ -74,11 +76,10 @@ BEGIN
 
 	$DESCR{$n}   = 'Agar-Core';
 	$URL{$n}     = 'http://libagar.org';
-
 	$TESTS{$n}   = \&TEST_agar_core;
 	$DISABLE{$n} = \&DISABLE_agar_core;
 	$EMUL{$n}    = \&EMUL_agar_core;
-
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'AGAR_CORE_CFLAGS AGAR_CORE_LIBS';
 }
 ;1

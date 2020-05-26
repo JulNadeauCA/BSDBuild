@@ -1,11 +1,10 @@
-# vim:ts=4
 # Public domain
 
 sub TEST_objc
 {
 	my @objc_try = ('clang', 'clang70', 'clang60',
-                    'gcc', 'gcc-6', 'gcc7', 'gcc8', 'gcc5', 'gcc49', 'gcc48',
-                    'clang.exe', 'cc.exe', 'gcc.exe');
+	                'gcc', 'gcc-6', 'gcc7', 'gcc8', 'gcc5', 'gcc49', 'gcc48',
+	                'clang.exe', 'cc.exe', 'gcc.exe');
 	
 	MkIfTrue('$CROSS_COMPILING');
 		MkDefine('CROSSPFX', '${host}-');
@@ -16,16 +15,18 @@ sub TEST_objc
 	MkIfEQ('$OBJC', '');										# Unspecified OBJC
 		MkPushIFS('$PATH_SEPARATOR');
 		MkFor('i', '$PATH');
-	my @try = @objc_try;
-	my $objc = shift(@try);
+			my @try = @objc_try;
+			my $objc = shift(@try);
+
 			MkIf('-x "${i}/${CROSSPFX}'.$objc.'"');
 			MkDefine('OBJC', '${i}/${CROSSPFX}'.$objc);
 			MkBreak;
-	foreach $objc (@try) {
-			MkElif('-x "${i}/${CROSSPFX}'.$objc.'"');
-			MkDefine('OBJC', '${i}/${CROSSPFX}'.$objc);
-			MkBreak;
-	}
+
+			foreach $objc (@try) {
+				MkElif('-x "${i}/${CROSSPFX}'.$objc.'"');
+				MkDefine('OBJC', '${i}/${CROSSPFX}'.$objc);
+				MkBreak;
+			}
 			MkEndif;
 		MkDone;
 		MkPopIFS();
@@ -39,9 +40,9 @@ EOF
 		echo "* under the current PATH, which is:"
 		echo "* $PATH"
 		echo "*"
-	    echo "* You may need to set the OBJC environment variable."
-	    echo "*"
-	    echo "Cannot find Objective C compiler in PATH." >>config.log
+		echo "* You may need to set the OBJC environment variable."
+		echo "*"
+		echo "Cannot find Objective C compiler in PATH." >>config.log
 		HAVE_OBJC="no"
 		echo "no"
 	else
@@ -63,8 +64,8 @@ int main(int argc, char *argv[]) { return (0); }
 EOT
 	$OBJC -x objective-c -o conftest conftest.m 2>>config.log
 	if [ $? != 0 ]; then
-	    echo "no"
-	    echo "no, compilation failed" >>config.log
+		echo "no"
+		echo "no, compilation failed" >>config.log
 		HAVE_OBJC="no"
 	else
 		HAVE_OBJC="yes"
@@ -94,7 +95,6 @@ EOT
 				echo "yes" >>config.log
 			fi
 EOF
-	MkSaveMK('EXECSUFFIX');
 	MkSaveDefine('EXECSUFFIX');
 	print << 'EOF';
 		else
@@ -120,17 +120,16 @@ EOF
 		MkSaveDefine('HAVE_OBJC');
 		print 'rm -f conftest.m $testdir/conftest$EXECSUFFIX', "\n";
 	MkElse;
-		DISABLE_objc();
+		MkDisableFailed('objc');
 	MkEndif;
 }
 
 sub DISABLE_objc
 {
-	MkDefine('HAVE_OBJC', 'no');
+	MkDefine('HAVE_OBJC', 'no') unless $TestFailed;
 	MkDefine('HAVE_OBJC_WARNINGS', 'no');
 	MkDefine('TEST_OBJCFLAGS', '');
 	MkSaveUndef('HAVE_OBJC', 'HAVE_OBJC_WARNINGS');
-	MkSaveMK('HAVE_OBJC', 'HAVE_OBJC_WARNINGS');
 }
 
 BEGIN
@@ -141,5 +140,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_objc;
 	$DISABLE{$n} = \&DISABLE_objc;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'HAVE_OBJC HAVE_OBJC_WARNINGS EXECSUFFIX';
 }
 ;1

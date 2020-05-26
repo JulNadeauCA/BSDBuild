@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 sub TEST_curl
@@ -11,7 +10,8 @@ sub TEST_curl
 		MkPrintSN('checking whether libcurl works...');
 		MkExecOutputPfx($pfx, 'curl-config', '--cflags', 'CURL_CFLAGS');
 		MkExecOutputPfx($pfx, 'curl-config', '--libs', 'CURL_LIBS');
-		MkCompileC('HAVE_CURL', '${CURL_CFLAGS}', '${CURL_LIBS}', << 'EOF');
+		MkCompileC('HAVE_CURL',
+		           '${CURL_CFLAGS}', '${CURL_LIBS}', << 'EOF');
 #include <curl/curl.h>
 
 int
@@ -24,15 +24,17 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-		MkSave('CURL_CFLAGS', 'CURL_LIBS');
+		MkIfFalse('${HAVE_CURL}');
+			MkDisableFailed('curl');
+		MkEndif;
 	MkElse;
-		DISABLE_curl();
+		MkDisableNotFound('curl');
 	MkEndif;
 }
 
 sub DISABLE_curl
 {
-	MkDefine('HAVE_CURL', 'no');
+	MkDefine('HAVE_CURL', 'no') unless $TestFailed;
 	MkDefine('CURL_CFLAGS', '');
 	MkDefine('CURL_LIBS', '');
 	MkSaveUndef('HAVE_CURL');
@@ -47,5 +49,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_curl;
 	$DISABLE{$n} = \&DISABLE_curl;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'CURL_CFLAGS CURL_LIBS';
 }
 ;1

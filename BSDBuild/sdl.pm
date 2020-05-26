@@ -1,7 +1,4 @@
-# vim:ts=4
 # Public domain
-
-use BSDBuild::Core;
 
 my $testCode = << 'EOF';
 #ifdef _USE_SDL_FRAMEWORK
@@ -73,7 +70,8 @@ sub TEST_sdl
 		
 	MkIfFound($pfx, $ver, 'SDL_VERSION');
 		MkPrintSN('checking whether SDL works...');
-		MkCompileC('HAVE_SDL', '${SDL_CFLAGS}', '${SDL_LIBS}', $testCode);
+		MkCompileC('HAVE_SDL',
+		           '${SDL_CFLAGS}', '${SDL_LIBS}', $testCode);
 		MkIfTrue('${HAVE_SDL}');
 			MkCaseIn('${host}');
 			MkCaseBegin('*-*-cygwin* | *-*-mingw32*');
@@ -107,31 +105,30 @@ sub TEST_sdl
 			MkPopIFS();
 
 			MkDefine('SDL_LIBS', '${SDL_LIBS_FIXED}');
-			MkSaveMK('SDL_CFLAGS', 'SDL_LIBS');
 		MkElse;
 			MkPrintSN('checking whether SDL works (with X11 libs)...');
 			MkAppend('SDL_LIBS', '-L/usr/X11R6/lib -lX11 -lXext -lXrandr '.
 			                     '-lXrender');
-			MkCompileC('HAVE_SDL', '${SDL_CFLAGS}', '${SDL_LIBS}', $testCode);
-			MkSave('SDL_CFLAGS', 'SDL_LIBS');
+			MkCompileC('HAVE_SDL',
+			           '${SDL_CFLAGS}', '${SDL_LIBS}', $testCode);
+			MkIfFalse('${HAVE_SDL}');
+				MkDisableFailed('sdl');
+			MkEndif;
 		MkEndif;
 	MkElse;
-		DISABLE_sdl();
+		MkDisableNotFound('sdl');
 	MkEndif;
 
 	MkIfTrue('${HAVE_SDL}');
 		MkDefine('SDL_PC', 'sdl');
-	MkElse;
-		MkDefine('SDL_PC', '');
 	MkEndif;
 }
 
 sub DISABLE_sdl
 {
-	MkDefine('HAVE_SDL', 'no');
+	MkDefine('HAVE_SDL', 'no') unless $TestFailed;
 	MkDefine('SDL_CFLAGS', '');
 	MkDefine('SDL_LIBS', '');
-	MkDefine('SDL_PC', '');
 	MkSaveUndef('HAVE_SDL');
 }
 
@@ -157,5 +154,6 @@ BEGIN
 	$DISABLE{$n} = \&DISABLE_sdl;
 	$EMUL{$n}    = \&EMUL_sdl;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'SDL_CFLAGS SDL_LIBS SDL_PC';
 }
 ;1

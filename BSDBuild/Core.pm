@@ -1,4 +1,3 @@
-# vim:ts=4
 #
 # Copyright (c) 2002-2020 Julien Nadeau Carriere <vedge@csoft.net>
 # All rights reserved.
@@ -32,6 +31,7 @@ our $EmulOSRel = undef;
 our $EmulEnv = undef;
 our %MkDefinesToSave = ();
 our $Cache = 0;
+our $TestFailed = 0;
 our %TESTS = ();
 our %DISABLE = ();
 our %DESCR = ();
@@ -39,6 +39,7 @@ our %URL = ();
 our %EMUL = ();
 our %EMULDEPS = ();
 our %HELPENV = ();
+our %SAVED = ();
 
 #
 # Bourne instructions.
@@ -271,11 +272,11 @@ sub MkExecOutputPfx
 
 	MkSet($define, '');
 	MkIfNE($pfx, '');
-			MkIfExists($pfx.'/bin/'.$bin);
-				MkSetExec($define, $pfx.'/bin/'.$bin.' '.$args);
-				MkSet('MK_EXEC_FOUND', 'Yes');
-				MkSetS('MK_EXEC_PATH', $pfx.'/bin/'.$bin);
-			MkEndif;
+		MkIfExists($pfx.'/bin/'.$bin);
+			MkSetExec($define, $pfx.'/bin/'.$bin.' '.$args);
+			MkSet('MK_EXEC_FOUND', 'Yes');
+			MkSetS('MK_EXEC_PATH', $pfx.'/bin/'.$bin);
+		MkEndif;
 	MkElse;
 		MkPushIFS('$PATH_SEPARATOR');
 		MkFor('path', '$PATH');
@@ -447,23 +448,14 @@ exit 1
 EOF
 }
 
-sub MKSave
-{
-    my $var = shift;
-    my $s = '';
-   
-	$s = "echo \"$var=\$$var\" >>Makefile.config\n";
-    return ($s);
-}
-
-sub MkSaveMK
+sub MkSave
 {
 	foreach my $var (@_) {
 		$MkDefinesToSave{$var} = 1;
 	}
 }
 
-sub MkSaveMK_Commit
+sub MkSave_Commit
 {
 	foreach my $var (sort keys %MkDefinesToSave) {
 		print << "EOF";
@@ -546,13 +538,6 @@ EOF
 echo "hdefs[\\"$var\\"] = \$$var" >>$OutputLUA
 EOF
 		}
-	}
-}
-
-sub MkSave
-{
-	foreach my $var (@_) {
-		MkSaveMK($var);
 	}
 }
 
@@ -736,7 +721,7 @@ sub MkSaveCompileSuccess ($)
 	my $define = shift;
 		
 	MkSet($define, 'yes');
-	MkSaveMK($define);
+	MkSave($define);
 	MkSaveDefine($define);
 }
 
@@ -745,7 +730,7 @@ sub MkSaveCompileFailed ($)
 	my $define = shift;
 		
 	MkSet($define, 'no');
-	MkSaveMK($define);
+	MkSave($define);
 	MkSaveUndef($define);
 }
 
@@ -1248,7 +1233,7 @@ sub MkEmulWindows
 
 	MkDefine("${module}_CFLAGS", "");
 	MkDefine("${module}_LIBS", "$libs");
-	MkSaveMK("${module}_CFLAGS", "${module}_LIBS");
+	MkSave("${module}_CFLAGS", "${module}_LIBS");
 }
 
 # Specify module availability under Windows platforms in Emul()
@@ -1275,7 +1260,7 @@ sub MkEmulUnavail
 
 		MkDefine("${module}_CFLAGS", "");
 		MkDefine("${module}_LIBS", "");
-		MkSaveMK("${module}_CFLAGS", "${module}_LIBS");
+		MkSave("${module}_CFLAGS", "${module}_LIBS");
 	}
 }
 
@@ -1303,6 +1288,21 @@ sub RegisterEnvVar
 	$HELPENV{$var} = "echo '    $dvar $desc'";
 }
 
+# Disable a module as a result of test failure.
+sub MkDisableFailed
+{
+	$TestFailed = 1;
+	main::disable(@_);
+	$TestFailed = 0;
+}
+
+# Disable a module as a result of its package not being found
+# (equivalent to calling the disable() directive from configure.in).
+sub MkDisableNotFound
+{
+	main::disable(@_);
+}
+
 BEGIN
 {
     require Exporter;
@@ -1310,6 +1310,6 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($Quiet $Cache $OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv %TESTS %DISABLE %DESCR %URL %HELPENV MkComment MkCache MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFail MKSave MkCleanup MkRun TryCompile MkCompileAda MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsAda TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSet MkSetS MkSetExec MkSetTrue MkSetFalse MkPushIFS MkPopIFS MkFor MkDone MkAppend MkBreak MkIfExec MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSaveMK MkSaveMK_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkSave MkLog MkPrint MkPrintN MkPrintS MkPrintSN MkIfFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion MkEmulWindows MkEmulWindowsSYS MkEmulUnavail MkEmulUnavailSYS RegisterEnvVar);
+    @EXPORT = qw($Quiet $Cache $OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv $TestFailed %TESTS %DISABLE %DESCR %URL %HELPENV %SAVED MkComment MkCache MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFail MkCleanup MkRun TryCompile MkCompileAda MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsAda TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSet MkSetS MkSetExec MkSetTrue MkSetFalse MkPushIFS MkPopIFS MkFor MkDone MkAppend MkBreak MkIfExec MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSave MkSave_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkLog MkPrint MkPrintN MkPrintS MkPrintSN MkIfFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion MkEmulWindows MkEmulWindowsSYS MkEmulUnavail MkEmulUnavailSYS RegisterEnvVar MkDisableFailed MkDisableNotFound);
 }
 ;1

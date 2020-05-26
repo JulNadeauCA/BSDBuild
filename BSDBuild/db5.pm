@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my @db5_releases = ('5.0', '5.1', '5.2', '5.3', '5');
@@ -19,24 +18,24 @@ sub TEST_db5
 {
 	my ($ver, $pfx) = @_;
 	
-	MkSetS('DB5_CFLAGS', '');
-	MkSetS('DB5_LIBS', '');
-	MkSetS('DB5_VERSION', '');
-	MkSetS('DB5_VERSION_J', '');
+	MkDefine('DB5_CFLAGS', '');
+	MkDefine('DB5_LIBS', '');
+	MkDefine('DB5_VERSION', '');
+	MkDefine('DB5_VERSION_J', '');
 
 	MkFor('path', $pfx.' /usr/local /usr /opt');
 		MkFor('dbver', join(' ',@db5_releases));
 			MkSetExec('DB5_VERSION_J', 'echo "${dbver}" | sed "s/\.//"');
 			MkIfExists('${path}/lib/db5/libdb-$dbver.so');
 				MkIfExists('${path}/include/db${DB5_VERSION_J}');
-					MkSetS('DB5_CFLAGS', '-I${path}/include/db${DB5_VERSION_J} '.
+					MkDefine('DB5_CFLAGS', '-I${path}/include/db${DB5_VERSION_J} '.
   					                     '-I${path}/include');			# XXX
 				MkElse;
-					MkSetS('DB5_CFLAGS', '-I${path}/include/db5 '.
+					MkDefine('DB5_CFLAGS', '-I${path}/include/db5 '.
   					                     '-I${path}/include');			# XXX
 				MkEndif;
-				MkSetS('DB5_LIBS', '-L${path}/lib/db5 -ldb-$dbver');
-				MkSetS('DB5_VERSION', '${dbver}');
+				MkDefine('DB5_LIBS', '-L${path}/lib/db5 -ldb-$dbver');
+				MkDefine('DB5_VERSION', '${dbver}');
 				MkBreak;
 			MkEndif;
 		MkDone;
@@ -45,18 +44,20 @@ sub TEST_db5
 	MkIfFound($pfx, $ver, 'DB5_VERSION');
 		MkPrintSN('checking whether DB5 works...');
 		MkCompileC('HAVE_DB5', '${DB5_CFLAGS}', '${DB5_LIBS}', $testCode);
-		MkSave('DB5_CFLAGS', 'DB5_LIBS');
+		MkIfFalse('${HAVE_DB5}');
+			MkDisableFailed('db5');
+		MkEndif;
 	MkElse;
 		MkPrint('no');
-		DISABLE_db5();
+		MkDisableNotFound('db5');
 	MkEndif;
 }
 
 sub DISABLE_db5
 {
-	MkSetS('HAVE_DB5', 'no');
-	MkSetS('DB5_CFLAGS', '');
-	MkSetS('DB5_LIBS', '');
+	MkDefine('HAVE_DB5', 'no') unless $TestFailed;
+	MkDefine('DB5_CFLAGS', '');
+	MkDefine('DB5_LIBS', '');
 	MkSaveUndef('HAVE_DB5');
 }
 
@@ -69,5 +70,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_db5;
 	$DISABLE{$n} = \&DISABLE_db5;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'DB5_CFLAGS DB5_LIBS';
 }
 ;1

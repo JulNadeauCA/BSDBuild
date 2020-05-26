@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 my $testCode = << 'EOF';
 #include <Cg/cg.h>
@@ -59,12 +58,14 @@ sub TEST_cg
 	           '${CG_CFLAGS} ${OPENGL_CFLAGS} ${PTHREADS_CFLAGS}',
 	           '${CG_LIBS} ${OPENGL_LIBS} ${PTHREADS_LIBS}',
 	           $testCode);
-	MkSave('CG_CFLAGS', 'CG_LIBS');
+	MkIfFalse('${HAVE_CG}');
+		MkDisableFailed('cg');
+	MkEndif;
 }
 
 sub DISABLE_cg
 {
-	MkDefine('HAVE_CG', 'no');
+	MkDefine('HAVE_CG', 'no') unless $TestFailed;
 	MkDefine('CG_CFLAGS', '');
 	MkDefine('CG_LIBS', '');
 	MkSaveUndef('HAVE_CG');
@@ -79,5 +80,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_cg;
 	$DISABLE{$n} = \&DISABLE_cg;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'CG_CFLAGS CG_LIBS';
 }
 ;1

@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my $testCode = << 'EOF';
@@ -29,15 +28,17 @@ sub TEST_agar_sg
 		           '${AGAR_SG_CFLAGS} ${AGAR_MATH_CFLAGS} ${AGAR_CFLAGS}',
 		           '${AGAR_SG_LIBS} ${AGAR_MATH_LIBS} ${AGAR_LIBS}',
 		           $testCode);
-		MkSave('AGAR_SG_CFLAGS', 'AGAR_SG_LIBS');
+		MkIfFalse('${HAVE_AGAR_SG}');
+			MkDisableFailed('agar-sg');
+		MkEndif;
 	MkElse;
-		DISABLE_agar_sg();
+		MkDisableNotFound('agar-sg');
 	MkEndif;
 }
 
 sub DISABLE_agar_sg
 {
-	MkDefine('HAVE_AGAR_SG', 'no');
+	MkDefine('HAVE_AGAR_SG', 'no') unless $TestFailed;
 	MkDefine('AGAR_SG_CFLAGS', '');
 	MkDefine('AGAR_SG_LIBS', '');
 	MkSaveUndef('HAVE_AGAR_SG');
@@ -65,6 +66,7 @@ BEGIN
 	$DISABLE{$n} = \&DISABLE_agar_sg;
 	$EMUL{$n}    = \&EMUL_agar_sg;
 	$DEPS{$n}    = 'cc,agar,agar-math';
+	$SAVED{$n}   = 'AGAR_SG_CFLAGS AGAR_SG_LIBS';
 
 	@{$EMULDEPS{$n}} = qw(agar);
 }

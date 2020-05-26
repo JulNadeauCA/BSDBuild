@@ -1,4 +1,3 @@
-# vim:ts=4
 #
 # Copyright (c) 2010-2020 Julien Nadeau Carriere <vedge@hypertriton.com>
 # All rights reserved.
@@ -146,7 +145,8 @@ EOF
 		MkDefine('HAVE_GETTEXT', 'no');
 		MkSaveUndef('ENABLE_NLS');
 	MkEndif;
-	MkSaveMK('ENABLE_NLS', 'HAVE_GETTEXT');
+
+	MkSave('ENABLE_NLS', 'HAVE_GETTEXT');
 }
 
 # Built-in ctags options.
@@ -205,10 +205,9 @@ EOF
 
 BEGIN
 {
-    require Exporter;
+	require Exporter;
 
-    @ISA = qw(Exporter);
-    @EXPORT = qw(BuiltinDoc BuiltinNLS BuiltinCtags BuiltinLibtool);
+	@ISA = qw(Exporter);
+	@EXPORT = qw(BuiltinDoc BuiltinNLS BuiltinCtags BuiltinLibtool);
 }
-
 ;1

@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 my $testCode = << 'EOF';
 #include <time.h>
@@ -17,27 +16,28 @@ sub TEST_clock_gettime
 	MkDefine('CLOCK_CFLAGS', '');
 	MkDefine('CLOCK_LIBS', '');
 
-	MkCompileC('HAVE_CLOCK_GETTIME', '${CLOCK_CFLAGS}',
-	    '${CLOCK_LIBS}', $testCode);
+	MkCompileC('HAVE_CLOCK_GETTIME',
+	           '${CLOCK_CFLAGS}', '${CLOCK_LIBS}',
+	           $testCode);
 	MkIfTrue('${HAVE_CLOCK_GETTIME}');
 		MkSaveDefine('HAVE_CLOCK_GETTIME');
-		MkSaveMK('CLOCK_CFLAGS', 'CLOCK_LIBS');
 	MkElse;
 		MkPrintSN('checking for clock_gettime() interface (with -lrt)...');
-		MkCompileC('HAVE_CLOCK_GETTIME', '${CLOCK_CFLAGS}', '-lrt', $testCode);
+		MkCompileC('HAVE_CLOCK_GETTIME',
+		           '${CLOCK_CFLAGS}', '-lrt',
+		           $testCode);
 		MkIfTrue('${HAVE_CLOCK_GETTIME}');
 			MkDefine('CLOCK_LIBS', '-lrt');
 			MkSaveDefine('HAVE_CLOCK_GETTIME');
-			MkSaveMK('CLOCK_CFLAGS', 'CLOCK_LIBS');
 		MkElse;
-			MkSaveUndef('HAVE_CLOCK_GETTIME');
+			MkDisableFailed('clock_gettime');
 		MkEndif;
 	MkEndif;
 }
 
 sub DISABLE_clock_gettime
 {
-	MkDefine('HAVE_CLOCK_GETTIME', 'no');
+	MkDefine('HAVE_CLOCK_GETTIME', 'no') unless $TestFailed;
 	MkDefine('CLOCK_CFLAGS', '');
 	MkDefine('CLOCK_LIBS', '');
 	MkSaveUndef('HAVE_CLOCK_GETTIME');
@@ -51,5 +51,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_clock_gettime;
 	$DISABLE{$n} = \&DISABLE_clock_gettime;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'CLOCK_CFLAGS CLOCK_LIBS';
 }
 ;1

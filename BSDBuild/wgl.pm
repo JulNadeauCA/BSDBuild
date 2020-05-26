@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my $testCode = << 'EOF';
@@ -25,16 +24,21 @@ sub TEST_wgl
 {
 	my ($ver) = @_;
 
-	MkCompileC('HAVE_WGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS} -lgdi32', $testCode);
+	MkCompileC('HAVE_WGL',
+	           '${OPENGL_CFLAGS}', '${OPENGL_LIBS} -lgdi32', $testCode);
 	MkIfTrue('${HAVE_WGL}');
 		MkDefine('OPENGL_LIBS', '${OPENGL_LIBS} -lgdi32');
-		MkSaveMK('OPENGL_CFLAGS', 'OPENGL_LIBS');
+	MkElse;
+		MkDisableFailed('wgl');
 	MkEndif;
 }
 
 sub DISABLE_wgl
 {
-	MkDefine('HAVE_WGL', 'no');
+	MkDefine('HAVE_WGL', 'no') unless $TestFailed;
+	#
+	# Don't clear OPENGL_CFLAGS and OPENGL_LIBS (conflict with opengl)
+	#
 	MkSaveUndef('HAVE_WGL');
 }
 
@@ -59,5 +63,6 @@ BEGIN
 	$DISABLE{$n} = \&DISABLE_wgl;
 	$EMUL{$n}    = \&EMUL_wgl;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'OPENGL_CFLAGS OPENGL_LIBS';
 }
 ;1

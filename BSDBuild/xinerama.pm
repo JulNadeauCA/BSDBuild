@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 sub TEST_xinerama
@@ -14,10 +13,10 @@ sub TEST_xinerama
 		MkDefine('XINERAMA_LIBS', '');
 		MkIfNE($pfx, '');
 			MkIfExists("$pfx/include/X11");
-			    MkDefine('XINERAMA_CFLAGS', "-I$pfx/include");
+				MkDefine('XINERAMA_CFLAGS', "-I$pfx/include");
 			MkEndif;
 			MkIfExists("$pfx/lib");
-			    MkDefine('XINERAMA_LIBS', "-L$pfx/lib");
+				MkDefine('XINERAMA_LIBS', "-L$pfx/lib");
 			MkEndif;
 		MkElse;
 			my @autoIncludeDirs = (
@@ -38,18 +37,14 @@ sub TEST_xinerama
 			);
 			foreach my $dir (@autoIncludeDirs) {
 				MkIfExists("$dir/X11");
-				    MkDefine('XINERAMA_CFLAGS', "-I$dir");
+					MkDefine('XINERAMA_CFLAGS', "-I$dir");
 				MkEndif;
 			}
 			foreach my $dir (@autoLibDirs) {
 				MkIfExists($dir);
-				    MkDefine('XINERAMA_LIBS', "\${XINERAMA_LIBS} -L$dir");
+					MkDefine('XINERAMA_LIBS', "\${XINERAMA_LIBS} -L$dir");
 				MkEndif;
 			}
-#			MkIfNE('${XINERAMA_CFLAGS}', '');
-#				MkPrintS("trying autodetected path");
-#				MkPrintS("WARNING: You should probably use --with-xinerama=prefix");
-#			MkEndif;
 		MkEndif;
 		MkDefine('XINERAMA_LIBS', "\${XINERAMA_LIBS} -lXinerama");
 	MkEndif;
@@ -73,21 +68,18 @@ int main(int argc, char *argv[])
 	return (rv);
 }
 EOF
-	MkSave('XINERAMA_CFLAGS', 'XINERAMA_LIBS');
-
 	MkIfTrue('${HAVE_XINERAMA}');
 		MkDefine('XINERAMA_PC', 'xinerama');
 	MkElse;
-		MkDefine('XINERAMA_PC', '');
+		MkDisableFailed('xinerama');
 	MkEndif;
 }
 
 sub DISABLE_xinerama
 {
-	MkDefine('HAVE_XINERAMA', 'no');
+	MkDefine('HAVE_XINERAMA', 'no') unless $TestFailed;
 	MkDefine('XINERAMA_CFLAGS', '');
 	MkDefine('XINERAMA_LIBS', '');
-	MkDefine('XINERAMA_PC', '');
 	MkSaveUndef('HAVE_XINERAMA');
 }
 
@@ -100,5 +92,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_xinerama;
 	$DISABLE{$n} = \&DISABLE_xinerama;
 	$DEPS{$n}    = 'cc,x11';
+	$SAVED{$n}   = 'XINERAMA_CFLAGS XINERAMA_LIBS XINERAMA_PC';
 }
 ;1

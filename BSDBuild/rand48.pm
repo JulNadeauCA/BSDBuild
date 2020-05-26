@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 sub TEST_rand48

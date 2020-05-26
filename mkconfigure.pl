@@ -97,10 +97,13 @@ sub package
 {
 	my ($val) = @_;
 
-	if ($val =~ /^"(.+)"$/) { $val = $1; }
+	if ($val =~ /^"(.+)"$/) {
+		$val = $1;
+	}
 	MkDefine('PACKAGE', $val);
-	MkSaveMK('PACKAGE');
 	MkSaveDefine('PACKAGE');
+
+	MkSave('PACKAGE');
 	return (0);
 }
 
@@ -109,10 +112,13 @@ sub version
 {
 	my ($val) = @_;
 
-	if ($val =~ /^"(.+)"$/) { $val = $1; }
+	if ($val =~ /^"(.+)"$/) {
+		$val = $1;
+	}
 	MkDefine('VERSION', $val);
-	MkSaveMK('VERSION');
 	MkSaveDefine('VERSION');
+
+	MkSave('VERSION');
 	return (0);
 }
 
@@ -121,10 +127,13 @@ sub release
 {
 	my ($val) = @_;
 
-	if ($val =~ /^"(.+)"$/) { $val = $1; }
+	if ($val =~ /^"(.+)"$/) {
+		$val = $1;
+	}
 	MkDefine('RELEASE', $val);
-	MkSaveMK('RELEASE');
 	MkSaveDefine('RELEASE');
+
+	MkSave('RELEASE');
 	return (0);
 }
 
@@ -316,7 +325,7 @@ sub default_dir
 	MkIf "\"\$\{${dir}_SPECIFIED\}\" != 'yes'";
 		MkDefine($dir, $default);
 		MkSaveDefine($dir);
-		MkSaveMK($dir);
+		MkSave($dir);
 	MkEndif;
 	
 	return (0);
@@ -441,6 +450,9 @@ sub test
 			MkComment("BEGIN $t");
 		}
 		&$c(@args);
+		if ($SAVED{$t}) {
+			MkSave(split(' ', $SAVED{$t}));
+		}
 		MkComment("END $t");
 		if ($EmulOS) {
 			MkPrintSN("ok\n");
@@ -522,8 +534,10 @@ sub disable
 	}
 	my $c = $DISABLE{$t};
 	if ($c) {
-		MkPrintS("not enabling $DESCR{$t}");
-		&$c(1);
+		&$c();
+	}
+	if ($SAVED{$t}) {
+		MkSave(split(' ', $SAVED{$t}));
 	}
 	return (0);
 }
@@ -535,7 +549,7 @@ sub mdefine
 	
 	if ($val =~ /^"(.*)"$/) { $val = $1; }
 	MkDefine($def, $val);
-	MkSaveMK($def);
+	MkSave($def);
 	return (0);
 }
 
@@ -546,7 +560,7 @@ sub mappend
 	
 	if ($val =~ /^"(.*)"$/) { $val = $1; }
 	MkDefine($def, "\${$def} $val");
-	MkSaveMK($def);
+	MkSave($def);
 	return (0);
 }
 
@@ -611,8 +625,8 @@ sub c_define
 
 	MkDefine('CFLAGS', '$CFLAGS -D'.$def);
 	MkDefine('CXXFLAGS', '$CXXFLAGS -D'.$def);
-	MkSaveMK('CFLAGS');
-	MkSaveMK('CXXFLAGS');
+	MkSave('CFLAGS');
+	MkSave('CXXFLAGS');
 	print {$LUA} "table.insert(package.defines,{\"$def\"})\n";
 	return (0);
 }
@@ -626,8 +640,8 @@ sub c_incdir
 #	if ($dir =~ /^\$/) { $qdir = '\"'.$dir.'\"'; }
 	MkDefine('CFLAGS', '$CFLAGS -I'.$qdir);
 	MkDefine('CXXFLAGS', '$CXXFLAGS -I'.$qdir);
-	MkSaveMK('CFLAGS');
-	MkSaveMK('CXXFLAGS');
+	MkSave('CFLAGS');
+	MkSave('CXXFLAGS');
 
 	if ($EmulEnv eq 'vs2005') {
 		$dir =~ s/\$SRC/\$\(SolutionDir\)/g;
@@ -693,7 +707,7 @@ sub c_libdir
 
 #	if ($dir =~ /^\$/) { $qdir = '\"'.$dir.'\"'; }
 	MkDefine('LIBS', '$LIBS -L'.$dir);
-	MkSaveMK('LIBS');
+	MkSave('LIBS');
 
 	$dir =~ s/\$SRC/\./g;
 	print {$LUA} "table.insert(package.libpaths,{\"$dir\"})\n";
@@ -732,7 +746,7 @@ sub ada_option
 	my $opt = shift;
 
 	MkDefine('ADAFLAGS', '$ADAFLAGS '.$opt);
-	MkSaveMK('ADAFLAGS');
+	MkSave('ADAFLAGS');
 	return (0);
 }
 
@@ -742,7 +756,7 @@ sub ada_bflag
 	my $opt = shift;
 
 	MkDefine('ADABFLAGS', '$ADABFLAGS '.$opt);
-	MkSaveMK('ADABFLAGS');
+	MkSave('ADABFLAGS');
 	return (0);
 }
 
@@ -753,8 +767,8 @@ sub c_option
 
 	MkDefine('CFLAGS', '$CFLAGS '.$opt);
 	MkDefine('CXXFLAGS', '$CXXFLAGS '.$opt);
-	MkSaveMK('CFLAGS');
-	MkSaveMK('CXXFLAGS');
+	MkSave('CFLAGS');
+	MkSave('CXXFLAGS');
 	return (0);
 }
 
@@ -764,7 +778,7 @@ sub ld_option
 	my $opt = shift;
 
 	MkDefine('LDFLAGS', '$LDFLAGS '.$opt);
-	MkSaveMK('LDFLAGS');
+	MkSave('LDFLAGS');
 	return (0);
 }
 
@@ -873,7 +887,7 @@ done
 EOT
 EOF
 	MkDefine('AVAIL_CONFIGSCRIPTS', '$AVAIL_CONFIGSCRIPTS '.$out);
-	MkSaveMK('AVAIL_CONFIGSCRIPTS');
+	MkSave('AVAIL_CONFIGSCRIPTS');
 	return (0);
 }
 
@@ -919,7 +933,7 @@ Cflags: $pkgconfig_module_cflags
 EOT
 EOF
 	MkDefine('AVAIL_PCMODULES', '$AVAIL_PCMODULES '.$out.'.pc');
-	MkSaveMK('AVAIL_PCMODULES');
+	MkSave('AVAIL_PCMODULES');
 	return (0);
 }
 
@@ -1433,7 +1447,7 @@ done
 IFS=$bb_save_IFS
 EOF
 
-MkSaveMK('PATH_SEPARATOR', 'PROG_PREFIX', 'PROG_SUFFIX', 'PROG_TRANSFORM');
+MkSave('PATH_SEPARATOR', 'PROG_PREFIX', 'PROG_SUFFIX', 'PROG_TRANSFORM');
 
 #
 # Sort out the installation, build and source directories. If build is
@@ -1714,7 +1728,7 @@ fi
 host_machine=`echo \${host} | cut -d- -f 1`
 EOF
 
-MkSaveMK('PROG_BUNDLE');
+MkSave('PROG_BUNDLE');
 
 print << 'EOF';
 if [ -e "Makefile.config" ]; then
@@ -1819,7 +1833,7 @@ if [ "${PKGCONFIG}" != "" ]; then
 fi
 EOF
 
-MkSaveMK('PKGCONFIG', 'PKGCONFIG_LIBDIR');
+MkSave('PKGCONFIG', 'PKGCONFIG_LIBDIR');
 MkSaveDefine('PREFIX');
 
 #
@@ -1866,7 +1880,7 @@ EOF
 fi
 EOF
 	MkSaveDefine($ucPath);
-	MkSaveMK($ucPath);
+	MkSave($ucPath);
 }
 
 
@@ -1936,7 +1950,7 @@ LINE: foreach $_ (@INPUT) {
 	$lineNo++;
 }
 
-MkSaveMK_Commit();
+MkSave_Commit();
 
 print << 'EOF';
 if [ "${srcdir}" != '' ]; then

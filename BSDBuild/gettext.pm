@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 my @autoPrefixDirs = (
 	'/usr',
@@ -46,9 +45,7 @@ sub TEST_gettext
 		MkEndif;
 
 		MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}', $testCode);
-		MkIfTrue('${HAVE_GETTEXT}');
-			MkSaveMK('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
-		MkElse;
+		MkIfFalse('${HAVE_GETTEXT}');
 			MkPrintSN('checking whether -lintl requires -liconv...');
 			MkIfNE($pfx, '');
 				MkIfExists("$pfx/include/iconv.h");
@@ -63,15 +60,19 @@ sub TEST_gettext
 					MkEndif;
 				}
 			MkEndif;
-			MkCompileC('HAVE_GETTEXT', '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}', $testCode);
-			MkSave('GETTEXT_CFLAGS', 'GETTEXT_LIBS');
+			MkCompileC('HAVE_GETTEXT',
+			           '${GETTEXT_CFLAGS}', '${GETTEXT_LIBS}',
+			           $testCode);
+			MkIfFalse('${HAVE_GETTEXT}');
+				MkDisableFailed('gettext');
+			MkEndif;
 		MkEndif;
 	MkEndif;
 }
 
 sub DISABLE_gettext
 {
-	MkDefine('HAVE_GETTEXT', 'no');
+	MkDefine('HAVE_GETTEXT', 'no') unless $TestFailed;
 	MkDefine('GETTEXT_CFLAGS', '');
 	MkDefine('GETTEXT_LIBS', '');
 	MkSaveUndef('HAVE_GETTEXT');
@@ -85,5 +86,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_gettext;
 	$DISABLE{$n} = \&DISABLE_gettext;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'GETTEXT_CFLAGS GETTEXT_LIBS';
 }
 ;1

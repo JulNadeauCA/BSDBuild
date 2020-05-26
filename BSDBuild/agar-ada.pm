@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 sub TEST_agar_ada
 {
@@ -12,7 +11,8 @@ sub TEST_agar_ada
 		MkExecOutputPfx($pfx, 'agar-ada-config', '--libs', 'AGAR_ADA_LIBS');
 		MkCompileAda('HAVE_AGAR_ADA',
 		           '${AGAR_ADA_CFLAGS} ${AGAR_ADA_CORE_CFLAGS} ${AGAR_CFLAGS}',
-				   '${AGAR_ADA_LIBS} ${AGAR_ADA_CORE_LIBS} ${AGAR_LIBS}', << "EOF");
+		           '${AGAR_ADA_LIBS} ${AGAR_ADA_CORE_LIBS} ${AGAR_LIBS}',
+			   << "EOF");
 with Agar.Init;
 with Agar.Init_GUI;
 with Agar.Error;
@@ -27,15 +27,17 @@ begin
   end if;
 end conftest;
 EOF
-		MkSave('AGAR_ADA_CFLAGS', 'AGAR_ADA_LIBS');
+		MkIfFalse('${HAVE_AGAR_ADA}');
+			MkDisableFailed('agar-ada');
+		MkEndif;
 	MkElse;
-		DISABLE_agar_ada();
+		MkDisableNotFound('agar-ada');
 	MkEndif;
 }
 
 sub DISABLE_agar_ada
 {
-	MkDefine('HAVE_AGAR_ADA', 'no');
+	MkDefine('HAVE_AGAR_ADA', 'no') unless $TestFailed;
 	MkDefine('AGAR_ADA_CFLAGS', '');
 	MkDefine('AGAR_ADA_LIBS', '');
 	MkSaveUndef('HAVE_AGAR_ADA');
@@ -59,11 +61,10 @@ BEGIN
 
 	$DESCR{$n}   = 'Ada bindings to Agar-GUI';
 	$URL{$n}     = 'http://libagar.org';
-
 	$TESTS{$n}   = \&TEST_agar_ada;
 	$DISABLE{$n} = \&DISABLE_agar_ada;
 	$EMUL{$n}    = \&EMUL_agar_ada;
-
 	$DEPS{$n}    = 'cc,agar,agar-ada-core';
+	$SAVED{$n}   = 'AGAR_ADA_CFLAGS AGAR_ADA_LIBS';
 }
 ;1

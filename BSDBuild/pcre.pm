@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my $testCode = << 'EOF';
@@ -34,15 +33,19 @@ sub TEST_pcre
 	MkIfFound($pfx, $ver, 'PCRE_VERSION');
 		MkPrintSN('checking whether PCRE works...');
 		MkCompileC('HAVE_PCRE', '${PCRE_CFLAGS}', '${PCRE_LIBS}', $testCode);
-		MkSave('PCRE_CFLAGS', 'PCRE_LIBS');
+		MkIfFalse('${HAVE_PCRE}');
+			MkDisableFailed('pcre');
+		MkEndif;
 	MkElse;
-		MkSaveUndef('HAVE_PCRE');
+		MkDisableNotFound('pcre');
 	MkEndif;
 }
 
 sub DISABLE_pcre
 {
-	MkDefine('HAVE_PCRE', 'no');
+	MkDefine('HAVE_PCRE', 'no') unless $TestFailed;
+	MkDefine('PCRE_CFLAGS', '');
+	MkDefine('PCRE_LIBS', '');
 	MkSaveUndef('HAVE_PCRE');
 }
 
@@ -55,5 +58,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_pcre;
 	$DISABLE{$n} = \&DISABLE_pcre;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'PCRE_CFLAGS PCRE_LIBS';
 }
 ;1

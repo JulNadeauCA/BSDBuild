@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 sub TEST_cocoa
@@ -18,12 +17,15 @@ sub TEST_cocoa
 
 int main(int argc, char *argv[]) { return (0); }
 EOF
-	MkSave('COCOA_CFLAGS', 'COCOA_LIBS');
+
+	MkIfFalse('${HAVE_COCOA}');
+		MkDisableFailed('cocoa');
+	MkEndif;
 }
 
 sub DISABLE_cocoa
 {
-	MkDefine('HAVE_COCOA', 'no');
+	MkDefine('HAVE_COCOA', 'no') unless $TestFailed;
 	MkDefine('COCOA_CFLAGS', '');
 	MkDefine('COCOA_LIBS', '');
 	MkSaveUndef('HAVE_COCOA');
@@ -38,5 +40,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_cocoa;
 	$DISABLE{$n} = \&DISABLE_cocoa;
 	$DEPS{$n}    = 'objc';
+	$SAVED{$n}   = 'COCOA_CFLAGS COCOA_LIBS';
 }
 ;1

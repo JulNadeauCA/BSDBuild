@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 my $testCode = << 'EOF';
 #ifdef _XBOX
@@ -29,15 +28,14 @@ sub TEST_clock_win32
 		MkDefine('CLOCK_CFLAGS', '');
 		MkDefine('CLOCK_LIBS', '-lwinmm');
 		MkSaveDefine('HAVE_CLOCK_WIN32');
-		MkSaveMK('CLOCK_CFLAGS', 'CLOCK_LIBS');
 	MkElse;
-		MkSaveUndef('HAVE_CLOCK_WIN32');
+		MkDisableFailed('clock_win32');
 	MkEndif;
 }
 
 sub DISABLE_clock_win32
 {
-	MkDefine('HAVE_CLOCK_WIN32', 'no');
+	MkDefine('HAVE_CLOCK_WIN32', 'no') unless $TestFailed;
 	MkDefine('CLOCK_CFLAGS', '');
 	MkDefine('CLOCK_LIBS', '');
 	MkSaveUndef('HAVE_CLOCK_WIN32');
@@ -66,5 +64,6 @@ BEGIN
 	$DISABLE{$n} = \&DISABLE_clock_win32;
 	$EMUL{$n}    = \&EMUL_clock_win32;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'CLOCK_CFLAGS CLOCK_LIBS';
 }
 ;1

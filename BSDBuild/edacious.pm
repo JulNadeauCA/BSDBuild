@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my $testCode = << 'EOF';
@@ -33,15 +32,17 @@ sub TEST_edacious
 		           '${EDACIOUS_LIBS} ${AGAR_MATH_LIBS} ${AGAR_VG_LIBS} '.
 		           '${AGAR_LIBS}',
 		           $testCode);
-		MkSave('EDACIOUS_CFLAGS', 'EDACIOUS_LIBS');
+		MkIfFalse('${HAVE_EDACIOUS}');
+			MkDisableFailed('edacious');
+		MkEndif;
 	MkElse;
-		MkSaveUndef('HAVE_EDACIOUS');
+		MkDisableNotFound('edacious');
 	MkEndif;
 }
 
 sub DISABLE_edacious
 {
-	MkDefine('HAVE_EDACIOUS', 'no');
+	MkDefine('HAVE_EDACIOUS', 'no') unless $TestFailed;
 	MkDefine('EDACIOUS_CFLAGS', '');
 	MkDefine('EDACIOUS_LIBS', '');
 	MkSaveUndef('HAVE_EDACIOUS');
@@ -56,5 +57,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_edacious;
 	$DISABLE{$n} = \&DISABLE_edacious;
 	$DEPS{$n}    = 'cc,agar,agar-vg,agar-math';
+	$SAVED{$n}   = 'EDACIOUS_CFLAGS EDACIOUS_LIBS';
 }
 ;1

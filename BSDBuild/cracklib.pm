@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 my @autoPrefixDirs = (
 	'/usr/local',
@@ -32,8 +31,8 @@ sub TEST_cracklib
 	MkIfNE('${CRACKLIB_LIBS}', '');
 		MkPrintS('ok');
 		MkPrintSN('checking whether cracklib works...');
-		MkCompileC('HAVE_CRACKLIB', '${CRACKLIB_CFLAGS}', '${CRACKLIB_LIBS}',
-		    << 'EOF');
+		MkCompileC('HAVE_CRACKLIB',
+		           '${CRACKLIB_CFLAGS}', '${CRACKLIB_LIBS}', << 'EOF');
 #include <stdio.h>
 #include <packer.h>
 int main(int argc, char *argv[]) {
@@ -41,24 +40,25 @@ int main(int argc, char *argv[]) {
 	return (msg != NULL);
 }
 EOF
-		MkSave('CRACKLIB_CFLAGS', 'CRACKLIB_LIBS');
-		MkIfTrue('${HAVE_CRACKLIB}', '');
+		MkIfTrue('${HAVE_CRACKLIB}');
 			foreach my $path (@dictPaths) {
 				MkIf("-f \"$path.pwd\"");
 					MkDefine('CRACKLIB_DICT_PATH', "$path");
 					MkSaveDefine('CRACKLIB_DICT_PATH');
 				MkEndif;
 			}
+		MkElse;
+			MkDisableFailed('cracklib');
 		MkEndif;
 	MkElse;
-		MkSaveUndef('HAVE_CRACKLIB');
+		MkDisableNotFound('cracklib');
 		MkPrintS('no');
 	MkEndif;
 }
 
 sub DISABLE_cracklib
 {
-	MkDefine('HAVE_CRACKLIB', 'no');
+	MkDefine('HAVE_CRACKLIB', 'no') unless $TestFailed;
 	MkDefine('CRACKLIB_CFLAGS', '');
 	MkDefine('CRACKLIB_LIBS', '');
 	MkDefine('CRACKLIB_DICT_PATH', '');
@@ -73,5 +73,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_cracklib;
 	$DISABLE{$n} = \&DISABLE_cracklib;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'CRACKLIB_CFLAGS CRACKLIB_LIBS CRACKLIB_DICT_PATH';
 }
 ;1

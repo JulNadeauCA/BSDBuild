@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 my $testCode = << 'EOF';
 #include <ft2build.h>
@@ -25,10 +24,10 @@ sub TEST_freetype
 		MkExecPkgConfig($pfx, 'freetype2', '--cflags', 'FREETYPE_CFLAGS');
 		MkExecPkgConfig($pfx, 'freetype2', '--libs', 'FREETYPE_LIBS');
 	MkElse;
-	    MkExecOutputPfx($pfx, 'freetype-config', '--version', 'FREETYPE_VERSION');
-	    MkExecOutputPfx($pfx, 'freetype-config', '--cflags', 'FREETYPE_CFLAGS');
-	    MkExecOutputPfx($pfx, 'freetype-config', '--libs', 'FREETYPE_LIBS');
-    MkEndif;
+		MkExecOutputPfx($pfx, 'freetype-config', '--version', 'FREETYPE_VERSION');
+		MkExecOutputPfx($pfx, 'freetype-config', '--cflags', 'FREETYPE_CFLAGS');
+		MkExecOutputPfx($pfx, 'freetype-config', '--libs', 'FREETYPE_LIBS');
+	MkEndif;
 
 	MkCaseIn('${host}');
 	MkCaseBegin('*-*-irix*');
@@ -41,24 +40,23 @@ sub TEST_freetype
 	MkIfFound($pfx, $ver, 'FREETYPE_VERSION');
 		MkPrintSN('checking whether FreeType works...');
 		MkCompileC('HAVE_FREETYPE', '${FREETYPE_CFLAGS}', '${FREETYPE_LIBS}', $testCode);
-		MkSave('FREETYPE_CFLAGS', 'FREETYPE_LIBS');
+		MkIfFalse('${HAVE_FREETYPE}');
+			MkDisableFailed('freetype');
+		MkEndif;
 	MkElse;
-		DISABLE_freetype();
+		MkDisableNotFound('freetype');
 	MkEndif;
 	
 	MkIfTrue('${HAVE_FREETYPE}');
 		MkDefine('FREETYPE_PC', 'freetype2');
-	MkElse;
-		MkDefine('FREETYPE_PC', '');
 	MkEndif;
 }
 
 sub DISABLE_freetype
 {
-	MkDefine('HAVE_FREETYPE', 'no');
+	MkDefine('HAVE_FREETYPE', 'no') unless $TestFailed;
 	MkDefine('FREETYPE_CFLAGS', '');
 	MkDefine('FREETYPE_LIBS', '');
-	MkDefine('FREETYPE_PC', '');
 	MkSaveUndef('HAVE_FREETYPE');
 }
 
@@ -84,5 +82,6 @@ BEGIN
 	$DISABLE{$n} = \&DISABLE_freetype;
 	$EMUL{$n}    = \&EMUL_freetype;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'FREETYPE_CFLAGS FREETYPE_LIBS FREETYPE_PC';
 }
 ;1

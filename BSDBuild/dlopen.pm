@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my $testCode = << 'EOF';
@@ -33,7 +32,8 @@ sub TEST_dlopen
 		MkIfTrue('${HAVE_DLOPEN}');
 			MkDefine('DSO_CFLAGS', '');
 			MkDefine('DSO_LIBS', '-ldl');
-			MkSaveMK('DSO_CFLAGS', 'DSO_LIBS');
+		MkElse;
+			MkDisableFailed('dlopen');
 		MkEndif;
 	MkEndif;
 	EndTestHeaders();
@@ -41,8 +41,10 @@ sub TEST_dlopen
 
 sub DISABLE_dlopen
 {
-	MkDefine('HAVE_DLOPEN', 'no');
+	MkDefine('HAVE_DLOPEN', 'no') unless $TestFailed;
 	MkDefine('HAVE_DLFCN_H', 'no');
+	MkDefine('DSO_CFLAGS', '');
+	MkDefine('DSO_LIBS', '');
 	MkSaveUndef('HAVE_DLOPEN', 'HAVE_DLFCN_H');
 }
 
@@ -54,5 +56,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_dlopen;
 	$DISABLE{$n} = \&DISABLE_dlopen;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'DSO_CFLAGS DSO_LIBS';
 }
 ;1

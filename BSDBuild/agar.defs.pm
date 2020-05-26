@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 my @core_options = qw(
 	ag_debug
@@ -9,7 +8,7 @@ my @core_options = qw(
 	have_64bit
 	have_float
 	have_long_double
-    ag_legacy
+	ag_legacy
 	ag_namespaces
 	ag_serialization
 	ag_threads
@@ -305,10 +304,14 @@ EOF
 		MkPrintSN('checking Agar definitions...');
 		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
-		MkCompileAndRunC('HAVE_AGAR_DEFS', '${AGAR_CFLAGS}', '${AGAR_LIBS}',
-	                     $testCode);
+		MkCompileAndRunC('HAVE_AGAR_DEFS',
+		                '${AGAR_CFLAGS}', '${AGAR_LIBS}',
+	                         $testCode);
+		MkIfFalse('${HAVE_AGAR_DEFS}');
+			MkDisableFailed('agar.defs');
+		MkEndif;
 	MkElse;
-		DISABLE_agar_defs();
+		MkDisableNotFound('agar.defs');
 	MkEndif;
 }
 
@@ -324,10 +327,8 @@ BEGIN
 
 	$DESCR{$n}   = 'Agar definitions';
 	$URL{$n}     = 'http://libagar.org';
-
 	$TESTS{$n}   = \&TEST_agar_defs;
 	$DISABLE{$n} = \&DISABLE_agar_defs;
-
 	$DEPS{$n}    = 'cc';
 }
 ;1

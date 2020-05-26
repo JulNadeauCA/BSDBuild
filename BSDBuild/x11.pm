@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 # Match autoconf / libs.m4 / _AC_PATH_X_DIRECT
@@ -57,33 +56,35 @@ sub TEST_x11
 		MkDefine('X11_LIBS', '');
 		MkIfNE($pfx, '');
 			MkIfExists("$pfx/include/X11");
-			    MkDefine('X11_CFLAGS', "-I$pfx/include");
+				MkDefine('X11_CFLAGS', "-I$pfx/include");
 			MkEndif;
 			MkIfExists("$pfx/lib");
-			    MkDefine('X11_LIBS', "-L$pfx/lib -lX11");
+				MkDefine('X11_LIBS', "-L$pfx/lib -lX11");
 			MkEndif;
 		MkElse;
 			MkIfNE('${with_x_libraries}', '');
 				MkIfExists('${with_x_includes}/X11');
-				    MkDefine('X11_CFLAGS', '-I${with_x_includes}/X11');
+					MkDefine('X11_CFLAGS',
+					         '-I${with_x_includes}/X11');
 				MkElse;
-				    MkDefine('X11_CFLAGS', '-I${with_x_includes}');
+					MkDefine('X11_CFLAGS',
+					         '-I${with_x_includes}');
 				MkEndif;
 				MkDefine('X11_LIBS', '-L${with_x_libraries} -lX11');
 			MkElse;
 				foreach my $dir (@autoIncludeDirs) {
 					MkIfExists("$dir/X11");
-					    MkDefine('X11_CFLAGS', "-I$dir");
+						MkDefine('X11_CFLAGS', "-I$dir");
 						MkBreak;
 					MkEndif;
 				}
 				foreach my $dir (@autoLibDirs) {
 					MkIfExists("$dir/libX11.so");
-					    MkDefine('X11_LIBS', "-L$dir -lX11");
+						MkDefine('X11_LIBS', "-L$dir -lX11");
 						MkBreak;
 					MkEndif;
 					MkIfExists("$dir/libX11.so.*");
-					    MkDefine('X11_LIBS', "-L$dir -lX11");
+						MkDefine('X11_LIBS', "-L$dir -lX11");
 						MkBreak;
 					MkEndif;
 				}
@@ -100,8 +101,6 @@ int main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	MkSave('X11_CFLAGS', 'X11_LIBS');
-
 	MkIfTrue('${HAVE_X11}');
 		MkDefine('X11_PC', 'x11');
 
@@ -137,25 +136,23 @@ int main(int argc, char *argv[])
 EOF
 			MkIfTrue('${HAVE_XF86MISC}');
 				MkDefine('X11_LIBS', '${X11_LIBS} -lXxf86misc');
-				MkSaveMK('X11_LIBS');
 				MkSaveDefine('HAVE_XF86MISC', 'X11_LIBS');
 			MkElse;
 				MkSaveUndef('HAVE_XF86MISC');
 			MkEndif;
 		MkEndif;
 	MkElse;
-		DISABLE_x11();
+		MkDisableFailed('x11');
 	MkEndif;
 }
 
 sub DISABLE_x11
 {
-	MkDefine('HAVE_X11', 'no');
-	MkDefine('HAVE_XKB', 'no');
-	MkDefine('HAVE_XF86MISC', 'no');
+	MkDefine('HAVE_X11', 'no') unless $TestFailed;
 	MkDefine('X11_CFLAGS', '');
 	MkDefine('X11_LIBS', '');
-	MkDefine('X11_PC', '');
+	MkDefine('HAVE_XKB', 'no');
+	MkDefine('HAVE_XF86MISC', 'no');
 	MkSaveUndef('HAVE_X11', 'HAVE_XKB', 'HAVE_XF86MISC');
 }
 
@@ -168,5 +165,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_x11;
 	$DISABLE{$n} = \&DISABLE_x11;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'X11_CFLAGS X11_LIBS X11_PC';
 }
 ;1

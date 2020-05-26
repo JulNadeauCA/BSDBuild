@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 sub TEST_arc4random
 {

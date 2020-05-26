@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my $testCode = << 'EOF';
@@ -26,16 +25,19 @@ sub TEST_ode
 	MkDefine('ODE_LIBS', '${ODE_LIBS} -lstdc++ -lm');
 	MkIfFound($pfx, $ver, 'ODE_VERSION');
 		MkPrintSN('checking whether ODE works...');
-		MkCompileC('HAVE_ODE', '${ODE_CFLAGS}', '${ODE_LIBS}', $testCode);
-		MkSave('ODE_CFLAGS', 'ODE_LIBS');
+		MkCompileC('HAVE_ODE',
+		           '${ODE_CFLAGS}', '${ODE_LIBS}', $testCode);
+		MkIfFalse('${HAVE_ODE}');
+			MkDisableFailed('ode');
+		MkEndif;
 	MkElse;
-		MkSaveUndef('HAVE_ODE');
+		MkDisableNotFound('ode');
 	MkEndif;
 }
 
 sub DISABLE_ode
 {
-	MkDefine('HAVE_ODE', 'no');
+	MkDefine('HAVE_ODE', 'no') unless $TestFailed;
 	MkDefine('ODE_CFLAGS', '');
 	MkDefine('ODE_LIBS', '');
 	MkSaveUndef('HAVE_ODE');
@@ -50,5 +52,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_ode;
 	$DISABLE{$n} = \&DISABLE_ode;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'ODE_CFLAGS ODE_LIBS';
 }
 ;1

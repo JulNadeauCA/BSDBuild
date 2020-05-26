@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 sub CheckBoolOption
@@ -93,12 +92,8 @@ sub DISABLE_setsockopt
 	MkDefine('HAVE_SO_LINGER', 'no');
 	MkDefine('HAVE_SO_ACCEPTFILTER', 'no');
 
-	MkSaveUndef('HAVE_SETSOCKOPT',
-                'HAVE_SO_OOBINLINE',
-	            'HAVE_SO_REUSEPORT',
-	            'HAVE_SO_TIMESTAMP',
-	            'HAVE_SO_NOSIGPIPE',
-	            'HAVE_SO_LINGER',
+	MkSaveUndef('HAVE_SETSOCKOPT', 'HAVE_SO_OOBINLINE', 'HAVE_SO_REUSEPORT',
+	            'HAVE_SO_TIMESTAMP', 'HAVE_SO_NOSIGPIPE', 'HAVE_SO_LINGER',
 	            'HAVE_SO_ACCEPTFILTER');
 }
 

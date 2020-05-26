@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 use BSDBuild::Core;
@@ -140,11 +139,12 @@ sub TEST_lldb
 	MkCaseBegin('*-*-darwin*');
 		MkIfEQ('LLDB_BUILD_DIR', '');
 			MkDefine('LLDB_BUILD_DIR',
-                     '/Applications/Xcode.app/Contents/SharedFrameworks');
+			         '/Applications/Xcode.app/Contents' .
+				 '/SharedFrameworks');
 		MkEndif;
 		MkDefine('LLDB_LIBS', '${LLDB_LDFLAGS} -llldb ${LLDB_LIBS} ' .
-		                      '-framework LLDB '.
-                              '-Wl,-rpath,"${LLDB_BUILD_DIR}" -lstdc++');
+		                      '-framework LLDB ' .
+ 		                      '-Wl,-rpath,"${LLDB_BUILD_DIR}" -lstdc++');
 		MkCaseEnd;
 	MkCaseBegin('*');
 		MkDefine('LLDB_LIBS', '${LLDB_LDFLAGS} -llldb ${LLDB_LIBS} -lstdc++');
@@ -153,12 +153,11 @@ sub TEST_lldb
 		
 	MkIfFound($pfx, $ver, 'LLDB_VERSION');
 		MkPrintSN('checking whether LLDB works...');
-		MkCompileCXX('HAVE_LLDB', '${LLDB_CFLAGS}',
-                     '${LLDB_LDFLAGS} ${LLDB_LIBS}',
-					 $testCode);
+		MkCompileCXX('HAVE_LLDB',
+		             '${LLDB_CFLAGS}',
+		             '${LLDB_LDFLAGS} ${LLDB_LIBS}', $testCode);
 		MkIfTrue('${HAVE_LLDB}');
 			MkDefine('LLDB_LIBS', '${LLDB_LDFLAGS} ${LLDB_LIBS}');
-			MkSaveMK('LLDB_CFLAGS', 'LLDB_LIBS');
 
 			MkPrintSN('checking for LLDB Utility library...');
 			MkCaseIn('${host}');
@@ -173,28 +172,26 @@ sub TEST_lldb
 				MkDefine('LLDB_UTILITY_LIBS', '-llldbUtility');
 				MkCompileCXX('HAVE_LLDB_UTILITY',
 				             '${LLDB_CFLAGS} ${LLDB_UTILITY_CFLAGS}',
-		                     '${LLDB_LDFLAGS} ${LLDB_LIBS} ${LLDB_UTILITY_LIBS}',
-							 $testCodeUtility);
-				MkSave('LLDB_UTILITY_CFLAGS', 'LLDB_UTILITY_LIBS');
+				             '${LLDB_LDFLAGS} ${LLDB_LIBS} ${LLDB_UTILITY_LIBS}',
+				             $testCodeUtility);
 				MkCaseEnd;
 			MkEsac;
 		MkElse;
-			MkDefine('HAVE_LLDB_UTILITY', 'no');
+			MkDisableFailed('lldb');
 		MkEndif;
 	MkElse;
-		DISABLE_lldb();
+		MkDisableNotFound('lldb');
 	MkEndif;
 }
 
 sub DISABLE_lldb
 {
-	MkDefine('HAVE_LLDB', 'no');
+	MkDefine('HAVE_LLDB', 'no') unless $TestFailed
 	MkDefine('HAVE_LLDB_UTILITY', 'no');
 	MkDefine('LLDB_CFLAGS', '');
 	MkDefine('LLDB_LIBS', '');
 	MkDefine('LLDB_UTILITY_CFLAGS', '');
 	MkDefine('LLDB_UTILITY_LIBS', '');
-
 	MkSaveUndef('HAVE_LLDB', 'HAVE_LLDB_UTILITY');
 }
 
@@ -208,5 +205,6 @@ BEGIN
 	$DISABLE{$n} = \&DISABLE_lldb;
 	$EMUL{$n}    = \&EMUL_lldb;
 	$DEPS{$n}    = 'cxx';
+	$SAVED{$n}   = 'LLDB_CFLAGS LLDB_LIBS LLDB_UTILITY_CFLAGS LLDB_UTILITY_LIBS';
 }
 ;1

@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my $testCode = << 'EOF';
@@ -25,25 +24,25 @@ sub TEST_sndfile
 	MkExecPkgConfig($pfx, 'sndfile', '--libs', 'SNDFILE_LIBS');
 	MkIfFound($pfx, $ver, 'SNDFILE_VERSION');
 		MkPrintSN('checking whether libsndfile works...');
-		MkCompileC('HAVE_SNDFILE', '${SNDFILE_CFLAGS}', '${SNDFILE_LIBS}', $testCode);
-		MkSave('SNDFILE_CFLAGS', 'SNDFILE_LIBS');
+		MkCompileC('HAVE_SNDFILE',
+		           '${SNDFILE_CFLAGS}', '${SNDFILE_LIBS}', $testCode);
+		MkIfFalse('${HAVE_SNDFILE}');
+			MkDisableFailed('sndfile');
+		MkEndif;
 	MkElse;
-		MkSaveUndef('HAVE_SNDFILE');
+		MkDisableNotFound('sndfile');
 	MkEndif;
-	
+
 	MkIfTrue('${HAVE_SNDFILE}');
 		MkDefine('SNDFILE_PC', 'sndfile');
-	MkElse;
-		MkDefine('SNDFILE_PC', '');
 	MkEndif;
 }
 
 sub DISABLE_sndfile
 {
-	MkDefine('HAVE_SNDFILE', 'no');
+	MkDefine('HAVE_SNDFILE', 'no') unless $TestFailed;
 	MkDefine('SNDFILE_CFLAGS', '');
 	MkDefine('SNDFILE_LIBS', '');
-	MkDefine('SNDFILE_PC', '');
 	MkSaveUndef('HAVE_SNDFILE');
 }
 
@@ -56,5 +55,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_sndfile;
 	$DISABLE{$n} = \&DISABLE_sndfile;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'SNDFILE_CFLAGS SNDFILE_LIBS SNDFILE_PC';
 }
 ;1

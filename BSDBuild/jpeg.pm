@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 my @autoPrefixDirs = (
 	'/usr/local',
@@ -57,25 +56,24 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-		MkSave('JPEG_CFLAGS', 'JPEG_LIBS');
+		MkIfFalse('${HAVE_JPEG}');
+			MkDisableFailed('jpeg');
+		MkEndif;
 	MkElse;
 		MkPrintS('no');
-		DISABLE_jpeg();
+		MkDisableNotFound('jpeg');
 	MkEndif;
 	
 	MkIfTrue('${HAVE_JPEG}');
 		MkDefine('JPEG_PC', 'libjpeg');
-	MkElse;
-		MkDefine('JPEG_PC', '');
 	MkEndif;
 }
 
 sub DISABLE_jpeg
 {
-	MkDefine('HAVE_JPEG', 'no');
+	MkDefine('HAVE_JPEG', 'no') unless $TestFailed;
 	MkDefine('JPEG_CFLAGS', '');
 	MkDefine('JPEG_LIBS', '');
-	MkDefine('JPEG_PC', '');
 	MkSaveUndef('HAVE_JPEG');
 }
 
@@ -88,5 +86,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_jpeg;
 	$DISABLE{$n} = \&DISABLE_jpeg;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'JPEG_CFLAGS JPEG_LIBS JPEG_PC';
 }
 ;1

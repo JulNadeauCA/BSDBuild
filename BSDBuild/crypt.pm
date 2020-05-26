@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my $testCode = << 'EOF';
@@ -32,15 +31,17 @@ sub TEST_crypt
 		MkIfTrue('${HAVE_CRYPT}');
 			MkDefine('CRYPT_CFLAGS', '');
 			MkDefine('CRYPT_LIBS', '');
+		MkElse;
+			MkDisableFailed('crypt');
 		MkEndif;
 	MkEndif;
-
-	MkSave('CRYPT_CFLAGS', 'CRYPT_LIBS');
 }
 
 sub DISABLE_crypt
 {
-	MkDefine('HAVE_CRYPT', 'no');
+	MkDefine('HAVE_CRYPT', 'no') unless $TestFailed;
+	MkDefine('CRYPT_CFLAGS', '');
+	MkDefine('CRYPT_LIBS', '');
 	MkSaveUndef('HAVE_CRYPT');
 }
 
@@ -52,5 +53,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_crypt;
 	$DISABLE{$n} = \&DISABLE_crypt;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'CRYPT_CFLAGS CRYPT_LIBS';
 }
 ;1

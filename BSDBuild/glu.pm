@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my @autoIncludeAndLibDirs = (
@@ -53,8 +52,9 @@ sub TEST_glu
 		MkCaseEnd;
 	MkEsac;
 
-	MkCompileC('HAVE_GLU', '${OPENGL_CFLAGS} ${GLU_CFLAGS}',
-	                       '${OPENGL_LIBS} ${GLU_LIBS} ${MATH_LIBS}', << 'EOF');
+	MkCompileC('HAVE_GLU',
+	           '${OPENGL_CFLAGS} ${GLU_CFLAGS}',
+	           '${OPENGL_LIBS} ${GLU_LIBS} ${MATH_LIBS}', << 'EOF');
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
@@ -69,12 +69,14 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-	MkSave('GLU_CFLAGS', 'GLU_LIBS');
+	MkIfFalse('${HAVE_GLU}');
+		MkDisableFailed('glu');
+	MkEndif;
 }
 
 sub DISABLE_glu
 {
-	MkDefine('HAVE_GLU', 'no');
+	MkDefine('HAVE_GLU', 'no') unless $TestFailed;
 	MkDefine('GLU_CFLAGS', '');
 	MkDefine('GLU_LIBS', '');
 	MkSaveUndef('HAVE_GLU', 'GLU_CFLAGS', 'GLU_LIBS');
@@ -102,5 +104,6 @@ BEGIN
 	$DISABLE{$n} = \&DISABLE_glu;
 	$EMUL{$n}    = \&EMUL_glu;
 	$DEPS{$n}    = 'cc,opengl,math';
+	$SAVED{$n}   = 'GLU_CFLAGS GLU_LIBS';
 }
 ;1

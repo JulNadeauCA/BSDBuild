@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my $testCode6 = << 'EOF';
@@ -45,22 +44,26 @@ sub TEST_imagemagick
 			MkPrintSN('checking whether ImageMagick 6 works...');
 			MkCompileC('HAVE_IMAGEMAGICK',
 			           '${IMAGEMAGICK_CFLAGS}', '${IMAGEMAGICK_LIBS}',
-					   $testCode6);
+			           $testCode6);
 		} else {
 			MkPrintSN('checking whether ImageMagick 7 works...');
 			MkCompileC('HAVE_IMAGEMAGICK',
 			           '${IMAGEMAGICK_CFLAGS}', '${IMAGEMAGICK_LIBS}',
-					   $testCode7);
+			           $testCode7);
 		}
-		MkSave('IMAGEMAGICK_CFLAGS', 'IMAGEMAGICK_LIBS');
+		MkIfFalse('${HAVE_IMAGEMAGICK}');
+			MkDisableFailed('imagemagick');
+		MkEndif;
 	MkElse;
-		MkSaveUndef('HAVE_IMAGEMAGICK6', 'HAVE_IMAGEMAGICK7');
+		MkDisableNotFound('imagemagick');
 	MkEndif;
 }
 
 sub DISABLE_imagemagick
 {
-	MkDefine('HAVE_IMAGEMAGICK', 'no');
+	MkDefine('HAVE_IMAGEMAGICK', 'no') unless $TestFailed;
+	MkDefine('IMAGEMAGICK_CFLAGS', '');
+	MkDefine('IMAGEMAGICK_LIBS', '');
 	MkSaveUndef('HAVE_IMAGEMAGICK');
 }
 
@@ -86,5 +89,6 @@ BEGIN
 	$DISABLE{$n} = \&DISABLE_imagemagick;
 	$EMUL{$n}    = \&EMUL_imagemagick;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'IMAGEMAGICK_CFLAGS IMAGEMAGICK_LIBS';
 }
 ;1

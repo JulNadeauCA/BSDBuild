@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 sub TEST_sdl_ttf
@@ -9,7 +8,8 @@ sub TEST_sdl_ttf
 	MkExecPkgConfig($pfx, 'SDL_ttf', '--cflags', 'SDL_TTF_CFLAGS');
 	MkExecPkgConfig($pfx, 'SDL_ttf', '--libs', 'SDL_TTF_LIBS');
 	MkIfNE('${SDL_TTF_VERSION}', '');
-		MkCompileC('HAVE_SDL_TTF', '${SDL_TTF_CFLAGS}', '${SDL_TTF_LIBS}', << 'EOF');
+		MkCompileC('HAVE_SDL_TTF',
+		           '${SDL_TTF_CFLAGS}', '${SDL_TTF_LIBS}', << 'EOF');
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -26,16 +26,18 @@ main(int argc, char *argv[])
 	return (fn == NULL);
 }
 EOF
-		MkSave('SDL_TTF_CFLAGS', 'SDL_TTF_LIBS');
+		MkIfFalse('${HAVE_SDL_TTF}');
+			MkDisableFailed('sdl_ttf');
+		MkEndif;
 	MkElse;
 		MkPrintS('no');
-		DISABLE_sdl_ttf();
+		MkDisableNotFound('sdl_ttf');
 	MkEndif;
 }
 
 sub DISABLE_sdl_ttf
 {
-	MkDefine('HAVE_SDL_TTF', 'no');
+	MkDefine('HAVE_SDL_TTF', 'no') unless $TestFailed;
 	MkDefine('SDL_TTF_CFLAGS', '');
 	MkDefine('SDL_TTF_LIBS', '');
 	MkSaveUndef('HAVE_SDL_TTF');
@@ -50,5 +52,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_sdl_ttf;
 	$DISABLE{$n} = \&DISABLE_sdl_ttf;
 	$DEPS{$n}    = 'cc,sdl';
+	$SAVED{$n}   = 'SDL_TTF_CFLAGS SDL_TTF_LIBS';
 }
 ;1

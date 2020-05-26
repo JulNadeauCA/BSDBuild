@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my $testCode = << 'EOF';
@@ -26,15 +25,17 @@ sub TEST_libidn
 	MkIfFound($pfx, $ver, 'LIBIDN_VERSION');
 		MkPrintSN('checking whether libidn works...');
 		MkCompileC('HAVE_LIBIDN', '${LIBIDN_CFLAGS}', '${LIBIDN_LIBS}', $testCode);
-		MkSave('LIBIDN_CFLAGS', 'LIBIDN_LIBS');
+		MkIfFalse('${HAVE_LIBIDN}');
+			MkDisableFailed('libidn');
+		MkEndif;
 	MkElse;
-		MkSaveUndef('HAVE_LIBIDN');
+		MkDisableNotFound('libidn');
 	MkEndif;
 }
 
 sub DISABLE_libidn
 {
-	MkDefine('HAVE_LIBIDN', 'no');
+	MkDefine('HAVE_LIBIDN', 'no') unless $TestFailed;
 	MkDefine('LIBIDN_CFLAGS', '');
 	MkDefine('LIBIDN_LIBS', '');
 	MkSaveUndef('HAVE_LIBIDN');
@@ -49,5 +50,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_libidn;
 	$DISABLE{$n} = \&DISABLE_libidn;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'LIBIDN_CFLAGS LIBIDN_LIBS';
 }
 ;1

@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my $testCode = << 'EOF';
@@ -22,15 +21,17 @@ sub TEST_percgi
 		MkExecOutputPfx($pfx, 'percgi-config', '--libs', 'PERCGI_LIBS');
 		MkPrintSN('checking whether PerCGI works...');
 		MkCompileC('HAVE_PERCGI', '${PERCGI_CFLAGS}', '${PERCGI_LIBS}', $testCode);
-		MkSave('PERCGI_CFLAGS', 'PERCGI_LIBS');
+		MkIfFalse('${HAVE_PERCGI}');
+			MkDisableFailed('percgi');
+		MkEndif;
 	MkElse;
-		DISABLE_percgi();
+		MkDisableNotFound('percgi');
 	MkEndif;
 }
 
 sub DISABLE_percgi
 {
-	MkDefine('HAVE_PERCGI', 'no');
+	MkDefine('HAVE_PERCGI', 'no') unless $TestFailed;
 	MkDefine('PERCGI_CFLAGS', '');
 	MkDefine('PERCGI_LIBS', '');
 	MkSaveUndef('HAVE_PERCGI');
@@ -45,5 +46,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_percgi;
 	$DISABLE{$n} = \&DISABLE_percgi;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'PERCGI_CFLAGS PERCGI_LIBS';
 }
 ;1

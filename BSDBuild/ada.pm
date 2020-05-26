@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 my $adaHello = << 'EOF';
 with Ada.Text_IO; use Ada.Text_IO;
@@ -155,11 +154,11 @@ if [ "${HAVE_ADA}" = "yes" ]; then
 	cat << 'EOT' > conftest.adb
 EOF
 	print $adaHello;
-    print "EOT\n";
+	print "EOT\n";
 
-    MkLogCode('HAVE_ADA', 'Ada', 'conftest.adb');
+	MkLogCode('HAVE_ADA', 'Ada', 'conftest.adb');
 
-    print << 'EOF';
+	print << 'EOF';
 	echo "$ADA -c conftest.adb" >>config.log
 	$ADA -c conftest.adb 2>>config.log
 	if [ $? != 0 ]; then
@@ -208,7 +207,6 @@ EOF
 				echo "yes" >>config.log
 			fi
 EOF
-	MkSaveMK('EXECSUFFIX');
 	MkSaveDefine('EXECSUFFIX');
 	print << 'EOF';
 		else
@@ -249,12 +247,14 @@ EOF
 		
 		MkCaseIn('${host}');
 		MkCaseBegin('*-*-cygwin* | *-*-mingw32*');
+
 			MkPrintSN('ada: checking for linker -no-undefined option...');
 			TryCompileFlagsAda('HAVE_ADA_LD_NO_UNDEFINED', '-Wl,--no-undefined', $adaHello);
 			MkIfTrue('${HAVE_ADA_LD_NO_UNDEFINED}');
 				MkDefine('LIBTOOLOPTS_SHARED',
 				    '${LIBTOOLOPTS_SHARED} -no-undefined -Wl,--no-undefined');
 			MkEndif;
+
 			MkPrintSN('ada: checking for linker -static-libgcc option...');
 			TryCompileFlagsAda('HAVE_ADA_LD_STATIC_LIBGCC', '-static-libgcc', $adaHello);
 			MkIfTrue('${HAVE_ADA_LD_STATIC_LIBGCC}');
@@ -263,49 +263,44 @@ EOF
 			MkEndif;
 			MkCaseEnd;
 		MkEsac;
-
-		MkSaveMK('ADA', 'ADAFLAGS', 'ADABIND', 'ADABFLAGS', 'ADALINK', 'ADALFLAGS',
-		         'ADAMKDEP', 'PROG_GUI_FLAGS', 'PROG_CLI_FLAGS',
-		         'LIBTOOLOPTS_SHARED');
 	MkElse;
-		DISABLE_ada();
+		MkDisableFailed('ada');
 	MkEndif;
+
 }
 
 sub DISABLE_ada
 {
 	MkDefine('HAVE_ADA', 'no');
-
 	MkDefine('ADA', '');
-	MkDefine('ADAFLAGS', '');
+	MkDefine('ADALFLAGS', '');
 	MkDefine('ADABIND', '');
 	MkDefine('ADABFLAGS', '');
 	MkDefine('ADALINK', '');
 	MkDefine('ADALFLAGS', '');
 	MkDefine('ADAMKDEP', '');
-	MkDefine('TEST_ADAFLAGS', '');
-
-	MkSaveMK('ADA', 'ADAFLAGS', 'ADABIND', 'ADABFLAGS', 'ADALINK',
-             'ADALFLAGS', 'ADAMKDEP');
-
-	MkSaveUndef('HAVE_ADA',
-	            'HAVE_ADA_LD_NO_UNDEFINED',
-                'HAVE_ADA_LD_STATIC_LIBGCC');
+	MkSaveUndef('HAVE_ADA', 'HAVE_ADA_LD_NO_UNDEFINED',
+	            'HAVE_ADA_LD_STATIC_LIBGCC');
 }
 
 BEGIN
 {
-	$DESCR{'ada'}   = 'Ada compiler';
-	$TESTS{'ada'}   = \&TEST_ada;
-	$DISABLE{'ada'} = \&DISABLE_ada;
+	my $n = 'ada';
 
-	RegisterEnvVar('ADA',		'Ada compiler command');
-	RegisterEnvVar('ADAFLAGS',	'Ada compiler flags');
-	RegisterEnvVar('ADABIND',	'Ada binder command');
-	RegisterEnvVar('ADABFLAGS',	'Ada binder flags');
-	RegisterEnvVar('ADALINK',	'Ada linker command');
-	RegisterEnvVar('ADALFLAGS',	'Ada linker flags');
-	RegisterEnvVar('ADAMKDEP',	'Ada dependency output command');
-	RegisterEnvVar('LIBS',		'Libraries passed to binder');
+	$DESCR{$n}   = 'Ada compiler';
+	$TESTS{$n}   = \&TEST_ada;
+	$DISABLE{$n} = \&DISABLE_ada;
+	$SAVED{$n}   = 'ADA ADAFLAGS ADABIND ADABFLAGS ADALINK ADALFLAGS ' .
+	               'ADAMKDEP PROG_GUI_FLAGS PROG_CLI_FLAGS EXECSUFFIX ' .
+	               'LIBTOOLOPTS_SHARED';
+
+	RegisterEnvVar('ADA',       'Ada compiler command');
+	RegisterEnvVar('ADAFLAGS',  'Ada compiler flags');
+	RegisterEnvVar('ADABIND',   'Ada binder command');
+	RegisterEnvVar('ADABFLAGS', 'Ada binder flags');
+	RegisterEnvVar('ADALINK',   'Ada linker command');
+	RegisterEnvVar('ADALFLAGS', 'Ada linker flags');
+	RegisterEnvVar('ADAMKDEP',  'Ada dependency output command');
+	RegisterEnvVar('LIBS',      'Libraries passed to binder');
 }
 ;1

@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 sub TEST_altivec
 {
@@ -37,18 +36,16 @@ esac
 EOF
 
 	MkCompileC('HAVE_ALTIVEC', '${CFLAGS} ${ALTIVEC_CFLAGS}', '',
-	    '#include <altivec.h>'."\n".
-		$testCode);
+	           '#include <altivec.h>' . "\n" . $testCode);
 	MkIfTrue('${HAVE_ALTIVEC}');
-	    MkSaveMK('ALTIVEC_CFLAGS');
 		MkDefine('HAVE_ALTIVEC_H');
 		MkSaveDefine('HAVE_ALTIVEC_H');
 	MkElse;
 		MkPrintSN('checking for AltiVec (without <altivec.h>)...');
+
 		MkCompileC('HAVE_ALTIVEC', '${CFLAGS} ${ALTIVEC_CFLAGS}', '', $testCode);
 		MkIfFalse('${HAVE_ALTIVEC}');
-			MkDefine('ALTIVEC_CFLAGS', '');
-			MkSaveMK('ALTIVEC_CFLAGS');
+			MkDisableFailed('altivec');
 		MkEndif;
 		MkSaveUndef('HAVE_ALTIVEC_H');
 	MkEndif;
@@ -56,7 +53,7 @@ EOF
 
 sub DISABLE_altivec
 {
-	MkDefine('HAVE_ALTIVEC', 'no');
+	MkDefine('HAVE_ALTIVEC', 'no') unless $TestFailed;
 	MkDefine('HAVE_ALTIVEC_H', 'no');
 	MkDefine('ALTIVEC_CFLAGS', '');
 	MkSaveUndef('HAVE_ALTIVEC', 'HAVE_ALTIVEC_H');
@@ -70,5 +67,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_altivec;
 	$DISABLE{$n} = \&DISABLE_altivec;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'ALTIVEC_CFLAGS';
 }
 ;1

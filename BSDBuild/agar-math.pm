@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 my $testCode = << 'EOF';
 #include <agar/core.h>
@@ -29,17 +28,18 @@ sub TEST_agar_math
 		MkExecOutputPfx($pfx, 'agar-math-config', '--libs', 'AGAR_MATH_LIBS');
 		MkCompileC('HAVE_AGAR_MATH',
 		           '${AGAR_MATH_CFLAGS} ${AGAR_CFLAGS}',
-		           '${AGAR_MATH_LIBS} ${AGAR_LIBS}',
-				   $testCode);
-		MkSave('AGAR_MATH_CFLAGS', 'AGAR_MATH_LIBS');
+		           '${AGAR_MATH_LIBS} ${AGAR_LIBS}', $testCode);
+		MkIfFalse('${HAVE_AGAR_MATH}');
+			MkDisableFailed('agar-math');
+		MkEndif;
 	MkElse;
-		DISABLE_agar_math();
+		MkDisableNotFound('agar-math');
 	MkEndif;
 }
 
 sub DISABLE_agar_math
 {
-	MkDefine('HAVE_AGAR_MATH', 'no');
+	MkDefine('HAVE_AGAR_MATH', 'no') unless $TestFailed;
 	MkDefine('AGAR_MATH_CFLAGS', '');
 	MkDefine('AGAR_MATH_LIBS', '');
 	MkSaveUndef('HAVE_AGAR_MATH');
@@ -63,11 +63,10 @@ BEGIN
 
 	$DESCR{$n}   = 'Agar-Math';
 	$URL{$n}     = 'http://libagar.org';
-
 	$TESTS{$n}   = \&TEST_agar_math;
 	$DISABLE{$n} = \&DISABLE_agar_math;
 	$EMUL{$n}    = \&EMUL_agar_math;
-	
 	$DEPS{$n}    = 'cc,agar';
+	$SAVED{$n}   = 'AGAR_MATH_CFLAGS AGAR_MATH_LIBS';
 }
 ;1

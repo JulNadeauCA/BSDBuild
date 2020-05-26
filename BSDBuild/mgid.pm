@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my $testCode = << 'EOF';
@@ -21,16 +20,19 @@ sub TEST_mgid
 	MkExecOutputPfx($pfx, 'mgid-config', '--libs', 'MGID_LIBS');
 	MkIfFound($pfx, $ver, 'MGID_VERSION');
 		MkPrintSN('checking whether libmgid works...');
-		MkCompileC('HAVE_MGID', '${MGID_CFLAGS}', '${MGID_LIBS}', $testCode);
-		MkSave('MGID_CFLAGS', 'MGID_LIBS');
+		MkCompileC('HAVE_MGID',
+		           '${MGID_CFLAGS}', '${MGID_LIBS}', $testCode);
+		MkIfFalse('${HAVE_MGID}');
+			MkDisableFailed('mgid');
+		MkEndif;
 	MkElse;
-		MkSaveUndef('HAVE_MGID');
+		MkDisableNotFound('mgid');
 	MkEndif;
 }
 
 sub DISABLE_mgid
 {
-	MkDefine('HAVE_MGID', 'no');
+	MkDefine('HAVE_MGID', 'no') unless $TestFailed;
 	MkDefine('MGID_CFLAGS', '');
 	MkDefine('MGID_LIBS', '');
 	MkSaveUndef('HAVE_MGID');
@@ -45,5 +47,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_mgid;
 	$DISABLE{$n} = \&DISABLE_mgid;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'MGID_CFLAGS MGID_LIBS';
 }
 ;1

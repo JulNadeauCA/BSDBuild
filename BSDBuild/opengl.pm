@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 my @autoIncludeDirs = (
 	'/usr/include/X11',
@@ -110,8 +109,7 @@ sub TEST_opengl
 		MkCaseBegin('*-*-cygwin* | *-*-mingw32*');
 			MkPrintSN('checking whether -lopengl32 works...');
 			MkCompileC('HAVE_LIBOPENGL32',
-			           '${OPENGL_CFLAGS}', '-lopengl32',
-					   $testCode);
+			           '${OPENGL_CFLAGS}', '-lopengl32', $testCode);
 			MkIfTrue('${HAVE_LIBOPENGL32}');
 				MkDefine('OPENGL_LIBS', '${GL_LIBS} -lopengl32');
 			MkElse;
@@ -125,18 +123,17 @@ sub TEST_opengl
 		MkEsac;
 
 		MkPrintSN('checking whether OpenGL works...');
-		MkCompileC('HAVE_OPENGL',
-		           '${OPENGL_CFLAGS}', '${OPENGL_LIBS}',
-				   $testCode);
-		MkIfTrue('${HAVE_OPENGL}');
-			MkSaveMK('OPENGL_CFLAGS', 'OPENGL_LIBS');
-		MkElse;
+		MkCompileC('HAVE_OPENGL', '${OPENGL_CFLAGS}', '${OPENGL_LIBS}',
+		           $testCode);
+		MkIfFalse('${HAVE_OPENGL}');
 			MkPrintSN('checking whether -lGL requires -lm...');
 			MkDefine('OPENGL_LIBS', '${OPENGL_LIBS} -lm');
 			MkCompileC('HAVE_OPENGL',
 			           '${OPENGL_CFLAGS}', '${OPENGL_LIBS}',
-					   $testCode);
-			MkSave('OPENGL_CFLAGS', 'OPENGL_LIBS');
+			           $testCode);
+			MkIfFalse('${HAVE_OPENGL}');
+				MkDisableFailed('opengl');
+			MkEndif;
 		MkEndif;
 
 		MkPrintSN('checking whether OpenGL has glext...');
@@ -145,26 +142,20 @@ sub TEST_opengl
 		           $testCodeGLEXT);
 	MkElse;
 		MkPrintS('no');
-		MkDefine('HAVE_GLEXT', 'no');
-		MkSaveUndef('HAVE_GLEXT');
+		MkDisableNotFound('opengl');
 	MkEndif;
-	
+
 	MkIfTrue('${HAVE_OPENGL}');
 		MkDefine('OPENGL_PC', 'gl');
-	MkElse;
-		MkDefine('OPENGL_PC', '');
 	MkEndif;
 }
 
 sub DISABLE_opengl
 {
-	MkDefine('HAVE_OPENGL', 'no');
+	MkDefine('HAVE_OPENGL', 'no') unless $TestFailed;
 	MkDefine('HAVE_GLEXT', 'no');
-
 	MkDefine('OPENGL_CFLAGS', '');
 	MkDefine('OPENGL_LIBS', '');
-	MkDefine('OPENGL_PC', '');
-
 	MkSaveUndef('HAVE_OPENGL', 'HAVE_GLEXT');
 }
 
@@ -177,7 +168,7 @@ sub EMUL_opengl
 		MkDefine('HAVE_GLEXT', 'no');
 		MkSaveUndef('HAVE_GLEXT');
 	} else {
-		DISABLE_opengl();
+		MkDisableNotFound('opengl');
 	}
 	return (1);
 }
@@ -192,5 +183,6 @@ BEGIN
 	$DISABLE{$n} = \&DISABLE_opengl;
 	$EMUL{$n}    = \&EMUL_opengl;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'OPENGL_CFLAGS OPENGL_LIBS OPENGL_PC';
 }
 ;1

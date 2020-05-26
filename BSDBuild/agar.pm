@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 my $testCode = << 'EOF';
 #include <agar/core.h>
@@ -28,17 +27,18 @@ sub TEST_agar
 		MkExecOutputPfx($pfx, 'agar-config', '--cflags', 'AGAR_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-config', '--libs', 'AGAR_LIBS');
 		MkCompileC('HAVE_AGAR',
-		           '${AGAR_CFLAGS}', '${AGAR_LIBS}',
-				   $testCode);
-		MkSave('AGAR_CFLAGS', 'AGAR_LIBS');
+		           '${AGAR_CFLAGS}', '${AGAR_LIBS}', $testCode);
+		MkIfFalse('${HAVE_AGAR}');
+			MkDisableFailed('agar');
+		MkEndif;
 	MkElse;
-		DISABLE_agar();
+		MkDisableNotFound('agar');
 	MkEndif;
 }
 
 sub DISABLE_agar
 {
-	MkDefine('HAVE_AGAR', 'no');
+	MkDefine('HAVE_AGAR', 'no') unless $TestFailed;
 	MkDefine('AGAR_CFLAGS', '');
 	MkDefine('AGAR_LIBS', '');
 	MkSaveUndef('HAVE_AGAR');
@@ -62,29 +62,14 @@ BEGIN
 
 	$DESCR{$n}   = 'Agar';
 	$URL{$n}     = 'http://libagar.org';
-
 	$TESTS{$n}   = \&TEST_agar;
 	$DISABLE{$n} = \&DISABLE_agar;
 	$EMUL{$n}    = \&EMUL_agar;
-
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'AGAR_CFLAGS AGAR_LIBS';
 
-	@{$EMULDEPS{$n}} = qw(
-		clock_win32
-		sdl
-		opengl
-		wgl
-		freetype
-		jpeg
-		png
-		winsock
-		db4
-		mysql
-		pthreads
-		iconv
-		gettext
-		sndfile
-		portaudio
-	);
+	@{$EMULDEPS{$n}} = qw(clock_win32 sdl opengl wgl freetype jpeg png
+	                      winsock db4 mysql pthreads iconv gettext
+	                      sndfile portaudio);
 }
 ;1

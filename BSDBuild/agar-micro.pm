@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 my $testCode = << 'EOF';
 #include <agar/core.h>
@@ -28,17 +27,18 @@ sub TEST_agar_micro
 		MkExecOutputPfx($pfx, 'agar-micro-config', '--cflags', 'AGAR_MICRO_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-micro-config', '--libs', 'AGAR_MICRO_LIBS');
 		MkCompileC('HAVE_AGAR_MICRO',
-		           '${AGAR_MICRO_CFLAGS}', '${AGAR_MICRO_LIBS}',
-				   $testCode);
-		MkSave('AGAR_MICRO_CFLAGS', 'AGAR_MICRO_LIBS');
+		           '${AGAR_MICRO_CFLAGS}', '${AGAR_MICRO_LIBS}', $testCode);
+		MkIfFalse('${HAVE_AGAR_MICRO}');
+			MkDisableFailed('agar-micro');
+		MkEndif;
 	MkElse;
-		DISABLE_agar_micro();
+		MkDisableNotFound('agar-micro');
 	MkEndif;
 }
 
 sub DISABLE_agar_micro
 {
-	MkDefine('HAVE_AGAR_MICRO', 'no');
+	MkDefine('HAVE_AGAR_MICRO', 'no') unless $TestFailed;
 	MkDefine('AGAR_MICRO_CFLAGS', '');
 	MkDefine('AGAR_MICRO_LIBS', '');
 	MkSaveUndef('HAVE_AGAR_MICRO');
@@ -62,11 +62,10 @@ BEGIN
 
 	$DESCR{$n}   = 'Micro-Agar';
 	$URL{$n}     = 'http://libagar.org';
-
 	$TESTS{$n}   = \&TEST_agar_micro;
 	$DISABLE{$n} = \&DISABLE_agar_micro;
 	$EMUL{$n}    = \&EMUL_agar_micro;
-
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'AGAR_MICRO_CFLAGS AGAR_MICRO_LIBS';
 }
 ;1

@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 use BSDBuild::Core;
@@ -36,8 +35,8 @@ sub TEST_libircclient
 
 	foreach my $dir (@pfxDirs) {
 		MkIfExists("$dir/include/libircclient.h");
-		    MkDefine('LIBIRCCLIENT_CFLAGS', "-I$dir/include");
-		    MkDefine('LIBIRCCLIENT_LIBS', "-L$dir/lib -lircclient");
+			MkDefine('LIBIRCCLIENT_CFLAGS', "-I$dir/include");
+			MkDefine('LIBIRCCLIENT_LIBS', "-L$dir/lib -lircclient");
 			MkPrintS('yes');
 			MkBreak;
 		MkEndif;
@@ -46,16 +45,18 @@ sub TEST_libircclient
 		MkPrintSN('checking whether libircclient works...');
 		MkCompileC('HAVE_LIBIRCCLIENT', '${LIBIRCCLIENT_CFLAGS}',
 		           '${LIBIRCCLIENT_LIBS}', $testCode);
-		MkSave('LIBIRCCLIENT_CFLAGS', 'LIBIRCCLIENT_LIBS');
+		MkIfFalse('${HAVE_LIBIRCCLIENT}');
+			MkDisableFailed('libircclient');
+		MkEndif;
 	MkElse;
 		MkPrintS('no');
-		MkSaveUndef('HAVE_LIBIRCCLIENT');
+		MkDisableNotFound('libircclient');
 	MkEndif;
 }
 
 sub DISABLE_libircclient
 {
-	MkDefine('HAVE_LIBIRCCLIENT', 'no');
+	MkDefine('HAVE_LIBIRCCLIENT', 'no') unless $TestFailed;
 	MkDefine('LIBIRCCLIENT_CFLAGS', '');
 	MkDefine('LIBIRCCLIENT_LIBS', '');
 	MkSaveUndef('HAVE_LIBIRCCLIENT');
@@ -83,5 +84,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_libircclient;
 	$DISABLE{$n} = \&DISABLE_libircclient;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'LIBIRCCLIENT_CFLAGS LIBIRCCLIENT_LIBS';
 }
 ;1

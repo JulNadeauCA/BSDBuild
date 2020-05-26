@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my $testCode = << 'EOF';
@@ -30,24 +29,23 @@ sub TEST_uim
 	MkIfFound($pfx, $ver, 'UIM_VERSION');
 		MkPrintSN('checking whether uim works...');
 		MkCompileC('HAVE_UIM', '${UIM_CFLAGS}', '${UIM_LIBS}', $testCode);
-		MkSave('UIM_CFLAGS', 'UIM_LIBS');
+		MkIfFalse('${HAVE_UIM}');
+			MkDisableFailed('uim');
+		MkEndif;
 	MkElse;
-		MkSaveUndef('HAVE_UIM');
+		MkDisableNotFound('uim');
 	MkEndif;
-
+	
 	MkIfTrue('${HAVE_UIM}');
 		MkDefine('UIM_PC', 'uim');
-	MkElse;
-		MkDefine('UIM_PC', '');
 	MkEndif;
 }
 
 sub DISABLE_uim
 {
-	MkDefine('HAVE_UIM', 'no');
+	MkDefine('HAVE_UIM', 'no') unless $TestFailed;
 	MkDefine('UIM_CFLAGS', '');
 	MkDefine('UIM_LIBS', '');
-	MkDefine('UIM_PC', '');
 	MkSaveUndef('HAVE_UIM');
 }
 
@@ -60,5 +58,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_uim;
 	$DISABLE{$n} = \&DISABLE_uim;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'UIM_CFLAGS UIM_LIBS UIM_PC';
 }
 ;1

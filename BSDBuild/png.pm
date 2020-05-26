@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 use BSDBuild::Core;
@@ -30,34 +29,32 @@ sub TEST_png
 	MkIfFound($pfx, $ver, 'PNG_VERSION');
 		MkPrintSN('checking whether libpng works...');
 		MkCompileC('HAVE_PNG', '${PNG_CFLAGS}', '${PNG_LIBS}', $testCode);
-		MkSave('PNG_CFLAGS', 'PNG_LIBS');
-		
-		MkTestVersion('PNG_VERSION', '1.4.0');
-		MkIfEQ('${MK_VERSION_OK}', 'yes');
-			MkDefine('HAVE_LIBPNG14', 'yes');
-			MkSaveMK('HAVE_LIBPNG14');
-			MkSaveDefine('HAVE_LIBPNG14');
+		MkIfFalse('${HAVE_PNG}');
+			MkDisableFailed('png');
 		MkElse;
-			MkSaveUndef('HAVE_LIBPNG14');
+			MkTestVersion('PNG_VERSION', '1.4.0');
+			MkIfEQ('${MK_VERSION_OK}', 'yes');
+				MkDefine('HAVE_LIBPNG14', 'yes');
+				MkSaveDefine('HAVE_LIBPNG14');
+			MkElse;
+				MkDefine('HAVE_LIBPNG14', 'no');
+				MkSaveUndef('HAVE_LIBPNG14');
+			MkEndif;
 		MkEndif;
 	MkElse;
-		DISABLE_png();
+		MkDisableNotFound('png');
 	MkEndif;
-	
+
 	MkIfTrue('${HAVE_PNG}');
 		MkDefine('PNG_PC', 'libpng');
-	MkElse;
-		MkDefine('PNG_PC', '');
 	MkEndif;
 }
 
 sub DISABLE_png
 {
-	MkDefine('HAVE_PNG', 'no');
-	MkDefine('HAVE_LIBPNG14', 'no');
+	MkDefine('HAVE_PNG', 'no') unless $TestFailed;
 	MkDefine('PNG_CFLAGS', '');
 	MkDefine('PNG_LIBS', '');
-	MkDefine('PNG_PC', '');
 	MkSaveUndef('HAVE_PNG', 'HAVE_LIBPNG14');
 }
 
@@ -70,5 +67,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_png;
 	$DISABLE{$n} = \&DISABLE_png;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'PNG_CFLAGS PNG_LIBS PNG_PC';
 }
 ;1

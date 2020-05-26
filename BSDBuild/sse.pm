@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 sub TEST_sse
@@ -33,7 +32,6 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	MkSave('SSE_CFLAGS');
 
 	MkPrintSN('checking for SSE2 extensions...');
 	MkDefine('SSE2_CFLAGS', '-msse2');
@@ -57,7 +55,6 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	MkSave('SSE2_CFLAGS');
 	
 	MkPrintSN('checking for SSE3 extensions...');
 	MkDefine('SSE3_CFLAGS', '-msse3');
@@ -83,7 +80,6 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	MkSave('SSE3_CFLAGS');
 }
 
 sub DISABLE_sse
@@ -106,5 +102,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_sse;
 	$DISABLE{$n} = \&DISABLE_sse;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'SSE_CFLAGS SSE2_CFLAGS SSE3_CFLAGS';
 }
 ;1

@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 sub TEST_perl
@@ -38,24 +37,23 @@ main(int argc, char **argv, char **env)
 	return (0);
 }
 EOF
-		MkSave('PERL_CFLAGS', 'PERL_LIBS');
+		MkIfFalse('${HAVE_PERL}');
+			MkDisableFailed('perl');
+		MkEndif;
 		MkSet('PERL', '${MK_EXEC_PATH}');
-		MkSaveMK('PERL');
 	MkElse;
 		MkPrintS('no');
-		DISABLE_perl();
+		MkDisableNotFound('perl');
 	MkEndif;
 }
 
 sub DISABLE_perl
 {
-	MkDefine('HAVE_PERL', 'no');
+	MkDefine('HAVE_PERL', 'no') unless $TestFailed;
+	MkSaveUndef('HAVE_PERL');
+	MkDefine('PERL', '/usr/bin/env perl');		# Default
 	MkDefine('PERL_CFLAGS', '');
 	MkDefine('PERL_LIBS', '');
-	MkSaveUndef('HAVE_PERL');
-	
-	MkDefine('PERL', '/usr/bin/env perl');		# Default
-	MkSaveMK('PERL');
 }
 
 BEGIN
@@ -67,5 +65,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_perl;
 	$DISABLE{$n} = \&DISABLE_perl;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'PERL PERL_CFLAGS PERL_LIBS';
 }
 ;1

@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 my $testCode = << 'EOF';
 #include <agar/core.h>
@@ -31,17 +30,18 @@ sub TEST_agar_vg
 		MkExecOutputPfx($pfx, 'agar-vg-config', '--libs', 'AGAR_VG_LIBS');
 		MkCompileC('HAVE_AGAR_VG',
 		           '${AGAR_VG_CFLAGS} ${AGAR_CFLAGS}',
-		           '${AGAR_VG_LIBS} ${AGAR_LIBS}',
-				   $testCode);
-		MkSave('AGAR_VG_CFLAGS', 'AGAR_VG_LIBS');
+		           '${AGAR_VG_LIBS} ${AGAR_LIBS}', $testCode);
+		MkIfFalse('${HAVE_AGAR_VG}');
+			MkDisableFailed('agar-vg');
+		MkEndif;
 	MkElse;
-		DISABLE_agar_vg();
+		MkDisableNotFound('agar-vg');
 	MkEndif;
 }
 
 sub DISABLE_agar_vg
 {
-	MkDefine('HAVE_AGAR_VG', 'no');
+	MkDefine('HAVE_AGAR_VG', 'no') unless $TestFailed;
 	MkDefine('AGAR_VG_CFLAGS', '');
 	MkDefine('AGAR_VG_LIBS', '');
 	MkSaveUndef('HAVE_AGAR_VG');
@@ -63,13 +63,12 @@ BEGIN
 {
 	my $n = 'agar-vg';
 
-	$DESCR{$n} = 'Agar-VG';
-	$URL{$n}   = 'http://libagar.org';
-
+	$DESCR{$n}   = 'Agar-VG';
+	$URL{$n}     = 'http://libagar.org';
 	$TESTS{$n}   = \&TEST_agar_vg;
 	$DISABLE{$n} = \&DISABLE_agar_vg;
 	$EMUL{$n}    = \&EMUL_agar_vg;
-	
-	$DEPS{$n}  = 'cc,agar';
+	$DEPS{$n}    = 'cc,agar';
+	$SAVED{$n}   = 'AGAR_VG_CFLAGS AGAR_VG_LIBS';
 }
 ;1

@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my $testCode = << 'EOF';
@@ -33,17 +32,18 @@ sub TEST_agar_net
 		MkExecOutputPfx($pfx, 'agar-net-config', '--libs', 'AGAR_NET_LIBS');
 		MkCompileC('HAVE_AGAR_NET',
 		           '${AGAR_NET_CFLAGS} ${AGAR_CORE_CFLAGS}',
-		           '${AGAR_NET_LIBS} ${AGAR_CORE_LIBS}',
-		           $testCode);
-		MkSave('AGAR_NET_CFLAGS', 'AGAR_NET_LIBS');
+		           '${AGAR_NET_LIBS} ${AGAR_CORE_LIBS}', $testCode);
+		MkIfFalse('${HAVE_AGAR_NET}');
+			MkDisableFailed('agar-net');
+		MkEndif;
 	MkElse;
-		DISABLE_agar_net();
+		MkDisableNotFound('agar-net');
 	MkEndif;
 }
 
 sub DISABLE_agar_net
 {
-	MkDefine('HAVE_AGAR_NET', 'no');
+	MkDefine('HAVE_AGAR_NET', 'no') unless $TestFailed;
 	MkDefine('AGAR_NET_CFLAGS', '');
 	MkDefine('AGAR_NET_LIBS', '');
 	MkSaveUndef('HAVE_AGAR_NET');
@@ -71,7 +71,6 @@ BEGIN
 	$DISABLE{$n} = \&DISABLE_agar_net;
 	$EMUL{$n}    = \&EMUL_agar_net;
 	$DEPS{$n}    = 'cc,agar-core';
-
-#	@{$EMULDEPS{$n}} = qw(agar);
+	$SAVED{$n}   = 'AGAR_NET_CFLAGS AGAR_NET_LIBS';
 }
 ;1

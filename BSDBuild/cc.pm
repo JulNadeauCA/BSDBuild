@@ -1,14 +1,15 @@
 # Public domain
-# vim:ts=4
 
 sub TEST_cc
 {
 	my @cc_try = ('clang', 'clang70', 'clang60', 'cc',
-                  'gcc', 'gcc-6', 'gcc7', 'gcc8', 'gcc5', 'gcc49', 'gcc48',
-                  'clang.exe', 'cc.exe', 'gcc.exe');
+	              'gcc', 'gcc-6', 'gcc7', 'gcc8', 'gcc5', 'gcc49', 'gcc48',
+	              'clang.exe', 'cc.exe', 'gcc.exe');
+
 	my $cc65_tgts = 'apple2 | apple2enh | atari | atmos | c16 | '.
-                    'c64 | c128 | cbm510 | cbm610 | geos | lunix | '.
-                    'lynx | nes | pet | plus4 | supervision | vic20';
+	                'c64 | c128 | cbm510 | cbm610 | geos | lunix | '.
+	                'lynx | nes | pet | plus4 | supervision | vic20';
+
 	my $mainTest = << 'EOF';
 int main(int argc, char *argv[]) { return(0); }';
 EOF
@@ -49,16 +50,17 @@ EOF
 			MkCaseBegin('*');								# any other target
 				MkPushIFS('$PATH_SEPARATOR');
 				MkFor('i', '$PATH');
-	my @try = @cc_try;
-	my $cc = shift(@try);
+					my @try = @cc_try;
+					my $cc = shift(@try);
+
 					MkIf('-x "${i}/${CROSSPFX}'.$cc.'"');
 					MkDefine('CC', '${i}/${CROSSPFX}'.$cc);
 					MkBreak;
-	foreach $cc (@try) {
-					MkElif('-x "${i}/${CROSSPFX}'.$cc.'"');
-					MkDefine('CC', '${i}/${CROSSPFX}'.$cc);
-					MkBreak;
-	}
+					foreach $cc (@try) {
+						MkElif('-x "${i}/${CROSSPFX}'.$cc.'"');
+						MkDefine('CC', '${i}/${CROSSPFX}'.$cc);
+						MkBreak;
+					}
 				MkEndif;
 				MkDone;
 				MkPopIFS();
@@ -145,7 +147,6 @@ EOT
 				echo "yes" >>config.log
 			fi
 EOF
-	MkSaveMK('EXECSUFFIX');
 	MkSaveDefine('EXECSUFFIX');
 	print << 'EOF';
 		else
@@ -226,23 +227,22 @@ EOF
 		MkCaseIn('${host}');
 		MkCaseBegin('*-*-cygwin* | *-*-mingw32*');
 			MkDefine('PICFLAGS', '');
-			MkSaveMK('PICFLAGS');
 
 			MkPrintSN('cc: checking for linker -no-undefined option...');
-			TryCompileFlagsC('HAVE_LD_NO_UNDEFINED', '-Wl,--no-undefined', $mainTest);
+			TryCompileFlagsC('HAVE_LD_NO_UNDEFINED',
+			                 '-Wl,--no-undefined', $mainTest);
 			MkIfTrue('${HAVE_LD_NO_UNDEFINED}');
-				MkDefine('LIBTOOLOPTS_SHARED', '${LIBTOOLOPTS_SHARED} ' .
-				                               '-no-undefined ' .
-				                               '-Wl,--no-undefined');
-				MkSaveMK('LIBTOOLOPTS_SHARED');
+				MkDefine('LIBTOOLOPTS_SHARED',
+				         '${LIBTOOLOPTS_SHARED} ' .
+				         '-no-undefined -Wl,--no-undefined');
 			MkEndif;
 
 			MkPrintSN('cc: checking for linker -static-libgcc option...');
 			TryCompileFlagsC('HAVE_LD_STATIC_LIBGCC', '-static-libgcc', $mainTest);
 			MkIfTrue('${HAVE_LD_STATIC_LIBGCC}');
-				MkDefine('LIBTOOLOPTS_SHARED', '${LIBTOOLOPTS_SHARED} -XCClinker ' .
-				                               '-static-libgcc');
-				MkSaveMK('LIBTOOLOPTS_SHARED');
+				MkDefine('LIBTOOLOPTS_SHARED',
+				         '${LIBTOOLOPTS_SHARED} ' .
+				         '-XCClinker -static-libgcc');
 			MkEndif;
 
 			MkPrintSN('cc: checking for cygwin environment...');
@@ -258,25 +258,10 @@ int main(int argc, char *argv[]) {
 	return(0);
 }
 EOF
-			MkPrintSN('cc: checking for -mwindows option...');
-			TryCompileFlagsC('HAVE_CC_MWINDOWS', '-mwindows', $winTest);
-				MkIfTrue('${HAVE_CC_MWINDOWS}');
-					MkDefine('PROG_GUI_FLAGS', '-mwindows');
-				MkElse;
-					MkDefine('PROG_GUI_FLAGS', '');
-				MkEndif;
-				MkPrintSN('cc: checking for -mconsole option...');
-				TryCompileFlagsC('HAVE_CC_MCONSOLE', '-mconsole', $winTest);
-				MkIfTrue('${HAVE_CC_MCONSOLE}');
-					MkDefine('PROG_CLI_FLAGS', '-mconsole');
-				MkElse;
-					MkDefine('PROG_CLI_FLAGS', '');
-				MkEndif;
 			MkCaseEnd;
 
 		MkCaseBegin('*');
 			MkDefine('PICFLAGS', '-fPIC');
-			MkSaveMK('PICFLAGS');
 
 			MkDefine('HAVE_CYGWIN', 'no');
 			MkSaveUndef('HAVE_CYGWIN');
@@ -294,37 +279,34 @@ EOF
 			MkDefine('CC_COMPILE', '-c');
 			MkSaveUndef('HAVE_CC65');
 		MkEndif;
-
-		MkSaveMK('HAVE_CC', 'HAVE_CC_CLANG', 'HAVE_CC_GCC', 'HAVE_CC65',
-		         'CC', 'CC_COMPILE', 'CFLAGS',
-                 'PROG_GUI_FLAGS', 'PROG_CLI_FLAGS');
-
 	MkElse;
-		DISABLE_cc();
+		MkDisableFailed('cc');
 	MkEndif;
+
 }
 
 sub DISABLE_cc
 {
-	MkDefine('HAVE_CC', 'no');
+	MkDefine('HAVE_CC', 'no') unless $TestFailed;
 	MkDefine('HAVE_CC65', 'no');
 	MkDefine('HAVE_CC_WARNINGS', 'no');
 	MkDefine('PROG_GUI_FLAGS', '');
 	MkDefine('PROG_CLI_FLAGS', '');
 	MkDefine('TEST_CFLAGS', '');
 
-	MkSaveUndef('HAVE_CC', 'HAVE_CC_CLANG', 'HAVE_CC_GCC', 'HAVE_CC65',
-	            'HAVE_CC_WARNINGS',
+	MkSaveUndef('HAVE_CC', 'HAVE_CC_WARNINGS',
+	            'HAVE_CC_CLANG', 'HAVE_CC_GCC', 'HAVE_CC65',
 	            'HAVE_FLOAT', 'HAVE_LONG_DOUBLE', 'HAVE_LONG_LONG',
-	            'HAVE_CYGWIN', 'HAVE_CC_MWINDOWS', 'HAVE_CC_MCONSOLE',
+	            'HAVE_CYGWIN',
 	            'HAVE_LD_NO_UNDEFINED', 'HAVE_LD_STATIC_LIBGCC');
-
-	MkSaveMK('HAVE_CC', 'HAVE_CC65', 'HAVE_CC_WARNINGS', 'CC', 'CFLAGS',
-             'PROG_GUI_CFLAGS', 'PROG_CLI_CFLAGS');
 }
 
 sub EMUL_cc
 {
+	MkDefine('PROG_GUI_FLAGS', '');
+	MkDefine('PROG_CLI_FLAGS', '');
+	MkDefine('TEST_CFLAGS', '');
+
 	MkDefine('HAVE_CC', 'yes');
 	MkDefine('HAVE_FLOAT', 'yes');
 
@@ -333,23 +315,17 @@ sub EMUL_cc
 	MkDefine('HAVE_LONG_DOUBLE', 'no');
 	MkDefine('HAVE_LONG_LONG', 'no');
 	MkDefine('HAVE_CYGWIN', 'no');
-	MkDefine('HAVE_CC_MWINDOWS', 'no');
-	MkDefine('HAVE_CC_MCONSOLE', 'no');
 	MkDefine('HAVE_LD_NO_UNDEFINED', 'no');
 	MkDefine('HAVE_LD_STATIC_LIBGCC', 'no');
-	MkDefine('PROG_GUI_FLAGS', '');
-	MkDefine('PROG_CLI_FLAGS', '');
-	MkDefine('TEST_CFLAGS', '');
 
 	MkSaveDefine('HAVE_CC', 'HAVE_FLOAT');
 
 	MkSaveUndef('HAVE_CC65', 'HAVE_CC_WARNINGS', 'HAVE_LONG_DOUBLE',
-	            'HAVE_LONG_LONG', 'HAVE_CYGWIN', 'HAVE_CC_MWINDOWS',
-				'HAVE_CC_MCONSOLE', 'HAVE_LD_NO_UNDEFINED',
-				'HAVE_LD_STATIC_LIBGCC');
+	            'HAVE_LONG_LONG', 'HAVE_CYGWIN',
+		    'HAVE_LD_NO_UNDEFINED',
+	            'HAVE_LD_STATIC_LIBGCC');
 
-	MkSaveMK('HAVE_CC', 'HAVE_CC65', 'HAVE_CC_WARNINGS', 'CC', 'CFLAGS',
-             'PROG_GUI_CFLAGS', 'PROG_CLI_CFLAGS');
+	MkSave(split(' ', $SAVED{'cc'}));
 }
 
 BEGIN
@@ -358,12 +334,16 @@ BEGIN
 	$TESTS{'cc'}   = \&TEST_cc;
 	$DISABLE{'cc'} = \&DISABLE_cc;
 	$EMUL{'cc'}    = \&EMUL_cc;
+	$SAVED{'cc'}   = 'HAVE_CC HAVE_CC_WARNINGS ' .
+	                 'HAVE_CC_CLANG HAVE_CC_GCC HAVE_CC65 ' .
+			 'CC CC_COMPILE CFLAGS PICFLAGS EXECSUFFIX ' .
+	                 'PROG_GUI_FLAGS PROG_CLI_FLAGS LIBTOOLOPTS_SHARED';
 
-	RegisterEnvVar('CC',		'C compiler command');
-	RegisterEnvVar('CFLAGS',	'C compiler flags');
-	RegisterEnvVar('LDFLAGS',	'C linker flags');
-	RegisterEnvVar('LIBS',		'Libraries to link against');
-	RegisterEnvVar('CPP',		'C preprocessor');
-	RegisterEnvVar('CPPFLAGS',	'C preprocessor flags');
+	RegisterEnvVar('CC',       'C compiler command');
+	RegisterEnvVar('CFLAGS',   'C compiler flags');
+	RegisterEnvVar('LDFLAGS',  'C linker flags');
+	RegisterEnvVar('LIBS',     'Libraries to link against');
+	RegisterEnvVar('CPP',      'C preprocessor');
+	RegisterEnvVar('CPPFLAGS', 'C preprocessor flags');
 }
 ;1

@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 my $testCode = << 'EOF';
 #include <tcl.h>
@@ -50,16 +49,17 @@ sub TEST_tcl
 	MkIfFound($pfx, $ver, 'TCL_VERSION');
 		MkPrintN('checking whether TCL works...');
 		MkCompileC('HAVE_TCL', '${TCL_CFLAGS}', '${TCL_LIBS}', $testCode);
-		MkSave('TCL_CFLAGS', 'TCL_LIBS');
+		MkIfFalse('${HAVE_TCL}');
+			MkDisableFailed('tcl');
+		MkEndif;
 	MkElse;
-		DISABLE_tcl();
+		MkDisableNotFound('tcl');
 	MkEndif;
-	
 }
 
 sub DISABLE_tcl
 {
-	MkDefine('HAVE_TCL', 'no');
+	MkDefine('HAVE_TCL', 'no') unless $TestFailed;
 	MkDefine('TCL_CFLAGS', '');
 	MkDefine('TCL_LIBS', '');
 	MkSaveUndef('HAVE_TCL');
@@ -74,5 +74,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_tcl;
 	$DISABLE{$n} = \&DISABLE_tcl;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'TCL_CFLAGS TCL_LIBS';
 }
 ;1

@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my @autoPrefixDirs = (
@@ -28,8 +27,8 @@ sub TEST_zlib
 	MkIfNE('${ZLIB_LIBS}', '');
 		MkPrintS('ok');
 		MkPrintSN('checking whether zlib works...');
-		MkCompileC('HAVE_ZLIB', '${ZLIB_CFLAGS}', '${ZLIB_LIBS}',
-		    << 'EOF');
+		MkCompileC('HAVE_ZLIB',
+		           '${ZLIB_CFLAGS}', '${ZLIB_LIBS}', << 'EOF');
 #include <stdio.h>
 #include <string.h>
 #include <zlib.h>
@@ -42,16 +41,18 @@ int main(int argc, char *argv[]) {
 	return deflateInit(&strm, 0);
 }
 EOF
-		MkSave('ZLIB_CFLAGS', 'ZLIB_LIBS');
+		MkIfFalse('${HAVE_ZLIB}');
+			MkDisableFailed('zlib');
+		MkEndif;
 	MkElse;
 		MkPrintS('no');
-		DISABLE_zlib();
+		MkDisableNotFound('zlib');
 	MkEndif;
 }
 
 sub DISABLE_zlib
 {
-	MkDefine('HAVE_ZLIB', 'no');
+	MkDefine('HAVE_ZLIB', 'no') unless $TestFailed;
 	MkDefine('ZLIB_CFLAGS', '');
 	MkDefine('ZLIB_LIBS', '');
 	MkSaveUndef('HAVE_ZLIB');
@@ -65,5 +66,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_zlib;
 	$DISABLE{$n} = \&DISABLE_zlib;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'ZLIB_CFLAGS ZLIB_LIBS';
 }
 ;1

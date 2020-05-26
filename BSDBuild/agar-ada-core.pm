@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 sub TEST_agar_ada_core
 {
@@ -12,7 +11,7 @@ sub TEST_agar_ada_core
 		MkExecOutputPfx($pfx, 'agar-ada-core-config', '--libs', 'AGAR_ADA_CORE_LIBS');
 		MkCompileAda('HAVE_AGAR_ADA_CORE',
 		             '${AGAR_ADA_CORE_CFLAGS} ${AGAR_CORE_CFLAGS}',
-					 '${AGAR_ADA_CORE_LIBS} ${AGAR_CORE_LIBS}', << "EOF");
+		             '${AGAR_ADA_CORE_LIBS} ${AGAR_CORE_LIBS}', << "EOF");
 with Agar;
 with Agar.Init;
 with Agar.Error;
@@ -24,15 +23,17 @@ begin
   end if;
 end conftest;
 EOF
-		MkSave('AGAR_ADA_CORE_CFLAGS', 'AGAR_ADA_CORE_LIBS');
+		MkIfFalse('${HAVE_AGAR_ADA_CORE}');
+			MkDisableFailed('agar-ada-core');
+		MkEndif;
 	MkElse;
-		DISABLE_agar_ada_core();
+		MkDisableNotFound('agar-ada-core');
 	MkEndif;
 }
 
 sub DISABLE_agar_ada_core
 {
-	MkDefine('HAVE_AGAR_ADA_CORE', 'no');
+	MkDefine('HAVE_AGAR_ADA_CORE', 'no') unless $TestFailed;
 	MkDefine('AGAR_ADA_CORE_CFLAGS', '');
 	MkDefine('AGAR_ADA_CORE_LIBS', '');
 	MkSaveUndef('HAVE_AGAR_ADA_CORE');
@@ -56,11 +57,10 @@ BEGIN
 
 	$DESCR{$n}   = 'Ada bindings to Agar-Core';
 	$URL{$n}     = 'http://libagar.org';
-
 	$TESTS{$n}   = \&TEST_agar_ada_core;
 	$DISABLE{$n} = \&DISABLE_agar_ada_core;
 	$EMUL{$n}    = \&EMUL_agar_ada_core;
-
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'AGAR_ADA_CORE_CFLAGS AGAR_ADA_CORE_LIBS';
 }
 ;1

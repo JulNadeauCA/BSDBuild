@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my $testCode = << 'EOF';
@@ -27,15 +26,15 @@ sub TEST_fastcgi
 	MkDefine('FASTCGI_LIBS', '');
 
 	MkIfNE($pfx, '');
-			MkIfExists("$pfx/include/fcgi_stdio.h");
-				MkDefine('FASTCGI_CFLAGS', "-I$pfx/include");
-			    MkDefine('FASTCGI_LIBS', "-L$pfx/lib -lfcgi");
-			MkEndif;
+		MkIfExists("$pfx/include/fcgi_stdio.h");
+			MkDefine('FASTCGI_CFLAGS', "-I$pfx/include");
+			MkDefine('FASTCGI_LIBS', "-L$pfx/lib -lfcgi");
+		MkEndif;
 	MkElse;
 		foreach my $dir (@autoPrefixes) {
 			MkIfExists("$dir/include/fcgi_stdio.h");
 				MkDefine('FASTCGI_CFLAGS', "-I$dir/include");
-			    MkDefine('FASTCGI_LIBS', "-L$dir/lib -lfcgi");
+				MkDefine('FASTCGI_LIBS', "-L$dir/lib -lfcgi");
 			MkEndif;
 		}
 	MkEndif;
@@ -44,16 +43,18 @@ sub TEST_fastcgi
 		MkPrintS('yes');
 		MkPrintSN('checking whether fastcgi works...');
 		MkCompileC('HAVE_FASTCGI', '${FASTCGI_CFLAGS}', '${FASTCGI_LIBS}', $testCode);
-		MkSave('FASTCGI_CFLAGS', 'FASTCGI_LIBS');
+		MkIfFalse('${HAVE_FASTCGI}');
+			MkDisableFailed('fastcgi');
+		MkEndif;
 	MkElse;
 		MkPrintS('no');
-		DISABLE_fastcgi();
+		MkDisableNotFound('fastcgi');
 	MkEndif;
 }
 
 sub DISABLE_fastcgi
 {
-	MkDefine('HAVE_FASTCGI', 'no');
+	MkDefine('HAVE_FASTCGI', 'no') unless $TestFailed;
 	MkDefine('FASTCGI_CFLAGS', '');
 	MkDefine('FASTCGI_LIBS', '');
 	MkSaveUndef('HAVE_FASTCGI');
@@ -68,5 +69,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_fastcgi;
 	$DISABLE{$n} = \&DISABLE_fastcgi;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'FASTCGI_CFLAGS FASTCGI_LIBS';
 }
 ;1

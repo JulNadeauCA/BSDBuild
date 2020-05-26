@@ -1,27 +1,4 @@
-# vim:ts=4
-#
-# Copyright (c) 2005-2018 Julien Nadeau Carriere <vedge@csoft.net>
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
-# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-# USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# Public domain
 
 my @autoIncludeDirs = (
 	'/usr/include/pthreads',
@@ -146,35 +123,36 @@ sub TEST_pthreads_std
 		MkDefine('PTHREADS_LIBS', "-lpthread");
 	MkEndif;
 
-	# Try the standard -lpthread.
-	MkCompileC('HAVE_PTHREADS', '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', $testCodeStd);
+	MkCompileC('HAVE_PTHREADS',
+	           '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}',
+	           $testCodeStd);
 	MkIfTrue('${HAVE_PTHREADS}');
 		MkDefine('CFLAGS', '${CFLAGS} ${PTHREADS_CFLAGS}');
-		MkSaveMK('CFLAGS', 'PTHREADS_CFLAGS', 'PTHREADS_LIBS');
-	MkElse();
-		# Fallback to -pthread.
+	MkElse;
 		MkPrintSN('checking for -pthread...');
 		MkDefine('PTHREADS_LIBS', '-pthread');
-		MkCompileC('HAVE_PTHREADS', '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', $testCodeStd);
-		MkIf('"${HAVE_PTHREADS}" = "yes"');
+		MkCompileC('HAVE_PTHREADS',
+		           '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}',
+			   $testCodeStd);
+		MkIfTrue('${HAVE_PTHREADS}');
 			MkDefine('CFLAGS', '${CFLAGS} ${PTHREADS_CFLAGS}');
-			MkSaveMK('CFLAGS', 'PTHREADS_CFLAGS','PTHREADS_LIBS');
-		MkElse();
-			# Fallback to scanning libs and include files.
+		MkElse;
 			MkDefine('PTHREADS_CFLAGS', '');
 			MkDefine('PTHREADS_LIBS', '');
+
 			MkPrintSN('checking for -pthread (common paths)...');
 			SearchIncludes($pfx, 'PTHREADS_CFLAGS');
 			SearchLibs($pfx, 'PTHREADS_LIBS');
 			MkCompileC('HAVE_PTHREADS',
-			    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}',
-				$testCodeStd);
-			MkIf('"${HAVE_PTHREADS}" = "yes"');
+			           '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}',
+			           $testCodeStd);
+			MkIfTrue('${HAVE_PTHREADS}');
 				MkDefine('CFLAGS', '${CFLAGS} ${PTHREADS_CFLAGS}');
-				MkSaveMK('CFLAGS', 'PTHREADS_CFLAGS', 'PTHREADS_LIBS');
-			MkEndif();
-		MkEndif();
-	MkEndif();
+			MkElse;
+				MkDisableFailed('pthreads');
+			MkEndif;
+		MkEndif;
+	MkEndif;
 }
 
 sub TEST_pthreads_recursive_mutex
@@ -185,7 +163,7 @@ sub TEST_pthreads_recursive_mutex
 	#
 	MkPrintSN('checking for PTHREAD_MUTEX_RECURSIVE...');
 	MkCompileC('HAVE_PTHREAD_MUTEX_RECURSIVE',
-	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', << 'EOF');
+	           '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', << 'EOF');
 #include <pthread.h>
 #include <signal.h>
 int main(int argc, char *argv[])
@@ -232,15 +210,18 @@ sub TEST_pthreads_pointerness
 {
 	MkPrintSN('checking whether pthread_mutex_t is a pointer...');
 	MkCompileC('HAVE_PTHREAD_MUTEX_T_POINTER',
-	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', $testIfMutexIsPointer);
+	           '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}',
+		   $testIfMutexIsPointer);
 	
 	MkPrintSN('checking whether pthread_cond_t is a pointer...');
 	MkCompileC('HAVE_PTHREAD_COND_T_POINTER',
-	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', $testIfCondIsPointer);
+	           '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}',
+		   $testIfCondIsPointer);
 	
 	MkPrintSN('checking whether pthread_t is a pointer...');
 	MkCompileC('HAVE_PTHREAD_T_POINTER',
-	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', $testIfThreadIsPointer);
+	           '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}',
+		   $testIfThreadIsPointer);
 }
 
 sub TEST_pthreads_xopen
@@ -265,9 +246,10 @@ sub TEST_pthreads_xopen
 		MkDefine('PTHREADS_XOPEN_LIBS', "-lpthread");
 	MkEndif;
 
-	MkCompileC('HAVE_PTHREADS_XOPEN', '${PTHREADS_XOPEN_CFLAGS}', '${PTHREADS_XOPEN_LIBS}', $testCodeXopen);
+	MkCompileC('HAVE_PTHREADS_XOPEN',
+	           '${PTHREADS_XOPEN_CFLAGS}', '${PTHREADS_XOPEN_LIBS}',
+	           $testCodeXopen);
 	MkIfTrue('${HAVE_PTHREADS_XOPEN}');
-		MkSaveMK('PTHREADS_XOPEN_CFLAGS', 'PTHREADS_XOPEN_LIBS');
 		MkSaveDefine('HAVE_PTHREADS_XOPEN');
 	MkElse;
 		# Fallback to scanning libraries and includes.
@@ -276,10 +258,9 @@ sub TEST_pthreads_xopen
 		SearchLibs($pfx, 'PTHREADS_XOPEN_LIBS');
 		SearchIncludes($pfx, 'PTHREADS_XOPEN_CFLAGS');
 		MkCompileC('HAVE_PTHREADS_XOPEN',
-		    '${PTHREADS_XOPEN_CFLAGS}', '${PTHREADS_XOPEN_LIBS}',
-			$testCodeXopen);
+		           '${PTHREADS_XOPEN_CFLAGS}', '${PTHREADS_XOPEN_LIBS}',
+		           $testCodeXopen);
 		MkIfTrue('${HAVE_PTHREADS_XOPEN}');
-			MkSaveMK('PTHREADS_XOPEN_CFLAGS', 'PTHREADS_XOPEN_LIBS');
 			MkSaveDefine('HAVE_PTHREADS_XOPEN');
 		MkElse;
 			MkSaveUndef('HAVE_PTHREADS_XOPEN');
@@ -297,20 +278,22 @@ sub TEST_pthreads
 
 sub DISABLE_pthreads
 {
-	MkDefine('HAVE_PTHREADS', 'no');
+	MkDefine('HAVE_PTHREADS', 'no') unless $TestFailed;
+	MkDefine('HAVE_PTHREADS_XOPEN', 'no');
 	MkDefine('HAVE_PTHREAD_MUTEX_RECURSIVE', 'no');
 	MkDefine('HAVE_PTHREAD_MUTEX_RECURSIVE_NP', 'no');
-	MkDefine('HAVE_PTHREADS_XOPEN', 'no');
+	MkDefine('HAVE_PTHREAD_MUTEX_T_POINTER', 'no');
+	MkDefine('HAVE_PTHREAD_COND_T_POINTER', 'no');
+	MkDefine('HAVE_PTHREAD_T_POINTER', 'no');
 
 	MkDefine('PTHREADS_CFLAGS', '');
 	MkDefine('PTHREADS_LIBS', '');
 	MkDefine('PTHREADS_XOPEN_CFLAGS', '');
 	MkDefine('PTHREADS_XOPEN_LIBS', '');
 
-	MkSaveUndef('HAVE_PTHREADS',
-                'HAVE_PTHREAD_MUTEX_RECURSIVE',
-                'HAVE_PTHREAD_MUTEX_RECURSIVE_NP',
-	            'HAVE_PTHREADS_XOPEN',
+	MkSaveUndef('HAVE_PTHREADS', 'HAVE_PTHREADS_XOPEN',
+	            'HAVE_PTHREAD_MUTEX_RECURSIVE',
+	            'HAVE_PTHREAD_MUTEX_RECURSIVE_NP',
 	            'HAVE_PTHREAD_MUTEX_T_POINTER',
 	            'HAVE_PTHREAD_COND_T_POINTER',
 	            'HAVE_PTHREAD_T_POINTER');
@@ -328,9 +311,8 @@ sub EMUL_pthreads
 
 		MkDefine('PTHREADS_XOPEN_CFLAGS', '-U_XOPEN_SOURCE '.
 		                                  '-D_XOPEN_SOURCE=600');
-		MkSaveMK('PTHREADS_XOPEN_CFLAGS');
 	} else {
-		DISABLE_pthreads();
+		MkDisableNotFound('pthreads');
 	}
 	return (1);
 }
@@ -344,5 +326,7 @@ BEGIN
 	$DISABLE{$n} = \&DISABLE_pthreads;
 	$EMUL{$n}    = \&EMUL_pthreads;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'CFLAGS PTHREADS_CFLAGS PTHREADS_LIBS ' .
+	               'PTHREADS_XOPEN_CFLAGS PTHREADS_XOPEN_LIBS';
 }
 ;1

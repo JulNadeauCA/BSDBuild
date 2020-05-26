@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 sub TEST_cc_attributes
 {

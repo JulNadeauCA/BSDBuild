@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 my $testCode = << 'EOF';
 #include <alsa/asoundlib.h>
@@ -51,15 +50,17 @@ sub TEST_alsa
 		MkPrintS('yes');
 		MkPrintSN('checking whether ALSA works...');
 		MkCompileC('HAVE_ALSA', '${ALSA_CFLAGS}', '${ALSA_LIBS}', $testCode);
-		MkSave('ALSA_CFLAGS', 'ALSA_LIBS');
+		MkIfFalse('${HAVE_ALSA}');
+			MkDisableFailed('alsa');
+		MkEndif;
 	MkElse;
-		MkPrintS('no');
+		MkDisableNotFound('alsa');
 	MkEndif;
 }
 
 sub DISABLE_alsa
 {
-	MkDefine('HAVE_ALSA', 'no');
+	MkDefine('HAVE_ALSA', 'no') unless $TestFailed;
 	MkDefine('ALSA_CFLAGS', '');
 	MkDefine('ALSA_LIBS', '');
 	MkSaveUndef('HAVE_ALSA');
@@ -71,10 +72,9 @@ BEGIN
 
 	$DESCR{$n}   = 'ALSA';
 	$URL{$n}     = 'http://www.alsa-project.org';
-
 	$TESTS{$n}   = \&TEST_alsa;
 	$DISABLE{$n} = \&DISABLE_alsa;
-
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'ALSA_CFLAGS ALSA_LIBS';
 }
 ;1

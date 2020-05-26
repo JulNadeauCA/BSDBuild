@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my @autoIncludeAndLibDirs = (
@@ -36,8 +35,9 @@ sub TEST_gle
 		}
 	MkEndif;
 
-	MkCompileC('HAVE_GLE', '${OPENGL_CFLAGS} ${GLE_CFLAGS} ${GLU_CFLAGS}',
-	                       '${OPENGL_LIBS} ${GLE_LIBS} ${GLU_LIBS}', << 'EOF');
+	MkCompileC('HAVE_GLE',
+	           '${OPENGL_CFLAGS} ${GLE_CFLAGS} ${GLU_CFLAGS}',
+	           '${OPENGL_LIBS} ${GLE_LIBS} ${GLU_LIBS}', << 'EOF');
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
 #include <OpenGL/gle.h>
@@ -49,12 +49,14 @@ int main(int argc, char *argv[]) {
 	return gleGetNumSides();
 }
 EOF
-	MkSave('GLE_CFLAGS', 'GLE_LIBS');
+	MkIfFalse('${HAVE_GLE}');
+		MkDisableFailed('gle');
+	MkEndif;
 }
 
 sub DISABLE_gle
 {
-	MkDefine('HAVE_GLE', 'no');
+	MkDefine('HAVE_GLE', 'no') unless $TestFailed;
 	MkDefine('GLE_CFLAGS', '');
 	MkDefine('GLE_LIBS', '');
 	MkSaveUndef('HAVE_GLE');
@@ -82,5 +84,6 @@ BEGIN
 	$DISABLE{$n} = \&DISABLE_gle;
 	$EMUL{$n}    = \&EMUL_gle;
 	$DEPS{$n}    = 'cc,opengl,glu';
+	$SAVED{$n}   = 'GLE_CFLAGS GLE_LIBS';
 }
 ;1

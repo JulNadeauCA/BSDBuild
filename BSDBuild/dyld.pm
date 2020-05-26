@@ -1,10 +1,9 @@
-# vim:ts=4
 # Public domain
 
 sub TEST_dyld
 {
 	BeginTestHeaders();
-	DetectHeaderC('HAVE_MACH_O_DYLD_H',	'<mach-o/dyld.h>');
+	DetectHeaderC('HAVE_MACH_O_DYLD_H', '<mach-o/dyld.h>');
 
 	TryCompile 'HAVE_DYLD', << 'EOF';
 #ifdef __APPLE__
@@ -58,8 +57,7 @@ main(int argc, char *argv[])
 }
 EOF
 	MkElse;
-		MkDefine('HAVE_DYLD_RETURN_ON_ERROR', 'no');
-		MkSaveUndef('HAVE_DYLD_RETURN_ON_ERROR');
+		MkDisableFailed('dyld');
 	MkEndif;
 
 	EndTestHeaders();
@@ -67,7 +65,7 @@ EOF
 
 sub DISABLE_dyld
 {
-	MkDefine('HAVE_DYLD', 'no');
+	MkDefine('HAVE_DYLD', 'no') unless $TestFailed;
 	MkDefine('HAVE_MACH_O_DYLD_H', 'no');
 	MkDefine('HAVE_DYLD_RETURN_ON_ERROR', 'no');
 	MkSaveUndef('HAVE_DYLD', 'HAVE_MACH_O_DYLD_H', 'HAVE_DYLD_RETURN_ON_ERROR');

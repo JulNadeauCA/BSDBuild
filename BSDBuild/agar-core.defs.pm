@@ -1,12 +1,11 @@
 # Public domain
-# vim:ts=4
 
 my @core_options = qw(
 	ag_debug
 	ag_enable_dso
 	ag_enable_exec
 	ag_enable_string
-    ag_legacy
+	ag_legacy
 	ag_namespaces
 	ag_serialization
 	ag_threads
@@ -220,16 +219,20 @@ EOF
 		MkPrintSN('checking Agar-Core definitions...');
 		MkExecOutputPfx($pfx, 'agar-core-config', '--cflags', 'AGAR_CORE_CFLAGS');
 		MkExecOutputPfx($pfx, 'agar-core-config', '--libs', 'AGAR_CORE_LIBS');
-		MkCompileAndRunC('HAVE_AGAR_CORE_DEFS', '${AGAR_CORE_CFLAGS}',
-		    '${AGAR_CORE_LIBS}', $testCode);
+		MkCompileAndRunC('HAVE_AGAR_CORE_DEFS',
+		                 '${AGAR_CORE_CFLAGS}',
+		                 '${AGAR_CORE_LIBS}', $testCode);
+		MkIfFalse('${HAVE_AGAR_CORE_DEFS}');
+			MkDisableFailed('agar-core.defs');
+		MkEndif;
 	MkElse;
-		DISABLE_agar_core_defs();
+		MkDisableNotFound('agar-core.defs');
 	MkEndif;
 }
 
 sub DISABLE_agar_core_defs
 {
-	MkDefine('HAVE_AGAR_CORE_DEFS', 'no');
+	MkDefine('HAVE_AGAR_CORE_DEFS', 'no') unless $TestFailed;
 	MkSaveUndef('HAVE_AGAR_CORE_DEFS');
 }
 
@@ -239,10 +242,8 @@ BEGIN
 
 	$DESCR{$n}   = 'Agar-Core definitions';
 	$URL{$n}     = 'http://libagar.org';
-
 	$TESTS{$n}   = \&TEST_agar_core_defs;
 	$DISABLE{$n} = \&DISABLE_agar_core_defs;
-
 	$DEPS{$n}    = 'cc';
 }
 ;1

@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my $testCode = << 'EOF';
@@ -31,16 +30,17 @@ sub TEST_agar_map
 		MkCompileC('HAVE_AGAR_MAP', '${AGAR_MAP_CFLAGS} ${AGAR_CFLAGS}',
 		                            '${AGAR_MAP_LIBS} ${AGAR_LIBS}',
 		                            $testCode);
-
-		MkSave('AGAR_MAP_CFLAGS', 'AGAR_MAP_LIBS');
+		MkIfFalse('${HAVE_AGAR_MAP}');
+			MkDisableFailed('agar-map');
+		MkEndif;
 	MkElse;
-		DISABLE_agar_map();
+		MkDisableNotFound('agar-map');
 	MkEndif;
 }
 
 sub DISABLE_agar_map
 {
-	MkDefine('HAVE_AGAR_MAP', 'no');
+	MkDefine('HAVE_AGAR_MAP', 'no') unless $TestFailed;
 	MkDefine('AGAR_MAP_CFLAGS', '');
 	MkDefine('AGAR_MAP_LIBS', '');
 	MkSaveUndef('HAVE_AGAR_MAP');
@@ -68,7 +68,6 @@ BEGIN
 	$DISABLE{$n} = \&DISABLE_agar_map;
 	$EMUL{$n}    = \&EMUL_agar_map;
 	$DEPS{$n}    = 'cc,agar';
-
-#	@{$EMULDEPS{$n}} = qw(agar);
+	$SAVED{$n}   = 'AGAR_MAP_CFLAGS AGAR_MAP_LIBS';
 }
 ;1

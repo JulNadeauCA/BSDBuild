@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 sub TEST_glx
@@ -8,16 +7,15 @@ sub TEST_glx
 	MkDefine('GLX_CFLAGS', '${OPENGL_CFLAGS} ${X11_CFLAGS}');
 	MkDefine('GLX_LIBS', '${OPENGL_LIBS} ${X11_LIBS}');
 
-	MkCompileC('HAVE_GLX', '${GLX_CFLAGS}',
-	                       '${GLX_LIBS}', << 'EOF');
+	MkCompileC('HAVE_GLX', '${GLX_CFLAGS}', '${GLX_LIBS}', << 'EOF');
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #ifdef __APPLE__
-#include <OpenGL/gl.h>
-#include <OpenGL/glx.h>
+# include <OpenGL/gl.h>
+# include <OpenGL/glx.h>
 #else
-#include <GL/gl.h>
-#include <GL/glx.h>
+# include <GL/gl.h>
+# include <GL/glx.h>
 #endif
 int main(int argc, char *argv[]) {
 	Display *d;
@@ -34,12 +32,14 @@ int main(int argc, char *argv[]) {
 	return (0);
 }
 EOF
-	MkSave('GLX_CFLAGS', 'GLX_LIBS');
+	MkIfFalse('${HAVE_GLX}');
+		MkDisableFailed('glx');
+	MkEndif;
 }
 
 sub DISABLE_glx
 {
-	MkDefine('HAVE_GLX', 'no');
+	MkDefine('HAVE_GLX', 'no') unless $TestFailed;
 	MkDefine('GLX_CFLAGS', '');
 	MkDefine('GLX_LIBS', '');
 	MkSaveUndef('HAVE_GLX');
@@ -53,5 +53,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_glx;
 	$DISABLE{$n} = \&DISABLE_glx;
 	$DEPS{$n}    = 'cc,opengl,x11,math';
+	$SAVED{$n}   = 'GLX_CFLAGS GLX_LIBS';
 }
 ;1

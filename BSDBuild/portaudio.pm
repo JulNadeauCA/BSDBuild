@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my $testCode = << 'EOF';
@@ -57,7 +56,7 @@ sub TEST_portaudio
 			MkIfExists("$pfx/include/portaudio.h");
 				MkDefine('PORTAUDIO_CFLAGS',
 				         "-I$pfx/include \${PTHREADS_CFLAGS}");
-			    MkDefine('PORTAUDIO_LIBS',
+				MkDefine('PORTAUDIO_LIBS',
 				         "-L$pfx/lib -lportaudio \${PTHREADS_LIBS}");
 				MkDefine('PORTAUDIO_VERSION', "18.0");
 			MkEndif;
@@ -66,7 +65,7 @@ sub TEST_portaudio
 				MkIfExists("$dir/include/portaudio.h");
 					MkDefine('PORTAUDIO_CFLAGS',
 					         "-I$dir/include \${PTHREADS_CFLAGS}");
-				    MkDefine('PORTAUDIO_LIBS',
+					MkDefine('PORTAUDIO_LIBS',
 					         "-L$dir/lib -lportaudio \${PTHREADS_LIBS}");
 					MkDefine('PORTAUDIO_VERSION', "18.0");
 				MkEndif;
@@ -77,24 +76,23 @@ sub TEST_portaudio
 	MkIfFound($pfx, $ver, 'PORTAUDIO_VERSION');
 		MkPrintSN('checking whether PortAudio2 works...');
 		MkCompileC('HAVE_PORTAUDIO', '${PORTAUDIO_CFLAGS}', '${PORTAUDIO_LIBS}', $testCode);
-		MkSave('PORTAUDIO_CFLAGS', 'PORTAUDIO_LIBS');
+		MkIfFalse('${HAVE_PORTAUDIO}');
+			MkDisableFailed('portaudio');
+		MkEndif;
 	MkElse;
-		MkSaveUndef('HAVE_PORTAUDIO');
+		MkDisableNotFound('portaudio');
 	MkEndif;
 	
 	MkIfTrue('${HAVE_PORTAUDIO}');
 		MkDefine('PORTAUDIO_PC', 'portaudio-2.0');
-	MkElse;
-		MkDefine('PORTAUDIO_PC', '');
 	MkEndif;
 }
 
 sub DISABLE_portaudio
 {
-	MkDefine('HAVE_PORTAUDIO', 'no');
+	MkDefine('HAVE_PORTAUDIO', 'no') unless $TestFailed;
 	MkDefine('PORTAUDIO_CFLAGS', '');
 	MkDefine('PORTAUDIO_LIBS', '');
-	MkDefine('PORTAUDIO_PC', '');
 	MkSaveUndef('HAVE_PORTAUDIO');
 }
 
@@ -107,5 +105,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_portaudio;
 	$DISABLE{$n} = \&DISABLE_portaudio;
 	$DEPS{$n}    = 'cc,pthreads';
+	$SAVED{$n}   = 'PORTAUDIO_CFLAGS PORTAUDIO_LIBS PORTAUDIO_PC';
 }
 ;1

@@ -1,4 +1,3 @@
-# vim:ts=4
 # Public domain
 
 my $testCode = << 'EOF';
@@ -25,17 +24,18 @@ sub TEST_etubestore
 		MkExecOutputPfx($pfx, 'etubestore-config', '--libs', 'ETUBESTORE_LIBS');
 		MkCompileC('HAVE_ETUBESTORE',
 		           '${ETUBESTORE_CFLAGS} ${AGAR_CFLAGS}',
-				   '${ETUBESTORE_LIBS} ${AGAR_LIBS}',
-		           $testCode);
-		MkSave('ETUBESTORE_CFLAGS', 'ETUBESTORE_LIBS');
+		           '${ETUBESTORE_LIBS} ${AGAR_LIBS}', $testCode);
+		MkIfFalse('${HAVE_ETUBESTORE}');
+			MkDisableFailed('etubestore');
+		MkEndif;
 	MkElse;
-		DISABLE_etubestore();
+		MkDisableNotFound('etubestore');
 	MkEndif;
 }
 
 sub DISABLE_etubestore
 {
-	MkDefine('HAVE_ETUBESTORE', 'no');
+	MkDefine('HAVE_ETUBESTORE', 'no') unless $TestFailed;
 	MkDefine('ETUBESTORE_CFLAGS', '');
 	MkDefine('ETUBESTORE_LIBS', '');
 	MkSaveUndef('HAVE_ETUBESTORE');
@@ -50,5 +50,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_etubestore;
 	$DISABLE{$n} = \&DISABLE_etubestore;
 	$DEPS{$n}    = 'cc,agar';
+	$SAVED{$n}   = 'ETUBESTORE_CFLAGS ETUBESTORE_LIBS';
 }
 ;1

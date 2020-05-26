@@ -1,10 +1,9 @@
-# vim:ts=4
 # Public domain
 
 sub TEST_winsock
 {
 	MkPrintS("not checking");
-	DISABLE_winsock();
+	MkDisableNotFound('winsock');
 }
 
 sub DISABLE_winsock

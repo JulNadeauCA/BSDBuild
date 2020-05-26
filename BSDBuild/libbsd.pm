@@ -1,18 +1,14 @@
-# vim:ts=4
 # Public domain
 
 my $testCode = << 'EOF';
 #include <bsd/bsd.h>
 
 int main(int argc, char *argv[]) {
-  int size;
-  char dst[4];
-  char src[3] = "foo";
-  size = strlcpy(dst, src, 4);
-  if (size < sizeof(src))
-    return (1);
-  else
-    return (0);
+	int size;
+	char dst[4];
+	char src[3] = "foo";
+	size = strlcpy(dst, src, 4);
+	return (size < sizeof(src)) ? 0 : 1;
 }
 EOF
 
@@ -26,15 +22,17 @@ sub TEST_libbsd
 	MkIfFound($pfx, $ver, 'LIBBSD_VERSION');
 		MkPrintSN('checking whether libbsd works...');
 		MkCompileC('HAVE_LIBBSD', '${LIBBSD_CFLAGS}', '${LIBBSD_LIBS}', $testCode);
-		MkSave('LIBBSD_CFLAGS', 'LIBBSD_LIBS');
+		MkIfFalse('${HAVE_LIBBSD}');
+			MkDisableFailed('libbsd');
+		MkEndif;
 	MkElse;
-		DISABLE_libbsd();
+		MkDisableNotFound('libbsd');
 	MkEndif;
 }
 
 sub DISABLE_libbsd
 {
-	MkDefine('HAVE_LIBBSD', 'no');
+	MkDefine('HAVE_LIBBSD', 'no') unless $TestFailed;
 	MkDefine('LIBBSD_CFLAGS', '');
 	MkDefine('LIBBSD_LIBS', '');
 	MkSaveUndef('HAVE_LIBBSD');
@@ -49,5 +47,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_libbsd;
 	$DISABLE{$n} = \&DISABLE_libbsd;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'LIBBSD_CFLAGS LIBBSD_LIBS';
 }
 ;1

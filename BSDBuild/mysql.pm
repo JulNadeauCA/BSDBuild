@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 my $testCode = << 'EOF';
 #include <mysql.h>
@@ -23,16 +22,19 @@ sub TEST_mysql
 		MkPrintSN('checking whether MySQL works...');
 		MkExecOutput('mysql_config', '--cflags', 'MYSQL_CFLAGS');
 		MkExecOutput('mysql_config', '--libs', 'MYSQL_LIBS');
-		MkCompileC('HAVE_MYSQL', '${MYSQL_CFLAGS}', '${MYSQL_LIBS}', $testCode);
-		MkSave('MYSQL_CFLAGS', 'MYSQL_LIBS');
+		MkCompileC('HAVE_MYSQL',
+		           '${MYSQL_CFLAGS}', '${MYSQL_LIBS}', $testCode);
+		MkIfFalse('${HAVE_MYSQL}');
+			MkDisableFailed('mysql');
+		MkEndif;
 	MkElse;
-		DISABLE_mysql();
+		MkDisableNotFound('mysql');
 	MkEndif;
 }
 
 sub DISABLE_mysql
 {
-	MkDefine('HAVE_MYSQL', 'no');
+	MkDefine('HAVE_MYSQL', 'no') unless $TestFailed;
 	MkDefine('MYSQL_CFLAGS', '');
 	MkDefine('MYSQL_LIBS', '');
 	MkSaveUndef('HAVE_MYSQL');
@@ -47,5 +49,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_mysql;
 	$DISABLE{$n} = \&DISABLE_mysql;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'MYSQL_CFLAGS MYSQL_LIBS';
 }
 ;1

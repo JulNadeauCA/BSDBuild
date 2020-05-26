@@ -1,5 +1,4 @@
 # Public domain
-# vim:ts=4
 
 my @autoPrefixDirs = (
 	'/usr',
@@ -50,15 +49,18 @@ sub TEST_iconv
 			MkEndif;
 		}
 	MkEndif;
-	MkCompileC('HAVE_ICONV', '${ICONV_CFLAGS} -Wno-cast-qual',
-	           '${ICONV_LIBS}', $testCode);
 
-	MkSave('ICONV_CFLAGS', 'ICONV_LIBS');
+	MkCompileC('HAVE_ICONV',
+	           '${ICONV_CFLAGS} -Wno-cast-qual',
+	           '${ICONV_LIBS}', $testCode);
+	MkIfFalse('${HAVE_ICONV}');
+		MkDisableFailed('iconv');
+	MkEndif;
 }
 
 sub DISABLE_iconv
 {
-	MkDefine('HAVE_ICONV', 'no');
+	MkDefine('HAVE_ICONV', 'no') unless $TestFailed;
 	MkDefine('ICONV_CFLAGS', '');
 	MkDefine('ICONV_LIBS', '');
 	MkSaveUndef('HAVE_ICONV');
@@ -72,5 +74,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_iconv;
 	$DISABLE{$n} = \&DISABLE_iconv;
 	$DEPS{$n}    = 'cc';
+	$SAVED{$n}   = 'ICONV_CFLAGS ICONV_LIBS';
 }
 ;1

@@ -10,9 +10,7 @@ SUBDIR=	BSDBuild \
 
 SCRIPTS=	mkconfigure \
 		mkprojfiles \
-		mkify \
-		h2mandoc \
-		uman
+		mkify
 
 DATAFILES=	build.common.mk \
 		build.doc.mk \

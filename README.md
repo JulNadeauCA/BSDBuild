@@ -2,7 +2,7 @@
 
 ### What is it?
 
-BSDBuild is a self-contained, portable build system in the spirit of the traditional 4.4BSD make library files. It allows standard BSD-style makefiles to be used, but without the BSD make extensions (Bourne script fragments are used instead), so it is portable to most operating systems and make flavors.
+BSDBuild is a self-contained, portable build system in the spirit of the traditional 4.4BSD make library files. It allows BSD-style makefiles to be used without the need for either BSD or GNU make extensions. It is portable to most operating systems and make flavors.
 
 In addition, BSDBuild includes a configure script compiler and a number of software test modules.
 

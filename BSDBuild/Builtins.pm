@@ -186,7 +186,7 @@ EOF
 sub BuiltinLibtool
 {
 	print << 'EOF';
-if [ "${with_libtool}" = "yes" ]; then
+if [ "${with_libtool}" != '' -a "${with_libtool}" != "no" ]; then
 	if [ "${prefix_libtool}" != '' -a "${prefix_libtool}" != 'bundled' ]; then
 		LIBTOOL_BUNDLED='no'
 		LIBTOOL="${prefix_libtool}"

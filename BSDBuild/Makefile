@@ -11,6 +11,7 @@ DATAFILES=Core.pm \
 	glib.pm \
 	glib2.pm \
 	sdl.pm \
+	sdl2.pm \
 	sdl_image.pm \
 	sdl_cpuinfo.pm \
 	smpeg.pm \

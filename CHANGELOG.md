@@ -16,6 +16,7 @@ All notable changes to BSDBuild will be documented in this file. This project ad
 - **cc**: Add support for [cc65](https://cc65.github.io). Add `$CC_COMPILE`. Don't assume the compiler understands "-c" or "-O2".
 - **imagemagick**: New test for ImageMagick 6 and 7.
 - **lldb**: New test for lldb interface library.
+- **sdl2**: New test for SDL 2.0 series.
 - **tcl**: New test for Tcl. Thanks Chuck!
 
 ### Removed

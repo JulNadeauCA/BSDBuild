@@ -124,8 +124,9 @@ sub TEST_lldb
 			MkExecOutputPfx($pfx, 'llvm-config', '--prefix', 'LLDB_PREFIX');
 			MkIfEQ('LLDB_PREFIX', '');
 				MkExecOutputPfx($pfx, 'llvm-config60', '--prefix', 'LLDB_PREFIX');
-				MkIfNE('LLDB_PREFIX', '');
-					Output_LLVM_Config('llvm-config60');
+				MkIfEQ('LLDB_PREFIX', '');
+					MkExecOutputPfx($pfx, 'llvm-config10', '--prefix', 'LLDB_PREFIX');
+					Output_LLVM_Config('llvm-config10');
 				MkEndif;
 			MkElse;
 				Output_LLVM_Config('llvm-config');

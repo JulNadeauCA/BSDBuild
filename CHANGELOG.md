@@ -2,7 +2,7 @@
 
 All notable changes to BSDBuild will be documented in this file. This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.2] - 2020-04-12
+## [3.2] - 2022-
 
 ### Added
 

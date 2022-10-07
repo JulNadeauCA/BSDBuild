@@ -571,7 +571,7 @@ sub TryCompile
 
 	MkLogCode($define, 'C', 'conftest$$.c');
 	MkRun('$CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest$$ conftest$$.c ' .
-	      "2>>config.log");
+	      "1>/dev/null 2>>config.log");
 	MkIfNE('$?', '0');
 		MkLog('failed $?');
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
@@ -695,7 +695,7 @@ echo 'int main (int argc, char *argv[]) { return (0); }' >>conftest$$.c
 EOF
 	MkSet('MK_COMPILE_STATUS', 'OK');
 	print << 'EOF';
-$CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest$$ conftest$$.c 2>>config.log
+$CC $CFLAGS $TEST_CFLAGS -o $testdir/conftest$$ conftest$$.c 1>/dev/null 2>>config.log
 EOF
 	MkIfNE('$?', '0');
 		MkLog('failed $?');
@@ -772,7 +772,7 @@ sub MkCompileAndRunC
 	MkLogCode($define, 'C', 'conftest$$.c');
 	MkRun('$CC $CFLAGS $TEST_CFLAGS ' . $cflags .
 	      ' -o $testdir/conftest$$ conftest$$.c ' . $libs .
-	      " 2>>config.log");
+	      " 1>/dev/null 2>>config.log");
 	MkIfNE('$?', '0');
 		MkLog('failed $?');
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
@@ -815,7 +815,7 @@ sub MkCompileAndRunCXX
 	MkLogCode($define, 'C++', 'conftest$$.cpp');
 	MkRun('$CXX $CXXFLAGS $TEST_CXXFLAGS ' . $cxxflags .
 	      ' -o $testdir/conftest$$ conftest$$.cpp ' . $libs .
-	      " 2>>config.log");
+	      " 1>/dev/null 2>>config.log");
 	MkIfNE('$?', '0');
 		MkLog('failed $?');
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
@@ -897,7 +897,7 @@ sub TryCompileFlagsC
 	MkLogCode($define, 'C', 'conftest$$.c');
 	MkRun('$CC $CFLAGS $TEST_CFLAGS ' . $flags .
 	      ' -o $testdir/conftest$$ conftest$$.c ' .
-	      "2>>config.log");
+	      "1>/dev/null 2>>config.log");
 	MkIfNE('$?', '0');
 		MkLog('failed $?');
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
@@ -945,7 +945,7 @@ sub TryCompileFlagsCXX
 	MkLogCode($define, 'C', 'conftest$$.c');
 	MkRun('$CXX $CXXFLAGS $TEST_CXXFLAGS ' . $flags .
 	      ' -o $testdir/conftest$$ conftest$$.cpp -lstdc++ ' .
-	      "2>>config.log");
+	      "1>/dev/null 2>>config.log");
 	MkIfNE('$?', '0');
 		MkPrint('failed $?');
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
@@ -1072,7 +1072,7 @@ sub MkCompileC
 	MkLogCode($define, 'C', 'conftest$$.c');
 	MkRun('$CC $CFLAGS $TEST_CFLAGS ' . $cflags .
 	      ' -o $testdir/conftest$$ conftest$$.c '. $libs .
-	      " 2>>config.log");
+	      " 1>/dev/null 2>>config.log");
 	MkIfNE('$?', '0');
 		MkLog('failed $?');
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
@@ -1124,7 +1124,7 @@ sub MkCompileOBJC
 	MkLogCode($define, 'ObjC', 'conftest$$.m');
 	MkRun('$CC $CFLAGS $TEST_CFLAGS ' . $cflags .
 	      ' -x objective-c -o $testdir/conftest$$ conftest$$.m ' . $libs .
-	      " 2>>config.log");
+	      " 1>/dev/null 2>>config.log");
 	MkIfNE('$?', '0');
 		MkLog('failed $?');
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');
@@ -1172,7 +1172,7 @@ sub MkCompileCXX
 	MkLogCode($define, 'C++', 'conftest$$.cpp');
 	MkRun('$CXX $CXXFLAGS $TEST_CXXFLAGS ' . $cxxflags .
 	      ' -o $testdir/conftest$$ conftest$$.cpp ' . $libs .
-	      " 2>>config.log");
+	      " 1>/dev/null 2>>config.log");
 	MkIfNE('$?', '0');
 		MkLog('failed $?');
 		MkSetS('MK_COMPILE_STATUS', 'FAIL $?');

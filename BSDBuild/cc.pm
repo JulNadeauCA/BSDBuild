@@ -137,7 +137,7 @@ if [ "${HAVE_CC}" = "yes" ]; then
 	cat << 'EOT' > conftest.c
 int main(int argc, char *argv[]) { return (0); }
 EOT
-	$CC -o conftest conftest.c 2>>config.log
+	$CC -o conftest conftest.c 1>/dev/null 2>>config.log
 	if [ $? != 0 ]; then
 	    echo "no"
 	    echo "no, compilation failed" >>config.log
@@ -152,7 +152,7 @@ EOT
 			for OUTFILE in conftest.exe conftest conftest.*; do
 				if [ -f $OUTFILE ]; then
 					case $OUTFILE in
-					*.c | *.cc | *.m | *.o | *.obj | *.bb | *.bbg | *.d | *.pdb | *.tds | *.xcoff | *.dSYM | *.xSYM | *.wasm )
+					*.c | *.cc | *.m | *.o | *.obj | *.bb | *.bbg | *.d | *.pdb | *.tds | *.xcoff | *.dSYM | *.xSYM | *.wasm | *.html | *.js )
 						;;
 					*.* )
 						EXECSUFFIX=`expr "$OUTFILE" : '[^.]*\(\..*\)'`
@@ -162,9 +162,6 @@ EOT
 					esac;
 			    fi
 			done
-			if [ "${HAVE_EMCC}" = "yes" ]; then
-				EXECSUFFIX=".wasm"
-			fi
 			if [ "$EXECSUFFIX" != '' ]; then
 				echo "yes, it outputs $EXECSUFFIX files"
 				echo "yes, it outputs $EXECSUFFIX files" >>config.log
@@ -192,7 +189,6 @@ fi
 EOF
 	
 	MkIfTrue('${HAVE_CC}');
-
 		MkPrintSN('cc: checking whether compiler is Clang...');
 		MkCompileC('HAVE_CC_CLANG', '', '', << 'EOF');
 #if !defined(__clang__)
@@ -200,6 +196,25 @@ EOF
 #endif
 int main(int argc, char *argv[]) { return (0); }
 EOF
+		MkPrintSN('cc: checking whether compiler is cc65...');
+		MkIfTrue('${HAVE_CC65}');
+			MkPrint("yes");
+			MkDefine('CC_COMPILE', '');
+			MkSaveDefine('HAVE_CC65');
+		MkElse;
+			MkPrint("no");
+			MkDefine('CC_COMPILE', '-c');
+			MkSaveUndef('HAVE_CC65');
+		MkEndif;
+
+		MkPrintSN('cc: checking whether compiler is emcc...');
+		MkIfTrue('${HAVE_EMCC}');
+			MkPrint("yes");
+			MkSaveDefine('HAVE_EMCC');
+		MkElse;
+			MkPrint("no");
+			MkSaveUndef('HAVE_EMCC');
+		MkEndif;
 
 		MkPrintSN('cc: checking whether compiler is GCC...');
 		MkCompileC('HAVE_CC_GCC', '', '', << 'EOF');
@@ -302,19 +317,6 @@ EOF
 		
 		MkSaveDefine('HAVE_CC');
 		
-		MkIfTrue('${HAVE_CC65}');
-			MkDefine('CC_COMPILE', '');
-			MkSaveDefine('HAVE_CC65');
-		MkElse;
-			MkDefine('CC_COMPILE', '-c');
-			MkSaveUndef('HAVE_CC65');
-		MkEndif;
-
-		MkIfTrue('${HAVE_EMCC}');
-			MkSaveDefine('HAVE_EMCC');
-		MkElse;
-			MkSaveUndef('HAVE_EMCC');
-		MkEndif;
 	MkElse;
 		MkDisableFailed('cc');
 	MkEndif;

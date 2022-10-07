@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2001-2020 Julien Nadeau Carriere <vedge@csoft.net>
+# Copyright (c) 2001-2022 Julien Nadeau Carriere <vedge@csoft.net>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -378,8 +378,13 @@ clean-prog:
 	        echo "rm -f ${WINRES}.o"; \
 	        rm -f ${WINRES}.o; \
 	    fi; \
-	    echo "rm -f ${PROG}${EXECSUFFIX}"; \
-	    rm -f ${PROG}${EXECSUFFIX}; \
+	    if [ "${HAVE_EMCC}" = "yes" ]; then \
+	    	prog_js=`echo "${PROG}" | sed 's/\\.js$$//'`; \
+	    	echo "rm -f $${prog_js}.wasm"; \
+	    	rm -f $${prog_js}.wasm; \
+	    fi; \
+	    echo "rm -f ${PROG} ${PROG}${EXECSUFFIX}"; \
+	    rm -f ${PROG} ${PROG}${EXECSUFFIX}; \
 	fi
 	@if [ "${CLEANFILES}" != "" ]; then \
 	    _cleanfiles=""; \

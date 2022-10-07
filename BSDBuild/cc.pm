@@ -2,10 +2,15 @@
 
 sub TEST_cc
 {
+	# Compilers to try and detect
 	my @cc_try = ('clang', 'clang70', 'clang60', 'cc',
 	              'gcc', 'gcc-6', 'gcc7', 'gcc8', 'gcc5', 'gcc49', 'gcc48',
 	              'clang.exe', 'cc.exe', 'gcc.exe');
 
+	# Emscripten-only targets (WebAssembly / wasm).
+	my $emcc_tgts = 'emscripten';
+
+	# 65(C)02 targets (8-bit systems).
 	my $cc65_tgts = 'apple2 | apple2enh | atari | atmos | c16 | '.
 	                'c64 | c128 | cbm510 | cbm610 | geos | lunix | '.
 	                'lynx | nes | pet | plus4 | supervision | vic20';
@@ -28,9 +33,28 @@ EOF
 	MkEndif;
 
 	MkDefine('HAVE_CC65', 'no');
-	MkIfEQ('$CC', '');										# Unspecified CC
+	MkDefine('HAVE_EMCC', 'no');
+
+	MkIfEQ('$CC', '');				# Unspecified CC
 		MkCaseIn('${host}');
-			MkCaseBegin($cc65_tgts);						# cc65-only targets
+			MkCaseBegin($emcc_tgts);	# emscripten-only targets
+				MkPushIFS('$PATH_SEPARATOR');
+				MkFor('i', '$PATH');
+					MkIf('-x "${i}/emcc"');
+						MkDefine('CC', '${i}/emcc');
+						MkDefine('HAVE_EMCC', 'yes');
+						MkDefine('CROSS_COMPILING', 'yes');
+						MkBreak;
+					MkElif('-x "${i}/emcc.exe"');
+						MkDefine('CC', '${i}/emcc.exe');
+						MkDefine('HAVE_EMCC', 'yes');
+						MkDefine('CROSS_COMPILING', 'yes');
+						MkBreak;
+					MkEndif;
+				MkDone;
+				MkPopIFS();
+			MkCaseEnd();
+			MkCaseBegin($cc65_tgts);	# cc65-only targets
 				MkPushIFS('$PATH_SEPARATOR');
 				MkFor('i', '$PATH');
 					MkIf('-x "${i}/cc65"');
@@ -69,35 +93,34 @@ EOF
 
 	print << 'EOF';
 	if [ "$CC" = '' ]; then
-		if [ "$HAVE_CC65" = "yes" ]; then
-			echo "*"
-			echo "* Cannot find cc65 in PATH. You may need to set CC."
-			echo "* You can download cc65 from: https://www.cc65.org/."
-			echo "*"
-			echo "Cannot find cc65 in PATH." >>config.log
-		else
-			echo "*"
+		echo "*"
 EOF
-	print 'echo "* Cannot find one of ' . join(', ',@cc_try) . '"', "\n";
+	print  'echo "* Cannot find one of ' . join(', ',@cc_try) . '"', "\n";
 	print << 'EOF';
-			echo "* under the current PATH, which is:"
-			echo "* $PATH"
-			echo "*"
-			echo "* You may need to set the CC environment variable."
-			echo "*"
-			echo "Cannot find C compiler in PATH." >>config.log
-		fi
-		HAVE_CC="no"
+		echo "* under the current PATH, which is:"
+		echo "* $PATH"
+		echo "*"
+		echo "* You may need to set the CC environment variable."
+		echo "*"
+		echo "Cannot find C compiler in PATH." >>config.log
 		echo "no"
 		echo "no" >>config.log
+
+		HAVE_CC="no"
 	else
-		HAVE_CC="yes"
 		echo "yes, ${CC}"
 		echo "yes, ${CC}" >>config.log
+
+		HAVE_CC="yes"
 	fi
 else
 	HAVE_CC="yes"
-	if ${CC} -V 2>&1 |grep -q ^cc65; then
+	if emcc --version 2>&1 |grep -q ^emcc; then
+		echo "using emcc (${CC})"
+		echo "using emcc (${CC})" >>config.log
+		HAVE_EMCC="yes"
+		CROSS_COMPILING="yes"
+	elif cc65 -V 2>&1 |grep -q ^cc65; then
 		echo "using cc65 (${CC})"
 		echo "using cc65 (${CC})" >>config.log
 		HAVE_CC65="yes"
@@ -129,7 +152,7 @@ EOT
 			for OUTFILE in conftest.exe conftest conftest.*; do
 				if [ -f $OUTFILE ]; then
 					case $OUTFILE in
-					*.c | *.cc | *.m | *.o | *.obj | *.bb | *.bbg | *.d | *.pdb | *.tds | *.xcoff | *.dSYM | *.xSYM )
+					*.c | *.cc | *.m | *.o | *.obj | *.bb | *.bbg | *.d | *.pdb | *.tds | *.xcoff | *.dSYM | *.xSYM | *.wasm )
 						;;
 					*.* )
 						EXECSUFFIX=`expr "$OUTFILE" : '[^.]*\(\..*\)'`
@@ -139,6 +162,9 @@ EOT
 					esac;
 			    fi
 			done
+			if [ "${HAVE_EMCC}" = "yes" ]; then
+				EXECSUFFIX=".wasm"
+			fi
 			if [ "$EXECSUFFIX" != '' ]; then
 				echo "yes, it outputs $EXECSUFFIX files"
 				echo "yes, it outputs $EXECSUFFIX files" >>config.log
@@ -147,7 +173,11 @@ EOT
 				echo "yes" >>config.log
 			fi
 EOF
+	
+	MkSaveDefine('HAVE_EMCC');
+	MkSaveDefine('HAVE_CC65');
 	MkSaveDefine('EXECSUFFIX');
+
 	print << 'EOF';
 		else
 			echo "yes"
@@ -155,7 +185,7 @@ EOF
 		fi
 	fi
 	if [ "${keep_conftest}" != "yes" ]; then
-		rm -f conftest.c conftest$EXECSUFFIX
+		rm -f conftest.c conftest conftest$EXECSUFFIX
 	fi
 	TEST_CFLAGS=''
 fi
@@ -279,6 +309,12 @@ EOF
 			MkDefine('CC_COMPILE', '-c');
 			MkSaveUndef('HAVE_CC65');
 		MkEndif;
+
+		MkIfTrue('${HAVE_EMCC}');
+			MkSaveDefine('HAVE_EMCC');
+		MkElse;
+			MkSaveUndef('HAVE_EMCC');
+		MkEndif;
 	MkElse;
 		MkDisableFailed('cc');
 	MkEndif;
@@ -289,13 +325,14 @@ sub DISABLE_cc
 {
 	MkDefine('HAVE_CC', 'no') unless $TestFailed;
 	MkDefine('HAVE_CC65', 'no');
+	MkDefine('HAVE_EMCC', 'no');
 	MkDefine('HAVE_CC_WARNINGS', 'no');
 	MkDefine('PROG_GUI_FLAGS', '');
 	MkDefine('PROG_CLI_FLAGS', '');
 	MkDefine('TEST_CFLAGS', '');
 
 	MkSaveUndef('HAVE_CC', 'HAVE_CC_WARNINGS',
-	            'HAVE_CC_CLANG', 'HAVE_CC_GCC', 'HAVE_CC65',
+	            'HAVE_CC_CLANG', 'HAVE_CC_GCC', 'HAVE_CC65', 'HAVE_EMCC',
 	            'HAVE_FLOAT', 'HAVE_LONG_DOUBLE', 'HAVE_LONG_LONG',
 	            'HAVE_CYGWIN',
 	            'HAVE_LD_NO_UNDEFINED', 'HAVE_LD_STATIC_LIBGCC');
@@ -311,6 +348,7 @@ sub EMUL_cc
 	MkDefine('HAVE_FLOAT', 'yes');
 
 	MkDefine('HAVE_CC65', 'no');
+	MkDefine('HAVE_EMCC', 'no');
 	MkDefine('HAVE_CC_WARNINGS', 'no');
 	MkDefine('HAVE_LONG_DOUBLE', 'no');
 	MkDefine('HAVE_LONG_LONG', 'no');
@@ -320,10 +358,9 @@ sub EMUL_cc
 
 	MkSaveDefine('HAVE_CC', 'HAVE_FLOAT');
 
-	MkSaveUndef('HAVE_CC65', 'HAVE_CC_WARNINGS', 'HAVE_LONG_DOUBLE',
-	            'HAVE_LONG_LONG', 'HAVE_CYGWIN',
-		    'HAVE_LD_NO_UNDEFINED',
-	            'HAVE_LD_STATIC_LIBGCC');
+	MkSaveUndef('HAVE_CC65', 'HAVE_EMCC', 'HAVE_CC_WARNINGS',
+	            'HAVE_LONG_DOUBLE', 'HAVE_LONG_LONG', 'HAVE_CYGWIN',
+		    'HAVE_LD_NO_UNDEFINED', 'HAVE_LD_STATIC_LIBGCC');
 
 	MkSave(split(' ', $SAVED{'cc'}));
 }
@@ -335,7 +372,7 @@ BEGIN
 	$DISABLE{'cc'} = \&DISABLE_cc;
 	$EMUL{'cc'}    = \&EMUL_cc;
 	$SAVED{'cc'}   = 'HAVE_CC HAVE_CC_WARNINGS ' .
-	                 'HAVE_CC_CLANG HAVE_CC_GCC HAVE_CC65 ' .
+	                 'HAVE_CC_CLANG HAVE_CC_GCC HAVE_CC65 HAVE_EMCC ' .
 			 'CC CC_COMPILE CFLAGS PICFLAGS EXECSUFFIX ' .
 	                 'PROG_GUI_FLAGS PROG_CLI_FLAGS LIBTOOLOPTS_SHARED';
 

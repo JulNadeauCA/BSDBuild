@@ -9,8 +9,8 @@ In addition, BSDBuild includes a configure script compiler and a number of softw
 ### Components
 
 * [mkconfigure](https://bsdbuild.hypertriton.com/mdoc.cgi?man=mkconfigure.1): Generate portable Bourne configure scripts.
-* [build.lib.mk](https://bsdbuild.hypertriton.com/mdoc.cgi?man=build.lib.mk.5): Compile static or shared libraries from sources (Ada, assembly, C, C++, Objective C, Lex, Yacc).
-* [build.prog.mk](https://bsdbuild.hypertriton.com/mdoc.cgi?man=build.prog.mk.5): Compile programs from sources (Ada, assembly, C, C++, Objective C, Lex, Yacc).
+* [build.lib.mk](https://bsdbuild.hypertriton.com/mdoc.cgi?man=build.lib.mk.5): Compile (or cross-compile) static or shared libraries from sources (Ada, assembly, C, C++, Objective C, Lex, Yacc).
+* [build.prog.mk](https://bsdbuild.hypertriton.com/mdoc.cgi?man=build.prog.mk.5): Compile (or cross-compile) programs from sources (Ada, assembly, C, C++, Objective C, Lex, Yacc).
 * [build.man.mk](https://bsdbuild.hypertriton.com/mdoc.cgi?man=build.man.mk.5): Process mdoc sources into ASCII, PostScript, PDF and HTML.
 * [build.proj.mk](https://bsdbuild.hypertriton.com/mdoc.cgi?man=build.proj.mk.5): Generate "Project files" for IDEs such as **Code::Blocks** and **Visual Studio**.
 

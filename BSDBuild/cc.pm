@@ -115,20 +115,28 @@ EOF
 	fi
 else
 	HAVE_CC="yes"
-	if emcc --version 2>&1 |grep -q ^emcc; then
-		echo "using emcc (${CC})"
-		echo "using emcc (${CC})" >>config.log
-		HAVE_EMCC="yes"
-		CROSS_COMPILING="yes"
-	elif cc65 -V 2>&1 |grep -q ^cc65; then
-		echo "using cc65 (${CC})"
-		echo "using cc65 (${CC})" >>config.log
-		HAVE_CC65="yes"
-		CROSS_COMPILING="yes"
-	else
+	case "${host}" in
+	c64)
+		if ${CC} -V 2>&1 |grep -q ^cc65; then
+			echo "using cc65 (${CC})"
+			echo "using cc65 (${CC})" >>config.log
+			HAVE_CC65="yes"
+			CROSS_COMPILING="yes"
+		fi
+		;;
+	emscripten) 
+		if ${CC} --version 2>&1 |grep -q ^emcc; then
+			echo "using emcc (${CC})"
+			echo "using emcc (${CC})" >>config.log
+			HAVE_EMCC="yes"
+			CROSS_COMPILING="yes"
+		fi
+		;;
+	*)
 		echo "using ${CC}"
 		echo "using ${CC}" >>config.log
-	fi
+		;;
+	esac
 fi
 
 if [ "${HAVE_CC}" = "yes" ]; then

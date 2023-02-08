@@ -1,6 +1,6 @@
 #!%PERL% -I%PREFIX%/share/bsdbuild
 #
-# Copyright (c) 2001-2020 Julien Nadeau Carriere <vedge@csoft.net>
+# Copyright (c) 2001-2023 Julien Nadeau Carriere <vedge@csoft.net>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -1414,7 +1414,7 @@ IFS=$PATH_SEPARATOR
 
 SH='sh'
 for path in $PATH; do
-	if [ -x "${path}/sh" ]; then
+	if [ -x "${path}/sh" -a ! -d "${path}/sh" ]; then
 		SH="${path}/sh"
 		break
 	elif [ -e "${path}/sh.exe" ]; then
@@ -1425,7 +1425,7 @@ done
 
 PERL=''
 for path in $PATH; do
-	if [ -x "${path}/perl" ]; then
+	if [ -x "${path}/perl" -a ! -d "${path}/perl" ]; then
 		PERL="${path}/perl"
 		break
 	elif [ -e "${path}/perl.exe" ]; then
@@ -1436,7 +1436,7 @@ done
 
 PKGCONFIG=''
 for path in $PATH; do
-	if [ -x "${path}/pkg-config" ]; then
+	if [ -x "${path}/pkg-config" -a ! -d "${path}/pkg-config" ]; then
 		PKGCONFIG="${path}/pkg-config"
 		break
 	elif [ -e "${path}/pkg-config.exe" ]; then

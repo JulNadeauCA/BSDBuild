@@ -43,6 +43,7 @@ All notable changes to BSDBuild will be documented in this file. This project ad
 ### Fixed
 
 - [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): Handle string literals containing "," and ";" in directives. Thanks Chuck!
+- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): When testing for the presence of executables, make sure they are not directories. Thanks Kristof!
 - **freetype**: Check with pkgconfig also. Thanks enthus1ast!
 - Don't include non-file args in "nothing to do" evaluation in bundled mkdep script.
 

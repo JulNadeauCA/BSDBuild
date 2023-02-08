@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2002-2020 Julien Nadeau Carriere <vedge@csoft.net>
+# Copyright (c) 2002-2023 Julien Nadeau Carriere <vedge@csoft.net>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,6 @@ our %SAVED = ();
 #
 sub MkBreak { print "break\n"; }
 sub MkIf { print 'if [ ',shift,' ]; then',"\n"; }
-sub MkIfExec { print 'if ',shift,'; then',"\n"; }
 sub MkElif { print 'elif [ ',shift,' ]; then',"\n"; }
 sub MkElse { print 'else',"\n"; }
 sub MkEndif { print 'fi',"\n"; }
@@ -75,6 +74,10 @@ sub MkIfTest
 	print 'if [ '.$test.' "'.$a.'" ]; then', "\n";
 }
 sub MkIfExists { my $file = shift; MkIfTest('-e', $file); }
+sub MkIfExecutable {
+	my $file = shift;
+	print 'if [ -x "' . $file . '" -a ! -d "' . $file . '" ]; then', "\n";
+}
 sub MkIfFile { my $file = shift; MkIfTest('-f', $file); }
 sub MkIfDir { my $file = shift; MkIfTest('-d', $file); }
 sub MkCaseIn { my $case = shift; print 'case "'.$case.'" in',"\n"; }
@@ -244,7 +247,7 @@ sub MkExecOutput
 	MkSet($define, '');
 	MkPushIFS('$PATH_SEPARATOR');
 	MkFor('path', '$PATH');
-		MkIfExists('${path}/'.$bin);
+		MkIfExecutable('${path}/'.$bin);
 			MkSetExec($define, '${path}/'.$bin.' '.$args);
 			MkSet('MK_EXEC_FOUND', 'Yes');
 			MkBreak;
@@ -272,7 +275,7 @@ sub MkExecOutputPfx
 
 	MkSet($define, '');
 	MkIfNE($pfx, '');
-		MkIfExists($pfx.'/bin/'.$bin);
+		MkIfExecutable($pfx.'/bin/'.$bin);
 			MkSetExec($define, $pfx.'/bin/'.$bin.' '.$args);
 			MkSet('MK_EXEC_FOUND', 'Yes');
 			MkSetS('MK_EXEC_PATH', $pfx.'/bin/'.$bin);
@@ -280,7 +283,7 @@ sub MkExecOutputPfx
 	MkElse;
 		MkPushIFS('$PATH_SEPARATOR');
 		MkFor('path', '$PATH');
-			MkIfExists('${path}/'.$bin);
+			MkIfExecutable('${path}/'.$bin);
 				MkSetExec($define, '${path}/'.$bin.' '.$args);
 				MkSet('MK_EXEC_FOUND', 'Yes');
 				MkSetS('MK_EXEC_PATH', '${path}/'.$bin);
@@ -357,7 +360,7 @@ sub MkExecOutputUnique
 	MkSet($define, '');
 	MkPushIFS('$PATH_SEPARATOR');
 	MkFor('path', '$PATH');
-		MkIfExists('${path}/'.$bin);
+		MkIfExecutable('${path}/'.$bin);
 			MkIfEQ('${MK_EXEC_FOUND}', 'Yes');
 				MkPrint('yes.');
 				MkIfNE('${MK_EXEC_FOUND_PATH}', '${path}/'.$bin.'.exe');
@@ -1310,6 +1313,6 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($Quiet $Cache $OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv $TestFailed %TESTS %DISABLE %DESCR %URL %HELPENV %SAVED MkComment MkCache MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFail MkCleanup MkRun TryCompile MkCompileAda MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsAda TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSet MkSetS MkSetExec MkSetTrue MkSetFalse MkPushIFS MkPopIFS MkFor MkDone MkAppend MkBreak MkIfExec MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSave MkSave_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkLog MkPrint MkPrintN MkPrintS MkPrintSN MkIfFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion MkEmulWindows MkEmulWindowsSYS MkEmulUnavail MkEmulUnavailSYS RegisterEnvVar MkDisableFailed MkDisableNotFound);
+    @EXPORT = qw($Quiet $Cache $OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv $TestFailed %TESTS %DISABLE %DESCR %URL %HELPENV %SAVED MkComment MkCache MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFail MkCleanup MkRun TryCompile MkCompileAda MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsAda TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSet MkSetS MkSetExec MkSetTrue MkSetFalse MkPushIFS MkPopIFS MkFor MkDone MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfExecutable MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSave MkSave_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkLog MkPrint MkPrintN MkPrintS MkPrintSN MkIfFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion MkEmulWindows MkEmulWindowsSYS MkEmulUnavail MkEmulUnavailSYS RegisterEnvVar MkDisableFailed MkDisableNotFound);
 }
 ;1

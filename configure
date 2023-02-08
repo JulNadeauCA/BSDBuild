@@ -220,7 +220,7 @@ IFS=$PATH_SEPARATOR
 
 SH='sh'
 for path in $PATH; do
-	if [ -x "${path}/sh" ]; then
+	if [ -x "${path}/sh" -a ! -d "${path}/sh" ]; then
 		SH="${path}/sh"
 		break
 	elif [ -e "${path}/sh.exe" ]; then
@@ -231,7 +231,7 @@ done
 
 PERL=''
 for path in $PATH; do
-	if [ -x "${path}/perl" ]; then
+	if [ -x "${path}/perl" -a ! -d "${path}/perl" ]; then
 		PERL="${path}/perl"
 		break
 	elif [ -e "${path}/perl.exe" ]; then
@@ -242,7 +242,7 @@ done
 
 PKGCONFIG=''
 for path in $PATH; do
-	if [ -x "${path}/pkg-config" ]; then
+	if [ -x "${path}/pkg-config" -a ! -d "${path}/pkg-config" ]; then
 		PKGCONFIG="${path}/pkg-config"
 		break
 	elif [ -e "${path}/pkg-config.exe" ]; then
@@ -1013,20 +1013,28 @@ echo "* Cannot find one of clang, clang70, clang60, cc, gcc, gcc-6, gcc7, gcc8, 
 	fi
 else
 	HAVE_CC="yes"
-	if emcc --version 2>&1 |grep -q ^emcc; then
-		echo "using emcc (${CC})"
-		echo "using emcc (${CC})" >>config.log
-		HAVE_EMCC="yes"
-		CROSS_COMPILING="yes"
-	elif cc65 -V 2>&1 |grep -q ^cc65; then
-		echo "using cc65 (${CC})"
-		echo "using cc65 (${CC})" >>config.log
-		HAVE_CC65="yes"
-		CROSS_COMPILING="yes"
-	else
+	case "${host}" in
+	c64)
+		if ${CC} -V 2>&1 |grep -q ^cc65; then
+			echo "using cc65 (${CC})"
+			echo "using cc65 (${CC})" >>config.log
+			HAVE_CC65="yes"
+			CROSS_COMPILING="yes"
+		fi
+		;;
+	emscripten) 
+		if ${CC} --version 2>&1 |grep -q ^emcc; then
+			echo "using emcc (${CC})"
+			echo "using emcc (${CC})" >>config.log
+			HAVE_EMCC="yes"
+			CROSS_COMPILING="yes"
+		fi
+		;;
+	*)
 		echo "using ${CC}"
 		echo "using ${CC}" >>config.log
-	fi
+		;;
+	esac
 fi
 
 if [ "${HAVE_CC}" = "yes" ]; then
@@ -1779,7 +1787,7 @@ $ECHO_N '# checking for perl...' >>config.log
 # BEGIN perl
 PERL_CFLAGS=
 if [ "" != "" ]; then
-if [ -e "/bin/perl" ]; then
+if [ -x "/bin/perl" -a ! -d "/bin/perl" ]; then
 PERL_CFLAGS=`/bin/perl -MExtUtils::Embed -e ccopts`
 MK_EXEC_FOUND=Yes
 MK_EXEC_PATH="/bin/perl"
@@ -1788,7 +1796,7 @@ else
 bb_save_IFS=$IFS
 IFS=$PATH_SEPARATOR
 for path in $PATH; do
-if [ -e "${path}/perl" ]; then
+if [ -x "${path}/perl" -a ! -d "${path}/perl" ]; then
 PERL_CFLAGS=`${path}/perl -MExtUtils::Embed -e ccopts`
 MK_EXEC_FOUND=Yes
 MK_EXEC_PATH="${path}/perl"
@@ -1804,7 +1812,7 @@ IFS=$bb_save_IFS
 fi
 PERL_LIBS=
 if [ "" != "" ]; then
-if [ -e "/bin/perl" ]; then
+if [ -x "/bin/perl" -a ! -d "/bin/perl" ]; then
 PERL_LIBS=`/bin/perl -MExtUtils::Embed -e ldopts`
 MK_EXEC_FOUND=Yes
 MK_EXEC_PATH="/bin/perl"
@@ -1813,7 +1821,7 @@ else
 bb_save_IFS=$IFS
 IFS=$PATH_SEPARATOR
 for path in $PATH; do
-if [ -e "${path}/perl" ]; then
+if [ -x "${path}/perl" -a ! -d "${path}/perl" ]; then
 PERL_LIBS=`${path}/perl -MExtUtils::Embed -e ldopts`
 MK_EXEC_FOUND=Yes
 MK_EXEC_PATH="${path}/perl"

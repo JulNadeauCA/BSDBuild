@@ -79,7 +79,7 @@ sub DISABLE_glu
 	MkDefine('HAVE_GLU', 'no') unless $TestFailed;
 	MkDefine('GLU_CFLAGS', '');
 	MkDefine('GLU_LIBS', '');
-	MkSaveUndef('HAVE_GLU', 'GLU_CFLAGS', 'GLU_LIBS');
+	MkSaveUndef('HAVE_GLU');
 }
 
 sub EMUL_glu

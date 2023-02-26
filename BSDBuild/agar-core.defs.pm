@@ -50,8 +50,6 @@ my @core_constants = qw(
 	AG_TIMER_NAME_MAX
 	AG_USER_NAME_MAX
 	AG_VARIABLE_NAME_MAX
-	AG_VERSION_NAME_MAX
-	AG_VERSION_MAX
 );
 my @core_sizeofs = qw(
 	AG_AgarVersion

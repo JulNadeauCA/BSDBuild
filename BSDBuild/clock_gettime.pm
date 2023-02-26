@@ -7,6 +7,9 @@ main(int argc, char *argv[])
 {
 	struct timespec ts;
 	clock_gettime(CLOCK_REALTIME, &ts);
+#ifdef __FreeBSD__
+	clock_gettime(CLOCK_SECOND, &ts);
+#endif
 	return (0);
 }
 EOF

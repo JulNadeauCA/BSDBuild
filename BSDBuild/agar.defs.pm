@@ -69,7 +69,6 @@ my @core_sizeofs = qw(
 	AG_Namespace
 	AG_Object
 	AG_ObjectClass
-	AG_ObjectClassPvt
 	AG_ObjectHeader
 	AG_Tbl
 	AG_TblBucket

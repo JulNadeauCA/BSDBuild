@@ -24,6 +24,7 @@ DATAFILES=Core.pm \
 	getenv.pm \
 	vasprintf.pm \
 	mmap.pm \
+	mprotect.pm \
 	setproctitle.pm \
 	asprintf.pm \
 	flock.pm \

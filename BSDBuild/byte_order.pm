@@ -97,7 +97,10 @@ sub EMUL_byte_order
 {
 	my ($os, $osrel, $machine) = @_;
 
-	if ($machine =~ /^(hppa|m68k|mc68000|mips|mipseb|ppc|sparc|sparc64)$/) {
+	if ($machine =~ /^(aarch64_be|armeb|avr32|earmveb|hppa|m68k|mc68|
+	                   mips32eb|mips64eb|mipseb|openrisc|powerpc|rs6000|
+			   sh3eb|sparc)/x)
+	{
 		MkDefine('_MK_BIG_ENDIAN', 'yes');
 		MkSaveDefine('_MK_BIG_ENDIAN');
 		MkSaveUndef('_MK_LITTLE_ENDIAN');

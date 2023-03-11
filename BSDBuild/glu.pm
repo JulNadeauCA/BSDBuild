@@ -103,7 +103,7 @@ BEGIN
 	$TESTS{$n}   = \&TEST_glu;
 	$DISABLE{$n} = \&DISABLE_glu;
 	$EMUL{$n}    = \&EMUL_glu;
-	$DEPS{$n}    = 'cc,opengl,math';
+	$DEPS{$n}    = 'cc,opengl';
 	$SAVED{$n}   = 'GLU_CFLAGS GLU_LIBS';
 }
 ;1

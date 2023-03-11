@@ -299,7 +299,7 @@ EOF
 			MkEndif;
 
 			MkPrintSN('cc: checking for cygwin environment...');
-			TryCompileFlagsC('HAVE_CYGWIN', '-mcygwin', << 'EOF');
+			TryCompileFlagsC('HAVE_CYGWIN', '', << 'EOF');
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <windows.h>

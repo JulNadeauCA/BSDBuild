@@ -2,12 +2,12 @@
 
 my $testCode = << 'EOF';
 #ifdef _USE_SDL_FRAMEWORK
-# include <SDL2/SDL.h>
+# include <SDL.h>
 # ifdef main
 #  undef main
 # endif
 #else
-# include <SDL2/SDL.h>
+# include <SDL.h>
 #endif
 int main(int argc, char *argv[]) {
 	SDL_Surface *su;

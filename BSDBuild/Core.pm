@@ -24,8 +24,10 @@
 
 our $OutputHeaderFile = undef;
 our $OutputHeaderDir = undef;
-our $OutputLUA = 'configure.lua';
-our $LUA = undef;
+our $OutputLUA = 'configure.lua';  # Lua definitions
+our $OutputCMAKE = undef;          # CMakeLists.txt
+our $LUA = undef;                  # Lua output filehandle
+our $CMAKE = undef;                # Cmake output filehandle
 our $EmulOS = undef;
 our $EmulOSRel = undef;
 our $EmulEnv = undef;
@@ -1306,6 +1308,16 @@ sub MkDisableNotFound
 	main::disable(@_);
 }
 
+# Escape characters for inclusion of source code in cmake source.
+sub MkCodeCMAKE
+{
+	my $code = shift;
+
+	$code =~ s/(["])/\\$1/g;
+
+	return ($code);
+}
+
 BEGIN
 {
     require Exporter;
@@ -1313,6 +1325,6 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($Quiet $Cache $OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv $TestFailed %TESTS %DISABLE %DESCR %URL %HELPENV %SAVED MkComment MkCache MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFail MkCleanup MkRun TryCompile MkCompileAda MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsAda TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSet MkSetS MkSetExec MkSetTrue MkSetFalse MkPushIFS MkPopIFS MkFor MkDone MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfExecutable MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSave MkSave_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkLog MkPrint MkPrintN MkPrintS MkPrintSN MkIfFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion MkEmulWindows MkEmulWindowsSYS MkEmulUnavail MkEmulUnavailSYS RegisterEnvVar MkDisableFailed MkDisableNotFound);
+    @EXPORT = qw($Quiet $Cache $OutputLUA $OutputHeaderFile $OutputHeaderDir $LUA $EmulOS $EmulOSRel $EmulEnv $TestFailed %TESTS %DISABLE %DESCR %URL %HELPENV %SAVED MkComment MkCache MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFail MkCleanup MkRun TryCompile MkCompileAda MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsAda TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSet MkSetS MkSetExec MkSetTrue MkSetFalse MkPushIFS MkPopIFS MkFor MkDone MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfExecutable MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSave MkSave_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkLog MkPrint MkPrintN MkPrintS MkPrintSN MkIfFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion MkEmulWindows MkEmulWindowsSYS MkEmulUnavail MkEmulUnavailSYS RegisterEnvVar MkDisableFailed MkDisableNotFound MkCodeCMAKE);
 }
 ;1

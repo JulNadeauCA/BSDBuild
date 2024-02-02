@@ -1,9 +1,8 @@
 # Public domain
 
-sub TEST_setenv
-{
-	TryCompile 'HAVE_SETENV', << 'EOF';
+my $testCode = << 'EOF';
 #include <stdlib.h>
+
 int
 main(int argc, char *argv[])
 {
@@ -11,6 +10,27 @@ main(int argc, char *argv[])
 	unsetenv("BSDBUILD_SETENV_TEST");
 	return (0);
 }
+EOF
+
+sub TEST_setenv
+{
+	TryCompile('HAVE_SETENV', $testCode);
+}
+
+sub CMAKE_setenv
+{
+	my $code = MkCodeCMAKE($testCode);
+
+	return << "EOF";
+macro(Check_Setenv)
+	check_c_source_compiles("
+$code" HAVE_SETENV)
+	if (HAVE_SETENV)
+		BB_Save_Define(HAVE_SETENV)
+	else()
+		BB_Save_Undef(HAVE_SETENV)
+	endif()
+endmacro()
 EOF
 }
 
@@ -24,8 +44,9 @@ BEGIN
 {
 	my $n = 'setenv';
 
-	$DESCR{$n}   = '(un)setenv()';
+	$DESCR{$n}   = 'setenv() and unsetenv()';
 	$TESTS{$n}   = \&TEST_setenv;
+	$CMAKE{$n}   = \&CMAKE_setenv;
 	$DISABLE{$n} = \&DISABLE_setenv;
 	$DEPS{$n}    = 'cc';
 }

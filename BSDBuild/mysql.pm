@@ -32,6 +32,23 @@ sub TEST_mysql
 	MkEndif;
 }
 
+sub CMAKE_mysql
+{
+	my $code = MkCodeCMAKE($testCode);
+
+	return << "EOF";
+macro(Check_Mysql)
+	# TODO
+endmacro()
+
+macro(Disable_Mysql)
+	BB_Save_MakeVar(MYSQL_CFLAGS "")
+	BB_Save_MakeVar(MYSQL_LIBS "")
+	BB_Save_Undef(HAVE_MYSQL)
+endmacro()
+EOF
+}
+
 sub DISABLE_mysql
 {
 	MkDefine('HAVE_MYSQL', 'no') unless $TestFailed;
@@ -47,6 +64,7 @@ BEGIN
 	$DESCR{$n}   = 'MySQL';
 	$URL{$n}     = 'http://dev.mysql.com';
 	$TESTS{$n}   = \&TEST_mysql;
+	$CMAKE{$n}   = \&CMAKE_mysql;
 	$DISABLE{$n} = \&DISABLE_mysql;
 	$DEPS{$n}    = 'cc';
 	$SAVED{$n}   = 'MYSQL_CFLAGS MYSQL_LIBS';

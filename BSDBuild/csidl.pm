@@ -21,6 +21,23 @@ sub TEST_csidl
 	MkCompileC('HAVE_CSIDL', '', '', $testCode);
 }
 
+sub CMAKE_csidl
+{
+	my $code = MkCodeCMAKE($testCode);
+
+	return << "EOF";
+macro(Check_Csidl)
+	check_c_source_compiles("
+$code" HAVE_CSIDL)
+	if (HAVE_CSIDL)
+		BB_Save_Define(HAVE_CSIDL)
+	else()
+		BB_Save_Undef(HAVE_CSIDL)
+	endif()
+endmacro()
+EOF
+}
+
 sub DISABLE_csidl
 {
 	MkDefine('HAVE_CSIDL', 'no');
@@ -33,6 +50,7 @@ BEGIN
 
 	$DESCR{$n}   = 'Windows CSIDL';
 	$TESTS{$n}   = \&TEST_csidl;
+	$CMAKE{$n}   = \&CMAKE_csidl;
 	$DISABLE{$n} = \&DISABLE_csidl;
 	$DEPS{$n}    = 'cc';
 }

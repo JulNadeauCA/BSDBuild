@@ -1,6 +1,6 @@
 #!%PERL% -I%PREFIX%/share/bsdbuild
 #
-# Copyright (c) 2001-2023 Julien Nadeau Carriere <vedge@csoft.net>
+# Copyright (c) 2001-2024 Julien Nadeau Carriere <vedge@csoft.net>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -100,10 +100,13 @@ sub package
 	if ($val =~ /^"(.+)"$/) {
 		$val = $1;
 	}
+	my $valUC = uc($val);
+	my $valLC = lc($val);
+
 	MkDefine('PACKAGE', $val);
 	MkSaveDefine('PACKAGE');
-
 	MkSave('PACKAGE');
+
 	return (0);
 }
 
@@ -1163,7 +1166,8 @@ my $res = GetOptions(
 	"emul-os=s" =>		\$EmulOS,
 	"emul-osrel=s" =>	\$EmulOSRel,
 	"emul-env=s" =>		\$EmulEnv,
-	"output-lua=s" =>	\$OutputLUA
+	"output-lua=s" =>	\$OutputLUA,
+	"output-cmake=s" =>	\$OutputCMAKE
 );
 
 print << 'EOF';
@@ -1193,6 +1197,92 @@ print { $LUA } << 'EOF';
 hdefs = {}
 mdefs = {}
 EOF
+
+if ($OutputCMAKE) {
+	my $MODULEDIR = '%PREFIX%/share/bsdbuild/BSDBuild';
+
+	open($CMAKE, ">$OutputCMAKE");
+	print { $CMAKE } << 'EOF';
+# Public domain
+#
+# Do not edit!
+# This file was generated from configure.in by BSDBuild %VERSION%.
+#
+# To regenerate this file, get the latest BSDBuild release from
+# https://bsdbuild.hypertriton.com/, and use the command:
+#
+#    $ mkconfigure --output-cmake=CMakeChecks.cmake < configure.in > /dev/null
+#
+# or alternatively:
+#
+#    $ make configure
+#
+
+macro(BB_Save_Define arg)
+	string(TOLOWER "${arg}" arg_lower)
+	file(WRITE "${CONFIG_DIR}/${arg_lower}.h" "#ifndef ${arg}
+#define ${arg} \"yes\"
+#endif
+")
+	file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/Makefile.config" "${arg}=yes
+")
+endmacro()
+
+macro(BB_Save_Define_Value arg val)
+	string(TOLOWER "${arg}" arg_lower)
+	file(WRITE "${CONFIG_DIR}/${arg_lower}.h" "#ifndef ${arg}
+#define ${arg} \"${val}\"
+#endif
+")
+	file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/Makefile.config" "${arg}=\"${val}\"
+")
+endmacro()
+
+macro(BB_Save_Define_Value_Bare arg val)
+	string(TOLOWER "${arg}" arg_lower)
+	file(WRITE "${CONFIG_DIR}/${arg_lower}.h" "#ifndef ${arg}
+#define ${arg} ${val}
+#endif
+")
+	file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/Makefile.config" "${arg}=\"${val}\"
+")
+endmacro()
+
+
+macro(BB_Save_Undef arg)
+	string(TOLOWER "${arg}" arg_lower)
+	file(WRITE "${CONFIG_DIR}/${arg_lower}.h" "#undef ${arg}
+")
+	file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/Makefile.config" "${arg}=no
+")
+endmacro()
+
+macro(BB_Save_MakeVar arg val)
+	file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/Makefile.config" "${arg}=${val}
+")
+endmacro()
+EOF
+
+	my %satisfied_deps = ();
+	opendir(DIR, $MODULEDIR) || die "$MODULEDIR: $!";
+	foreach my $file (readdir(DIR)) {
+	if (index($file,'.') == 0) { next; }
+		my ($base, $ext) = split(/\./, $file);
+		if ($base =~ /^(Builtins|Core|Makefile)$/ || $ext ne 'pm') {
+			next;
+		}
+		do($MODULEDIR.'/'.$file);
+		if (exists($CMAKE{$base})) {
+			my $c = $CMAKE{$base};
+			my $rv = &$c();
+			print { $CMAKE } "\n#\n";
+			print { $CMAKE } "# From BSDBuild/$file:\n";
+			print { $CMAKE } "#\n";
+			print { $CMAKE } $rv;
+		}
+	}
+	closedir(DIR);
+}
 
 #
 # Initialize and parse for command-line options.

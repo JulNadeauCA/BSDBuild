@@ -1,8 +1,6 @@
 # Public domain
 
-sub TEST_execvp
-{
-	TryCompile 'HAVE_EXECVP', << 'EOF';
+my $testCode = << 'EOF';
 #include <unistd.h>
 
 int
@@ -14,6 +12,27 @@ main(int argc, char *argv[])
 	rv = execvp(args[0], args);
 	return (rv);
 }
+EOF
+
+sub TEST_execvp
+{
+	TryCompile('HAVE_EXECVP', $testCode);
+}
+
+sub CMAKE_execvp
+{
+	my $code = MkCodeCMAKE($testCode);
+
+	return << "EOF";
+macro(Check_Execvp)
+	check_c_source_compiles("
+$code" HAVE_EXECVP)
+	if (HAVE_EXECVP)
+		BB_Save_Define(HAVE_EXECVP)
+	else()
+		BB_Save_Undef(HAVE_EXECVP)
+	endif()
+endmacro()
 EOF
 }
 
@@ -29,6 +48,7 @@ BEGIN
 
 	$DESCR{$n}   = 'the execvp() function';
 	$TESTS{$n}   = \&TEST_execvp;
+	$CMAKE{$n}   = \&CMAKE_execvp;
 	$DISABLE{$n} = \&DISABLE_execvp;
 	$DEPS{$n}    = 'cc';
 }

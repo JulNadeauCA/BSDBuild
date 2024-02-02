@@ -41,6 +41,34 @@ int main(int argc, char *argv[])
 }
 EOF
 
+my $testCodeMutexRecursive = << 'EOF';
+#include <pthread.h>
+#include <signal.h>
+
+int main(int argc, char *argv[])
+{
+	pthread_mutex_t mutex;
+	pthread_mutexattr_t mutexattr;
+	pthread_mutexattr_settype(&mutexattr, PTHREAD_MUTEX_RECURSIVE);
+	pthread_mutex_init(&mutex, &mutexattr);
+	return (0);
+}
+EOF
+
+my $testCodeMutexRecursiveNP = << 'EOF';
+#include <pthread.h>
+#include <signal.h>
+
+int main(int argc, char *argv[])
+{
+	pthread_mutex_t mutex;
+	pthread_mutexattr_t mutexattr;
+	pthread_mutexattr_settype(&mutexattr, PTHREAD_MUTEX_RECURSIVE_NP);
+	pthread_mutex_init(&mutex, &mutexattr);
+	return (0);
+}
+EOF
+
 my $testCodeXopen = << 'EOF';
 #include <pthread.h>
 #include <signal.h>
@@ -162,19 +190,8 @@ sub TEST_pthreads_recursive_mutex
 	# pthread_mutexattr_settype().
 	#
 	MkPrintSN('checking for PTHREAD_MUTEX_RECURSIVE...');
-	MkCompileC('HAVE_PTHREAD_MUTEX_RECURSIVE',
-	           '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', << 'EOF');
-#include <pthread.h>
-#include <signal.h>
-int main(int argc, char *argv[])
-{
-	pthread_mutex_t mutex;
-	pthread_mutexattr_t mutexattr;
-	pthread_mutexattr_settype(&mutexattr, PTHREAD_MUTEX_RECURSIVE);
-	pthread_mutex_init(&mutex, &mutexattr);
-	return (0);
-}
-EOF
+	MkCompileC('HAVE_PTHREAD_MUTEX_RECURSIVE', '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}',
+	    $testCodeMutexRecursive);
 	MkIfTrue('${HAVE_PTHREAD_MUTEX_RECURSIVE}');
 		MkSaveDefine('HAVE_PTHREAD_MUTEX_RECURSIVE');
 	MkElse;
@@ -187,18 +204,7 @@ EOF
 	#
 	MkPrintSN('checking for PTHREAD_MUTEX_RECURSIVE_NP...');
 	MkCompileC('HAVE_PTHREAD_MUTEX_RECURSIVE_NP',
-	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', << 'EOF');
-#include <pthread.h>
-#include <signal.h>
-int main(int argc, char *argv[])
-{
-	pthread_mutex_t mutex;
-	pthread_mutexattr_t mutexattr;
-	pthread_mutexattr_settype(&mutexattr, PTHREAD_MUTEX_RECURSIVE_NP);
-	pthread_mutex_init(&mutex, &mutexattr);
-	return (0);
-}
-EOF
+	    '${PTHREADS_CFLAGS}', '${PTHREADS_LIBS}', $testCodeMutexRecursiveNP);
 	MkIfTrue('${HAVE_PTHREAD_MUTEX_RECURSIVE_NP}');
 		MkSaveDefine('HAVE_PTHREAD_MUTEX_RECURSIVE_NP');
 	MkElse;
@@ -276,6 +282,128 @@ sub TEST_pthreads
 	TEST_pthreads_pointerness();
 }
 
+sub CMAKE_pthreads
+{
+	my $codeStd = MkCodeCMAKE($testCodeStd);
+	my $codeMutexRecursive = MkCodeCMAKE($testCodeMutexRecursive);
+	my $codeMutexRecursiveNP = MkCodeCMAKE($testCodeMutexRecursiveNP);
+	my $codeXopen = MkCodeCMAKE($testCodeXopen);
+	my $codeMutexIsPointer = MkCodeCMAKE($testIfMutexIsPointer);
+	my $codeCondIsPointer = MkCodeCMAKE($testIfCondIsPointer);
+	my $codeThreadIsPointer = MkCodeCMAKE($testIfThreadIsPointer);
+
+	return << "EOF";
+macro(Check_Pthreads)
+	set(ORIG_CMAKE_REQUIRED_FLAGS \${CMAKE_REQUIRED_FLAGS})
+	set(ORIG_CMAKE_REQUIRED_LIBRARIES \${CMAKE_REQUIRED_LIBRARIES})
+
+	set(PTHREADS_CFLAGS "")
+	set(PTHREADS_LIBS "-lpthread")
+
+	set(CMAKE_REQUIRED_LIBRARIES "\${CMAKE_REQUIRED_LIBRARIES} \${PTHREADS_LIBS}")
+	check_c_source_compiles("
+$codeStd" HAVE_PTHREADS)
+	if (HAVE_PTHREADS)
+		BB_Save_Define(HAVE_PTHREADS)
+	else()
+		#
+		# Check for the -pthread flag (older OpenBSD, etc.)
+		#
+		set(CMAKE_REQUIRED_FLAGS "\${ORIG_CMAKE_REQUIRED_FLAGS} -pthread")
+		check_c_source_compiles("
+$codeStd" HAVE_PTHREADS_PTHREAD_FLAG)
+		if (HAVE_PTHREADS_PTHREAD_FLAG)
+			set(PTHREADS_CFLAGS "-pthread")
+			set(PTHREADS_LIBS "")
+			set(HAVE_PTHREADS ON)
+			BB_Save_Define(HAVE_PTHREADS)
+		else()
+			BB_Save_Undef(HAVE_PTHREADS)
+		endif()
+		set(CMAKE_REQUIRED_FLAGS \${ORIG_CMAKE_REQUIRED_FLAGS})
+	endif()
+
+	check_c_source_compiles("
+$codeMutexRecursive" HAVE_PTHREAD_MUTEX_RECURSIVE)
+	if(HAVE_PTHREAD_MUTEX_RECURSIVE)
+		BB_Save_Define(HAVE_PTHREAD_MUTEX_RECURSIVE)
+	else()
+		BB_Save_Undef(HAVE_PTHREAD_MUTEX_RECURSIVE)
+	endif()
+
+	check_c_source_compiles("
+$codeMutexRecursiveNP" HAVE_PTHREAD_MUTEX_RECURSIVE_NP)
+	if(HAVE_PTHREAD_MUTEX_RECURSIVE_NP)
+		BB_Save_Define(HAVE_PTHREAD_MUTEX_RECURSIVE_NP)
+	else()
+		BB_Save_Undef(HAVE_PTHREAD_MUTEX_RECURSIVE_NP)
+	endif()
+
+	check_c_source_compiles("
+$codeMutexIsPointer" HAVE_PTHREAD_MUTEX_T_POINTER)
+	if(HAVE_PTHREAD_MUTEX_T_POINTER)
+		BB_Save_Define(HAVE_PTHREAD_MUTEX_T_POINTER)
+	else()
+		BB_Save_Undef(HAVE_PTHREAD_MUTEX_T_POINTER)
+	endif()
+
+	check_c_source_compiles("
+$codeCondIsPointer" HAVE_PTHREAD_COND_T_POINTER)
+	if(HAVE_PTHREAD_COND_T_POINTER)
+		BB_Save_Define(HAVE_PTHREAD_COND_T_POINTER)
+	else()
+		BB_Save_Undef(HAVE_PTHREAD_COND_T_POINTER)
+	endif()
+
+	check_c_source_compiles("
+$codeThreadIsPointer" HAVE_PTHREAD_T_POINTER)
+	if(HAVE_PTHREAD_T_POINTER)
+		BB_Save_Define(HAVE_PTHREAD_T_POINTER)
+	else()
+		BB_Save_Undef(HAVE_PTHREAD_T_POINTER)
+	endif()
+
+	if(NOT FREEBSD)
+		set(CMAKE_REQUIRED_FLAGS "\${CMAKE_REQUIRED_FLAGS} -U_XOPEN_SOURCE -D_XOPEN_SOURCE=600")
+	endif()
+	check_c_source_compiles("
+$codeXopen" HAVE_PTHREADS_XOPEN)
+	if(HAVE_PTHREADS_XOPEN)
+		if(NOT FREEBSD)
+			set(PTHREADS_XOPEN_CFLAGS "-U_XOPEN_SOURCE -D_XOPEN_SOURCE=600")
+		endif()
+		BB_Save_Define(HAVE_PTHREADS_XOPEN)
+	else()
+		BB_Save_Undef(HAVE_PTHREADS_XOPEN)
+	endif()
+
+	BB_Save_MakeVar(PTHREADS_CFLAGS "\${PTHREADS_CFLAGS}")
+	BB_Save_MakeVar(PTHREADS_LIBS "\${PTHREADS_LIBS}")
+	BB_Save_MakeVar(PTHREADS_XOPEN_CFLAGS "\${PTHREADS_XOPEN_CFLAGS}")
+	BB_Save_MakeVar(PTHREADS_XOPEN_LIBS "\${PTHREADS_XOPEN_LIBS}")
+
+	set(CMAKE_REQUIRED_FLAGS \${ORIG_CMAKE_REQUIRED_FLAGS})
+	set(CMAKE_REQUIRED_LIBRARIES \${ORIG_CMAKE_REQUIRED_LIBRARIES})
+
+endmacro()
+
+macro(Disable_Pthreads)
+	BB_Save_MakeVar(PTHREADS_CFLAGS "")
+	BB_Save_MakeVar(PTHREADS_LIBS "")
+	BB_Save_MakeVar(PTHREADS_XOPEN_CFLAGS "")
+	BB_Save_MakeVar(PTHREADS_XOPEN_LIBS "")
+
+	BB_Save_Undef(HAVE_PTHREADS)
+	BB_Save_Undef(HAVE_PTHREADS_XOPEN)
+	BB_Save_Undef(HAVE_PTHREAD_MUTEX_RECURSIVE)
+	BB_Save_Undef(HAVE_PTHREAD_MUTEX_RECURSIVE_NP)
+	BB_Save_Undef(HAVE_PTHREAD_MUTEX_T_POINTER)
+	BB_Save_Undef(HAVE_PTHREAD_COND_T_POINTER)
+	BB_Save_Undef(HAVE_PTHREAD_T_POINTER)
+endmacro()
+EOF
+}
+
 sub DISABLE_pthreads
 {
 	MkDefine('HAVE_PTHREADS', 'no') unless $TestFailed;
@@ -323,6 +451,7 @@ BEGIN
 
 	$DESCR{$n}   = 'POSIX threads';
 	$TESTS{$n}   = \&TEST_pthreads;
+	$CMAKE{$n}   = \&CMAKE_pthreads;
 	$DISABLE{$n} = \&DISABLE_pthreads;
 	$EMUL{$n}    = \&EMUL_pthreads;
 	$DEPS{$n}    = 'cc';

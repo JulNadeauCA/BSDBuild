@@ -1,8 +1,6 @@
 # Public domain
 
-sub TEST_getpwnam_r
-{
-	TryCompile 'HAVE_GETPWNAM_R', << 'EOF';
+my $testCode = << 'EOF';
 #include <sys/types.h>
 #include <pwd.h>
 #include <stdio.h>
@@ -29,6 +27,27 @@ main(int argc, char *argv[])
 	return (pw.pw_dir != NULL);
 }
 EOF
+
+sub TEST_getpwnam_r
+{
+	TryCompile('HAVE_GETPWNAM_R', $testCode);
+}
+
+sub CMAKE_getpwnam_r
+{
+	my $code = MkCodeCMAKE($testCode);
+
+	return << "EOF";
+macro(Check_Getpwnam_r)
+	check_c_source_compiles("
+$code" HAVE_GETPWNAM_R)
+	if (HAVE_GETPWNAM_R)
+		BB_Save_Define(HAVE_GETPWNAM_R)
+	else()
+		BB_Save_Undef(HAVE_GETPWNAM_R)
+	endif()
+endmacro()
+EOF
 }
 
 sub DISABLE_getpwnam_r
@@ -43,6 +62,7 @@ BEGIN
 
 	$DESCR{$n}   = 'the getpwnam_r() interface';
 	$TESTS{$n}   = \&TEST_getpwnam_r;
+	$CMAKE{$n}   = \&CMAKE_getpwnam_r;
 	$DISABLE{$n} = \&DISABLE_getpwnam_r;
 	$DEPS{$n}    = 'cc';
 }

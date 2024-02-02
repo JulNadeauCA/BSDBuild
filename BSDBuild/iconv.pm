@@ -58,6 +58,39 @@ sub TEST_iconv
 	MkEndif;
 }
 
+sub CMAKE_iconv
+{
+        return << 'EOF';
+macro(Check_Iconv)
+	set(ICONV_CFLAGS "")
+	set(ICONV_LIBS "")
+
+	include(FindIconv)
+	if(Iconv_FOUND)
+		set(HAVE_ICONV ON)
+		BB_Save_Define(HAVE_ICONV)
+		if(${Iconv_INCLUDE_DIRS})
+			set(ICONV_CFLAGS "-I${Iconv_INCLUDE_DIRS}")
+		endif()
+		set(ICONV_LIBS "${Iconv_LIBRARIES}")
+	else()
+		set(HAVE_ICONV OFF)
+		BB_Save_Undef(HAVE_ICONV)
+	endif()
+
+	BB_Save_MakeVar(ICONV_CFLAGS "${ICONV_CFLAGS}")
+	BB_Save_MakeVar(ICONV_LIBS "${ICONV_LIBS}")
+endmacro()
+
+macro(Disable_Iconv)
+	set(HAVE_ICONV OFF)
+	BB_Save_Undef(HAVE_ICONV)
+	BB_Save_MakeVar(ICONV_CFLAGS "")
+	BB_Save_MakeVar(ICONV_LIBS "")
+endmacro()
+EOF
+}
+
 sub DISABLE_iconv
 {
 	MkDefine('HAVE_ICONV', 'no') unless $TestFailed;
@@ -72,6 +105,7 @@ BEGIN
 
 	$DESCR{$n}   = 'iconv()';
 	$TESTS{$n}   = \&TEST_iconv;
+	$CMAKE{$n}   = \&CMAKE_iconv;
 	$DISABLE{$n} = \&DISABLE_iconv;
 	$DEPS{$n}    = 'cc';
 	$SAVED{$n}   = 'ICONV_CFLAGS ICONV_LIBS';

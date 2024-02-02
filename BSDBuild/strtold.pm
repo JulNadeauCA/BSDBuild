@@ -34,6 +34,23 @@ sub TEST_strtold
 	MkEndif;
 }
 
+sub CMAKE_strtold
+{
+	my $code = MkCodeCMAKE($testCode);
+
+	return << "EOF";
+macro(Check_Strtold)
+	check_c_source_compiles("
+$code" _MK_HAVE_STRTOLD)
+	if (_MK_HAVE_STRTOLD)
+		BB_Save_Define(_MK_HAVE_STRTOLD)
+	else()
+		BB_Save_Undef(_MK_HAVE_STRTOLD)
+	endif()
+endmacro()
+EOF
+}
+
 sub DISABLE_strtold
 {
 	MkDefine('_MK_HAVE_STRTOLD', 'no');
@@ -46,6 +63,7 @@ BEGIN
 
 	$DESCR{$n}   = 'strtold()';
 	$TESTS{$n}   = \&TEST_strtold;
+	$CMAKE{$n}   = \&CMAKE_strtold;
 	$DISABLE{$n} = \&DISABLE_strtold;
 	$DEPS{$n}    = 'cc';
 }

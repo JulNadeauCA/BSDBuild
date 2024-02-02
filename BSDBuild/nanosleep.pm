@@ -1,8 +1,6 @@
 # Public domain
 
-sub TEST_nanosleep
-{
-	TryCompile 'HAVE_NANOSLEEP', << 'EOF';
+my $testCode = << 'EOF';
 #include <time.h>
 
 int
@@ -16,6 +14,27 @@ main(int argc, char *argv[])
 	rv = nanosleep(&rqtp, &rmtp);
 	return (rv == -1);
 }
+EOF
+
+sub TEST_nanosleep
+{
+	TryCompile('HAVE_NANOSLEEP', $testCode);
+}
+
+sub CMAKE_nanosleep
+{
+	my $code = MkCodeCMAKE($testCode);
+
+	return << "EOF";
+macro(Check_Nanosleep)
+	check_c_source_compiles("
+$code" HAVE_NANOSLEEP)
+	if (HAVE_NANOSLEEP)
+		BB_Save_Define(HAVE_NANOSLEEP)
+	else()
+		BB_Save_Undef(HAVE_NANOSLEEP)
+	endif()
+endmacro()
 EOF
 }
 
@@ -31,6 +50,7 @@ BEGIN
 
 	$DESCR{$n}   = 'nanosleep()';
 	$TESTS{$n}   = \&TEST_nanosleep;
+	$CMAKE{$n}   = \&CMAKE_nanosleep;
 	$DISABLE{$n} = \&DISABLE_nanosleep;
 	$DEPS{$n}    = 'cc';
 }

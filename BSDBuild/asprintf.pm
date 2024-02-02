@@ -1,8 +1,6 @@
 # Public domain
 
-sub TEST_asprintf
-{
-	TryCompileFlagsC('HAVE_ASPRINTF', '-D_GNU_SOURCE', << 'EOF');
+my $testCode = << 'EOF';
 #include <stdio.h>
 
 int
@@ -14,6 +12,27 @@ main(int argc, char *argv[])
 	}
 	return (1);
 }
+EOF
+
+sub TEST_asprintf
+{
+	TryCompileFlagsC('HAVE_ASPRINTF', '-D_GNU_SOURCE', $testCode);
+}
+
+sub CMAKE_asprintf
+{
+	my $code = MkCodeCMAKE($testCode);
+
+	return << "EOF";
+macro(Check_Asprintf)
+	check_c_source_compiles("
+$code" HAVE_ASPRINTF)
+	if (HAVE_ASPRINTF)
+		BB_Save_Define(HAVE_ASPRINTF)
+	else()
+		BB_Save_Undef(HAVE_ASPRINTF)
+	endif()
+endmacro()
 EOF
 }
 
@@ -29,6 +48,7 @@ BEGIN
 
 	$DESCR{$n}   = 'asprintf()';
 	$TESTS{$n}   = \&TEST_asprintf;
+	$CMAKE{$n}   = \&CMAKE_asprintf;
 	$DISABLE{$n} = \&DISABLE_asprintf;
 	$DEPS{$n}    = 'cc';
 }

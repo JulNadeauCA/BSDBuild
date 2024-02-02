@@ -106,6 +106,8 @@ PROG_REQUIRED_CAPABILITIES?=
 # location-services magnetometer metal microphone opengles-1 opengles-2
 # opengles-3 peer-peer sms still-camera telephony video-camera wifi
 
+MKCONFIGURE_FLAGS?=
+
 all: all-subdir ${PROG}
 install: install-prog install-subdir
 deinstall: deinstall-prog deinstall-subdir
@@ -599,10 +601,10 @@ check-prog:
 configure-prog:
 	@if [ "${PROG}" != "" ]; then \
 		if [ -e "configure.in" ]; then \
-			echo "cat configure.in | mkconfigure > configure"; \
-			cat configure.in | mkconfigure > configure; \
+			echo "cat configure.in | mkconfigure ${MKCONFIGURE_FLAGS} > configure"; \
+			cat configure.in | mkconfigure ${MKCONFIGURE_FLAGS} > configure; \
 			if [ ! -e configure ]; then \
-				echo "mkconfigure (BSDBuild) failed."; \
+				echo "mkconfigure failed. Is BSDBuild installed?"; \
 				exit 1; \
 			fi; \
 			if [ ! -x configure ]; then \

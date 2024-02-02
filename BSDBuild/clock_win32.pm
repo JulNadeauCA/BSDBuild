@@ -33,6 +33,39 @@ sub TEST_clock_win32
 	MkEndif;
 }
 
+sub CMAKE_clock_win32
+{
+	my $code = MkCodeCMAKE($testCode);
+
+	return << "EOF";
+macro(Check_Clock_win32)
+	set(ORIG_CMAKE_REQUIRED_LIBRARIES \${CMAKE_REQUIRED_LIBRARIES})
+
+	set(CLOCK_CFLAGS "")
+	set(CLOCK_LIBS "")
+
+	set(CMAKE_REQUIRED_LIBRARIES "\${CMAKE_REQUIRED_LIBRARIES} -lwinmm")
+	check_c_source_compiles("
+$code" HAVE_CLOCK_WIN32)
+	if(HAVE_CLOCK_WIN32)
+		BB_Save_Define(HAVE_CLOCK_WIN32)
+		set(CLOCK_LIBS "-lwinmm")
+	else()
+		BB_Save_Undef(HAVE_CLOCK_WIN32)
+	endif()
+
+	BB_Save_MakeVar(CLOCK_CFLAGS "\${CLOCK_CFLAGS}")
+	BB_Save_MakeVar(CLOCK_LIBS "\${CLOCK_LIBS}")
+
+	set(CMAKE_REQUIRED_LIBRARIES \${ORIG_CMAKE_REQUIRED_LIBRARIES})
+endmacro()
+
+macro(Disable_Clock_win32)
+	BB_Save_Undef(HAVE_CLOCK_WIN32)
+endmacro()
+EOF
+}
+
 sub DISABLE_clock_win32
 {
 	MkDefine('HAVE_CLOCK_WIN32', 'no') unless $TestFailed;
@@ -61,6 +94,7 @@ BEGIN
 
 	$DESCR{$n}   = 'winmm time interface';
 	$TESTS{$n}   = \&TEST_clock_win32;
+	$CMAKE{$n}   = \&CMAKE_clock_win32;
 	$DISABLE{$n} = \&DISABLE_clock_win32;
 	$EMUL{$n}    = \&EMUL_clock_win32;
 	$DEPS{$n}    = 'cc';

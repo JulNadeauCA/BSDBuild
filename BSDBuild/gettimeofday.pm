@@ -1,8 +1,6 @@
 # Public domain
 
-sub TEST_gettimeofday
-{
-	TryCompile 'HAVE_GETTIMEOFDAY', << 'EOF';
+my $testCode = << 'EOF';
 #include <sys/time.h>
 #include <stdio.h>
 
@@ -13,6 +11,27 @@ main(int argc, char *argv[])
 	int rv = gettimeofday(&tv, NULL);
 	return (rv);
 }
+EOF
+
+sub TEST_gettimeofday
+{
+	TryCompile('HAVE_GETTIMEOFDAY', $testCode);
+}
+
+sub CMAKE_gettimeofday
+{
+	my $code = MkCodeCMAKE($testCode);
+
+	return << "EOF";
+macro(Check_Gettimeofday)
+	check_c_source_compiles("
+$code" HAVE_GETTIMEOFDAY)
+	if (HAVE_GETTIMEOFDDAY)
+		BB_Save_Define(HAVE_GETTIMEOFDAY)
+	else()
+		BB_Save_Undef(HAVE_GETTIMEOFDAY)
+	endif()
+endmacro()
 EOF
 }
 
@@ -28,6 +47,7 @@ BEGIN
 
 	$DESCR{$n}   = 'gettimeofday()';
 	$TESTS{$n}   = \&TEST_gettimeofday;
+	$CMAKE{$n}   = \&CMAKE_gettimeofday;
 	$DISABLE{$n} = \&DISABLE_gettimeofday;
 	$DEPS{$n}    = 'cc';
 }

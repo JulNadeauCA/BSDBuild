@@ -93,6 +93,23 @@ EOF
 	MkEndif;
 }
 
+sub CMAKE_byte_order
+{
+	return << "EOF";
+include(TestBigEndian)
+macro(Check_ByteOrder)
+	TEST_BIG_ENDIAN(IS_BIG_ENDIAN)
+	if (IS_BIG_ENDIAN)
+		BB_Save_Define(_MK_BIG_ENDIAN)
+		BB_Save_Undef(_MK_LITTLE_ENDIAN)
+	else()
+		BB_Save_Define(_MK_LITTLE_ENDIAN)
+		BB_Save_Undef(_MK_BIG_ENDIAN)
+	endif()
+endmacro()
+EOF
+}
+
 sub EMUL_byte_order
 {
 	my ($os, $osrel, $machine) = @_;
@@ -118,6 +135,7 @@ BEGIN
 
 	$DESCR{$n} = 'byte order';
 	$TESTS{$n} = \&TEST_byte_order;
+	$CMAKE{$n} = \&CMAKE_byte_order;
 	$EMUL{$n}  = \&EMUL_byte_order;
 	$DEPS{$n}  = 'cc';
 }

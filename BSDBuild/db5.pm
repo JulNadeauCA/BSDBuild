@@ -53,6 +53,23 @@ sub TEST_db5
 	MkEndif;
 }
 
+sub CMAKE_db5
+{
+	my $code = MkCodeCMAKE($testCode);
+
+	return << "EOF";
+macro(Check_Db5)
+	# TODO
+endmacro()
+
+macro(Disable_Db5)
+	BB_Save_MakeVar(DB5_CFLAGS "")
+	BB_Save_MakeVar(DB5_LIBS "")
+	BB_Save_Undef(HAVE_DB5)
+endmacro()
+EOF
+}
+
 sub DISABLE_db5
 {
 	MkDefine('HAVE_DB5', 'no') unless $TestFailed;
@@ -68,6 +85,7 @@ BEGIN
 	$DESCR{$n}   = 'Berkeley DB 5.x';
 	$URL{$n}     = 'http://www.oracle.com/technology/products/berkeley-db';
 	$TESTS{$n}   = \&TEST_db5;
+	$CMAKE{$n}   = \&CMAKE_db5;
 	$DISABLE{$n} = \&DISABLE_db5;
 	$DEPS{$n}    = 'cc';
 	$SAVED{$n}   = 'DB5_CFLAGS DB5_LIBS';

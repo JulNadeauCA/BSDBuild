@@ -6,6 +6,7 @@ All notable changes to BSDBuild will be documented in this file. This project ad
 
 ### Added
 
+- Add support for [cmake](https://cmake.org). Add `--output-cmake` option to [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure) to output macros usable from cmake.
 - [**build.prog.mk**](https://bsdbuild.hypertriton.com/man5/build.prog.mk) & [**build.lib.mk**](https://bsdbuild.hypertriton.com/man5/build.lib.mk): Add support for compiling to wasm (WebAssembly) with Emscripten (https://emscripten.org).
 - [**build.prog.mk**](https://bsdbuild.hypertriton.com/man5/build.prog.mk) & [**build.lib.mk**](https://bsdbuild.hypertriton.com/man5/build.lib.mk): Add support for the Ada language. Introduce `$ADA`, `$ADABIND`, `$ADALINK` and `$LINKER_TYPE`. Introduce `${PROG_BUNDLE}`, `${LIB_BUNDLE}` and `gen-bundle.pl` for generating platform-specific application bundles (currently "OSX" or "iOS").
 - [**build.www.mk**](https://bsdbuild.hypertriton.com/man5/build.www.mk): Introduce the mlproc(1) multilanguage preprocessor. Define `${MLPROC}`, `${MLPROCFLAGS}`, `${MINIFIER}`, `${MINIFIERFLAGS}` and `${MINIFIERFLAGSCSS}`.

@@ -1,8 +1,6 @@
 # Public domain
 
-sub TEST_kqueue
-{
-	TryCompile 'HAVE_KQUEUE', << 'EOF';
+my $testCode = << 'EOF';
 #include <sys/types.h>
 #include <sys/event.h>
 #include <sys/time.h>
@@ -27,6 +25,27 @@ main(int argc, char *argv[])
 	return (chg.flags & EV_ERROR);
 }
 EOF
+
+sub TEST_kqueue
+{
+	TryCompile('HAVE_KQUEUE', $testCode);
+}
+
+sub CMAKE_kqueue
+{
+	my $code = MkCodeCMAKE($testCode);
+
+	return << "EOF";
+macro(Check_Kqueue)
+	check_c_source_compiles("
+$code" HAVE_KQUEUE)
+	if (HAVE_KQUEUE)
+		BB_Save_Define(HAVE_KQUEUE)
+	else()
+		BB_Save_Undef(HAVE_KQUEUE)
+	endif()
+endmacro()
+EOF
 }
 
 sub DISABLE_kqueue
@@ -41,6 +60,7 @@ BEGIN
 
 	$DESCR{$n}   = 'the kqueue() mechanism';
 	$TESTS{$n}   = \&TEST_kqueue;
+	$CMAKE{$n}   = \&CMAKE_kqueue;
 	$DISABLE{$n} = \&DISABLE_kqueue;
 	$DEPS{$n}    = 'cc';
 }

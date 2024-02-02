@@ -70,6 +70,39 @@ sub TEST_gettext
 	MkEndif;
 }
 
+sub CMAKE_gettext
+{
+        return << 'EOF';
+macro(Check_Gettext)
+	set(GETTEXT_CFLAGS "")
+	set(GETTEXT_LIBS "")
+
+	include(FindIntl)
+	if(Intl_FOUND)
+		set(HAVE_GETTEXT ON)
+		BB_Save_Define(HAVE_GETTEXT)
+		if(${Intl_INCLUDE_DIRS})
+			set(GETTEXT_CFLAGS "-I${Intl_INCLUDE_DIRS}")
+		endif()
+		set(GETTEXT_LIBS "${Intl_LIBRARIES}")
+	else()
+		set(HAVE_GETTEXT OFF)
+		BB_Save_Undef(HAVE_GETTEXT)
+	endif()
+	
+	BB_Save_MakeVar(GETTEXT_CFLAGS "${GETTEXT_CFLAGS}")
+	BB_Save_MakeVar(GETTEXT_LIBS "${GETTEXT_LIBS}")
+endmacro()
+
+macro(Disable_Gettext)
+	set(HAVE_GETTEXT OFF)
+	BB_Save_Undef(HAVE_GETTEXT)
+	BB_Save_MakeVar(GETTEXT_CFLAGS "")
+	BB_Save_MakeVar(GETTEXT_LIBS "")
+endmacro()
+EOF
+}
+
 sub DISABLE_gettext
 {
 	MkDefine('HAVE_GETTEXT', 'no') unless $TestFailed;
@@ -84,6 +117,7 @@ BEGIN
 
 	$DESCR{$n}   = 'a gettext library in libc';
 	$TESTS{$n}   = \&TEST_gettext;
+	$CMAKE{$n}   = \&CMAKE_gettext;
 	$DISABLE{$n} = \&DISABLE_gettext;
 	$DEPS{$n}    = 'cc';
 	$SAVED{$n}   = 'GETTEXT_CFLAGS GETTEXT_LIBS';

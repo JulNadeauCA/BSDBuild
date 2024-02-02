@@ -1,8 +1,6 @@
 # Public domain
 
-sub TEST_timerfd
-{
-	TryCompile 'HAVE_TIMERFD', << 'EOF';
+my $testCode = << 'EOF';
 #include <sys/timerfd.h>
 
 int
@@ -21,6 +19,31 @@ main(int argc, char *argv[])
 	return (1);
 }
 EOF
+
+sub TEST_timerfd
+{
+	TryCompile('HAVE_TIMERFD', $testCode);
+}
+
+sub CMAKE_timerfd
+{
+	my $code = MkCodeCMAKE($testCode);
+
+	return << "EOF";
+macro(Check_Timerfd)
+	check_c_source_compiles("
+$code" HAVE_TIMERFD)
+	if (HAVE_TIMERFD)
+		BB_Save_Define(HAVE_TIMERFD)
+	else()
+		BB_Save_Undef(HAVE_TIMERFD)
+	endif()
+endmacro()
+
+macro(Disable_Timerfd)
+	BB_Save_Undef(HAVE_TIMERFD)
+endmacro()
+EOF
 }
 
 sub DISABLE_timerfd
@@ -33,8 +56,9 @@ BEGIN
 {
 	my $n = 'timerfd';
 
-	$DESCR{$n}   = 'the Linux timerfd interface';
+	$DESCR{$n}   = 'the timerfd interface';
 	$TESTS{$n}   = \&TEST_timerfd;
+	$CMAKE{$n}   = \&CMAKE_timerfd;
 	$DISABLE{$n} = \&DISABLE_timerfd;
 	$DEPS{$n}    = 'cc';
 }

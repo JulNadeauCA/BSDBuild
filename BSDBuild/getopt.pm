@@ -1,8 +1,6 @@
 # Public domain
 
-sub TEST_getopt
-{
-	TryCompile 'HAVE_GETOPT', << 'EOF';
+my $testCode = << 'EOF';
 #include <string.h>
 #include <getopt.h>
 
@@ -21,6 +19,27 @@ main(int argc, char *argv[])
 	return (x != 0);
 }
 EOF
+
+sub TEST_getopt
+{
+	TryCompile('HAVE_GETOPT', $testCode);
+}
+
+sub CMAKE_getopt
+{
+	my $code = MkCodeCMAKE($testCode);
+
+	return << "EOF";
+macro(Check_Getopt)
+	check_c_source_compiles("
+$code" HAVE_GETOPT)
+	if (HAVE_GETOPT)
+		BB_Save_Define(HAVE_GETOPT)
+	else()
+		BB_Save_Undef(HAVE_GETOPT)
+	endif()
+endmacro()
+EOF
 }
 
 sub DISABLE_getopt
@@ -35,6 +54,7 @@ BEGIN
 
 	$DESCR{$n}   = 'the getopt() function';
 	$TESTS{$n}   = \&TEST_getopt;
+	$CMAKE{$n}   = \&CMAKE_getopt;
 	$DISABLE{$n} = \&DISABLE_getopt;
 	$DEPS{$n}    = 'cc';
 }

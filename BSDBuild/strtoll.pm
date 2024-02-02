@@ -1,8 +1,6 @@
 # Public domain
 
-sub TEST_strtoll
-{
-	TryCompile '_MK_HAVE_STRTOLL', << 'EOF';
+my $testCode = << 'EOF';
 #include <stdlib.h>
 
 int
@@ -15,6 +13,27 @@ main(int argc, char *argv[])
 	lli = strtoll(foo, &ep, 10);
 	return (lli != 0);
 }
+EOF
+
+sub TEST_strtoll
+{
+	TryCompile('_MK_HAVE_STRTOLL', $testCode);
+}
+
+sub CMAKE_strtoll
+{
+	my $code = MkCodeCMAKE($testCode);
+
+	return << "EOF";
+macro(Check_Strtoll)
+	check_c_source_compiles("
+$code" HAVE_STRTOLL)
+	if (HAVE_STRTOLL)
+		BB_Save_Define(HAVE_STRTOLL)
+	else()
+		BB_Save_Undef(HAVE_STRTOLL)
+	endif()
+endmacro()
 EOF
 }
 
@@ -30,6 +49,7 @@ BEGIN
 
 	$DESCR{$n}   = 'strtoll()';
 	$TESTS{$n}   = \&TEST_strtoll;
+	$CMAKE{$n}   = \&CMAKE_strtoll;
 	$DISABLE{$n} = \&DISABLE_strtoll;
 	$DEPS{$n}    = 'cc';
 }

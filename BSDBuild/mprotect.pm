@@ -1,8 +1,6 @@
 # Public domain
 
-sub TEST_mprotect
-{
-	TryCompile 'HAVE_MPROTECT', << 'EOF';
+my $testCode = << 'EOF';
 #include <sys/mman.h>
 
 #include <stdlib.h>
@@ -29,6 +27,27 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
+
+sub TEST_mprotect
+{
+	TryCompile('HAVE_MPROTECT', $testCode);
+}
+
+sub CMAKE_mprotect
+{
+	my $code = MkCodeCMAKE($testCode);
+
+	return << "EOF";
+macro(Check_Mprotect)
+	check_c_source_compiles("
+$code" HAVE_MPROTECT)
+	if (HAVE_MPROTECT)
+		BB_Save_Define(HAVE_MPROTECT)
+	else()
+		BB_Save_Undef(HAVE_MPROTECT)
+	endif()
+endmacro()
+EOF
 }
 
 sub DISABLE_mprotect
@@ -43,6 +62,7 @@ BEGIN
 
 	$DESCR{$n}   = 'mprotect()';
 	$TESTS{$n}   = \&TEST_mprotect;
+	$CMAKE{$n}   = \&CMAKE_mprotect;
 	$DISABLE{$n} = \&DISABLE_mprotect;
 	$DEPS{$n}    = 'cc';
 }

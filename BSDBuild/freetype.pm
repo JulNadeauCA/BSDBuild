@@ -52,6 +52,41 @@ sub TEST_freetype
 	MkEndif;
 }
 
+sub CMAKE_freetype
+{
+        return << 'EOF';
+macro(Check_FreeType)
+	set(FREETYPE_CFLAGS "")
+	set(FREETYPE_LIBS "")
+
+	include(FindFreetype)
+	if(FREETYPE_FOUND)
+		set(HAVE_FREETYPE ON)
+		foreach(freetypeincdir ${FREETYPE_INCLUDE_DIRS})
+			list(APPEND FREETYPE_CFLAGS "-I${freetypeincdir}")
+		endforeach()
+		foreach(freetypelib ${FREETYPE_LIBRARIES})
+			list(APPEND FREETYPE_LIBS "${freetypelib}")
+		endforeach()
+		BB_Save_Define(HAVE_FREETYPE)
+	else()
+		set(HAVE_FREETYPE OFF)
+		BB_Save_Undef(HAVE_FREETYPE)
+	endif()
+
+	BB_Save_MakeVar(FREETYPE_CFLAGS "${FREETYPE_CFLAGS}")
+	BB_Save_MakeVar(FREETYPE_LIBS "${FREETYPE_LIBS}")
+endmacro()
+
+macro(Disable_FreeType)
+	set(HAVE_FREETYPE OFF)
+	BB_Save_Undef(HAVE_FREETYPE)
+	BB_Save_MakeVar(FREETYPE_CFLAGS "")
+	BB_Save_MakeVar(FREETYPE_LIBS "")
+endmacro()
+EOF
+}
+
 sub DISABLE_freetype
 {
 	MkDefine('HAVE_FREETYPE', 'no') unless $TestFailed;
@@ -79,6 +114,7 @@ BEGIN
 	$DESCR{$n}   = 'FreeType';
 	$URL{$n}     = 'http://www.freetype.org';
 	$TESTS{$n}   = \&TEST_freetype;
+	$CMAKE{$n}   = \&CMAKE_freetype;
 	$DISABLE{$n} = \&DISABLE_freetype;
 	$EMUL{$n}    = \&EMUL_freetype;
 	$DEPS{$n}    = 'cc';

@@ -9,7 +9,7 @@ sub TEST_xinerama
 		MkExecPkgConfig($pfx, 'xinerama', '--cflags', 'XINERAMA_CFLAGS');
 		MkExecPkgConfig($pfx, 'xinerama', '--libs', 'XINERAMA_LIBS');
 	MkElse;
-		MkDefine('XINERAM_CFLAGS', '');
+		MkDefine('XINERAMA_CFLAGS', '');
 		MkDefine('XINERAMA_LIBS', '');
 		MkIfNE($pfx, '');
 			MkIfExists("$pfx/include/X11");

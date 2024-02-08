@@ -27,11 +27,11 @@ sub CMAKE_strtoll
 	return << "EOF";
 macro(Check_Strtoll)
 	check_c_source_compiles("
-$code" HAVE_STRTOLL)
-	if (HAVE_STRTOLL)
-		BB_Save_Define(HAVE_STRTOLL)
+$code" _MK_HAVE_STRTOLL)
+	if (_MK_HAVE_STRTOLL)
+		BB_Save_Define(_MK_HAVE_STRTOLL)
 	else()
-		BB_Save_Undef(HAVE_STRTOLL)
+		BB_Save_Undef(_MK_HAVE_STRTOLL)
 	endif()
 endmacro()
 EOF

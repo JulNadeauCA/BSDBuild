@@ -49,6 +49,47 @@ sub TEST_fontconfig
 	MkEndif;
 }
 
+sub CMAKE_fontconfig
+{
+        return << 'EOF';
+macro(Check_Fontconfig)
+	set(FONTCONFIG_CFLAGS "")
+	set(FONTCONFIG_LIBS "")
+
+	include(FindFontconfig)
+	if(Fontconfig_FOUND)
+		set(HAVE_FONTCONFIG ON)
+
+		if(Fontconfig_COMPILE_OPTIONS)
+			foreach(fontconfigopt ${Fontconfig_COMPILE_OPTIONS})
+				list(APPEND FONTCONFIG_CFLAGS ${fontconfigopt})
+			endforeach()
+		endif()
+		foreach(fontconfigincdir ${Fontconfig_INCLUDE_DIRS})
+			list(APPEND FONTCONFIG_CFLAGS "-I${fontconfigincdir}")
+		endforeach()
+		foreach(fontconfiglib ${Fontconfig_LIBRARIES})
+			list(APPEND FONTCONFIG_LIBS "${fontconfiglib}")
+		endforeach()
+		BB_Save_Define(HAVE_FONTCONFIG)
+	else()
+		set(HAVE_FONTCONFIG OFF)
+		BB_Save_Undef(HAVE_FONTCONFIG)
+	endif()
+
+	BB_Save_MakeVar(FONTCONFIG_CFLAGS "${FONTCONFIG_CFLAGS}")
+	BB_Save_MakeVar(FONTCONFIG_LIBS "${FONTCONFIG_LIBS}")
+endmacro()
+
+macro(Disable_Fontconfig)
+	set(HAVE_FONTCONFIG OFF)
+	BB_Save_Undef(HAVE_FONTCONFIG)
+	BB_Save_MakeVar(FONTCONFIG_CFLAGS "")
+	BB_Save_MakeVar(FONTCONFIG_LIBS "")
+endmacro()
+EOF
+}
+
 sub DISABLE_fontconfig
 {
 	MkDefine('HAVE_FONTCONFIG', 'no') unless $TestFailed;
@@ -64,6 +105,7 @@ BEGIN
 	$DESCR{$n}   = 'fontconfig';
 	$URL{$n}     = 'http://fontconfig.org';
 	$TESTS{$n}   = \&TEST_fontconfig;
+	$CMAKE{$n}   = \&CMAKE_fontconfig;
 	$DISABLE{$n} = \&DISABLE_fontconfig;
 	$DEPS{$n}    = 'cc';
 	$SAVED{$n}   = 'FONTCONFIG_CFLAGS FONTCONFIG_LIBS';

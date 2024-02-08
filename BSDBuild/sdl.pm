@@ -124,6 +124,43 @@ sub TEST_sdl
 	MkEndif;
 }
 
+sub CMAKE_sdl
+{
+        return << 'EOF';
+macro(Check_Sdl)
+	set(SDL_CFLAGS "")
+	set(SDL_LIBS "")
+
+	set(SDL_BUILDING_LIBRARY ON)
+	include(FindSDL)
+	if(SDL_FOUND)
+		set(HAVE_SDL ON)
+		foreach(sdlincdir ${SDL_INCLUDE_DIRS})
+			list(APPEND SDL_CFLAGS "-I${sdlincdir}")
+		endforeach()
+
+		foreach(sdllib ${SDL_LIBRARIES})
+			list(APPEND SDL_LIBS "${sdllib}")
+		endforeach()
+		BB_Save_Define(HAVE_SDL)
+	else()
+		set(HAVE_SDL OFF)
+		BB_Save_Undef(HAVE_SDL)
+	endif()
+
+	BB_Save_MakeVar(SDL_CFLAGS "${SDL_CFLAGS}")
+	BB_Save_MakeVar(SDL_LIBS "${SDL_LIBS}")
+endmacro()
+
+macro(Disable_Sdl)
+	set(HAVE_SDL OFF)
+	BB_Save_Undef(HAVE_SDL)
+	BB_Save_MakeVar(SDL_CFLAGS "")
+	BB_Save_MakeVar(SDL_LIBS "")
+endmacro()
+EOF
+}
+
 sub DISABLE_sdl
 {
 	MkDefine('HAVE_SDL', 'no') unless $TestFailed;
@@ -151,6 +188,7 @@ BEGIN
 	$DESCR{$n}   = 'SDL 1.2';
 	$URL{$n}     = 'http://www.libsdl.org';
 	$TESTS{$n}   = \&TEST_sdl;
+	$CMAKE{$n}   = \&CMAKE_sdl;
 	$DISABLE{$n} = \&DISABLE_sdl;
 	$EMUL{$n}    = \&EMUL_sdl;
 	$DEPS{$n}    = 'cc';

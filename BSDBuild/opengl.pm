@@ -61,6 +61,52 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
+my $testCodeGLX = << 'EOF';
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#ifdef __APPLE__
+# include <OpenGL/gl.h>
+# include <OpenGL/glx.h>
+#else
+# include <GL/gl.h>
+# include <GL/glx.h>
+#endif
+int main(int argc, char *argv[]) {
+	Display *d;
+	XVisualInfo *xvi;
+	int glxAttrs[] = { GLX_RGBA, GLX_RED_SIZE,1, GLX_DEPTH_SIZE,1, None };
+	GLXContext glxCtx;
+	int err, ev, s;
+
+	d = XOpenDisplay(NULL);
+	(void)glXQueryExtension(d, &err, &ev);
+	s = DefaultScreen(d);
+	if ((xvi = glXChooseVisual(d, s, glxAttrs)) == NULL) { return (1); }
+	if ((glxCtx = glXCreateContext(d, xvi, 0, GL_FALSE)) == NULL) { return (1); }
+	return (0);
+}
+EOF
+
+my $testCodeWGL = << 'EOF';
+#include <windows.h>
+
+int main(int argc, char *argv[]) {
+	HWND hwnd;
+	HDC hdc;
+	HGLRC hglrc;
+
+	hwnd = CreateWindowEx(0, "a", "a", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
+	    CW_USEDEFAULT, 0,0, NULL, NULL, GetModuleHandle(NULL), NULL);
+	hdc = GetDC(hwnd);
+	hglrc = wglCreateContext(hdc);
+	SwapBuffers(hdc);
+	wglDeleteContext(hglrc);
+	ReleaseDC(hwnd, hdc);
+	DestroyWindow(hwnd);
+	return (0);
+}
+EOF
+
 sub TEST_opengl
 {
 	my ($ver, $pfx) = @_;
@@ -150,6 +196,86 @@ sub TEST_opengl
 	MkEndif;
 }
 
+sub CMAKE_opengl
+{
+	my $codeWGL = MkCodeCMAKE($testCodeWGL);
+	my $codeGLEXT = MkCodeCMAKE($testCodeGLEXT);
+
+        return << "EOF";
+macro(Check_OpenGL)
+	set(OPENGL_CFLAGS "")
+	set(OPENGL_LIBS "")
+
+	include(FindOpenGL)
+	if(OPENGL_FOUND)
+		set(HAVE_OPENGL ON)
+
+		if(OPENGL_INCLUDE_DIR)
+			list(APPEND OPENGL_CFLAGS "-I\${OPENGL_INCLUDE_DIR}")
+		endif()
+		foreach(opengllib \${OPENGL_LIBRARIES})
+			list(APPEND OPENGL_LIBS "\${opengllib}")
+		endforeach()
+
+		BB_Save_Define(HAVE_OPENGL)
+	else()
+		set(HAVE_OPENGL OFF)
+		BB_Save_Undef(HAVE_OPENGL)
+	endif()
+
+	if(OpenGL_GLX_FOUND)
+		set(HAVE_GLX ON)
+		BB_Save_Define(HAVE_GLX)
+	else()
+		set(HAVE_GLX OFF)
+		BB_Save_Undef(HAVE_GLX)
+	endif()
+
+	set(ORIG_CMAKE_REQUIRED_FLAGS \${CMAKE_REQUIRED_FLAGS})
+	set(ORIG_CMAKE_REQUIRED_LIBRARIES \${CMAKE_REQUIRED_LIBRARIES})
+
+	set(CMAKE_REQUIRED_FLAGS "\${CMAKE_REQUIRED_FLAGS} \${OPENGL_CFLAGS}")
+	set(CMAKE_REQUIRED_LIBRARIES "\${CMAKE_REQUIRED_LIBRARIES} \${OPENGL_LIBS}")
+
+	check_c_source_compiles("
+$codeGLEXT" HAVE_GLEXT)
+	if(HAVE_GLEXT)
+		BB_Save_Define(HAVE_GLEXT)
+	else()
+		BB_Save_Undef(HAVE_GLEXT)
+	endif()
+
+	set(CMAKE_REQUIRED_LIBRARIES "\${ORIG_CMAKE_REQUIRED_LIBRARIES} \${OPENGL_LIBS} -lgdi32")
+
+	check_c_source_compiles("
+$codeWGL" HAVE_WGL)
+	if(HAVE_WGL)
+		BB_Save_Define(HAVE_WGL)
+		set(OPENGL_LIBS "\${OPENGL_LIBS} -lgdi32")
+	else()
+		BB_Save_Undef(HAVE_WGL)
+	endif()
+
+	set(CMAKE_REQUIRED_FLAGS \${ORIG_CMAKE_REQUIRED_FLAGS})
+	set(CMAKE_REQUIRED_LIBRARIES \${ORIG_CMAKE_REQUIRED_LIBRARIES})
+
+	BB_Save_MakeVar(OPENGL_CFLAGS "\${OPENGL_CFLAGS}")
+	BB_Save_MakeVar(OPENGL_LIBS "\${OPENGL_LIBS}")
+endmacro()
+
+macro(Disable_OpenGL)
+	set(HAVE_OPENGL OFF)
+	set(HAVE_GLEXT OFF)
+	set(HAVE_WGL OFF)
+	BB_Save_Undef(HAVE_OPENGL)
+	BB_Save_Undef(HAVE_GLEXT)
+	BB_Save_Undef(HAVE_WGL)
+	BB_Save_MakeVar(OPENGL_CFLAGS "")
+	BB_Save_MakeVar(OPENGL_LIBS "")
+endmacro()
+EOF
+}
+
 sub DISABLE_opengl
 {
 	MkDefine('HAVE_OPENGL', 'no') unless $TestFailed;
@@ -180,6 +306,7 @@ BEGIN
 	$DESCR{$n}   = 'OpenGL';
 	$URL{$n}     = 'http://www.OpenGL.org';
 	$TESTS{$n}   = \&TEST_opengl;
+	$CMAKE{$n}   = \&CMAKE_opengl;
 	$DISABLE{$n} = \&DISABLE_opengl;
 	$EMUL{$n}    = \&EMUL_opengl;
 	$DEPS{$n}    = 'cc';

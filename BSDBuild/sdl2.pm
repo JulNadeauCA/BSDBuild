@@ -111,6 +111,46 @@ sub TEST_sdl2
 	MkEndif;
 }
 
+sub CMAKE_sdl2
+{
+        return << 'EOF';
+macro(Check_Sdl2)
+	set(SDL2_CFLAGS "")
+	set(SDL2_LIBS "")
+
+	find_package(SDL2)
+	if(SDL2_FOUND)
+		set(HAVE_SDL2 ON)
+
+		foreach(sdl2incdir ${SDL2_INCLUDE_DIRS})
+			list(APPEND SDL2_CFLAGS "-I${sdl2incdir}")
+		endforeach()
+
+		find_library(SDL2_LIBRARY NAMES SDL2)
+		if(SDL2_LIBRARY)
+			list(APPEND SDL2_LIBS "${SDL2_LIBRARY}")
+		endif()
+
+		message(STATUS "Found SDL2: ${SDL2_LIBS} (found version \"${SDL2_VERSION}\")")
+		BB_Save_Define(HAVE_SDL2)
+	else()
+		set(HAVE_SDL2 OFF)
+		BB_Save_Undef(HAVE_SDL2)
+	endif()
+
+	BB_Save_MakeVar(SDL2_CFLAGS "${SDL2_CFLAGS}")
+	BB_Save_MakeVar(SDL2_LIBS "${SDL2_LIBS}")
+endmacro()
+
+macro(Disable_Sdl2)
+	set(HAVE_SDL2 OFF)
+	BB_Save_Undef(HAVE_SDL2)
+	BB_Save_MakeVar(SDL2_CFLAGS "")
+	BB_Save_MakeVar(SDL2_LIBS "")
+endmacro()
+EOF
+}
+
 sub DISABLE_sdl2
 {
 	MkDefine('HAVE_SDL2', 'no') unless $TestFailed;
@@ -138,6 +178,7 @@ BEGIN
 	$DESCR{$n}   = 'SDL 2.0';
 	$URL{$n}     = 'http://www.libsdl.org';
 	$TESTS{$n}   = \&TEST_sdl2;
+	$CMAKE{$n}   = \&CMAKE_sdl2;
 	$DISABLE{$n} = \&DISABLE_sdl2;
 	$EMUL{$n}    = \&EMUL_sdl2;
 	$DEPS{$n}    = 'cc';

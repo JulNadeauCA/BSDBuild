@@ -1,12 +1,6 @@
 # Public domain
 
-sub TEST_sse
-{
-	my ($ver) = @_;
-
-	MkDefine('SSE_CFLAGS', '-msse');
-	# XXX cross compiling
-	MkCompileAndRunC('HAVE_SSE', '${CFLAGS} ${SSE_CFLAGS}', '', << 'EOF');
+my $testCodeSSE = << 'EOF';
 #include <xmmintrin.h>
 #include <stdio.h>
 
@@ -33,10 +27,7 @@ main(int argc, char *argv[])
 }
 EOF
 
-	MkPrintSN('checking for SSE2 extensions...');
-	MkDefine('SSE2_CFLAGS', '-msse2');
-	MkCompileAndRunC('HAVE_SSE2', '${CFLAGS} ${SSE2_CFLAGS}', '',
-	    << 'EOF');
+my $testCodeSSE2 = << 'EOF';
 #include <emmintrin.h>
 
 int
@@ -55,11 +46,8 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
-	
-	MkPrintSN('checking for SSE3 extensions...');
-	MkDefine('SSE3_CFLAGS', '-msse3');
-	MkCompileAndRunC('HAVE_SSE3', '${CFLAGS} ${SSE3_CFLAGS}', '',
-	    << 'EOF');
+
+my $testCodeSSE3 = << 'EOF';
 #include <pmmintrin.h>
 
 int
@@ -79,6 +67,89 @@ main(int argc, char *argv[])
 	_mm_store_ss(&rv, vec1);
 	return (0);
 }
+EOF
+
+sub TEST_sse
+{
+	my ($ver) = @_;
+
+	# XXX cross compiling
+
+	MkDefine('SSE_CFLAGS', '-msse');
+	MkCompileAndRunC('HAVE_SSE', '${CFLAGS} ${SSE_CFLAGS}', '', $testCodeSSE);
+
+	MkPrintSN('checking for SSE2 extensions...');
+	MkDefine('SSE2_CFLAGS', '-msse2');
+	MkCompileAndRunC('HAVE_SSE2', '${CFLAGS} ${SSE2_CFLAGS}', '', $testCodeSSE2);
+	
+	MkPrintSN('checking for SSE3 extensions...');
+	MkDefine('SSE3_CFLAGS', '-msse3');
+	MkCompileAndRunC('HAVE_SSE3', '${CFLAGS} ${SSE3_CFLAGS}', '', $testCodeSSE3);
+}
+
+sub CMAKE_sse
+{
+	my $codeSSE = MkCodeCMAKE($testCodeSSE);
+	my $codeSSE2 = MkCodeCMAKE($testCodeSSE2);
+	my $codeSSE3 = MkCodeCMAKE($testCodeSSE3);
+
+	return << "EOF";
+macro(Check_SSE)
+	set(ORIG_CMAKE_REQUIRED_FLAGS \${CMAKE_REQUIRED_FLAGS})
+
+	set(CMAKE_REQUIRED_FLAGS "\${ORIG_CMAKE_REQUIRED_FLAGS} -msse")
+	check_c_source_compiles("
+$codeSSE" HAVE_SSE)
+	if (HAVE_SSE)
+		set(SSE_CFLAGS "-msse")
+		BB_Save_MakeVar(SSE_CFLAGS "\${SSE_CFLAGS}")
+		BB_Save_Define(HAVE_SSE)
+	else()
+		set(SSE_CFLAGS "")
+		BB_Save_MakeVar(SSE_CFLAGS "")
+		BB_Save_Undef(HAVE_SSE)
+	endif()
+
+	set(CMAKE_REQUIRED_FLAGS "\${ORIG_CMAKE_REQUIRED_FLAGS} -msse2")
+	check_c_source_compiles("
+$codeSSE2" HAVE_SSE2)
+	if (HAVE_SSE2)
+		set(SSE2_CFLAGS "-msse2")
+		BB_Save_MakeVar(SSE2_CFLAGS "\${SSE2_CFLAGS}")
+		BB_Save_Define(HAVE_SSE2)
+	else()
+		set(SSE2_CFLAGS "")
+		BB_Save_MakeVar(SSE2_CFLAGS "")
+		BB_Save_Undef(HAVE_SSE2)
+	endif()
+
+	set(CMAKE_REQUIRED_FLAGS "\${ORIG_CMAKE_REQUIRED_FLAGS} -msse3")
+	check_c_source_compiles("
+$codeSSE3" HAVE_SSE3)
+	if (HAVE_SSE3)
+		set(SSE3_CFLAGS "-msse3")
+		BB_Save_MakeVar(SSE3_CFLAGS "\${SSE3_CFLAGS}")
+		BB_Save_Define(HAVE_SSE3)
+	else()
+		set(SSE3_CFLAGS "")
+		BB_Save_MakeVar(SSE3_CFLAGS "")
+		BB_Save_Undef(HAVE_SSE3)
+	endif()
+
+	set(CMAKE_REQUIRED_FLAGS \${ORIG_CMAKE_REQUIRED_FLAGS})
+endmacro()
+
+macro(Disable_SSE)
+	set(SSE_CFLAGS "")
+	set(SSE2_CFLAGS "")
+	set(SSE3_CFLAGS "")
+	BB_Save_MakeVar(SSE_CFLAGS "")
+	BB_Save_MakeVar(SSE2_CFLAGS "")
+	BB_Save_MakeVar(SSE3_CFLAGS "")
+	BB_Save_Undef(HAVE_SSE)
+	BB_Save_Undef(HAVE_SSE2)
+	BB_Save_Undef(HAVE_SSE3)
+endmacro()
 EOF
 }
 
@@ -100,6 +171,7 @@ BEGIN
 
 	$DESCR{$n}   = 'SSE extensions';
 	$TESTS{$n}   = \&TEST_sse;
+	$CMAKE{$n}   = \&CMAKE_sse;
 	$DISABLE{$n} = \&DISABLE_sse;
 	$DEPS{$n}    = 'cc';
 	$SAVED{$n}   = 'SSE_CFLAGS SSE2_CFLAGS SSE3_CFLAGS';

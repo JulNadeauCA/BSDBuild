@@ -1,9 +1,6 @@
 # Public domain
 
-sub TEST_altivec
-{
-	my ($ver) = @_;
-	my $testCode = << 'EOF';
+my $testCode = << 'EOF';
 float a[4] = { 1,2,3,4 };
 float b[4] = { 5,6,7,8 };
 float c[4];
@@ -19,6 +16,10 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
+
+sub TEST_altivec
+{
+	my ($ver) = @_;
 
 	print << 'EOF';
 case "$host" in
@@ -51,6 +52,38 @@ EOF
 	MkEndif;
 }
 
+sub CMAKE_altivec
+{
+	my $code = MkCodeCMAKE($testCode);
+
+	return << "EOF";
+macro(Check_Altivec)
+	set(ORIG_CMAKE_REQUIRED_FLAGS \${CMAKE_REQUIRED_FLAGS})
+
+	set(CMAKE_REQUIRED_FLAGS "\${ORIG_CMAKE_REQUIRED_FLAGS} -maltivec")
+	check_c_source_compiles("
+$code" HAVE_ALTIVEC)
+	if (HAVE_ALTIVEC)
+		set(ALTIVEC_CFLAGS "-maltivec")
+		BB_Save_MakeVar(ALTIVEC_CFLAGS "\${ALTIVEC_CFLAGS}")
+		BB_Save_Define(HAVE_ALTIVEC)
+	else()
+		set(ALTIVEC_CFLAGS "")
+		BB_Save_MakeVar(ALTIVEC_CFLAGS "")
+		BB_Save_Undef(HAVE_ALTIVEC)
+	endif()
+
+	set(CMAKE_REQUIRED_FLAGS \${ORIG_CMAKE_REQUIRED_FLAGS})
+endmacro()
+
+macro(Disable_Altivec)
+	set(ALTIVEC_CFLAGS "")
+	BB_Save_MakeVar(ALTIVEC_CFLAGS "")
+	BB_Save_Undef(HAVE_ALTIVEC)
+endmacro()
+EOF
+}
+
 sub DISABLE_altivec
 {
 	MkDefine('HAVE_ALTIVEC', 'no') unless $TestFailed;
@@ -65,6 +98,7 @@ BEGIN
 
 	$DESCR{$n}   = 'AltiVec (with <altivec.h>)';
 	$TESTS{$n}   = \&TEST_altivec;
+	$CMAKE{$n}   = \&CMAKE_altivec;
 	$DISABLE{$n} = \&DISABLE_altivec;
 	$DEPS{$n}    = 'cc';
 	$SAVED{$n}   = 'ALTIVEC_CFLAGS';

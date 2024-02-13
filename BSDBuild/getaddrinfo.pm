@@ -1,8 +1,6 @@
 # Public domain
 
-sub TEST_getaddrinfo
-{
-	TryCompile 'HAVE_GETADDRINFO', << 'EOF';
+my $testCode = << 'EOF';
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -24,6 +22,27 @@ main(int argc, char *argv[])
 	return (s != NULL);
 }
 EOF
+
+sub TEST_getaddrinfo
+{
+	TryCompile('HAVE_GETADDRINFO', $testCode);
+}
+
+sub CMAKE_getaddrinfo
+{
+	my $code = MkCodeCMAKE($testCode);
+
+	return << "EOF";
+macro(Check_Getaddrinfo)
+	check_c_source_compiles("
+$code" HAVE_GETADDRINFO)
+	if (HAVE_GETADDRINFO)
+		BB_Save_Define(HAVE_GETADDRINFO)
+	else()
+		BB_Save_Undef(HAVE_GETADDRINFO)
+	endif()
+endmacro()
+EOF
 }
 
 sub DISABLE_getaddrinfo
@@ -38,6 +57,7 @@ BEGIN
 	
 	$DESCR{$n}   = 'getaddrinfo()';
 	$TESTS{$n}   = \&TEST_getaddrinfo;
+	$CMAKE{$n}   = \&CMAKE_getaddrinfo;
 	$DISABLE{$n} = \&DISABLE_getaddrinfo;
 	$DEPS{$n}    = 'cc';
 }

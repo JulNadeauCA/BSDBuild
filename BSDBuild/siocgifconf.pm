@@ -1,8 +1,6 @@
 # Public domain
 
-sub TEST_siocgifconf
-{
-	TryCompile 'HAVE_SIOCGIFCONF', << 'EOF';
+my $testCode = << 'EOF';
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
@@ -40,6 +38,27 @@ main(int argc, char *argv[])
 	return (0);
 }
 EOF
+
+sub TEST_siocgifconf
+{
+	TryCompile('HAVE_SIOCGIFCONF', $testCode);
+}
+
+sub CMAKE_siocgifconf
+{
+	my $code = MkCodeCMAKE($testCode);
+
+	return << "EOF";
+macro(Check_Siocgifconf)
+	check_c_source_compiles("
+$code" HAVE_SIOCGIFCONF)
+	if (HAVE_SIOCGIFCONF)
+		BB_Save_Define(HAVE_SIOCGIFCONF)
+	else()
+		BB_Save_Undef(HAVE_SIOCGIFCONF)
+	endif()
+endmacro()
+EOF
 }
 
 sub DISABLE_siocgifconf
@@ -54,6 +73,7 @@ BEGIN
 
 	$DESCR{$n}   = 'the SIOCGIFCONF interface';
 	$TESTS{$n}   = \&TEST_siocgifconf;
+	$CMAKE{$n}   = \&CMAKE_siocgifconf;
 	$DISABLE{$n} = \&DISABLE_siocgifconf;
 	$DEPS{$n}    = 'cc';
 }

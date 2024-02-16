@@ -92,6 +92,132 @@ $SIG{__DIE__} = sub {
 	exit(1);
 };
 
+my $StartCMAKE = << 'EOF';
+# Public domain
+#
+# Do not edit!
+# This file was generated from configure.in by BSDBuild %VERSION%.
+#
+# To regenerate this file, get the latest BSDBuild release from
+# https://bsdbuild.hypertriton.com/, and use the command:
+#
+#    $ mkconfigure --output-cmake=CMakeChecks.cmake < configure.in > /dev/null
+#
+# or alternatively:
+#
+#    $ make configure
+#
+
+# Save a C definition (boolean) to ${CONFIG_DIR}.
+macro(BB_Save_Define arg)
+	string(TOLOWER "${arg}" arg_lower)
+	file(WRITE "${CONFIG_DIR}/${arg_lower}.h" "#ifndef ${arg}
+#define ${arg} \"yes\"
+#endif
+")
+	file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/Makefile.config" "${arg}=yes
+")
+endmacro()
+
+# Save a C definition (with a string literal value) to ${CONFIG_DIR}.
+macro(BB_Save_Define_Value arg val)
+	string(TOLOWER "${arg}" arg_lower)
+	file(WRITE "${CONFIG_DIR}/${arg_lower}.h" "#ifndef ${arg}
+#define ${arg} \"${val}\"
+#endif
+")
+	file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/Makefile.config" "${arg}=\"${val}\"
+")
+endmacro()
+
+# Save a C definition (with an unquoted literal value) to ${CONFIG_DIR}.
+macro(BB_Save_Define_Value_Bare arg val)
+	string(TOLOWER "${arg}" arg_lower)
+	file(WRITE "${CONFIG_DIR}/${arg_lower}.h" "#ifndef ${arg}
+#define ${arg} ${val}
+#endif
+")
+	file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/Makefile.config" "${arg}=\"${val}\"
+")
+endmacro()
+
+# Save a C undefinition to ${CONFIG_DIR}.
+macro(BB_Save_Undef arg)
+	string(TOLOWER "${arg}" arg_lower)
+	file(WRITE "${CONFIG_DIR}/${arg_lower}.h" "#undef ${arg}
+")
+	file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/Makefile.config" "${arg}=no
+")
+endmacro()
+
+# Save the value of a make variable to Makefile.config.
+macro(BB_Save_MakeVar arg val)
+	file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/Makefile.config" "${arg}=${val}
+")
+endmacro()
+
+# Set the per-platform definition expected by BSDBuild modules.
+macro(BB_Detect_Platform)
+	if(WIN32)
+		if(NOT WINDOWS)
+			set(WINDOWS TRUE)
+		endif()
+	elseif(UNIX AND NOT APPLE)
+		if(CMAKE_SYSTEM_NAME MATCHES ".*Linux")
+			set(LINUX TRUE)
+		elseif(CMAKE_SYSTEM_NAME MATCHES "kFreeBSD.*")
+			set(FREEBSD TRUE)
+		elseif(CMAKE_SYSTEM_NAME MATCHES "kNetBSD.*|NetBSD.*")
+			set(NETBSD TRUE)
+		elseif(CMAKE_SYSTEM_NAME MATCHES "kOpenBSD.*|OpenBSD.*")
+			set(OPENBSD TRUE)
+		elseif(CMAKE_SYSTEM_NAME MATCHES ".*GNU.*")
+			set(GNU TRUE)
+		elseif(CMAKE_SYSTEM_NAME MATCHES ".*BSDI.*")
+			set(BSDI TRUE)
+		elseif(CMAKE_SYSTEM_NAME MATCHES "DragonFly.*|FreeBSD")
+			set(FREEBSD TRUE)
+		elseif(CMAKE_SYSTEM_NAME MATCHES "SYSV5.*")
+			set(SYSV5 TRUE)
+		elseif(CMAKE_SYSTEM_NAME MATCHES "Solaris.*")
+			set(SOLARIS TRUE)
+		elseif(CMAKE_SYSTEM_NAME MATCHES "HP-UX.*")
+			set(HPUX TRUE)
+		elseif(CMAKE_SYSTEM_NAME MATCHES "AIX.*")
+			set(AIX TRUE)
+		elseif(CMAKE_SYSTEM_NAME MATCHES "Minix.*")
+			set(MINIX TRUE)
+		endif()
+	elseif(APPLE)
+		if(CMAKE_SYSTEM_NAME MATCHES ".*Darwin.*")
+			set(DARWIN TRUE)
+		elseif(CMAKE_SYSTEM_NAME MATCHES ".*MacOS.*")
+			set(MACOSX TRUE)
+		elseif(CMAKE_SYSTEM_NAME MATCHES ".*tvOS.*")
+			set(TVOS TRUE)
+		elseif(CMAKE_SYSTEM_NAME MATCHES ".*iOS.*")
+			set(IOS TRUE)
+		endif()
+	elseif(CMAKE_SYSTEM_NAME MATCHES "BeOS.*")
+		set(BEOS TRUE)
+	elseif(CMAKE_SYSTEM_NAME MATCHES "Haiku.*")
+		set(HAIKU TRUE)
+	endif()
+
+	if(UNIX AND NOT APPLE AND NOT RISCOS)
+		set(UNIX_SYS ON)
+	else()
+		set(UNIX_SYS OFF)
+	endif()
+
+	if(UNIX OR APPLE)
+		set(UNIX_OR_MAC_SYS ON)
+	else()
+		set(UNIX_OR_MAC_SYS OFF)
+	endif()
+endmacro()
+EOF
+
 # Specify software package name
 sub package
 {
@@ -1202,66 +1328,7 @@ if ($OutputCMAKE) {
 	my $MODULEDIR = '%PREFIX%/share/bsdbuild/BSDBuild';
 
 	open($CMAKE, ">$OutputCMAKE");
-	print { $CMAKE } << 'EOF';
-# Public domain
-#
-# Do not edit!
-# This file was generated from configure.in by BSDBuild %VERSION%.
-#
-# To regenerate this file, get the latest BSDBuild release from
-# https://bsdbuild.hypertriton.com/, and use the command:
-#
-#    $ mkconfigure --output-cmake=CMakeChecks.cmake < configure.in > /dev/null
-#
-# or alternatively:
-#
-#    $ make configure
-#
-
-macro(BB_Save_Define arg)
-	string(TOLOWER "${arg}" arg_lower)
-	file(WRITE "${CONFIG_DIR}/${arg_lower}.h" "#ifndef ${arg}
-#define ${arg} \"yes\"
-#endif
-")
-	file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/Makefile.config" "${arg}=yes
-")
-endmacro()
-
-macro(BB_Save_Define_Value arg val)
-	string(TOLOWER "${arg}" arg_lower)
-	file(WRITE "${CONFIG_DIR}/${arg_lower}.h" "#ifndef ${arg}
-#define ${arg} \"${val}\"
-#endif
-")
-	file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/Makefile.config" "${arg}=\"${val}\"
-")
-endmacro()
-
-macro(BB_Save_Define_Value_Bare arg val)
-	string(TOLOWER "${arg}" arg_lower)
-	file(WRITE "${CONFIG_DIR}/${arg_lower}.h" "#ifndef ${arg}
-#define ${arg} ${val}
-#endif
-")
-	file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/Makefile.config" "${arg}=\"${val}\"
-")
-endmacro()
-
-
-macro(BB_Save_Undef arg)
-	string(TOLOWER "${arg}" arg_lower)
-	file(WRITE "${CONFIG_DIR}/${arg_lower}.h" "#undef ${arg}
-")
-	file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/Makefile.config" "${arg}=no
-")
-endmacro()
-
-macro(BB_Save_MakeVar arg val)
-	file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/Makefile.config" "${arg}=${val}
-")
-endmacro()
-EOF
+	print { $CMAKE } $StartCMAKE;
 
 	my %satisfied_deps = ();
 	opendir(DIR, $MODULEDIR) || die "$MODULEDIR: $!";

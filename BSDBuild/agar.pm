@@ -36,6 +36,44 @@ sub TEST_agar
 	MkEndif;
 }
 
+sub CMAKE_agar
+{
+        return << 'EOF';
+macro(Check_Agar)
+	set(AGAR_CFLAGS "")
+	set(AGAR_LIBS "")
+
+	find_package(agar)
+	if(agar_FOUND)
+		set(HAVE_AGAR ON)
+		foreach(agarincdir ${AGAR_INCLUDE_DIRS})
+			list(APPEND AGAR_CFLAGS "-I${agarincdir}")
+		endforeach()
+		foreach(agarlib ${AGAR_GUI_LIBRARIES} ${AGAR_CORE_LIBRARIES})
+			list(APPEND AGAR_LIBS "${agarlib}")
+		endforeach()
+		list(REMOVE_DUPLICATES AGAR_CFLAGS)
+		list(REMOVE_DUPLICATES AGAR_LIBS)
+		list(REMOVE_DUPLICATES AGAR_INCLUDE_DIRS)
+		BB_Save_Define(HAVE_AGAR)
+	else()
+		set(HAVE_AGAR OFF)
+		BB_Save_Undef(HAVE_AGAR)
+	endif()
+
+	BB_Save_MakeVar(AGAR_CFLAGS "${AGAR_CFLAGS}")
+	BB_Save_MakeVar(AGAR_LIBS "${AGAR_LIBS}")
+endmacro()
+
+macro(Disable_Agar)
+	set(HAVE_AGAR OFF)
+	BB_Save_Undef(HAVE_AGAR)
+	BB_Save_MakeVar(AGAR_CFLAGS "")
+	BB_Save_MakeVar(AGAR_LIBS "")
+endmacro()
+EOF
+}
+
 sub DISABLE_agar
 {
 	MkDefine('HAVE_AGAR', 'no') unless $TestFailed;
@@ -61,8 +99,9 @@ BEGIN
 	my $n = 'agar';
 
 	$DESCR{$n}   = 'Agar';
-	$URL{$n}     = 'http://libagar.org';
+	$URL{$n}     = 'https://libagar.org';
 	$TESTS{$n}   = \&TEST_agar;
+	$CMAKE{$n}   = \&CMAKE_agar;
 	$DISABLE{$n} = \&DISABLE_agar;
 	$EMUL{$n}    = \&EMUL_agar;
 	$DEPS{$n}    = 'cc';

@@ -50,6 +50,44 @@ sub TEST_agar_core
 	MkEndif;
 }
 
+sub CMAKE_agar_core
+{
+        return << 'EOF';
+macro(Check_Agar_Core)
+	set(AGAR_CORE_CFLAGS "")
+	set(AGAR_CORE_LIBS "")
+
+	find_package(agarCore)
+	if(agarCore_FOUND)
+		set(HAVE_AGAR_CORE ON)
+		foreach(agarincdir ${AGAR_CORE_INCLUDE_DIRS})
+			list(APPEND AGAR_CORE_CFLAGS "-I${agarincdir}")
+		endforeach()
+		foreach(agarlib ${AGAR_CORE_LIBRARIES})
+			list(APPEND AGAR_CORE_LIBS "${agarlib}")
+		endforeach()
+		list(REMOVE_DUPLICATES AGAR_CORE_CFLAGS)
+		list(REMOVE_DUPLICATES AGAR_CORE_LIBS)
+		list(REMOVE_DUPLICATES AGAR_CORE_INCLUDE_DIRS)
+		BB_Save_Define(HAVE_AGAR_CORE)
+	else()
+		set(HAVE_AGAR_CORE OFF)
+		BB_Save_Undef(HAVE_AGAR_CORE)
+	endif()
+
+	BB_Save_MakeVar(AGAR_CORE_CFLAGS "${AGAR_CORE_CFLAGS}")
+	BB_Save_MakeVar(AGAR_CORE_LIBS "${AGAR_CORE_LIBS}")
+endmacro()
+
+macro(Disable_Agar_Core)
+	set(HAVE_AGAR_CORE OFF)
+	BB_Save_Undef(HAVE_AGAR_CORE)
+	BB_Save_MakeVar(AGAR_CORE_CFLAGS "")
+	BB_Save_MakeVar(AGAR_CORE_LIBS "")
+endmacro()
+EOF
+}
+
 sub DISABLE_agar_core
 {
 	MkDefine('HAVE_AGAR_CORE', 'no') unless $TestFailed;
@@ -75,8 +113,9 @@ BEGIN
 	my $n = 'agar-core';
 
 	$DESCR{$n}   = 'Agar-Core';
-	$URL{$n}     = 'http://libagar.org';
+	$URL{$n}     = 'https://libagar.org';
 	$TESTS{$n}   = \&TEST_agar_core;
+	$CMAKE{$n}   = \&CMAKE_agar_core;
 	$DISABLE{$n} = \&DISABLE_agar_core;
 	$EMUL{$n}    = \&EMUL_agar_core;
 	$DEPS{$n}    = 'cc';

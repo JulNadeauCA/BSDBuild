@@ -4,9 +4,20 @@ my @db4_releases = ('4.8', '4.7', '4.6', '4.5', '4.4', '4.3', '4.2', '4');
 
 my $testCode = << 'EOF';
 #include <db.h>
-#if DB_VERSION_MAJOR != 4
-#error version
+int main(int argc, char *argv[]) {
+	DB *db;
+	db_create(&db, NULL, 0);
+	return (0);
+}
+EOF
+
+my $testCodeCMAKE = << 'EOF';
+#ifdef __FreeBSD__
+# include <db18/db.h>
+#else
+# include <db.h>
 #endif
+
 int main(int argc, char *argv[]) {
 	DB *db;
 	db_create(&db, NULL, 0);
@@ -61,14 +72,52 @@ sub TEST_db4
 
 sub CMAKE_db4
 {
-	my $code = MkCodeCMAKE($testCode);
+	my $code = MkCodeCMAKE($testCodeCMAKE);
 
 	return << "EOF";
 macro(Check_Db4)
-	# TODO
+	set(DB4_CFLAGS "")
+	set(DB4_LIBS "")
+	if(FREEBSD)
+		set(ORIG_CMAKE_REQUIRED_FLAGS \${CMAKE_REQUIRED_FLAGS})
+		set(ORIG_CMAKE_REQUIRED_LIBRARIES \${CMAKE_REQUIRED_LIBRARIES})
+		set(CMAKE_REQUIRED_FLAGS "\${CMAKE_REQUIRED_FLAGS} -I/usr/local/include")
+		set(CMAKE_REQUIRED_LIBRARIES "\${CMAKE_REQUIRED_LIBRARIES} -L/usr/local/lib -ldb-18")
+
+		CHECK_INCLUDE_FILE(db18/db.h HAVE_DB18_DB_H)
+		if(HAVE_DB18_DB_H)
+			check_c_source_compiles("
+$code" HAVE_DB4)
+			if(HAVE_DB4)
+				set(DB4_CFLAGS "-I/usr/local/include")
+				set(DB4_LIBS "-L/usr/local/lib" "-ldb-18")
+				BB_Save_Define(HAVE_DB4)
+			else()
+				BB_Save_Undef(HAVE_DB4)
+			endif()
+		else()
+			set(HAVE_DB4 OFF)
+			BB_Save_Undef(HAVE_DB4)
+		endif()
+
+		set(CMAKE_REQUIRED_FLAGS \${ORIG_CMAKE_REQUIRED_FLAGS})
+		set(CMAKE_REQUIRED_LIBRARIES \${ORIG_CMAKE_REQUIRED_LIBRARIES})
+	else()
+		check_c_source_compiles("
+$code" HAVE_DB4)
+		if(HAVE_DB4)
+			BB_Save_Define(HAVE_DB4)
+		else()
+			BB_Save_Undef(HAVE_DB4)
+		endif()
+	endif()
+
+	BB_Save_MakeVar(DB4_CFLAGS "\${DB4_CFLAGS}")
+	BB_Save_MakeVar(DB4_LIBS "\${DB4_LIBS}")
 endmacro()
 
 macro(Disable_Db4)
+	set(HAVE_DB4 OFF)
 	BB_Save_MakeVar(DB4_CFLAGS "")
 	BB_Save_MakeVar(DB4_LIBS "")
 	BB_Save_Undef(HAVE_DB4)

@@ -88,6 +88,52 @@ sub TEST_portaudio
 	MkEndif;
 }
 
+sub CMAKE_portaudio
+{
+	my $code = MkCodeCMAKE($testCode);
+
+	return << "EOF";
+macro(Check_Portaudio)
+	set(PORTAUDIO_CFLAGS "")
+	set(PORTAUDIO_LIBS "")
+
+	set(ORIG_CMAKE_REQUIRED_FLAGS \${CMAKE_REQUIRED_FLAGS})
+	set(ORIG_CMAKE_REQUIRED_LIBRARIES \${CMAKE_REQUIRED_LIBRARIES})
+	set(CMAKE_REQUIRED_FLAGS "\${CMAKE_REQUIRED_FLAGS} -I/usr/local/include")
+	set(CMAKE_REQUIRED_LIBRARIES "\${CMAKE_REQUIRED_LIBRARIES} -L/usr/local/lib -lm -lpthread -lportaudio")
+
+	CHECK_INCLUDE_FILE(portaudio.h HAVE_PORTAUDIO_H)
+	if(HAVE_PORTAUDIO_H)
+		check_c_source_compiles("
+$code" HAVE_PORTAUDIO)
+		if(HAVE_PORTAUDIO)
+			set(PORTAUDIO_CFLAGS "-I/usr/local/include")
+			set(PORTAUDIO_LIBS "-L/usr/local/lib" "-lm" "-lpthread" "-lportaudio")
+			BB_Save_Define(HAVE_PORTAUDIO)
+		else()
+			BB_Save_Undef(HAVE_PORTAUDIO)
+		endif()
+	else()
+		set(HAVE_PORTAUDIO OFF)
+		BB_Save_Undef(HAVE_PORTAUDIO)
+	endif()
+
+	set(CMAKE_REQUIRED_FLAGS \${ORIG_CMAKE_REQUIRED_FLAGS})
+	set(CMAKE_REQUIRED_LIBRARIES \${ORIG_CMAKE_REQUIRED_LIBRARIES})
+
+	BB_Save_MakeVar(PORTAUDIO_CFLAGS "\${PORTAUDIO_CFLAGS}")
+	BB_Save_MakeVar(PORTAUDIO_LIBS "\${PORTAUDIO_LIBS}")
+endmacro()
+
+macro(Disable_Portaudio)
+	set(HAVE_PORTAUDIO OFF)
+	BB_Save_MakeVar(PORTAUDIO_CFLAGS "")
+	BB_Save_MakeVar(PORTAUDIO_LIBS "")
+	BB_Save_Undef(HAVE_PORTAUDIO)
+endmacro()
+EOF
+}
+
 sub DISABLE_portaudio
 {
 	MkDefine('HAVE_PORTAUDIO', 'no') unless $TestFailed;
@@ -103,6 +149,7 @@ BEGIN
 	$DESCR{$n}   = 'PortAudio2';
 	$URL{$n}     = 'http://www.portaudio.com';
 	$TESTS{$n}   = \&TEST_portaudio;
+	$CMAKE{$n}   = \&CMAKE_portaudio;
 	$DISABLE{$n} = \&DISABLE_portaudio;
 	$DEPS{$n}    = 'cc,pthreads';
 	$SAVED{$n}   = 'PORTAUDIO_CFLAGS PORTAUDIO_LIBS PORTAUDIO_PC';

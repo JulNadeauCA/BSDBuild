@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2001-2023 Julien Nadeau Carriere <vedge@csoft.net>
+# Copyright (c) 2001-2024 Julien Nadeau Carriere <vedge@csoft.net>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -358,7 +358,7 @@ lib${LIB}.so: ${SRCS_GENERATED} _lib_objs ${OBJS}
 	        _libout="lib${LIB}.${LIB_CURRENT}.dylib"; \
 	        _libnames="lib${LIB}.dylib"; \
 		;; \
-	    *-mingw*) \
+	    *-mingw* | *-cygwin*) \
 	        _libout="${LIB}.dll"; \
 	        _libnames=""; \
 		;; \
@@ -385,7 +385,7 @@ lib${LIB}.so: ${SRCS_GENERATED} _lib_objs ${OBJS}
 	        echo "${CC} -shared -o $$_libout -Wl,-rpath,${LIBDIR} ${LDFLAGS} -dynamiclib -install_name lib${LIB}.dylib $$_objs ${LIBS}"; \
 	        ${CC} -shared -o $$_libout -Wl,-rpath ${LIBDIR} ${LDFLAGS} -dynamiclib -install_name lib${LIB}.dylib $$_objs ${LIBS}; \
 	        ;; \
-	    *-mingw*) \
+	    *-mingw* | *-cygwin*) \
 	        echo "${CC} -shared -o $$_libout -Wl,--out-implib,lib${LIB}_dll.lib -Wl,-rpath ${LIBDIR} ${LDFLAGS} $$_objs ${LIBS}"; \
 	        ${CC} -shared -o $$_libout -Wl,--out-implib,lib${LIB}_dll.lib -Wl,-rpath ${LIBDIR} ${LDFLAGS} $$_objs ${LIBS}; \
 	        ;; \
@@ -559,7 +559,7 @@ clean-lib:
 	   	    rm -f lib${LIB}.a lib${LIB}.${LIB_CURRENT}.dylib \
 		          lib${LIB}.dylib lib${LIB}.la; \
 		    ;; \
-		*-mingw*) \
+		*-mingw* | *-cygwin*) \
 	   	    echo "rm -f lib${LIB}.a lib${LIB}_dll.lib ${LIB}.dll lib${LIB}.la"; \
 	   	    rm -f lib${LIB}.a lib${LIB}_dll.lib ${LIB}.dll lib${LIB}.la; \
 		    ;; \
@@ -661,7 +661,7 @@ install-lib: check-libtool
 			echo "(cd ${LIBDIR} && ${LN} -fs $$_libout lib${LIB}.dylib)"; \
 			(cd ${DESTDIR}${LIBDIR} && ${SUDO} ${LN} -fs $$_libout lib${LIB}.dylib); \
 		    	;; \
-		    *-mingw*) \
+		    *-mingw* | *-cygwin*) \
 		        _libout="${LIB}.dll"; \
 	    	        echo "${INSTALL_PROG} $$_libout ${BINDIR}"; \
 	                ${SUDO} ${INSTALL_PROG} $$_libout ${DESTDIR}${BINDIR}; \
@@ -811,7 +811,7 @@ deinstall-lib: check-libtool
 	                _libout="lib${LIB}.${LIB_CURRENT}.dylib"; \
 	                _libnames="$$_libout lib${LIB}.dylib"; \
 		        ;; \
-	            *-mingw*) \
+	            *-mingw* | *-cygwin*) \
 	                _libout="${LIB}.dll"; \
 	                _libnames="$$_libout"; \
 		        ;; \

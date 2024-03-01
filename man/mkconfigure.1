@@ -1,5 +1,5 @@
 .\"
-.\" Copyright (c) 2007-2023 Julien Nadeau Carriere <vedge@csoft.net>
+.\" Copyright (c) 2007-2024 Julien Nadeau Carriere <vedge@csoft.net>
 .\" All rights reserved.
 .\"
 .\" Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,9 @@
 .Nd Compile BSDBuild configure scripts
 .Sh SYNOPSIS
 .Nm
+.Op Fl \-verbose
+.Op Fl \-output-lua Ns = Ns Ar file
+.Op Fl \-output-cmake Ns = Ns Ar file
 .Sh DESCRIPTION
 The
 .Nm
@@ -43,8 +46,28 @@ The
 source may include valid Bourne shell script, along with special directives
 interpreted by
 .Nm .
+.Pp
 Directives are case-insensitive.
 Long lines can be wrapped with a terminating \\ character.
+.Sh COMMAND-LINE OPTIONS
+The
+.Fl \-verbose
+option prints extra debugging output during the generation of the script.
+.Pp
+The
+.Fl \-output-lua
+option arranges for the configure script to write definitions in the Lua language
+to the given output
+.Fa file .
+Lua definitions are used when generating project files with the Premake method
+(deprecated).
+.Pp
+The
+.Fl \-output-cmake
+option arranges for a Cmake macro package to be generated under the given output
+.Fa file .
+The generate Cmake macro package will include macros named "Check_Foo" and
+"Disable_Foo", for every BSDBuild test which supports Cmake.
 .Sh INFORMATION DIRECTIVES
 The following directives provide information about the package:
 .Bl -tag -width "register_env_var(name, desc) "

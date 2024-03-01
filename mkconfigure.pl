@@ -756,7 +756,12 @@ sub c_define
 	MkDefine('CXXFLAGS', '$CXXFLAGS -D'.$def);
 	MkSave('CFLAGS');
 	MkSave('CXXFLAGS');
-	print {$LUA} "table.insert(package.defines,{\"$def\"})\n";
+	
+	if ($OutputLUA) {
+		print << "EOF";
+echo "table.insert(package.defines,{"$def"})" >>$OutputLUA
+EOF
+	}
 	return (0);
 }
 
@@ -779,7 +784,12 @@ sub c_incdir
 		$dir =~ s/\$SRC/\.\./g;
 		$dir =~ s/\$BLD/\.\./g;
 	}
-	print {$LUA} "table.insert(package.includepaths,{\"$dir\"})\n";
+
+	if ($OutputLUA) {
+		print << "EOF";
+echo "table.insert(package.includepaths,{"$dir"})" >>$OutputLUA
+EOF
+	}
 	return (0);
 }
 
@@ -839,33 +849,47 @@ sub c_libdir
 	MkSave('LIBS');
 
 	$dir =~ s/\$SRC/\./g;
-	print {$LUA} "table.insert(package.libpaths,{\"$dir\"})\n";
+	if ($OutputLUA) {
+		print << "EOF";
+echo "table.insert(package.libpaths,{"$dir"})" >>$OutputLUA
+EOF
+	}
 	return (0);
 }
 
 # Extra compiler warnings
 sub c_extra_warnings
 {
-	print {$LUA} 'table.insert(package.buildflags,{"extra-warnings"})'."\n";
+	if ($OutputLUA) {
+		print << "EOF";
+echo 'table.insert(package.buildflags,{"extra-warnings"})' >>$OutputLUA
+EOF
+	}
 	return (0);
 }
 
 # Fatal warnings
 sub c_fatal_warnings
 {
-	print {$LUA} 'table.insert(package.buildflags,{"extra-warnings"})'."\n";
+	if ($OutputLUA) {
+		print << "EOF";
+echo 'table.insert(package.buildflags,{"extra-warnings"})' >>$OutputLUA
+EOF
+	}
 	return (0);
 }
 
 # Disable _CRT_SECURE warnings (win32)
 sub c_no_secure_warnings
 {
-	print {$LUA} << "EOF";
-if (windows) then
-	table.insert(package.defines,{"_CRT_SECURE_NO_WARNINGS"})
-	table.insert(package.defines,{"_CRT_SECURE_NO_DEPRECATE"})
-end
+	if ($OutputLUA) {
+		print << "EOF";
+echo 'if (windows) then' >>$OutputLUA
+echo ' table.insert(package.defines,{"_CRT_SECURE_NO_WARNINGS"})' >>$OutputLUA
+echo ' table.insert(package.defines,{"_CRT_SECURE_NO_DEPRECATE"})' >>$OutputLUA
+echo 'end' >>$OutputLUA
 EOF
+	}
 	return (0);
 }
 
@@ -1308,22 +1332,6 @@ print << 'EOF';
 #
 EOF
 
-open($LUA, ">$OutputLUA");
-print { $LUA } << 'EOF';
--- Public domain
---
--- Do not edit!
--- This file was generated from configure.in by BSDBuild %VERSION%.
---
--- To regenerate this file, get the latest BSDBuild release from
--- https://bsdbuild.hypertriton.com/, and use the command:
---
---    $ mkconfigure < configure.in > configure
---
-hdefs = {}
-mdefs = {}
-EOF
-
 if ($OutputCMAKE) {
 	my $MODULEDIR = '%PREFIX%/share/bsdbuild/BSDBuild';
 
@@ -1541,6 +1549,15 @@ do
 	esac
 done
 EOF
+
+if($OutputLUA) {
+	print << "EOF";
+echo '-- Do not edit!' >$OutputLUA
+echo '-- This file was generated from configure.in by BSDBuild %VERSION%' >>$OutputLUA
+echo 'hdefs = {}' >>$OutputLUA
+echo 'mdefs = {}' >>$OutputLUA
+EOF
+}
 
 print << 'EOF';
 if [ -e "/bin/echo" ]; then

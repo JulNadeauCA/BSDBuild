@@ -143,7 +143,7 @@ BEGIN
 	$DESCR{$n}   = 'a C++ compiler';
 	$TESTS{$n}   = \&TEST_cxx;
 	$DISABLE{$n} = \&DISABLE_cxx;
-	$DEPS{$n}    = 'cc';
+	$DEPS{$n}    = '';
 	$SAVED{$n}   = 'HAVE_CXX HAVE_CXX_WARNINGS CXX CXXFLAGS EXECSUFFIX';
 	
 	RegisterEnvVar('CXX',      'C++ compiler command');

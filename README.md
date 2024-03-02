@@ -1,4 +1,4 @@
-![BSDBuild](mk/bsdbuild-logo.png)
+![BSDBuild](bsdbuild-logo.png)
 
 ### What is it?
 

@@ -39,18 +39,6 @@ sub DISABLE_getenv
 	MkSaveUndef('HAVE_GETENV');
 }
 
-sub EMUL_getenv
-{
-	my ($os, $osrel, $machine) = @_;
-
-	if ($os =~ /^windows/) {
-		MkEmulWindows('GETENV', '');
-	} else {
-		MkEmulUnavail('GETENV');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'getenv';
@@ -59,7 +47,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_getenv;
 	$CMAKE{$n}   = \&CMAKE_getenv;
 	$DISABLE{$n} = \&DISABLE_getenv;
-	$EMUL{$n}    = \&EMUL_getenv;
 	$DEPS{$n}    = 'cc';
 }
 ;1

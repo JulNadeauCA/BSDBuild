@@ -95,18 +95,6 @@ sub DISABLE_freetype
 	MkSaveUndef('HAVE_FREETYPE');
 }
 
-sub EMUL_freetype
-{
-	my ($os, $osrel, $machine) = @_;
-
-	if ($os =~ /^windows/) {
-		MkEmulWindows('FREETYPE', 'freetype');
-	} else {
-		MkEmulUnavail('FREETYPE');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'freetype';
@@ -116,7 +104,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_freetype;
 	$CMAKE{$n}   = \&CMAKE_freetype;
 	$DISABLE{$n} = \&DISABLE_freetype;
-	$EMUL{$n}    = \&EMUL_freetype;
 	$DEPS{$n}    = 'cc';
 	$SAVED{$n}   = 'FREETYPE_CFLAGS FREETYPE_LIBS FREETYPE_PC';
 }

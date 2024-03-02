@@ -50,14 +50,16 @@ my %Fns = (
 	'ada_option'		=> \&ada_option,
 	'ada_bflag'		=> \&ada_bflag,
 	'c_define'		=> \&c_define,
+	'cxx_define'		=> \&cxx_define,
 	'c_incdir'		=> \&c_incdir,
+	'cxx_incdir'		=> \&cxx_incdir,
 	'c_incprep'		=> \&c_incprep,
 	'c_libdir'		=> \&c_libdir,
 	'c_option'		=> \&c_option,
+	'cxx_option'		=> \&cxx_option,
 	'ld_option'		=> \&ld_option,
-	'c_extra_warnings'	=> \&c_extra_warnings,
-	'c_fatal_warnings'	=> \&c_fatal_warnings,
-	'c_no_secure_warnings'	=> \&c_no_secure_warnings,
+	'c_extra_warnings'	=> \&c_extra_warnings,		# Deprecated
+	'c_no_secure_warnings'	=> \&c_no_secure_warnings,	# Deprecated
 	'c_incdir_config'	=> \&c_incdir_config,
 	'c_include_config'	=> \&c_include_config,
 	'config_cache'		=> \&config_cache,
@@ -66,10 +68,18 @@ my %Fns = (
 	'pkgconfig_mod'		=> \&pkgconfig_module,
 	'config_guess'		=> \&config_guess,
 	'success_fn'		=> \&success_fn,
-	'check_header'		=> \&check_header,
-	'check_header_opts'	=> \&check_header_opts,
-	'check_func'		=> \&check_func,
-	'check_func_opts'	=> \&check_func_opts,
+	'check_header'		=> \&check_c_header,
+	'check_header_opts'	=> \&check_c_header_opts,
+	'check_c_header'	=> \&check_c_header,
+	'check_c_header_opts'	=> \&check_c_header_opts,
+	'check_cxx_header'	=> \&check_cxx_header,
+	'check_cxx_header_opts'	=> \&check_cxx_header_opts,
+	'check_func'		=> \&check_c_func,
+	'check_func_opts'	=> \&check_c_func_opts,
+	'check_c_func'		=> \&check_c_func,
+	'check_c_func_opts'	=> \&check_c_func_opts,
+	'check_cxx_func'	=> \&check_cxx_func,
+	'check_cxx_func_opts'	=> \&check_cxx_func_opts,
 	'check_perl_module'	=> \&check_perl_module,
 	'require_perl_module'	=> \&require_perl_module,
 	'default_dir'		=> \&default_dir,
@@ -79,7 +89,6 @@ $INSTALLDIR = '%PREFIX%/share/bsdbuild';
 my @Help = ();
 my $ConfigGuess = 'mk/config.guess';
 my @TestDirs = ("$INSTALLDIR/BSDBuild");
-my %EmulDepsTested = ();
 my $SuccessFn = '';
 my $ParserError = '';
 my $lineNo = 1;
@@ -218,7 +227,9 @@ macro(BB_Detect_Platform)
 endmacro()
 EOF
 
-# Specify software package name
+#
+# Specify the name of the project.
+#
 sub package
 {
 	my ($val) = @_;
@@ -236,7 +247,9 @@ sub package
 	return (0);
 }
 
-# Specify software package version
+#
+# Specify the version of the project.
+#
 sub version
 {
 	my ($val) = @_;
@@ -251,7 +264,9 @@ sub version
 	return (0);
 }
 
-# Specify software package release name
+#
+# Specify a release codename for the project.
+#
 sub release
 {
 	my ($val) = @_;
@@ -266,7 +281,9 @@ sub release
 	return (0);
 }
 
+#
 # Enable/disable support for the ./configure --cache option.
+#
 sub config_cache
 {
 	my ($val) = @_;
@@ -282,7 +299,9 @@ sub config_cache
 	return (0);
 }
 
-# Set function to call when configure succeeds.
+#
+# Set a function to call when configure succeeds.
+#
 sub success_fn
 {
 	my ($val) = @_;
@@ -290,7 +309,9 @@ sub success_fn
 	return (0);
 }
 
+#
 # Directives used in first pass; no-ops as script directives
+#
 sub register { }
 sub register_env_var { }
 sub register_section { }
@@ -298,8 +319,10 @@ sub config_guess { }
 sub c_incdir_config { }
 sub c_include_config { }
 
-# Check for a header file
-sub check_header
+#
+# Check for the existence of a C header file.
+#
+sub check_c_header
 {
 	foreach my $hdrFile (@_) {
 		$hdrDef = uc($hdrFile);
@@ -315,8 +338,29 @@ EOF
 	return (0);
 }
 
-# Check for a header file, with specific CFLAGS/LIBS.
-sub check_header_opts
+#
+# Check for the existence of a C++ header file.
+#
+sub check_cxx_header
+{
+	foreach my $hdrFile (@_) {
+		$hdrDef = uc($hdrFile);
+		$hdrDef =~ s/[\\\/\.]/_/g;
+		$hdrDef = 'HAVE_'.$hdrDef;
+
+		MkPrintSN("checking for <$hdrFile> ($hdrDef)...");
+		MkCompileCXX $hdrDef, '', '', << "EOF";
+#include <$hdrFile>
+int main (void) { return 0; }
+EOF
+	}
+	return (0);
+}
+
+#
+# Check for the existence of a C header file (and specify alternate CFLAGS).
+#
+sub check_c_header_opts
 {
 	my $cflags = shift;
 	my $libs = shift;
@@ -335,8 +379,32 @@ EOF
 	return (0);
 }
 
-# Check for a function
-sub check_func
+#
+# Check for the existence of a C++ header file (and specify alternate CXXFLAGS).
+#
+sub check_cxx_header_opts
+{
+	my $cxxflags = shift;
+	my $libs = shift;
+
+	foreach my $hdrFile (@_) {
+		$hdrDef = uc($hdrFile);
+		$hdrDef =~ s/[\\\/\.]/_/g;
+		$hdrDef = 'HAVE_'.$hdrDef;
+
+		MkPrintSN("checking for <$hdrFile>...");
+		MkCompileCXX $hdrDef, $cxxflags, $libs, << "EOF";
+#include <$hdrFile>
+int main (void) { return 0; }
+EOF
+	}
+	return (0);
+}
+
+#
+# Check for the existence of a C function.
+#
+sub check_c_func
 {
 	foreach my $funcList (@_) {
 		$funcDef = uc($funcList);
@@ -351,22 +419,48 @@ sub check_func
 #else
 # include <assert.h>
 #endif
-
 #undef $funcList
-
 #ifdef __cplusplus
 extern "C"
 #endif
-
 char $funcList();
 #if defined __stub_$funcList || defined __stub___$funcList
 choke me
 #endif
-
 int main() {
-    return $funcList();
-    ;
-    return 0;
+	return $funcList();
+}
+EOF
+	}
+	return (0);
+}
+
+#
+# Check for the existence of a C++ function.
+#
+sub check_cxx_func
+{
+	foreach my $funcList (@_) {
+		$funcDef = uc($funcList);
+		$funcDef =~ s/[\\\/\.]/_/g;
+		$funcDef = 'HAVE_'.$funcDef;
+
+		MkPrintSN("checking for $funcList()...");
+		MkDefine('TEST_CXXFLAGS', '-Wall');
+		MkCompileCXX $funcDef, '', '', << "EOF";
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+#undef $funcList
+extern "C"
+char $funcList();
+#if defined __stub_$funcList || defined __stub___$funcList
+choke me
+#endif
+int main() {
+	return $funcList();
 }
 EOF
 	}
@@ -460,8 +554,10 @@ sub default_dir
 	return (0);
 }
 
-# Check for a function with CFLAGS and LIBS
-sub check_func_opts
+#
+# Check for the existence of a C function (with specified CFLAGS and LIBS).
+# 
+sub check_c_func_opts
 {
     	my $cflags = shift;
 	my $libs = shift;
@@ -479,30 +575,60 @@ sub check_func_opts
 #else
 # include <assert.h>
 #endif
-
 #undef $funcList
-
 #ifdef __cplusplus
 extern "C"
 #endif
-
 char $funcList();
 #if defined __stub_$funcList || defined __stub___$funcList
 choke me
 #endif
-
 int main() {
-    return $funcList();
-    ;
-    return 0;
+	return $funcList();
 }
 EOF
 	}
-	
 	return (0);
 }
 
-# Add a directory containing extra test modules.
+#
+# Check for the existence of a C++ function (with specified CXXFLAGS and LIBS).
+# 
+sub check_cxx_func_opts
+{
+    	my $cxxflags = shift;
+	my $libs = shift;
+
+	foreach my $funcList (@_) {
+	    $funcDef = uc($funcList);
+	    $funcDef =~ s/[\\\/\.]/_/g;
+	    $funcDef = 'HAVE_'.$funcDef;
+
+	    MkPrintSN("checking for $funcList()...");
+	    MkDefine('TEST_CXXFLAGS', '-Wall');		# Avoid failing on "conflicting types blah"
+	    MkCompileCXX $funcDef, $cxxflags, $libs, << "EOF";
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+#undef $funcList
+extern "C"
+char $funcList();
+#if defined __stub_$funcList || defined __stub___$funcList
+choke me
+#endif
+int main() {
+	return $funcList();
+}
+EOF
+	}
+	return (0);
+}
+
+#
+# Register a directory containing extra BSDBuild test modules.
+#
 sub test_dir
 {
 	foreach my $dir (@_) {
@@ -548,29 +674,7 @@ sub test
 			}
 		}
 	}
-	my $c;
-	if ($EmulOS) {
-		if (exists($EMUL{$t}) && defined($EMUL{$t})) {
-			if (exists($EMULDEPS{$t})) {
-		 		foreach my $ed (@{$EMULDEPS{$t}}) {
-					if (!exists($EmulDepsTested{$ed})) {
-						test($ed);
-						$EmulDepsTested{$ed} = 1;
-					}
-				}
-			}
-			$c = $EMUL{$t};
-		} else {
-			unless (exists($DISABLE{$t}) && defined($DISABLE{$t})) {
-				$ParserError = $t.': missing EMUL/DISABLE hook';
-				return (-1);
-			}
-			$c = $DISABLE{$t};
-		}
-		@args = ($EmulOS, $EmulOSRel, '');
-	} else {
-		$c = $TESTS{$t};
-	}
+	my $c = $TESTS{$t};
 	if ($c) {
 		MkPrintSN("checking for $DESCR{$t}...");
 		if (@args) {
@@ -583,9 +687,6 @@ sub test
 			MkSave(split(' ', $SAVED{$t}));
 		}
 		MkComment("END $t");
-		if ($EmulOS) {
-			MkPrintSN("ok\n");
-		}
 	} else {
 		MkFail("$t: not in TESTS table");
 	}
@@ -602,10 +703,6 @@ sub test_require
 
 	test(@_);
 	
-	if ($EmulOS) {
-		return (0);
-	}
-
 	MkIf "\"\$\{$def\}\" != \"yes\"";
 		MkPrintS('* ');
 		if ($ver) {
@@ -747,16 +844,14 @@ sub hundef_if
 	return (0);
 }
 
-# C/C++ define
+# C preprocessor definition
 sub c_define
 {
 	my $def = shift;
 
 	MkDefine('CFLAGS', '$CFLAGS -D'.$def);
-	MkDefine('CXXFLAGS', '$CXXFLAGS -D'.$def);
 	MkSave('CFLAGS');
-	MkSave('CXXFLAGS');
-	
+
 	if ($OutputLUA) {
 		print << "EOF";
 echo "table.insert(package.defines,{"$def"})" >>$OutputLUA
@@ -765,7 +860,23 @@ EOF
 	return (0);
 }
 
-# C/C++ include directory
+# C++ preprocessor definition
+sub cxx_define
+{
+	my $def = shift;
+
+	MkDefine('CXXFLAGS', '$CXXFLAGS -D'.$def);
+	MkSave('CXXFLAGS');
+
+	if ($OutputLUA) {
+		print << "EOF";
+echo "table.insert(package.defines,{"$def"})" >>$OutputLUA
+EOF
+	}
+	return (0);
+}
+
+# C include directory
 sub c_incdir
 {
 	my $dir = shift;
@@ -773,17 +884,25 @@ sub c_incdir
 
 #	if ($dir =~ /^\$/) { $qdir = '\"'.$dir.'\"'; }
 	MkDefine('CFLAGS', '$CFLAGS -I'.$qdir);
-	MkDefine('CXXFLAGS', '$CXXFLAGS -I'.$qdir);
 	MkSave('CFLAGS');
-	MkSave('CXXFLAGS');
 
-	if ($EmulEnv eq 'vs2005') {
-		$dir =~ s/\$SRC/\$\(SolutionDir\)/g;
-		$dir =~ s/\$BLD/\$\(SolutionDir\)/g;
-	} else {
-		$dir =~ s/\$SRC/\.\./g;
-		$dir =~ s/\$BLD/\.\./g;
+	if ($OutputLUA) {
+		print << "EOF";
+echo "table.insert(package.includepaths,{"$dir"})" >>$OutputLUA
+EOF
 	}
+	return (0);
+}
+
+# C++ include directory
+sub cxx_incdir
+{
+	my $dir = shift;
+	my $qdir = $dir;
+
+#	if ($dir =~ /^\$/) { $qdir = '\"'.$dir.'\"'; }
+	MkDefine('CXXFLAGS', '$CXXFLAGS -I'.$qdir);
+	MkSave('CXXFLAGS');
 
 	if ($OutputLUA) {
 		print << "EOF";
@@ -868,17 +987,6 @@ EOF
 	return (0);
 }
 
-# Fatal warnings
-sub c_fatal_warnings
-{
-	if ($OutputLUA) {
-		print << "EOF";
-echo 'table.insert(package.buildflags,{"extra-warnings"})' >>$OutputLUA
-EOF
-	}
-	return (0);
-}
-
 # Disable _CRT_SECURE warnings (win32)
 sub c_no_secure_warnings
 {
@@ -919,8 +1027,16 @@ sub c_option
 	my $opt = shift;
 
 	MkDefine('CFLAGS', '$CFLAGS '.$opt);
-	MkDefine('CXXFLAGS', '$CXXFLAGS '.$opt);
 	MkSave('CFLAGS');
+	return (0);
+}
+
+# C++ compiler option
+sub cxx_option
+{
+	my $opt = shift;
+
+	MkDefine('CXXFLAGS', '$CXXFLAGS '.$opt);
 	MkSave('CXXFLAGS');
 	return (0);
 }
@@ -1313,9 +1429,6 @@ EOF
 
 my $res = GetOptions(
 	"verbose" =>		\$Verbose,
-	"emul-os=s" =>		\$EmulOS,
-	"emul-osrel=s" =>	\$EmulOSRel,
-	"emul-env=s" =>		\$EmulEnv,
 	"output-lua=s" =>	\$OutputLUA,
 	"output-cmake=s" =>	\$OutputCMAKE
 );

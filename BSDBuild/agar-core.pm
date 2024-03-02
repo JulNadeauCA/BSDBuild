@@ -58,18 +58,6 @@ sub DISABLE_agar_core
 	MkSaveUndef('HAVE_AGAR_CORE');
 }
 
-sub EMUL_agar_core
-{
-	my ($os, $osrel, $machine) = @_;
-
-	if ($os =~ /^windows/) {
-		MkEmulWindows('AGAR_CORE', 'ag_core');
-	} else {
-		MkEmulUnavail('AGAR_CORE');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'agar-core';
@@ -78,7 +66,6 @@ BEGIN
 	$URL{$n}     = 'https://libagar.org';
 	$TESTS{$n}   = \&TEST_agar_core;
 	$DISABLE{$n} = \&DISABLE_agar_core;
-	$EMUL{$n}    = \&EMUL_agar_core;
 	$DEPS{$n}    = 'cc';
 	$SAVED{$n}   = 'AGAR_CORE_CFLAGS AGAR_CORE_LIBS';
 }

@@ -44,19 +44,6 @@ sub DISABLE_limits_h
 	MkSaveUndef('_MK_HAVE_LIMITS_H');
 }
 
-sub EMUL_limits_h
-{
-	my ($os, $osrel, $machine) = @_;
-	
-	if ($os =~ /^windows/) {
-		MkDefine('_MK_HAVE_LIMITS_H', 'yes');
-		MkSaveDefine('_MK_HAVE_LIMITS_H');
-	} else {
-		MkSaveUndef('_MK_HAVE_LIMITS_H');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'limits_h';
@@ -65,7 +52,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_limits_h;
 	$CMAKE{$n}   = \&CMAKE_limits_h;
 	$DISABLE{$n} = \&DISABLE_limits_h;
-	$EMUL{$n}    = \&EMUL_limits_h;
 	$DEPS{$n}    = 'cc';
 }
 ;1

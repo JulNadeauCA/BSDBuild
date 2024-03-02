@@ -45,18 +45,6 @@ sub DISABLE_agar_math
 	MkSaveUndef('HAVE_AGAR_MATH');
 }
 
-sub EMUL_agar_math
-{
-	my ($os, $osrel, $machine) = @_;
-
-	if ($os =~ /^windows/) {
-		MkEmulWindows('AGAR_MATH', 'ag_math');
-	} else {
-		MkEmulUnavail('AGAR_MATH');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'agar-math';
@@ -65,7 +53,6 @@ BEGIN
 	$URL{$n}     = 'http://libagar.org';
 	$TESTS{$n}   = \&TEST_agar_math;
 	$DISABLE{$n} = \&DISABLE_agar_math;
-	$EMUL{$n}    = \&EMUL_agar_math;
 	$DEPS{$n}    = 'cc,agar';
 	$SAVED{$n}   = 'AGAR_MATH_CFLAGS AGAR_MATH_LIBS';
 }

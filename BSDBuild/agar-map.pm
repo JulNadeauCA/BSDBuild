@@ -46,18 +46,6 @@ sub DISABLE_agar_map
 	MkSaveUndef('HAVE_AGAR_MAP');
 }
 
-sub EMUL_agar_map
-{
-	my ($os, $osrel, $machine) = @_;
-
-	if ($os =~ /^windows/) {
-		MkEmulWindows('AGAR_MAP', 'ag_map');
-	} else {
-		MkEmulUnavail('AGAR_MAP');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'agar-map';
@@ -66,7 +54,6 @@ BEGIN
 	$URL{$n}     = 'http://libagar.org';
 	$TESTS{$n}   = \&TEST_agar_map;
 	$DISABLE{$n} = \&DISABLE_agar_map;
-	$EMUL{$n}    = \&EMUL_agar_map;
 	$DEPS{$n}    = 'cc,agar';
 	$SAVED{$n}   = 'AGAR_MAP_CFLAGS AGAR_MAP_LIBS';
 }

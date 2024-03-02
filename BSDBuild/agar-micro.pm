@@ -44,18 +44,6 @@ sub DISABLE_agar_micro
 	MkSaveUndef('HAVE_AGAR_MICRO');
 }
 
-sub EMUL_agar_micro
-{
-	my ($os, $osrel, $machine) = @_;
-
-	if ($os =~ /^windows/) {
-		MkEmulWindows('AGAR_MICRO', 'ag_core ag_micro_gui');
-	} else {
-		MkEmulUnavail('AGAR_MICRO');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'agar-micro';
@@ -64,7 +52,6 @@ BEGIN
 	$URL{$n}     = 'http://libagar.org';
 	$TESTS{$n}   = \&TEST_agar_micro;
 	$DISABLE{$n} = \&DISABLE_agar_micro;
-	$EMUL{$n}    = \&EMUL_agar_micro;
 	$DEPS{$n}    = 'cc';
 	$SAVED{$n}   = 'AGAR_MICRO_CFLAGS AGAR_MICRO_LIBS';
 }

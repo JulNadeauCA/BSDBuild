@@ -427,24 +427,6 @@ sub DISABLE_pthreads
 	            'HAVE_PTHREAD_T_POINTER');
 }
 
-sub EMUL_pthreads
-{
-	my ($os, $osrel, $machine) = @_;
-
-	if ($os =~ /^windows/) {
-		MkEmulWindows('PTHREADS', 'pthreadVC2');
-		MkEmulWindows('PTHREADS_XOPEN', 'pthreadVC2');
-		MkEmulWindowsSYS('PTHREAD_MUTEX_RECURSIVE');
-		MkEmulUnavailSYS('PTHREAD_MUTEX_RECURSIVE_NP');
-
-		MkDefine('PTHREADS_XOPEN_CFLAGS', '-U_XOPEN_SOURCE '.
-		                                  '-D_XOPEN_SOURCE=600');
-	} else {
-		MkDisableNotFound('pthreads');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'pthreads';
@@ -453,7 +435,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_pthreads;
 	$CMAKE{$n}   = \&CMAKE_pthreads;
 	$DISABLE{$n} = \&DISABLE_pthreads;
-	$EMUL{$n}    = \&EMUL_pthreads;
 	$DEPS{$n}    = 'cc';
 	$SAVED{$n}   = 'CFLAGS PTHREADS_CFLAGS PTHREADS_LIBS ' .
 	               'PTHREADS_XOPEN_CFLAGS PTHREADS_XOPEN_LIBS';

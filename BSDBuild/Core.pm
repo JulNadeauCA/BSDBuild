@@ -28,9 +28,6 @@ our $OutputHeaderFile = undef;		# Generate C definitions (common header file)
 our $OutputHeaderDir = undef;		# Generate C definitions (directory of headers)
 
 our $CMAKE = undef;			# Cmake output filehandle
-our $EmulOS = undef;
-our $EmulOSRel = undef;
-our $EmulEnv = undef;
 
 our %MkDefinesToSave = ();
 our $Cache = 0;
@@ -39,8 +36,6 @@ our %TESTS = ();
 our %DISABLE = ();
 our %DESCR = ();
 our %URL = ();
-our %EMUL = ();
-our %EMULDEPS = ();
 our %HELPENV = ();
 our %SAVED = ();
 
@@ -1228,62 +1223,6 @@ EOF
 	MkCleanup('$testdir/conftest$$.pl');
 }
 
-# Specify module availability under Windows platforms in Emul()
-sub MkEmulWindows
-{
-	my $module = shift;
-	my $libs = shift;
-
-	MkDefine("HAVE_${module}", "yes");
-	MkSaveDefine("HAVE_${module}");
-
-	MkDefine("${module}_CFLAGS", "");
-	MkDefine("${module}_LIBS", "$libs");
-	MkSave("${module}_CFLAGS", "${module}_LIBS");
-}
-
-# Specify module availability under Windows platforms in Emul()
-# No CFLAGS/LIBS are defined.
-sub MkEmulWindowsSYS
-{
-	my $module = shift;
-
-	if ($module =~ /^_MK/) {
-		MkDefine($module, "yes");
-		MkSaveDefine($module);
-	} else {
-		MkDefine("HAVE_${module}", "yes");
-		MkSaveDefine("HAVE_${module}");
-	}
-}
-
-# Specify module unavailability in Emul().
-sub MkEmulUnavail
-{
-	foreach my $module (@_) {
-		MkDefine("HAVE_${module}", "no");
-		MkSaveUndef("HAVE_${module}");
-
-		MkDefine("${module}_CFLAGS", "");
-		MkDefine("${module}_LIBS", "");
-		MkSave("${module}_CFLAGS", "${module}_LIBS");
-	}
-}
-
-# Specify module unavailability in Emul(), without CFLAGS/LIBS.
-sub MkEmulUnavailSYS
-{
-	foreach my $module (@_) {
-		if ($module =~ /^_/) {
-			MkDefine($module, "no");
-			MkSaveUndef($module);
-		} else {
-			MkDefine("HAVE_${module}", "no");
-			MkSaveUndef("HAVE_${module}");
-		}
-	}
-}
-
 sub RegisterEnvVar
 {
 	my ($var, $desc) = @_;
@@ -1326,6 +1265,6 @@ BEGIN
     $^W = 0;
 
     @ISA = qw(Exporter);
-    @EXPORT = qw($Quiet $Cache $OutputLUA $OutputHeaderFile $OutputHeaderDir $EmulOS $EmulOSRel $EmulEnv $TestFailed %TESTS %DISABLE %DESCR %URL %HELPENV %SAVED MkComment MkCache MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFail MkCleanup MkRun TryCompile MkCompileAda MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsAda TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSet MkSetS MkSetExec MkSetTrue MkSetFalse MkPushIFS MkPopIFS MkFor MkDone MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfExecutable MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSave MkSave_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkLog MkPrint MkPrintN MkPrintS MkPrintSN MkIfFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion MkEmulWindows MkEmulWindowsSYS MkEmulUnavail MkEmulUnavailSYS RegisterEnvVar MkDisableFailed MkDisableNotFound MkCodeCMAKE);
+    @EXPORT = qw($Quiet $Cache $OutputLUA $OutputHeaderFile $OutputHeaderDir $TestFailed %TESTS %DISABLE %DESCR %URL %HELPENV %SAVED MkComment MkCache MkExecOutput MkExecOutputPfx MkExecPkgConfig MkExecOutputUnique MkFail MkCleanup MkRun TryCompile MkCompileAda MkCompileC MkCompileOBJC MkCompileCXX MkCompileAndRunC MkCompileAndRunCXX TryCompileFlagsAda TryCompileFlagsC TryCompileFlagsCXX Log MkDefine MkSet MkSetS MkSetExec MkSetTrue MkSetFalse MkPushIFS MkPopIFS MkFor MkDone MkAppend MkBreak MkIf MkIfCmp MkIfEQ MkIfNE MkIfTrue MkIfFalse MkIfTest MkIfExists MkIfExecutable MkIfFile MkIfDir MkCaseIn MkEsac MkCaseBegin MkCaseEnd MkElif MkElse MkEndif MkSave MkSave_Commit MkSaveDefine MkSaveDefineUnquoted MkSaveUndef MkLog MkPrint MkPrintN MkPrintS MkPrintSN MkIfFound PmComment PmIf PmEndif PmIfHDefined PmDefineBool PmDefineString PmIncludePath PmLibPath PmBuildFlag PmLink DetectHeaderC BeginTestHeaders EndTestHeaders MkTestVersion RegisterEnvVar MkDisableFailed MkDisableNotFound MkCodeCMAKE);
 }
 ;1

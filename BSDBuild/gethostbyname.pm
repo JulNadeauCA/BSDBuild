@@ -24,18 +24,6 @@ sub DISABLE_gethostbyname
 	MkSaveUndef('HAVE_GETHOSTBYNAME');
 }
 
-sub EMUL_gethostbyname
-{
-	my ($os, $osrel, $machine) = @_;
-	
-	if ($os =~ /^windows/) {
-		MkEmulWindows('GETHOSTBYNAME', 'Winsock');
-	} else {
-		MkEmulUnavail('GETHOSTBYNAME');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'gethostbyname';
@@ -43,7 +31,6 @@ BEGIN
 	$DESCR{$n}   = 'gethostbyname()';
 	$TESTS{$n}   = \&TEST_gethostbyname;
 	$DISABLE{$n} = \&DISABLE_gethostbyname;
-	$EMUL{$n}    = \&EMUL_gethostbyname;
 	$DEPS{$n}    = 'cc';
 }
 ;1

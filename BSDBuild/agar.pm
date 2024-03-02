@@ -218,18 +218,6 @@ sub DISABLE_agar
 	MkSaveUndef('HAVE_AGAR');
 }
 
-sub EMUL_agar
-{
-	my ($os, $osrel, $machine) = @_;
-
-	if ($os =~ /^windows/) {
-		MkEmulWindows('AGAR', 'ag_core ag_gui');
-	} else {
-		MkEmulUnavail('AGAR');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'agar';
@@ -239,12 +227,7 @@ BEGIN
 	$TESTS{$n}   = \&TEST_agar;
 	$CMAKE{$n}   = \&CMAKE_agar;
 	$DISABLE{$n} = \&DISABLE_agar;
-	$EMUL{$n}    = \&EMUL_agar;
 	$DEPS{$n}    = 'cc';
 	$SAVED{$n}   = 'AGAR_CFLAGS AGAR_LIBS';
-
-	@{$EMULDEPS{$n}} = qw(clock_win32 sdl opengl wgl freetype jpeg png
-	                      winsock db4 mysql pthreads iconv gettext
-	                      sndfile portaudio);
 }
 ;1

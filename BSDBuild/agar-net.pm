@@ -49,18 +49,6 @@ sub DISABLE_agar_net
 	MkSaveUndef('HAVE_AGAR_NET');
 }
 
-sub EMUL_agar_net
-{
-	my ($os, $osrel, $machine) = @_;
-
-	if ($os =~ /^windows/) {
-		MkEmulWindows('AGAR_NET', 'ag_net');
-	} else {
-		MkEmulUnavail('AGAR_NET');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'agar-net';
@@ -69,7 +57,6 @@ BEGIN
 	$URL{$n}     = 'http://libagar.org';
 	$TESTS{$n}   = \&TEST_agar_net;
 	$DISABLE{$n} = \&DISABLE_agar_net;
-	$EMUL{$n}    = \&EMUL_agar_net;
 	$DEPS{$n}    = 'cc,agar-core';
 	$SAVED{$n}   = 'AGAR_NET_CFLAGS AGAR_NET_LIBS';
 }

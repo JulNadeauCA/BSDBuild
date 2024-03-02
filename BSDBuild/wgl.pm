@@ -42,18 +42,6 @@ sub DISABLE_wgl
 	MkSaveUndef('HAVE_WGL');
 }
 
-sub EMUL_wgl
-{
-	my ($os, $osrel, $machine) = @_;
-	
-	if ($os =~ /^windows/) {
-		MkEmulWindowsSYS('WGL');
-	} else {
-		MkEmulUnavailSYS('WGL');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'wgl';
@@ -61,7 +49,6 @@ BEGIN
 	$DESCR{$n}   = 'the WGL interface';
 	$TESTS{$n}   = \&TEST_wgl;
 	$DISABLE{$n} = \&DISABLE_wgl;
-	$EMUL{$n}    = \&EMUL_wgl;
 	$DEPS{$n}    = 'cc';
 	$SAVED{$n}   = 'OPENGL_CFLAGS OPENGL_LIBS';
 }

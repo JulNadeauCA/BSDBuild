@@ -82,18 +82,6 @@ sub DISABLE_glu
 	MkSaveUndef('HAVE_GLU');
 }
 
-sub EMUL_glu
-{
-	my ($os, $osrel, $machine) = @_;
-	
-	if ($os =~ /^windows/) {
-		MkEmulWindows('GLU', 'glu32');
-	} else {
-		MkEmulUnavail('GLU');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'glu';
@@ -102,7 +90,6 @@ BEGIN
 	$URL{$n}     = 'http://www.opengl.org';
 	$TESTS{$n}   = \&TEST_glu;
 	$DISABLE{$n} = \&DISABLE_glu;
-	$EMUL{$n}    = \&EMUL_glu;
 	$DEPS{$n}    = 'cc,opengl';
 	$SAVED{$n}   = 'GLU_CFLAGS GLU_LIBS';
 }

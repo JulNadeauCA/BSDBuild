@@ -43,18 +43,6 @@ sub DISABLE_agar_ada
 	MkSaveUndef('HAVE_AGAR_ADA');
 }
 
-sub EMUL_agar_ada
-{
-	my ($os, $osrel, $machine) = @_;
-
-	if ($os =~ /^windows/) {
-		MkEmulWindows('AGAR_ADA', 'ag_ada');
-	} else {
-		MkEmulUnavail('AGAR_ADA');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'agar-ada';
@@ -63,7 +51,6 @@ BEGIN
 	$URL{$n}     = 'http://libagar.org';
 	$TESTS{$n}   = \&TEST_agar_ada;
 	$DISABLE{$n} = \&DISABLE_agar_ada;
-	$EMUL{$n}    = \&EMUL_agar_ada;
 	$DEPS{$n}    = 'cc,agar,agar-ada-core';
 	$SAVED{$n}   = 'AGAR_ADA_CFLAGS AGAR_ADA_LIBS';
 }

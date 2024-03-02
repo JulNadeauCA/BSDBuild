@@ -72,18 +72,6 @@ sub DISABLE_math
 	MkSaveUndef('HAVE_MATH');
 }
 
-sub EMUL_math
-{
-	my ($os, $osrel, $machine) = @_;
-
-	if ($os =~ /^windows/) {
-		MkEmulWindows('MATH', '');
-	} else {
-		MkEmulUnavail('MATH');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'math';
@@ -92,7 +80,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_math;
 	$CMAKE{$n}   = \&CMAKE_math;
 	$DISABLE{$n} = \&DISABLE_math;
-	$EMUL{$n}    = \&EMUL_math;
 	$DEPS{$n}    = 'cc';
 	$SAVED{$n}   = 'MATH_CFLAGS MATH_LIBS';
 }

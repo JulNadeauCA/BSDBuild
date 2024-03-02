@@ -204,7 +204,6 @@ BEGIN
 	$URL{$n}     = 'https://lldb.llvm.org/';
 	$TESTS{$n}   = \&TEST_lldb;
 	$DISABLE{$n} = \&DISABLE_lldb;
-	$EMUL{$n}    = \&EMUL_lldb;
 	$DEPS{$n}    = 'cxx';
 	$SAVED{$n}   = 'LLDB_CFLAGS LLDB_LIBS LLDB_UTILITY_CFLAGS LLDB_UTILITY_LIBS';
 }

@@ -110,25 +110,6 @@ endmacro()
 EOF
 }
 
-sub EMUL_byte_order
-{
-	my ($os, $osrel, $machine) = @_;
-
-	if ($machine =~ /^(aarch64_be|armeb|avr32|earmveb|hppa|m68k|mc68|
-	                   mips32eb|mips64eb|mipseb|openrisc|powerpc|rs6000|
-			   sh3eb|sparc)/x)
-	{
-		MkDefine('_MK_BIG_ENDIAN', 'yes');
-		MkSaveDefine('_MK_BIG_ENDIAN');
-		MkSaveUndef('_MK_LITTLE_ENDIAN');
-	} else {
-		MkDefine('_MK_LITTLE_ENDIAN', 'yes');
-		MkSaveDefine('_MK_LITTLE_ENDIAN');
-		MkSaveUndef('_MK_BIG_ENDIAN');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'byte_order';
@@ -136,7 +117,6 @@ BEGIN
 	$DESCR{$n} = 'byte order';
 	$TESTS{$n} = \&TEST_byte_order;
 	$CMAKE{$n} = \&CMAKE_byte_order;
-	$EMUL{$n}  = \&EMUL_byte_order;
 	$DEPS{$n}  = 'cc';
 }
 ;1

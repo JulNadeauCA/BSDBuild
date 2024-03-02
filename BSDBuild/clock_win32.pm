@@ -74,20 +74,6 @@ sub DISABLE_clock_win32
 	MkSaveUndef('HAVE_CLOCK_WIN32');
 }
 
-sub EMUL_clock_win32
-{
-	my ($os, $osrel, $machine) = @_;
-
-	if ($os =~ /^windows/) {
-		MkEmulWindows('CLOCK_WIN32', 'winmm');
-		MkEmulWindows('CLOCK', 'winmm');
-	} else {
-		MkEmulUnavail('CLOCK_WIN32');
-		MkEmulUnavail('CLOCK');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'clock_win32';
@@ -96,7 +82,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_clock_win32;
 	$CMAKE{$n}   = \&CMAKE_clock_win32;
 	$DISABLE{$n} = \&DISABLE_clock_win32;
-	$EMUL{$n}    = \&EMUL_clock_win32;
 	$DEPS{$n}    = 'cc';
 	$SAVED{$n}   = 'CLOCK_CFLAGS CLOCK_LIBS';
 }

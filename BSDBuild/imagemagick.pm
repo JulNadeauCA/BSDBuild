@@ -67,18 +67,6 @@ sub DISABLE_imagemagick
 	MkSaveUndef('HAVE_IMAGEMAGICK');
 }
 
-sub EMUL_imagemagick
-{
-	my ($os, $osrel, $machine) = @_;
-
-	if ($os =~ /^windows/) {
-		MkEmulWindows('IMAGEMAGICK', 'MagickCore-6 MagickWand-6');
-	} else {
-		MkEmulUnavail('IMAGEMAGICK');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'imagemagick';
@@ -87,7 +75,6 @@ BEGIN
 	$URL{$n}     = 'http://www.ImageMagick.org';
 	$TESTS{$n}   = \&TEST_imagemagick;
 	$DISABLE{$n} = \&DISABLE_imagemagick;
-	$EMUL{$n}    = \&EMUL_imagemagick;
 	$DEPS{$n}    = 'cc';
 	$SAVED{$n}   = 'IMAGEMAGICK_CFLAGS IMAGEMAGICK_LIBS';
 }

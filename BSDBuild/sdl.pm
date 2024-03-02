@@ -169,18 +169,6 @@ sub DISABLE_sdl
 	MkSaveUndef('HAVE_SDL');
 }
 
-sub EMUL_sdl
-{
-	my ($os, $osrel, $machine) = @_;
-
-	if ($os =~ /^windows/) {
-		MkEmulWindows('SDL', 'SDL');
-	} else {
-		MkEmulUnavail('SDL');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'sdl';
@@ -190,7 +178,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_sdl;
 	$CMAKE{$n}   = \&CMAKE_sdl;
 	$DISABLE{$n} = \&DISABLE_sdl;
-	$EMUL{$n}    = \&EMUL_sdl;
 	$DEPS{$n}    = 'cc';
 	$SAVED{$n}   = 'SDL_CFLAGS SDL_LIBS SDL_PC';
 }

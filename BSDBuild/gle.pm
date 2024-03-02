@@ -62,18 +62,6 @@ sub DISABLE_gle
 	MkSaveUndef('HAVE_GLE');
 }
 
-sub EMUL_gle
-{
-	my ($os, $osrel, $machine) = @_;
-	
-	if ($os =~ /^windows/) {
-		MkEmulWindows('GLE', 'gle');
-	} else {
-		MkEmulUnavail('GLE');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'gle';
@@ -82,7 +70,6 @@ BEGIN
 	$URL{$n}     = 'http://linas.org/gle';
 	$TESTS{$n}   = \&TEST_gle;
 	$DISABLE{$n} = \&DISABLE_gle;
-	$EMUL{$n}    = \&EMUL_gle;
 	$DEPS{$n}    = 'cc,opengl,glu';
 	$SAVED{$n}   = 'GLE_CFLAGS GLE_LIBS';
 }

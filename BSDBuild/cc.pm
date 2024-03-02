@@ -518,40 +518,12 @@ sub DISABLE_cc
 	            'HAVE_LD_NO_UNDEFINED', 'HAVE_LD_STATIC_LIBGCC');
 }
 
-sub EMUL_cc
-{
-	MkDefine('PROG_GUI_FLAGS', '');
-	MkDefine('PROG_CLI_FLAGS', '');
-	MkDefine('TEST_CFLAGS', '');
-
-	MkDefine('HAVE_CC', 'yes');
-	MkDefine('HAVE_FLOAT', 'yes');
-
-	MkDefine('HAVE_CC65', 'no');
-	MkDefine('HAVE_EMCC', 'no');
-	MkDefine('HAVE_CC_WARNINGS', 'no');
-	MkDefine('HAVE_LONG_DOUBLE', 'no');
-	MkDefine('HAVE_LONG_LONG', 'no');
-	MkDefine('HAVE_CYGWIN', 'no');
-	MkDefine('HAVE_LD_NO_UNDEFINED', 'no');
-	MkDefine('HAVE_LD_STATIC_LIBGCC', 'no');
-
-	MkSaveDefine('HAVE_CC', 'HAVE_FLOAT');
-
-	MkSaveUndef('HAVE_CC65', 'HAVE_EMCC', 'HAVE_CC_WARNINGS',
-	            'HAVE_LONG_DOUBLE', 'HAVE_LONG_LONG', 'HAVE_CYGWIN',
-		    'HAVE_LD_NO_UNDEFINED', 'HAVE_LD_STATIC_LIBGCC');
-
-	MkSave(split(' ', $SAVED{'cc'}));
-}
-
 BEGIN
 {
 	$DESCR{'cc'}   = 'a C compiler';
 	$TESTS{'cc'}   = \&TEST_cc;
 	$CMAKE{'cc'}   = \&CMAKE_cc;
 	$DISABLE{'cc'} = \&DISABLE_cc;
-	$EMUL{'cc'}    = \&EMUL_cc;
 	$SAVED{'cc'}   = 'HAVE_CC HAVE_CC_WARNINGS HAVE_CC_ASM ' .
 	                 'HAVE_CC_CLANG HAVE_CC_GCC HAVE_CC65 HAVE_EMCC ' .
 			 'CC CC_COMPILE CFLAGS PICFLAGS EXECSUFFIX ' .

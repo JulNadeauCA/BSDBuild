@@ -31,7 +31,6 @@ BEGIN
 	$DESCR{$n}   = 'gethostname()';
 	$TESTS{$n}   = \&TEST_gethostname;
 	$DISABLE{$n} = \&DISABLE_gethostname;
-	$EMUL{$n}    = \&EMUL_gethostname;
 	$DEPS{$n}    = 'cc';
 }
 ;1

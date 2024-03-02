@@ -23,19 +23,6 @@ sub DISABLE_setjmp
 	MkSaveUndef('_MK_HAVE_SETJMP');
 }
 
-sub EMUL_setjmp
-{
-	my ($os, $osrel, $machine) = @_;
-
-	if ($os =~ /^windows/) {
-		MkDefine('_MK_HAVE_SETJMP', 'yes');
-		MkSaveDefine('_MK_HAVE_SETJMP');
-	} else {
-		MkSaveUndef('_MK_HAVE_SETJMP');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'setjmp';
@@ -43,7 +30,6 @@ BEGIN
 	$DESCR{$n}   = 'setjmp() and longjmp()';
 	$TESTS{$n}   = \&TEST_setjmp;
 	$DISABLE{$n} = \&DISABLE_setjmp;
-	$EMUL{$n}    = \&EMUL_setjmp;
 	$DEPS{$n}    = 'cc';
 }
 ;1

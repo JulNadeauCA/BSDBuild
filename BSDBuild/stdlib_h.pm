@@ -37,18 +37,6 @@ sub DISABLE_stdlib_h
 	MkSaveUndef('_MK_HAVE_STDLIB_H');
 }
 
-sub EMUL_stdlib_h
-{
-	my ($os, $osrel, $machine) = @_;
-	
-	if ($os =~ /^windows/) {
-		MkEmulWindowsSYS('_MK_HAVE_STDLIB_H');
-	} else {
-		MkEmulUnavailSYS('_MK_HAVE_STDLIB_H');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'stdlib_h';
@@ -57,7 +45,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_stdlib_h;
 	$CMAKE{$n}   = \&CMAKE_stdlib_h;
 	$DISABLE{$n} = \&DISABLE_stdlib_h;
-	$EMUL{$n}    = \&EMUL_stdlib_h;
 	$DEPS{$n}    = 'cc';
 }
 ;1

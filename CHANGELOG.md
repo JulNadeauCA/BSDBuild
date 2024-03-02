@@ -7,10 +7,11 @@ All notable changes to BSDBuild will be documented in this file. This project ad
 ### Added
 
 - Add support for [cmake](https://cmake.org). Add `--output-cmake` option to [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure) to output macros usable from cmake.
+- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): New C++ specific directives: `cxx_define()`, `cxx_incdir()`, `cxx_option()`, `check_cxx_header()`, `check_cxx_header_opts()`, `check_cxx_func_opts()`.
+- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): New directives: `ada_option()`, `ada_bflag()`, `hdefine_if()`. Export LDFLAGS to Makefile.config. Fix `ld_option()`. New directive `pkgconfig_module()` for integrated pkg-config module generation. Add `$PKGCONFIG_LIBDIR` setting to simplify the installation of .pc modules. Introduce `--keep-conftest` configure option (preserve output test files).
 - [**build.prog.mk**](https://bsdbuild.hypertriton.com/man5/build.prog.mk) & [**build.lib.mk**](https://bsdbuild.hypertriton.com/man5/build.lib.mk): Add support for compiling to wasm (WebAssembly) with Emscripten (https://emscripten.org).
 - [**build.prog.mk**](https://bsdbuild.hypertriton.com/man5/build.prog.mk) & [**build.lib.mk**](https://bsdbuild.hypertriton.com/man5/build.lib.mk): Add support for the Ada language. Introduce `$ADA`, `$ADABIND`, `$ADALINK` and `$LINKER_TYPE`. Introduce `${PROG_BUNDLE}`, `${LIB_BUNDLE}` and `gen-bundle.pl` for generating platform-specific application bundles (currently "OSX" or "iOS").
 - [**build.www.mk**](https://bsdbuild.hypertriton.com/man5/build.www.mk): Introduce the mlproc(1) multilanguage preprocessor. Define `${MLPROC}`, `${MLPROCFLAGS}`, `${MINIFIER}`, `${MINIFIERFLAGS}` and `${MINIFIERFLAGSCSS}`.
-- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): New directives: `Ada_option()`, `Ada_bflag()`, `Hdefine_if()`. Export LDFLAGS to Makefile.config. Fix `Ld_Option()`. New directive `Pkgconfig_Module()` for integrated pkg-config module generation. Add `$PKGCONFIG_LIBDIR` setting to simplify the installation of .pc modules. Introduce `--keep-conftest` configure option (preserve output test files).
 - **ada**: New test for Ada toolchain.
 - **agar-ada**: New test module for Ada bindings to Agar-GUI.
 - **agar-ada-core**: New test module for Ada bindings to Agar-Core.

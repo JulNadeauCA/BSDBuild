@@ -44,18 +44,6 @@ sub DISABLE_agar_sk
 	MkSaveUndef('HAVE_AGAR_SK');
 }
 
-sub EMUL_agar_sk
-{
-	my ($os, $osrel, $machine) = @_;
-
-	if ($os =~ /^windows/) {
-		MkEmulWindows('AGAR_SK', 'ag_sk');
-	} else {
-		MkEmulUnavail('AGAR_SK');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'agar-sk';
@@ -64,10 +52,7 @@ BEGIN
 	$URL{$n}     = 'http://libagar.org';
 	$TESTS{$n}   = \&TEST_agar_sk;
 	$DISABLE{$n} = \&DISABLE_agar_sk;
-	$EMUL{$n}    = \&EMUL_agar_sk;
 	$DEPS{$n}    = 'cc,agar';
 	$SAVED{$n}   = 'AGAR_SK_CFLAGS AGAR_SK_LIBS';
-
-	@{$EMULDEPS{$n}} = qw(agar);
 }
 ;1

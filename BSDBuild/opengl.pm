@@ -298,20 +298,6 @@ sub DISABLE_opengl
 	MkSaveUndef('HAVE_OPENGL', 'HAVE_GLEXT');
 }
 
-sub EMUL_opengl
-{
-	my ($os, $osrel, $machine) = @_;
-	
-	if ($os =~ /^windows/) {
-		MkEmulWindows('OPENGL', 'opengl32');
-		MkDefine('HAVE_GLEXT', 'no');
-		MkSaveUndef('HAVE_GLEXT');
-	} else {
-		MkDisableNotFound('opengl');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'opengl';
@@ -321,7 +307,6 @@ BEGIN
 	$TESTS{$n}   = \&TEST_opengl;
 	$CMAKE{$n}   = \&CMAKE_opengl;
 	$DISABLE{$n} = \&DISABLE_opengl;
-	$EMUL{$n}    = \&EMUL_opengl;
 	$DEPS{$n}    = 'cc';
 	$SAVED{$n}   = 'OPENGL_CFLAGS OPENGL_LIBS OPENGL_PC';
 }

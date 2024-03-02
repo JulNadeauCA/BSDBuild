@@ -62,25 +62,12 @@ sub DISABLE_libircclient
 	MkSaveUndef('HAVE_LIBIRCCLIENT');
 }
 
-sub EMUL_libircclient
-{
-	my ($os, $osrel, $machine) = @_;
-
-	if ($os =~ /^windows/) {
-		MkEmulWindows('LIBIRCCLIENT', 'LIBIRCCLIENT');
-	} else {
-		MkEmulUnavail('LIBIRCCLIENT');
-	}
-	return (1);
-}
-
 BEGIN
 {
 	my $n = 'libircclient';
 
 	$DESCR{$n}   = 'libircclient';
 	$URL{$n}     = 'http://www.ulduzsoft.com/libircclient';
-	$EMUL{$n}    = \&EMUL_libircclient;
 	$TESTS{$n}   = \&TEST_libircclient;
 	$DISABLE{$n} = \&DISABLE_libircclient;
 	$DEPS{$n}    = 'cc';

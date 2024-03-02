@@ -948,6 +948,5 @@ configure-lib:
 .PHONY: _lib_objs _lib_ltobjs lib-tags check-libtool none
 
 include ${TOP}/mk/build.common.mk
-include ${TOP}/mk/build.proj.mk
 include ${TOP}/mk/build.subdir.mk
 include .depend

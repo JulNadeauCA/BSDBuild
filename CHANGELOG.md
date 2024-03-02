@@ -2,7 +2,7 @@
 
 All notable changes to BSDBuild will be documented in this file. This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.2] - 2022-
+## [3.2] - 2024-03-02
 
 ### Added
 
@@ -23,8 +23,10 @@ All notable changes to BSDBuild will be documented in this file. This project ad
 
 ### Removed
 
+- Removed **build.proj.mk** module. Premake is no longer maintained and project file generation can be done with cmake.
 - [**build.man.mk**](https://bsdbuild.hypertriton.com/man5/build.man.mk): Removed support for catman (`.cat*`) file auto-generation.
 - **freesg**: Module replaced by **agar-sg**.
+- Removed **h2mandoc.pl**, **cmpfiles.pl** and **cleanfiles.pl**.
 
 ### Changed
 

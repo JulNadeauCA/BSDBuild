@@ -414,7 +414,7 @@ clean-prog:
 	fi
 
 cleandir-prog:
-	rm -f *.core config.log config.status configure.lua tags
+	rm -f *.core config.log config.status tags
 	if [ -e "./config/prefix.h" ]; then rm -fr ./config; fi
 	if [ -e "Makefile.config" ]; then echo >Makefile.config; fi
 	@if [ "${CONFIGSCRIPTS}" != "" ]; then \
@@ -619,6 +619,5 @@ configure-prog:
 .PHONY: configure-prog _prog_objs prog-tags none
 
 include ${TOP}/mk/build.common.mk
-include ${TOP}/mk/build.proj.mk
 include ${TOP}/mk/build.subdir.mk
 include .depend

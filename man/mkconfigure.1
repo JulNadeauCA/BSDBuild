@@ -23,7 +23,7 @@
 .\" IN ANY WAY OUT OF THE USE OF THIS SOFTWARE EVEN IF ADVISED OF THE
 .\" POSSIBILITY OF SUCH DAMAGE.
 .\"
-.Dd February 25, 2023
+.Dd March 1, 2024
 .Dt MKCONFIGURE 1
 .Os BSDBuild 3.2
 .Sh NAME
@@ -66,8 +66,8 @@ The
 .Fl \-output-cmake
 option arranges for a Cmake macro package to be generated under the given output
 .Fa file .
-The generate Cmake macro package will include macros named "Check_Foo" and
-"Disable_Foo", for every BSDBuild test which supports Cmake.
+The Cmake macro package will include macros named "Check_Foo" and
+"Disable_Foo" for every BSDBuild test which supports Cmake.
 .Sh INFORMATION DIRECTIVES
 The following directives provide information about the package:
 .Bl -tag -width "register_env_var(name, desc) "
@@ -199,15 +199,11 @@ An
 of "FOO" would result in the
 .Ar -DFOO
 flag being passed to the compiler.
-This value is also used by
-.Xr build.proj.mk 5 .
 .It Fn c_incdir "dir"
 Specify a directory for include files.
 This results in the
 .Ar -Idir
 flag being added to the compiler command line.
-This value is also used by
-.Xr build.proj.mk 5 .
 .It Fn c_incdir_config "dir"
 Specify a target directory for individual include files with configure-script
 generated statements (i.e.,
@@ -388,4 +384,4 @@ is Libs.private (for --static --libs).
 .Xr build.lib.mk 5 ,
 .Xr build.prog.mk 5
 .Pp
-http://bsdbuild.hypertriton.com/
+.Lk https://bsdbuild.hypertriton.com/

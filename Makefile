@@ -9,7 +9,6 @@ SUBDIR=	BSDBuild \
 	mlproc
 
 SCRIPTS=	mkconfigure \
-		mkprojfiles \
 		mkify
 
 DATAFILES=	build.common.mk \
@@ -18,13 +17,10 @@ DATAFILES=	build.common.mk \
 		build.man.mk \
 		build.perl.mk \
 		build.po.mk \
-		build.proj.mk \
 		build.prog.mk \
 		build.subdir.mk \
 		build.www.mk \
 		config.guess \
-		cleanfiles.pl \
-		cmpfiles.pl \
 		mkdep \
 		mkconcurrent.pl \
 		manlinks.pl \

@@ -12,7 +12,6 @@ In addition, BSDBuild includes a configure script compiler and a number of softw
 * [build.lib.mk](https://bsdbuild.hypertriton.com/man5/build.lib.mk): Compile (or cross-compile) static or shared libraries from sources (Ada, assembly, C, C++, Objective C, Lex, Yacc).
 * [build.prog.mk](https://bsdbuild.hypertriton.com/man5/build.prog.mk): Compile (or cross-compile) programs from sources (Ada, assembly, C, C++, Objective C, Lex, Yacc).
 * [build.man.mk](https://bsdbuild.hypertriton.com/man5/build.man.mk): Process mdoc sources into ASCII, PostScript, PDF and HTML.
-* [build.proj.mk](https://bsdbuild.hypertriton.com/man5/build.proj.mk): Generate "Project files" for IDEs such as **Code::Blocks** and **Visual Studio** (now deprecated in favor of Cmake method).
 
 ### Availability
 

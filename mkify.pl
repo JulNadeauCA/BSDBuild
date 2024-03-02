@@ -29,8 +29,6 @@
 	mkdep
 	mkconcurrent.pl
 	manlinks.pl
-	cmpfiles.pl
-	cleanfiles.pl
 	gen-bundle.pl
 	gen-declspecs.pl
 	gen-dotdepend.pl

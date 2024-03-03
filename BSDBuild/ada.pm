@@ -301,6 +301,7 @@ BEGIN
 	RegisterEnvVar('ADALINK',   'Ada linker command');
 	RegisterEnvVar('ADALFLAGS', 'Ada linker flags');
 	RegisterEnvVar('ADAMKDEP',  'Ada dependency output command');
-	RegisterEnvVar('LIBS',      'Libraries passed to binder');
+
+	# RegisterEnvVar('LIBS',      'Libraries passed to binder');
 }
 ;1

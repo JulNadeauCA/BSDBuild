@@ -1453,8 +1453,13 @@ if ($OutputCMAKE) {
 
 	my %satisfied_deps = ();
 	opendir(DIR, $MODULEDIR) || die "$MODULEDIR: $!";
-	foreach my $file (readdir(DIR)) {
-	if (index($file,'.') == 0) { next; }
+	my @files = readdir(DIR);
+	closedir(DIR);
+
+	foreach my $file (sort @files) {
+		if (index($file, '.') == 0) {
+			next;
+		}
 		my ($base, $ext) = split(/\./, $file);
 		if ($base =~ /^(Builtins|Core|Makefile)$/ || $ext ne 'pm') {
 			next;
@@ -1469,7 +1474,6 @@ if ($OutputCMAKE) {
 			print { $CMAKE } $rv;
 		}
 	}
-	closedir(DIR);
 }
 
 #

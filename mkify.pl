@@ -27,6 +27,7 @@
 @Scripts = qw(
 	config.guess
 	mkdep
+	mkdep-cxx
 	mkconcurrent.pl
 	manlinks.pl
 	gen-bundle.pl

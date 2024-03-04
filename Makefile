@@ -22,6 +22,7 @@ DATAFILES=	build.common.mk \
 		build.www.mk \
 		config.guess \
 		mkdep \
+		mkdep-cxx \
 		mkconcurrent.pl \
 		manlinks.pl \
 		gen-bundle.pl \

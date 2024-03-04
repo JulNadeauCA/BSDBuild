@@ -551,11 +551,14 @@ syn keyword shStatement package version release register register_env_var
 syn keyword shStatement register_section test check require test_dir disable
 syn keyword shStatement mdefine mappend hdefine hdefine_unquoted hundef
 syn keyword shStatement hdefine_if hundef_if ada_option ada_bflag c_define
-syn keyword shStatement c_incdir c_incprep c_libdir c_option ld_option
-syn keyword shStatement c_extra_warnings c_fatal_warnings c_no_secure_warnings
+syn keyword shStatement cxx_define c_incdir cxx_incdir c_incprep c_libdir
+syn keyword shStatement c_option cxx_option ld_option c_extra_warnings 
+syn keyword shStatement c_fatal_warnings c_no_secure_warnings
 syn keyword shStatement c_incdir_config c_include_config config_cache
 syn keyword shStatement config_script pkgconfig_module config_guess success_fn
-syn keyword shStatement check_header check_header_opts check_func check_func_opts
+syn keyword shStatement check_header check_header_opts check_c_header check_c_header_opts
+syn keyword shStatement check_cxx_header check_cxx_header_opts check_func check_func_opts
+syn keyword shStatement check_c_func check_c_func_opts check_cxx_func check_cxx_func_opts
 syn keyword shStatement check_perl_module require_perl_module default_dir
 
 " Additional ksh Keywords and Aliases: {{{1

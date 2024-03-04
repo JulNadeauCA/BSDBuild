@@ -78,8 +78,28 @@ Files in this list will be processed before anything else is compiled.
 .It Ev PROG
 Filename of target executable.
 Platform-specific transforms may be applied to the name.
+.Pp
 If cross-compiling to WebAssembly (using "emscripten" target),
 ${PROG} is expected to have the extension ".html", ".js", ".mjs" or ".wasm".
+.It Ev PROG_LINKER_TYPE
+Select the type of linker.
+It can be one of:
+.Bl -tag -width "CL65 "
+.It C
+The C linker (e.g. CC and CFLAGS).
+The default if SRCS only contains *.c files.
+.It CXX
+The C++ linker (e.g. CXX and CXXFLAGS).
+The default if SRCS contains at least one *.cpp file.
+.It CL65
+The cc65 linker.
+Default if
+.Dv HAVE_CC65
+is set.
+.It ADA
+The Ada binder / linker.
+Default if SRCS contains *.ad[bs] files exclusively.
+.El
 .It Ev PROG_TYPE
 Platform-specific program type.
 Set to "CLI" (command-line utility), "GUI" (graphical user interface) or
@@ -111,11 +131,6 @@ Compiler for C, C++ and Objective C sources.
 Defaults to "cc", "clang" or "gcc".
 .It Ev PROG_PROFILE
 Set "Yes" to compile with profiling instrumentation.
-.It Ev PROG_LINKER_TYPE
-Set to "C" for C-style linker (the default),
-"CL65" for cc65 (the default if
-.Dv HAVE_CC65
-is set) or "ADA" (the default if SRCS contains *.ad[bs] files exclusively).
 .It Ev ADAFLAGS
 Compiler flags for Ada sources.
 .It Ev ADABFLAGS

@@ -229,9 +229,10 @@ sub MkCache
 sub MkExecOutput
 {
 	my ($bin, $args, $define) = @_;
+	
+	MkSet('MK_EXEC_FOUND', 'No');
 
 	if ($Cache) {
-		MkSet('MK_EXEC_FOUND', 'No');
 		MkSet('MK_CACHED', 'No');
 		MkIfNE('${cache}', '');
 			MkIfExists('${cache}/exec-'.$define);
@@ -272,6 +273,7 @@ sub MkExecOutputPfx
 	my ($pfx, $bin, $args, $define) = @_;
 
 	MkSet($define, '');
+	MkSet('MK_EXEC_FOUND', 'No');
 	MkIfNE($pfx, '');
 		MkIfExecutable($pfx.'/bin/'.$bin);
 			MkSetExec($define, $pfx.'/bin/'.$bin.' '.$args);

@@ -101,40 +101,22 @@ main(int argc, char const *argv[])
 }
 EOF
 
-sub Output_LLVM_Config
-{
-	my $name = shift;
-
-	MkExecOutputPfx($pfx, $name, '--version', 'LLDB_VERSION');
-	MkExecOutputPfx($pfx, $name, '--cflags',  'LLDB_CFLAGS');
-	MkExecOutputPfx($pfx, $name, '--ldflags', 'LLDB_LDFLAGS');
-	MkExecOutputPfx($pfx, $name, '--libs',    'LLDB_LIBS');
-}
-
 sub TEST_lldb
 {
 	my ($ver, $pfx) = @_;
+	my $llvmConfigs = 'llvm-config llvm-config15 llvm-config10 llvm-config80 ' .
+	                  'llvm-config70 llvm-config60';
 
-	MkExecOutputPfx($pfx, 'llvm-config80', '--prefix', 'LLDB_PREFIX');
-	Output_LLVM_Config('llvm-config80');
-
-	MkIfEQ('LLDB_PREFIX', '');
-		MkExecOutputPfx($pfx, 'llvm-config70', '--prefix', 'LLDB_PREFIX');
-		MkIfEQ('LLDB_PREFIX', '');
-			MkExecOutputPfx($pfx, 'llvm-config', '--prefix', 'LLDB_PREFIX');
-			MkIfEQ('LLDB_PREFIX', '');
-				MkExecOutputPfx($pfx, 'llvm-config60', '--prefix', 'LLDB_PREFIX');
-				MkIfEQ('LLDB_PREFIX', '');
-					MkExecOutputPfx($pfx, 'llvm-config10', '--prefix', 'LLDB_PREFIX');
-					Output_LLVM_Config('llvm-config10');
-				MkEndif;
-			MkElse;
-				Output_LLVM_Config('llvm-config');
-			MkEndif;
-		MkElse;
-			Output_LLVM_Config('llvm-config70');
+	MkFor('llvmconfig', $llvmConfigs);
+		MkExecOutputPfx($pfx, '${llvmconfig}', '--prefix', 'LLDB_PREFIX');
+		MkIfEQ('${MK_EXEC_FOUND}', 'Yes');
+			MkExecOutputPfx($pfx, '${llvmconfig}', '--version', 'LLDB_VERSION');
+			MkExecOutputPfx($pfx, '${llvmconfig}', '--cflags',  'LLDB_CFLAGS');
+			MkExecOutputPfx($pfx, '${llvmconfig}', '--ldflags', 'LLDB_LDFLAGS');
+			MkExecOutputPfx($pfx, '${llvmconfig}', '--libs',    'LLDB_LIBS');
+			MkBreak;
 		MkEndif;
-	MkEndif;
+	MkDone;
 
 	MkCaseIn('${host}');
 	MkCaseBegin('*-*-darwin*');
@@ -151,7 +133,7 @@ sub TEST_lldb
 		MkDefine('LLDB_LIBS', '${LLDB_LDFLAGS} -llldb ${LLDB_LIBS} -lstdc++');
 		MkCaseEnd;
 	MkEsac;
-		
+
 	MkIfFound($pfx, $ver, 'LLDB_VERSION');
 		MkPrintSN('checking whether LLDB works...');
 		MkCompileCXX('HAVE_LLDB',
@@ -159,22 +141,29 @@ sub TEST_lldb
 		             '${LLDB_LDFLAGS} ${LLDB_LIBS}', $testCode);
 		MkIfTrue('${HAVE_LLDB}');
 			MkDefine('LLDB_LIBS', '${LLDB_LDFLAGS} ${LLDB_LIBS}');
+			MkSaveDefine('HAVE_LLDB');
 
 			MkPrintSN('checking for LLDB Utility library...');
 			MkCaseIn('${host}');
 			MkCaseBegin('*-*-darwin*');
 				MkPrintS('no');
+				MkSaveUndef('HAVE_LLDB_UTILITY');
 				MkDefine('HAVE_LLDB_UTILITY', 'no');
 				MkDefine('LLDB_UTILITY_CFLAGS', '');
 				MkDefine('LLDB_UTILITY_LIBS', '');
 				MkCaseEnd;
 			MkCaseBegin('*');
 				MkDefine('LLDB_UTILITY_CFLAGS', '');
-				MkDefine('LLDB_UTILITY_LIBS', '-llldbUtility');
 				MkCompileCXX('HAVE_LLDB_UTILITY',
 				             '${LLDB_CFLAGS} ${LLDB_UTILITY_CFLAGS}',
-				             '${LLDB_LDFLAGS} ${LLDB_LIBS} ${LLDB_UTILITY_LIBS}',
+				             '${LLDB_LDFLAGS} ${LLDB_LIBS} -llldbUtility',
 				             $testCodeUtility);
+				MkIfTrue('${HAVE_LLDB_UTILITY}');
+					MkDefine('LLDB_UTILITY_LIBS', '-llldbUtility');
+					MkSaveDefine('HAVE_LLDB_UTILITY');
+				MkElse;
+					MkSaveUndef('HAVE_LLDB_UTILITY');
+				MkEndif;
 				MkCaseEnd;
 			MkEsac;
 		MkElse;

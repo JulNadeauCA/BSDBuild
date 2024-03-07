@@ -2,56 +2,80 @@
 
 All notable changes to BSDBuild will be documented in this file. This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.2] - 2024-03-02
+## [3.2] - 2024-03-08
 
 ### Added
 
 - Add support for [cmake](https://cmake.org). Add `--output-cmake` option to [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure) to output macros usable from cmake.
 - Make the `depend` target use `CXX` and `CXXFLAGS` when compiling C++.
-- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): New C++ specific directives: `cxx_define()`, `cxx_incdir()`, `cxx_option()`, `check_cxx_header()`, `check_cxx_header_opts()`, `check_cxx_func_opts()`.
-- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): New directives: `ada_option()`, `ada_bflag()`, `hdefine_if()`. Export LDFLAGS to Makefile.config. Fix `ld_option()`. New directive `pkgconfig_module()` for integrated pkg-config module generation. Add `$PKGCONFIG_LIBDIR` setting to simplify the installation of .pc modules. Introduce `--keep-conftest` configure option (preserve output test files).
-- [**build.prog.mk**](https://bsdbuild.hypertriton.com/man5/build.prog.mk) & [**build.lib.mk**](https://bsdbuild.hypertriton.com/man5/build.lib.mk): Add support for compiling to wasm (WebAssembly) with Emscripten (https://emscripten.org).
-- [**build.prog.mk**](https://bsdbuild.hypertriton.com/man5/build.prog.mk) & [**build.lib.mk**](https://bsdbuild.hypertriton.com/man5/build.lib.mk): Autodetect `${LINKER_TYPE}`.
+- Provide a built-in `configure` target for regenerating `configure` from `configure.in`. New make variable `${MKCONFIGURE_FLAGS}` for passing arguments to `mkconfigure`.
+- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): New C++ specific directives: `cxx_define()`, `cxx_incdir()`, `cxx_option()`, `check_cxx_header()`, `check_cxx_header_opts()` and `check_cxx_func_opts()`.
+- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): New directives: `ada_option()`, `ada_bflag()` and `hdefine_if()`.
+- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): New `pkgconfig_module()` directive for integrated pkg-config module generation. Add `$PKGCONFIG_LIBDIR` setting to simplify the installation of .pc modules.
+- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): Introduce `--keep-conftest` configure option (preserve output test files).
 - [**build.prog.mk**](https://bsdbuild.hypertriton.com/man5/build.prog.mk) & [**build.lib.mk**](https://bsdbuild.hypertriton.com/man5/build.lib.mk): Add support for the Ada language.
+- [**build.prog.mk**](https://bsdbuild.hypertriton.com/man5/build.prog.mk) & [**build.lib.mk**](https://bsdbuild.hypertriton.com/man5/build.lib.mk): Add support for compiling to wasm (WebAssembly) with Emscripten (https://emscripten.org).
+- [**build.prog.mk**](https://bsdbuild.hypertriton.com/man5/build.prog.mk) & [**build.lib.mk**](https://bsdbuild.hypertriton.com/man5/build.lib.mk): Autodetect `${LINKER_TYPE}` default based on `${SRCS}` file extensions.
 - [**build.prog.mk**](https://bsdbuild.hypertriton.com/man5/build.prog.mk) & [**build.lib.mk**](https://bsdbuild.hypertriton.com/man5/build.lib.mk): Introduce `${PROG_BUNDLE}`, `${LIB_BUNDLE}` and `gen-bundle.pl` for generating platform-specific application bundles.
-- [**build.www.mk**](https://bsdbuild.hypertriton.com/man5/build.www.mk): Introduce the mlproc(1) multilanguage preprocessor. Define `${MLPROC}`, `${MLPROCFLAGS}`, `${MINIFIER}`, `${MINIFIERFLAGS}` and `${MINIFIERFLAGSCSS}`.
+- [**build.www.mk**](https://bsdbuild.hypertriton.com/man5/build.www.mk): Introduce the `mlproc(1)` multilanguage preprocessor. Define `${MLPROC}`, `${MLPROCFLAGS}`, `${MINIFIER}`, `${MINIFIERFLAGS}` and `${MINIFIERFLAGSCSS}`.
 - **ada**: New test for Ada toolchain.
 - **agar-ada**: New test module for Ada bindings to Agar-GUI.
 - **agar-ada-core**: New test module for Ada bindings to Agar-Core.
-- **agar.types**: New test modules to generate tables of definitions and struct sizes for an installed Agar build. Intended to simplify the implementation of thin and variable-thickness bindings to different languages.
+- **agar.defs**, **agar-core.difs**: New test modules to generate tables of definitions and struct sizes for an installed Agar build. Intended to simplify the implementation of thin and variable-thickness bindings to different languages.
 - **cc**: Add support for [cc65](https://cc65.github.io). Add `$CC_COMPILE`. Don't assume the compiler understands "-c" or "-O2".
+- **db5**: New test for DB5.
+- **fdclose**: New test for the `fdclose()` function.
+- **devkitpro**: New test for [devkitPro](https://devkitpro.org/).
+- **gle**: New test for [GLE](https://linas.org/gle).
 - **imagemagick**: New test for ImageMagick 6 and 7.
-- **lldb**: New test for lldb interface library.
-- **sdl2**: New test for SDL 2.0 series.
-- **tcl**: New test for Tcl. Thanks Chuck!
+- **libircclient**: New test for [libircclient](http://www.ulduzsoft.com/libircclient).
+- **lldb**: New test for [LLDB](https://lldb.llvm.org/) and its utility library.
+- **mprotect**: New test for the `mprotect()` call.
+- **pcre**: New test for the [PCRE](https://pcre.org) library.
+- **sdl2**: New test for [SDL 2.0](https://libsdl.org).
+- **sdl_cpuinfo**: New test for the SDL cpuinfo functions.
+- **sys_stat**: New test for `<sys/stat.h>`.
+- **tcl**: New test for [TCL](https://tcl.tk/). Thanks Chuck!
+- **xbox**: New test for Xbox XDK.
+- **zlib**: New test for zlib.
 
 ### Removed
 
 - Removed **build.proj.mk** module. Premake is no longer maintained and project file generation can be done with cmake.
 - [**build.man.mk**](https://bsdbuild.hypertriton.com/man5/build.man.mk): Removed support for catman (`.cat*`) file auto-generation.
-- **freesg**: Module replaced by **agar-sg**.
+- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): Removed unused Core function `Which()`.
 - Removed **h2mandoc.pl**, **cmpfiles.pl** and **cleanfiles.pl**.
+- Removed modules **md5**, **rmd160**, **sha1**.
+- Removed module **freesg** (replaced by **agar-sg**).
+- Removed module **freesg-rg** (replaced by **agar-map**).
 
 ### Changed
 
+- Updates to the manual pages.
+- Update config.guess to 2015-03-04. Add [FabBSD](https://FabBSD.org).
+- In "install" target, create `${DESTDIR}` if needed.
+- In **mkconcurrent**, extract and cache make target fragments directly from an installed build.\*.mk so we no longer need to maintain a copy of them in the script.
 - [**build.lib.mk**](https://bsdbuild.hypertriton.com/man5/build.lib.mk): Disable use of Libtool by default. Generate .la files even when `USE_LIBTOOL=No`. Handle .dylib and .dll files directly.
 - [**build.prog.mk**](https://bsdbuild.hypertriton.com/man5/build.prog.mk) & [**build.lib.mk**](https://bsdbuild.hypertriton.com/man5/build.lib.mk): Use ``{LIB,PROG}_PROFILE`` instead of separate .po targets. Merge the "depend" from [**build.dep.mk**](https://bsdbuild.hypertriton.com/man5/build.dep.mk). Include support for cc65 compiler.
 - [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): Make the generated config.log a runnable shell script containing all test code and compilation commands (so individual tests can be reproduced easily by copy/pasting from it). Fix quoting of arguments in config.status.
 - [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): Show influential environment variables in generated "--help" output. Introduce `Register_env_var()` directive. Use `$IFS` instead of sed for path traversals. Add test for `$PATH_SEPARATOR`. Use expr to validate `--with-*` and `--enable-*` arguments. Honor `${EXECSUFFIX}` in `$PATH` searches. Don't invoke config.guess unnecessarily if --build is provided.
+- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): Now exports `LDFLAGS` to `Makefile.config`.
 - Don't output Lua definitions unless `--output-lua` is passed to [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure).
-- **mkconcurrent** script: Extract and cache make target fragments directly from an installed build.\*.mk so we no longer need to maintain a copy of them in the script.
 - **cc**: Define `HAVE_CC_GCC` and `HAVE_CC_CLANG`.
-- **x11**: Honor `--x-includes=*` and `--x-libraries=*` configure arguments. If XKB is not found then fallback to libXf86misc.
+- **libidn**: Check for `idn2` instead of the old `idna` interface.
 - **pthreads**: Add subtests `HAVE_PTHREAD_{MUTEX,COND,}_T_POINTER` to determine whether `pthread_mutex_t`, `pthread_cond_t` and `pthread_t` are pointer types or not. Needed for `_Pure_Attribute_If_Unthreaded` in agar.
-- Update config.guess to 2015-03-04. Add [FabBSD](https://FabBSD.org).
-- Don't imply "all" in the "install" target.
-- In "install" target, create `${DESTDIR}` if needed.
-- Updates to the manual pages.
+- **x11**: Honor `--x-includes=*` and `--x-libraries=*` configure arguments. If XKB is not found then fallback to libXf86misc.
 
 ### Fixed
 
 - [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): Handle string literals containing "," and ";" in directives. Thanks Chuck!
 - [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): When testing for the presence of executables, make sure they are not directories. Thanks Kristof!
+- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): Fix the `ld_option()` directive.
+- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): In `MkExecOutput()` and `MkExecOutputPfx()`, always initialize `MK_EXEC_FOUND` to `No`.
+- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): New Core functions `MkLog()`, `MkPrintSN()`, `MkComment()`, `MkCache()`, `MkCleanup()`, `MkLogCode()`, `MkRun()`.
+- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): New Core functions `MkDisableFailed()` and `MkDisableNotFound()`.
+- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): New Core functions `MkCompileAda()`, `TryCompileFlagsAda()` and `MkCodeCMAKE()`.
+- **db**: Correctly detect db18 on FreeBSD.
 - **freetype**: Check with pkgconfig also. Thanks enthus1ast!
 - Don't include non-file args in "nothing to do" evaluation in bundled mkdep script.
 

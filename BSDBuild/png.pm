@@ -24,7 +24,7 @@ sub TEST_png
 	MkExecOutputPfx($pfx, 'libpng-config', '--version', 'PNG_VERSION');
 	MkExecOutputPfx($pfx, 'libpng-config', '--cflags', 'PNG_CFLAGS');
 	MkExecOutputPfx($pfx, 'libpng-config', '--L_opts', 'PNG_LOPTS');
-	MkExecOutputPfx($pfx, 'libpng-config', '--libs', 'PNG_LIBS');
+	MkExecOutputPfx($pfx, 'libpng-config', '--static --libs', 'PNG_LIBS');
 	MkDefine('PNG_LIBS', '${PNG_LOPTS} ${PNG_LIBS}');
 	MkIfFound($pfx, $ver, 'PNG_VERSION');
 		MkPrintSN('checking whether libpng works...');

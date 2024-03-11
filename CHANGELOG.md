@@ -57,12 +57,13 @@ All notable changes to BSDBuild will be documented in this file. This project ad
 - In **mkconcurrent**, extract and cache make target fragments directly from an installed build.\*.mk so we no longer need to maintain a copy of them in the script.
 - [**build.lib.mk**](https://bsdbuild.hypertriton.com/man5/build.lib.mk): Disable use of Libtool by default. Generate .la files even when `USE_LIBTOOL=No`. Handle .dylib and .dll files directly.
 - [**build.prog.mk**](https://bsdbuild.hypertriton.com/man5/build.prog.mk) & [**build.lib.mk**](https://bsdbuild.hypertriton.com/man5/build.lib.mk): Use ``{LIB,PROG}_PROFILE`` instead of separate .po targets. Merge the "depend" from [**build.dep.mk**](https://bsdbuild.hypertriton.com/man5/build.dep.mk). Include support for cc65 compiler.
-- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): Make the generated config.log a runnable shell script containing all test code and compilation commands (so individual tests can be reproduced easily by copy/pasting from it). Fix quoting of arguments in config.status.
+- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): Make the generated `config.log` a runnable shell script containing all test code and compilation commands. This allows individual tests to be "replayed" easily by copy/pasting from `config.log` to a shell.
 - [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): Show influential environment variables in generated "--help" output. Introduce `Register_env_var()` directive. Use `$IFS` instead of sed for path traversals. Add test for `$PATH_SEPARATOR`. Use expr to validate `--with-*` and `--enable-*` arguments. Honor `${EXECSUFFIX}` in `$PATH` searches. Don't invoke config.guess unnecessarily if --build is provided.
 - [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): Now exports `LDFLAGS` to `Makefile.config`.
 - Don't output Lua definitions unless `--output-lua` is passed to [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure).
 - **cc**: Define `HAVE_CC_GCC` and `HAVE_CC_CLANG`.
 - **libidn**: Check for `idn2` instead of the old `idna` interface.
+- **png**: Use `libpng-config --static --libs` to include any libpng dependencies in `${PNG_LIBS}`.
 - **pthreads**: Add subtests `HAVE_PTHREAD_{MUTEX,COND,}_T_POINTER` to determine whether `pthread_mutex_t`, `pthread_cond_t` and `pthread_t` are pointer types or not. Needed for `_Pure_Attribute_If_Unthreaded` in agar.
 - **x11**: Honor `--x-includes=*` and `--x-libraries=*` configure arguments. If XKB is not found then fallback to libXf86misc.
 
@@ -70,7 +71,7 @@ All notable changes to BSDBuild will be documented in this file. This project ad
 
 - [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): Handle string literals containing "," and ";" in directives. Thanks Chuck!
 - [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): When testing for the presence of executables, make sure they are not directories. Thanks Kristof!
-- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): Fix the `ld_option()` directive.
+- [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): Fix the `ld_option()` directive. Fix quoting of arguments in `config.status`.
 - [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): In `MkExecOutput()` and `MkExecOutputPfx()`, always initialize `MK_EXEC_FOUND` to `No`.
 - [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): New Core functions `MkLog()`, `MkPrintSN()`, `MkComment()`, `MkCache()`, `MkCleanup()`, `MkLogCode()`, `MkRun()`.
 - [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): New Core functions `MkDisableFailed()` and `MkDisableNotFound()`.

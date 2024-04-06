@@ -487,6 +487,11 @@ sub MkSaveUndef
 echo 'hdefs["$var"] = nil' >>$OutputLUA
 EOF
 		}
+		if (!defined($OutputHeaderFile) &&
+		    !defined($OutputHeaderDir) &&
+		    !defined($OutputLUA)) {
+			print "no_output_defined=noop\n"
+		}
 	}
 }
 
@@ -514,6 +519,11 @@ EOF
 echo "hdefs[\\"$var\\"] = \\"\$$var\\"" >>$OutputLUA
 EOF
 		}
+		if (!defined($OutputHeaderFile) &&
+		    !defined($OutputHeaderDir) &&
+		    !defined($OutputLUA)) {
+			print "no_output_defined=noop\n"
+		}
 	}
 }
 
@@ -540,6 +550,11 @@ EOF
 			print << "EOF";
 echo "hdefs[\\"$var\\"] = \$$var" >>$OutputLUA
 EOF
+		}
+		if (!defined($OutputHeaderFile) &&
+		    !defined($OutputHeaderDir) &&
+		    !defined($OutputLUA)) {
+			print "no_output_defined=noop\n"
 		}
 	}
 }

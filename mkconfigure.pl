@@ -1266,10 +1266,10 @@ sub P1_c_include_config
 	my $file = shift;
 
 	if ($file) {
-		MkIfExists('$file');
-			MkPrint('Overwriting $file');
-			print 'rm -f "$file"', "\n";
-			MkSetS('iconf', '$file');
+		MkIfExists($file);
+			MkPrint('Overwriting ' . $file);
+			print 'rm -f "' . $file . '"', "\n";
+			MkSetS('iconf', $file);
 		MkEndif;
 		$OutputHeaderFile = $file;
 	} else {

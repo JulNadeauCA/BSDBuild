@@ -476,6 +476,7 @@ sub MkSaveUndef
 {
 	foreach my $var (@_) {
 		if ($OutputHeaderFile) {
+			print "echo '' >>\$iconf\n";
 			print "echo '#undef $var' >>\$iconf\n";
 		}
 		if ($OutputHeaderDir) {
@@ -500,6 +501,7 @@ sub MkSaveDefine
 	foreach my $var (@_) {
 		if ($OutputHeaderFile) {
 			print << "EOF";
+echo '' >>\$iconf
 echo '#ifndef $var' >>\$iconf
 echo "#define $var \\"\$$var\\"" >>\$iconf
 echo '#endif' >>\$iconf

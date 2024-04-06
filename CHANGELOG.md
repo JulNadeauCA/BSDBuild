@@ -38,6 +38,7 @@ All notable changes to BSDBuild will be documented in this file. This project ad
 - **tcl**: New test for [TCL](https://tcl.tk/). Thanks Chuck!
 - **xbox**: New test for Xbox XDK.
 - **zlib**: New test for zlib.
+- **zstd**: New test for libzstd.
 
 ### Removed
 

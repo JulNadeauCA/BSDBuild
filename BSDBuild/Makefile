@@ -138,7 +138,8 @@ DATAFILES=Core.pm \
 	fdclose.pm \
 	lldb.pm \
 	tcl.pm \
-	devkitpro.pm
+	devkitpro.pm \
+	zstd.pm
 
 all:
 

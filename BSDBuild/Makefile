@@ -139,7 +139,8 @@ DATAFILES=Core.pm \
 	lldb.pm \
 	tcl.pm \
 	devkitpro.pm \
-	zstd.pm
+	zstd.pm \
+	glew.pm
 
 all:
 

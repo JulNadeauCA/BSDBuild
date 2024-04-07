@@ -30,6 +30,7 @@ All notable changes to BSDBuild will be documented in this file. This project ad
 - **imagemagick**: New test for ImageMagick 6 and 7.
 - **libircclient**: New test for [libircclient](http://www.ulduzsoft.com/libircclient).
 - **lldb**: New test for [LLDB](https://lldb.llvm.org/) and its utility library.
+- **lua**: New test for the [Lua](https://www.lua.org/) library.
 - **mprotect**: New test for the `mprotect()` call.
 - **pcre**: New test for the [PCRE](https://pcre.org) library.
 - **sdl2**: New test for [SDL 2.0](https://libsdl.org).

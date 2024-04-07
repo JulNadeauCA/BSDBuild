@@ -140,7 +140,8 @@ DATAFILES=Core.pm \
 	tcl.pm \
 	devkitpro.pm \
 	zstd.pm \
-	glew.pm
+	glew.pm \
+	lua.pm
 
 all:
 

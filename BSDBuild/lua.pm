@@ -68,7 +68,7 @@ macro(Check_Lua)
 	set(LUA_CFLAGS "")
 	set(LUA_LIBS "")
 
-	find_package(lua)
+	find_package(Lua)
 	if(LUA_FOUND)
 		set(HAVE_LUA ON)
 		BB_Save_Define(HAVE_LUA)

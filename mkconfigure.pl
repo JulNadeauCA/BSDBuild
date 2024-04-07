@@ -1267,10 +1267,10 @@ sub P1_c_include_config
 
 	if ($file) {
 		MkIfExists($file);
-			MkPrint('Overwriting ' . $file);
+			MkPrint('* Overwriting existing ' . $file);
 			print 'rm -f "' . $file . '"', "\n";
-			MkSetS('iconf', $file);
 		MkEndif;
+		MkSetS('iconf', $file);
 		$OutputHeaderFile = $file;
 	} else {
 		$OutputHeaderFile = undef;

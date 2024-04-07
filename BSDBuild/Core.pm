@@ -313,19 +313,23 @@ sub MkExecPkgConfig
 {
 	my ($pfx, $pkg, $args, $define) = @_;
 
-	MkIfNE('$pfx', '');
-		MkSetExec('MK_EXEC_PKGPREFIX', '$PKGCONFIG --variable=prefix '.$pkg.
-		                               ' 2>/dev/null');
-		MkIfNE('$MK_EXEC_PKGPREFIX', '$pfx');
-			MkPrint('* ');
-			MkPrint("* ERROR: According to pkg-config, $pkg is installed in prefix: ");
-			MkPrint("* \$MK_EXEC_PKGPREFIX, but the prefix $pfx was given.");
-			MkPrint('* ');
-			MkPrint("* Please indicate correct $pkg prefix (or omit for autodetect).");
-			MkPrint('* ');
-			MkFail('Package prefix mismatch');
+	if (defined($pfx)) {
+		MkIfNE($pfx, '');
+			MkSetExec('MK_EXEC_PKGPREFIX', '$PKGCONFIG --variable=prefix ' . $pkg . ' 2>/dev/null');
+			MkIfNE('$MK_EXEC_PKGPREFIX', '');
+				MkIfNE('$MK_EXEC_PKGPREFIX', $pfx);
+					MkPrint('');
+					MkPrint('* ');
+					MkPrint("* ERROR: According to pkg-config, $pkg is installed in \$MK_EXEC_PKGPREFIX,");
+					MkPrint("* but the alternate prefix $pfx was passed to configure instead.");
+					MkPrint('* ');
+					MkPrint("* Please indicate correct $pkg prefix (or simply omit to use \$MK_EXEC_PKGPREFIX).");
+					MkPrint('* ');
+					MkFail('Package prefix mismatch');
+				MkEndif;
+			MkEndif;
 		MkEndif;
-	MkEndif;
+	}
 
 	MkSetExec($define, '$PKGCONFIG '.$pkg.' '.$args.' 2>/dev/null');
 }

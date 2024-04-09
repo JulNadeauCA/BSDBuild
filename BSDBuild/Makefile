@@ -1,60 +1,13 @@
 TOP=..
 
-DATAFILES=Core.pm \
-	Builtins.pm \
+DATAFILES=Core.pm Builtins.pm \
 	ada.pm \
-	cc.pm \
-	cc_attributes.pm \
-	objc.pm \
-	cxx.pm \
-	gcc.pm \
-	glib.pm \
-	glib2.pm \
-	sdl.pm \
-	sdl2.pm \
-	sdl_image.pm \
-	sdl_cpuinfo.pm \
-	smpeg.pm \
-	x11.pm \
-	freetype.pm \
-	setenv.pm \
-	strlcat.pm \
-	strlcpy.pm \
-	strsep.pm \
-	getenv.pm \
-	vasprintf.pm \
-	mmap.pm \
-	mprotect.pm \
-	setproctitle.pm \
-	asprintf.pm \
-	flock.pm \
-	progname.pm \
-	opengl.pm \
-	math.pm \
-	jpeg.pm \
-	gethostname.pm \
-	snprintf.pm \
-	vsnprintf.pm \
-	setlocale.pm \
-	gettext.pm \
-	fastcgi.pm \
-	arc4random.pm \
-	pctr.pm \
-	getpwuid.pm \
-	getpwnam_r.pm \
-	getuid.pm \
-	pthreads.pm \
-	sys_stat.pm \
-	sys_types.pm \
-	sys_queue.pm \
-	free_null.pm \
-	agar.pm \
-	agar.defs.pm \
-	agar-ada.pm \
+	Mail-SpamAssassin.pm \
 	agar-ada-core.pm \
+	agar-ada.pm \
 	agar-au.pm \
-	agar-core.pm \
 	agar-core.defs.pm \
+	agar-core.pm \
 	agar-map.pm \
 	agar-math.pm \
 	agar-micro.pm \
@@ -62,86 +15,135 @@ DATAFILES=Core.pm \
 	agar-sg.pm \
 	agar-sk.pm \
 	agar-vg.pm \
-	cg.pm \
-	cracklib.pm \
-	db4.pm \
-	db5.pm \
-	perl.pm \
-	libidn.pm \
-	getaddrinfo.pm \
-	gethostbyname.pm \
-	gle.pm \
-	glu.pm \
-	ode.pm \
-	sse.pm \
-	setjmp.pm \
-	signal.pm \
-	altivec.pm \
-	unistd_h.pm \
-	stdlib_h.pm \
-	limits_h.pm \
-	strtoll.pm \
-	strtold.pm \
-	open_exlock.pm \
-	fgetln.pm \
-	Mail-SpamAssassin.pm \
-	getpeerucred.pm \
-	so_peercred.pm \
-	getpeereid.pm \
-	math_c99.pm \
-	getopt.pm \
-	byte_order.pm \
-	iconv.pm \
-	curl.pm \
-	edacious.pm \
-	dlopen.pm \
-	dyld.pm \
-	shl_load.pm \
-	float_h.pm \
-	percgi.pm \
-	gettimeofday.pm \
-	syslog.pm \
-	glob.pm \
-	glx.pm \
-	png.pm \
+	agar.defs.pm \
+	agar.pm \
 	alsa.pm \
-	wgl.pm \
-	mgid.pm \
-	select.pm \
-	sndfile.pm \
-	execvp.pm \
-	libbsd.pm \
+	altivec.pm \
+	arc4random.pm \
+	asprintf.pm \
+	byte_order.pm \
+	cc.pm \
+	cc_attributes.pm \
+	cg.pm \
 	clock_gettime.pm \
 	clock_win32.pm \
-	sdl_ttf.pm \
-	xinerama.pm \
-	portaudio.pm \
-	mysql.pm \
 	cocoa.pm \
-	sockopts.pm \
+	cracklib.pm \
 	crypt.pm \
-	winsock.pm \
-	siocgifconf.pm \
-	fontconfig.pm \
-	rand48.pm \
-	nanosleep.pm \
-	kqueue.pm \
-	timerfd.pm \
-	etubestore.pm \
-	uim.pm \
-	xbox.pm \
 	csidl.pm \
-	libircclient.pm \
-	pcre.pm \
-	imagemagick.pm \
-	zlib.pm \
-	fdclose.pm \
-	lldb.pm \
-	tcl.pm \
+	curl.pm \
+	cxx.pm \
+	db4.pm \
+	db5.pm \
 	devkitpro.pm \
-	zstd.pm \
+	dlopen.pm \
+	dyld.pm \
+	edacious.pm \
+	etubestore.pm \
+	execvp.pm \
+	fastcgi.pm \
+	fdclose.pm \
+	fgetln.pm \
+	float_h.pm \
+	flock.pm \
+	fontconfig.pm \
+	free_null.pm \
+	freetype.pm \
+	gcc.pm \
+	getaddrinfo.pm \
+	getenv.pm \
+	gethostbyname.pm \
+	gethostname.pm \
+	getopt.pm \
+	getpeereid.pm \
+	getpeerucred.pm \
+	getpwnam_r.pm \
+	getpwuid.pm \
+	gettext.pm \
+	gettimeofday.pm \
+	getuid.pm \
+	gle.pm \
 	glew.pm \
-	lua.pm
+	glib.pm \
+	glib2.pm \
+	glob.pm \
+	glu.pm \
+	glx.pm \
+	iconv.pm \
+	imagemagick.pm \
+	jpeg.pm \
+	kqueue.pm \
+	libbsd.pm \
+	libidn.pm \
+	libircclient.pm \
+	limits_h.pm \
+	lldb.pm \
+	lua.pm \
+	math.pm \
+	math_c99.pm \
+	mgid.pm \
+	mmap.pm \
+	mprotect.pm \
+	mysql.pm \
+	nanosleep.pm \
+	objc.pm \
+	ode.pm \
+	open_exlock.pm \
+	opengl.pm \
+	openjpeg.pm \
+	pcre.pm \
+	pctr.pm \
+	percgi.pm \
+	perl.pm \
+	png.pm \
+	portaudio.pm \
+	progname.pm \
+	pthreads.pm \
+	rand48.pm \
+	sdl.pm \
+	sdl2.pm \
+	sdl_cpuinfo.pm \
+	sdl_image.pm \
+	sdl_ttf.pm \
+	select.pm \
+	setenv.pm \
+	setjmp.pm \
+	setlocale.pm \
+	setproctitle.pm \
+	shl_load.pm \
+	signal.pm \
+	siocgifconf.pm \
+	smpeg.pm \
+	sndfile.pm \
+	snprintf.pm \
+	so_peercred.pm \
+	sockopts.pm \
+	sse.pm \
+	stdlib_h.pm \
+	strlcat.pm \
+	strlcpy.pm \
+	strsep.pm \
+	strtold.pm \
+	strtoll.pm \
+	sys_queue.pm \
+	sys_stat.pm \
+	sys_types.pm \
+	syslog.pm \
+	tcl.pm \
+	tiff.pm \
+	timerfd.pm \
+	uim.pm \
+	unistd_h.pm \
+	vasprintf.pm \
+	vsnprintf.pm \
+	webp.pm \
+	wgl.pm \
+	winsock.pm \
+	x11.pm \
+	xbox.pm \
+	xinerama.pm \
+	zlib.pm \
+	zstd.pm
 
 all:
 

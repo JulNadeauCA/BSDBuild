@@ -429,13 +429,9 @@ lib${LIB}.so: ${SRCS_GENERATED} _lib_objs ${OBJS}
 	            echo "${CXX} -shared -o $$_libout -Wl,-soname,lib${LIB}.so.${LIB_CURRENT} -Wl,-rpath,${LIBDIR} ${LDFLAGS} $$_objs"; \
 	            ${CXX} -shared -o $$_libout -Wl,-soname,lib${LIB}.so.${LIB_CURRENT} -Wl,-rpath ${LIBDIR} ${LDFLAGS} $$_objs; \
 	            ;; \
-	        *-linux*) \
+	        *) \
 	            echo "${CXX} -shared -o $$_libout -Wl,-soname,lib${LIB}.so.${LIB_CURRENT} ${LDFLAGS} $$_objs ${LIBS}"; \
 	            ${CXX} -shared -o $$_libout -Wl,-soname,lib${LIB}.so.${LIB_CURRENT} ${LDFLAGS} $$_objs ${LIBS}; \
-	            ;; \
-	        *) \
-	            echo "${CXX} -shared -o $$_libout -Wl,-rpath,${LIBDIR} ${LDFLAGS} $$_objs"; \
-	            ${CXX} -shared -o $$_libout -Wl,-rpath ${LIBDIR} ${LDFLAGS} $$_objs; \
 	            ;; \
 	        esac; \
 	    else \
@@ -452,13 +448,9 @@ lib${LIB}.so: ${SRCS_GENERATED} _lib_objs ${OBJS}
 	            echo "${CC} -shared -o $$_libout -Wl,-soname,lib${LIB}.so.${LIB_CURRENT} -Wl,-rpath,${LIBDIR} ${LDFLAGS} $$_objs"; \
 	            ${CC} -shared -o $$_libout -Wl,-soname,lib${LIB}.so.${LIB_CURRENT} -Wl,-rpath ${LIBDIR} ${LDFLAGS} $$_objs; \
 	            ;; \
-	        *-linux*) \
+	        *) \
 	            echo "${CC} -shared -o $$_libout -Wl,-soname,lib${LIB}.so.${LIB_CURRENT} ${LDFLAGS} $$_objs ${LIBS}"; \
 	            ${CC} -shared -o $$_libout -Wl,-soname,lib${LIB}.so.${LIB_CURRENT} ${LDFLAGS} $$_objs ${LIBS}; \
-	            ;; \
-	        *) \
-	            echo "${CC} -shared -o $$_libout -Wl,-rpath,${LIBDIR} ${LDFLAGS} $$_objs"; \
-	            ${CC} -shared -o $$_libout -Wl,-rpath ${LIBDIR} ${LDFLAGS} $$_objs; \
 	            ;; \
 	        esac; \
 	    fi; \
@@ -882,7 +874,7 @@ install-lib: check-libtool
 	    done; \
 	fi
 	@case "${HOST}" in \
-	    *-linux*) \
+	    *-linux* | *-haiku*) \
 	        if [ "${EUID}" = "0" -o "${USER}" = "root" ]; then \
 	            if [ -x "/sbin/ldconfig" ]; then \
 	                echo "/sbin/ldconfig"; \

@@ -3,9 +3,13 @@
 my @db5_releases = ('5.0', '5.1', '5.2', '5.3', '5');
 
 my $testCode = << 'EOF';
-#include <db5/db.h>
-#if DB_VERSION_MAJOR != 5
-#error version
+#ifdef DB5_HAVE_INCLUDES_IN_DB4
+# include <db4/db.h>
+#else
+# include <db5/db.h>
+# if DB_VERSION_MAJOR != 5
+#  error version
+# endif
 #endif
 int main(int argc, char *argv[]) {
 	DB *db;
@@ -28,15 +32,31 @@ sub TEST_db5
 			MkSetExec('DB5_VERSION_J', 'echo "${dbver}" | sed "s/\.//"');
 			MkIfExists('${path}/lib/db5/libdb-$dbver.so');
 				MkIfExists('${path}/include/db${DB5_VERSION_J}');
-					MkDefine('DB5_CFLAGS', '-I${path}/include/db${DB5_VERSION_J} '.
-  					                     '-I${path}/include');			# XXX
+					MkDefine('DB5_CFLAGS', '-I${path}/include/db${DB5_VERSION_J} ' .
+  					                       '-I${path}/include');			# XXX
 				MkElse;
-					MkDefine('DB5_CFLAGS', '-I${path}/include/db5 '.
-  					                     '-I${path}/include');			# XXX
+					MkDefine('DB5_CFLAGS', '-I${path}/include/db5 ' .
+  					                       '-I${path}/include');			# XXX
 				MkEndif;
 				MkDefine('DB5_LIBS', '-L${path}/lib/db5 -ldb-$dbver');
 				MkDefine('DB5_VERSION', '${dbver}');
 				MkBreak;
+			MkElse;
+				#
+				# Handle platforms that have DB5 installed with libraries and includes under db4/.
+				#
+				MkIfExists('${path}/lib/db4/libdb.so.5.0');
+					MkIfExists('${path}/include/db4');
+						MkDefine('DB5_CFLAGS', '-DDB5_HAVE_INCLUDES_IN_DB4 ' .
+						                       '-I${path}/include/db4 ' .
+  						                       '-I${path}/include');
+					MkElse;
+						MkDefine('DB5_CFLAGS', '-I${path}/include');
+					MkEndif;
+					MkDefine('DB5_LIBS', '-L${path}/lib/db4 -ldb');
+					MkDefine('DB5_VERSION', '5');
+					MkBreak;
+				MkEndif;
 			MkEndif;
 		MkDone;
 	MkDone;

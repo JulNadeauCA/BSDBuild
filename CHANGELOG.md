@@ -24,6 +24,7 @@ All notable changes to BSDBuild will be documented in this file. This project ad
 - **agar.defs**, **agar-core.difs**: New test modules to generate tables of definitions and struct sizes for an installed Agar build. Intended to simplify the implementation of thin and variable-thickness bindings to different languages.
 - **cc**: Add support for [cc65](https://cc65.github.io). Add `$CC_COMPILE`. Don't assume the compiler understands "-c" or "-O2".
 - **db5**: New test for DB5.
+- **dirfd**: New test for the `dirfd()` function.
 - **fdclose**: New test for the `fdclose()` function.
 - **devkitpro**: New test for [devkitPro](https://devkitpro.org/).
 - **gle**: New test for [GLE](https://linas.org/gle).
@@ -71,6 +72,7 @@ All notable changes to BSDBuild will be documented in this file. This project ad
 
 ### Fixed
 
+- [**build.lib.mk**](https://bsdbuild.hypertriton.com/man5/build.lib.mk): Define `SONAME` correctly on Haiku (and other platforms). Thanks Begasus!
 - [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): Handle string literals containing "," and ";" in directives. Thanks Chuck!
 - [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): When testing for the presence of executables, make sure they are not directories. Thanks Kristof!
 - [**mkconfigure**](https://bsdbuild.hypertriton.com/man1/mkconfigure): Fix the `ld_option()` directive. Fix quoting of arguments in `config.status`.

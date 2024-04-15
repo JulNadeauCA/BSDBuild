@@ -36,6 +36,7 @@ DATAFILES=Core.pm Builtins.pm \
 	db4.pm \
 	db5.pm \
 	devkitpro.pm \
+	dirfd.pm \
 	dlopen.pm \
 	dyld.pm \
 	edacious.pm \

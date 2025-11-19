@@ -96,6 +96,7 @@ DATAFILES=Core.pm Builtins.pm \
 	pctr.pm \
 	percgi.pm \
 	perl.pm \
+	plutosvg.pm \
 	png.pm \
 	portaudio.pm \
 	progname.pm \
@@ -140,6 +141,7 @@ DATAFILES=Core.pm Builtins.pm \
 	webp.pm \
 	wgl.pm \
 	winsock.pm \
+	woa.pm \
 	x11.pm \
 	xbox.pm \
 	xinerama.pm \
